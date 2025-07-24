@@ -25,6 +25,7 @@ const customJestConfig = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   testTimeout: 10000,
+  maxWorkers: 1, // Run tests serially to avoid conflicts
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },

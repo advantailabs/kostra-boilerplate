@@ -1,7 +1,11 @@
 import { cleanupDatabase } from './setup';
 
-// Clean up database before each test file
+// Clean up database before and after each test
 beforeEach(async () => {
+  await cleanupDatabase();
+});
+
+afterEach(async () => {
   await cleanupDatabase();
 });
 

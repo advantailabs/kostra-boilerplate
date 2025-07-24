@@ -17,11 +17,7 @@ describe('Persona Service - End-to-End Tests', () => {
 
   beforeEach(async () => {
     await cleanupDatabase();
-    testUser = await createTestUser({
-      clerkUserId: 'test_clerk_user_123',
-      email: 'test@example.com',
-      name: 'Test User',
-    });
+    testUser = await createTestUser();
   });
 
   describe('createPersonaService', () => {
@@ -34,7 +30,7 @@ describe('Persona Service - End-to-End Tests', () => {
         tags: ['test', 'assistant'],
       };
 
-      const result = await createPersonaService(testUser.id, personaData);
+      const result = await createPersonaService(testUser.id, personaData, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data).toMatchObject({
@@ -62,7 +58,7 @@ describe('Persona Service - End-to-End Tests', () => {
         tags: ['  test  ', '  assistant  '],
       };
 
-      const result = await createPersonaService(testUser.id, personaData);
+      const result = await createPersonaService(testUser.id, personaData, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data?.name).toBe('Test Assistant');
@@ -80,7 +76,7 @@ describe('Persona Service - End-to-End Tests', () => {
         tags: [],
       };
 
-      const result = await createPersonaService(testUser.id, personaData);
+      const result = await createPersonaService(testUser.id, personaData, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data?.tags).toEqual([]);
@@ -113,7 +109,7 @@ describe('Persona Service - End-to-End Tests', () => {
         deletedAt: new Date(),
       });
 
-      const result = await getUserPersonasService(testUser.id);
+      const result = await getUserPersonasService(testUser.id, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
@@ -132,7 +128,7 @@ describe('Persona Service - End-to-End Tests', () => {
     });
 
     it('should return empty array when user has no personas', async () => {
-      const result = await getUserPersonasService(testUser.id);
+      const result = await getUserPersonasService(testUser.id, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -156,7 +152,7 @@ describe('Persona Service - End-to-End Tests', () => {
         name: 'Test User Assistant',
       });
 
-      const result = await getUserPersonasService(testUser.id);
+      const result = await getUserPersonasService(testUser.id, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
@@ -173,7 +169,7 @@ describe('Persona Service - End-to-End Tests', () => {
         tags: ['test'],
       });
 
-      const result = await getPersonaByIdService(persona.id);
+      const result = await getPersonaByIdService(persona.id, testPrisma);
 
       expect(result.success).toBe(true);
       expect(result.data).toMatchObject({
@@ -186,7 +182,7 @@ describe('Persona Service - End-to-End Tests', () => {
     });
 
     it('should return error for non-existent persona', async () => {
-      const result = await getPersonaByIdService(99999);
+      const result = await getPersonaByIdService(99999, testPrisma);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found');
@@ -198,7 +194,7 @@ describe('Persona Service - End-to-End Tests', () => {
         deletedAt: new Date(),
       });
 
-      const result = await getPersonaByIdService(persona.id);
+      const result = await getPersonaByIdService(persona.id, testPrisma);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found');
@@ -225,7 +221,12 @@ describe('Persona Service - End-to-End Tests', () => {
         tags: ['updated', 'modified'],
       };
 
-      const result = await updatePersonaService(testUser.id, testPersona.id, updateData);
+      const result = await updatePersonaService(
+        testUser.id,
+        testPersona.id,
+        updateData,
+        testPrisma
+      );
 
       expect(result.success).toBe(true);
       expect(result.data).toMatchObject({
@@ -248,7 +249,12 @@ describe('Persona Service - End-to-End Tests', () => {
         name: 'Partially Updated Assistant',
       };
 
-      const result = await updatePersonaService(testUser.id, testPersona.id, partialUpdate);
+      const result = await updatePersonaService(
+        testUser.id,
+        testPersona.id,
+        partialUpdate,
+        testPrisma
+      );
 
       expect(result.success).toBe(true);
       expect(result.data?.name).toBe('Partially Updated Assistant');
@@ -263,7 +269,12 @@ describe('Persona Service - End-to-End Tests', () => {
         description: '  Trimmed description  ',
       };
 
-      const result = await updatePersonaService(testUser.id, testPersona.id, updateData);
+      const result = await updatePersonaService(
+        testUser.id,
+        testPersona.id,
+        updateData,
+        testPrisma
+      );
 
       expect(result.success).toBe(true);
       expect(result.data?.name).toBe('Trimmed Name');
@@ -271,7 +282,12 @@ describe('Persona Service - End-to-End Tests', () => {
     });
 
     it('should return error when persona not found', async () => {
-      const result = await updatePersonaService(testUser.id, 99999, { name: 'Updated' });
+      const result = await updatePersonaService(
+        testUser.id,
+        99999,
+        { name: 'Updated' },
+        testPrisma
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found or access denied');
@@ -284,7 +300,12 @@ describe('Persona Service - End-to-End Tests', () => {
         name: 'Other User',
       });
 
-      const result = await updatePersonaService(otherUser.id, testPersona.id, { name: 'Hacked' });
+      const result = await updatePersonaService(
+        otherUser.id,
+        testPersona.id,
+        { name: 'Hacked' },
+        testPrisma
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found or access denied');
@@ -304,7 +325,7 @@ describe('Persona Service - End-to-End Tests', () => {
     });
 
     it('should soft delete persona successfully', async () => {
-      const result = await deactivatePersonaService(testUser.id, testPersona.id);
+      const result = await deactivatePersonaService(testUser.id, testPersona.id, testPrisma);
 
       expect(result.success).toBe(true);
 
@@ -315,12 +336,12 @@ describe('Persona Service - End-to-End Tests', () => {
       expect(dbPersona?.deletedAt).toBeTruthy();
 
       // Verify persona is not returned in active personas
-      const activePersonas = await getUserPersonasService(testUser.id);
+      const activePersonas = await getUserPersonasService(testUser.id, testPrisma);
       expect(activePersonas.data).toHaveLength(0);
     });
 
     it('should return error when persona not found', async () => {
-      const result = await deactivatePersonaService(testUser.id, 99999);
+      const result = await deactivatePersonaService(testUser.id, 99999, testPrisma);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found or access denied');
@@ -333,7 +354,7 @@ describe('Persona Service - End-to-End Tests', () => {
         name: 'Other User',
       });
 
-      const result = await deactivatePersonaService(otherUser.id, testPersona.id);
+      const result = await deactivatePersonaService(otherUser.id, testPersona.id, testPrisma);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found or access denied');
@@ -341,10 +362,10 @@ describe('Persona Service - End-to-End Tests', () => {
 
     it('should handle already deleted persona gracefully', async () => {
       // First deletion
-      await deactivatePersonaService(testUser.id, testPersona.id);
+      await deactivatePersonaService(testUser.id, testPersona.id, testPrisma);
 
       // Second deletion attempt
-      const result = await deactivatePersonaService(testUser.id, testPersona.id);
+      const result = await deactivatePersonaService(testUser.id, testPersona.id, testPrisma);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Persona not found or access denied');

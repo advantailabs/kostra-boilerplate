@@ -7,9 +7,12 @@ import {
   UpdateThreadData,
 } from '@/types/chat';
 
-const prisma = new PrismaClient();
+const defaultPrisma = new PrismaClient();
 
-const createThread = async (data: CreateThreadData): Promise<Thread> => {
+const createThread = async (
+  data: CreateThreadData,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread> => {
   return prisma.thread.create({
     data: {
       userId: data.userId,
@@ -19,7 +22,10 @@ const createThread = async (data: CreateThreadData): Promise<Thread> => {
   });
 };
 
-const findByUserId = async (userId: number): Promise<ThreadWithPersona[]> => {
+const findByUserId = async (
+  userId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<ThreadWithPersona[]> => {
   return prisma.thread.findMany({
     where: {
       userId,
@@ -33,7 +39,10 @@ const findByUserId = async (userId: number): Promise<ThreadWithPersona[]> => {
   });
 };
 
-const findByIdWithMessages = async (threadId: number): Promise<ThreadWithMessages | null> => {
+const findByIdWithMessages = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<ThreadWithMessages | null> => {
   return prisma.thread.findUnique({
     where: { id: threadId },
     include: {
@@ -47,13 +56,20 @@ const findByIdWithMessages = async (threadId: number): Promise<ThreadWithMessage
   });
 };
 
-const findById = async (threadId: number): Promise<Thread | null> => {
+const findById = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread | null> => {
   return prisma.thread.findUnique({
     where: { id: threadId },
   });
 };
 
-const findByUserAndId = async (userId: number, threadId: number): Promise<Thread | null> => {
+const findByUserAndId = async (
+  userId: number,
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread | null> => {
   return prisma.thread.findFirst({
     where: {
       id: threadId,
@@ -62,7 +78,11 @@ const findByUserAndId = async (userId: number, threadId: number): Promise<Thread
   });
 };
 
-const updateThread = async (threadId: number, data: UpdateThreadData): Promise<Thread> => {
+const updateThread = async (
+  threadId: number,
+  data: UpdateThreadData,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread> => {
   return prisma.thread.update({
     where: { id: threadId },
     data: {
@@ -73,13 +93,19 @@ const updateThread = async (threadId: number, data: UpdateThreadData): Promise<T
   });
 };
 
-const deleteThread = async (threadId: number): Promise<void> => {
+const deleteThread = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<void> => {
   await prisma.thread.delete({
     where: { id: threadId },
   });
 };
 
-const updateThreadTimestamp = async (threadId: number): Promise<Thread> => {
+const updateThreadTimestamp = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread> => {
   return prisma.thread.update({
     where: { id: threadId },
     data: {

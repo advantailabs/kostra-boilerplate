@@ -2,9 +2,12 @@ import { Persona, PrismaClient } from '@prisma/client';
 
 import { CreatePersonaData, PersonaWithUser, UpdatePersonaData } from '@/types/chat';
 
-const prisma = new PrismaClient();
+const defaultPrisma = new PrismaClient();
 
-const createPersona = async (data: CreatePersonaData): Promise<Persona> => {
+const createPersona = async (
+  data: CreatePersonaData,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona> => {
   return prisma.persona.create({
     data: {
       userId: data.userId,
@@ -16,7 +19,10 @@ const createPersona = async (data: CreatePersonaData): Promise<Persona> => {
   });
 };
 
-const findActiveByUserId = async (userId: number): Promise<Persona[]> => {
+const findActiveByUserId = async (
+  userId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona[]> => {
   return prisma.persona.findMany({
     where: {
       userId,
@@ -28,13 +34,19 @@ const findActiveByUserId = async (userId: number): Promise<Persona[]> => {
   });
 };
 
-const findById = async (id: number): Promise<Persona | null> => {
+const findById = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona | null> => {
   return prisma.persona.findUnique({
     where: { id },
   });
 };
 
-const findByIdWithUser = async (id: number): Promise<PersonaWithUser | null> => {
+const findByIdWithUser = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PersonaWithUser | null> => {
   return prisma.persona.findUnique({
     where: { id },
     include: {
@@ -43,7 +55,11 @@ const findByIdWithUser = async (id: number): Promise<PersonaWithUser | null> => 
   });
 };
 
-const updatePersona = async (id: number, data: UpdatePersonaData): Promise<Persona> => {
+const updatePersona = async (
+  id: number,
+  data: UpdatePersonaData,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona> => {
   return prisma.persona.update({
     where: { id },
     data: {
@@ -56,7 +72,10 @@ const updatePersona = async (id: number, data: UpdatePersonaData): Promise<Perso
   });
 };
 
-const softDeletePersona = async (id: number): Promise<Persona> => {
+const softDeletePersona = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona> => {
   return prisma.persona.update({
     where: { id },
     data: {
@@ -68,7 +87,8 @@ const softDeletePersona = async (id: number): Promise<Persona> => {
 
 const findPersonaByUserAndId = async (
   userId: number,
-  personaId: number
+  personaId: number,
+  prisma: PrismaClient = defaultPrisma
 ): Promise<Persona | null> => {
   return prisma.persona.findFirst({
     where: {
@@ -79,7 +99,10 @@ const findPersonaByUserAndId = async (
   });
 };
 
-const restorePersona = async (id: number): Promise<Persona> => {
+const restorePersona = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Persona> => {
   return prisma.persona.update({
     where: { id },
     data: {

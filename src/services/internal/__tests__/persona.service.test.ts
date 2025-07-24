@@ -63,13 +63,16 @@ describe('Persona Service', () => {
 
       const result = await createPersonaService(1, mockInputData);
 
-      expect(mockCreatePersona).toHaveBeenCalledWith({
-        userId: 1,
-        name: 'Test Persona',
-        description: 'Test Description',
-        instructions: 'Test Instructions',
-        tags: ['tag1', 'tag2'],
-      });
+      expect(mockCreatePersona).toHaveBeenCalledWith(
+        {
+          userId: 1,
+          name: 'Test Persona',
+          description: 'Test Description',
+          instructions: 'Test Instructions',
+          tags: ['tag1', 'tag2'],
+        },
+        undefined
+      );
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockCreatedPersona);
     });
@@ -112,7 +115,7 @@ describe('Persona Service', () => {
 
       const result = await getUserPersonasService(1);
 
-      expect(mockFindActiveByUserId).toHaveBeenCalledWith(1);
+      expect(mockFindActiveByUserId).toHaveBeenCalledWith(1, undefined);
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockPersonas);
     });
@@ -157,11 +160,15 @@ describe('Persona Service', () => {
 
       const result = await updatePersonaService(1, 1, mockUpdateData);
 
-      expect(mockFindPersonaByUserAndId).toHaveBeenCalledWith(1, 1);
-      expect(mockUpdatePersona).toHaveBeenCalledWith(1, {
-        name: 'Updated Name',
-        description: 'Updated Description',
-      });
+      expect(mockFindPersonaByUserAndId).toHaveBeenCalledWith(1, 1, undefined);
+      expect(mockUpdatePersona).toHaveBeenCalledWith(
+        1,
+        {
+          name: 'Updated Name',
+          description: 'Updated Description',
+        },
+        undefined
+      );
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockUpdatedPersona);
     });
@@ -198,8 +205,8 @@ describe('Persona Service', () => {
 
       const result = await deactivatePersonaService(1, 1);
 
-      expect(mockFindPersonaByUserAndId).toHaveBeenCalledWith(1, 1);
-      expect(mockSoftDeletePersona).toHaveBeenCalledWith(1);
+      expect(mockFindPersonaByUserAndId).toHaveBeenCalledWith(1, 1, undefined);
+      expect(mockSoftDeletePersona).toHaveBeenCalledWith(1, undefined);
       expect(result.success).toBe(true);
     });
 

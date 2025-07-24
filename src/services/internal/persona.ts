@@ -1,4 +1,4 @@
-import { Persona } from '@prisma/client';
+import { Persona, PrismaClient } from '@prisma/client';
 
 import {
   createPersona,
@@ -18,16 +18,20 @@ export interface PersonaServiceResult<T> {
 
 const createPersonaService = async (
   userId: number,
-  data: CreatePersonaData
+  data: CreatePersonaData,
+  prisma?: PrismaClient
 ): Promise<PersonaServiceResult<Persona>> => {
   try {
-    const persona = await createPersona({
-      userId,
-      name: data.name.trim(),
-      description: data.description.trim(),
-      instructions: data.instructions.trim(),
-      tags: data.tags?.map(tag => tag.trim()) || [],
-    });
+    const persona = await createPersona(
+      {
+        userId,
+        name: data.name.trim(),
+        description: data.description.trim(),
+        instructions: data.instructions.trim(),
+        tags: data.tags?.map(tag => tag.trim()) || [],
+      },
+      prisma
+    );
 
     return {
       success: true,
@@ -41,9 +45,12 @@ const createPersonaService = async (
   }
 };
 
-const getUserPersonasService = async (userId: number): Promise<PersonaServiceResult<Persona[]>> => {
+const getUserPersonasService = async (
+  userId: number,
+  prisma?: PrismaClient
+): Promise<PersonaServiceResult<Persona[]>> => {
   try {
-    const personas = await findActiveByUserId(userId);
+    const personas = await findActiveByUserId(userId, prisma);
     return {
       success: true,
       data: personas,
@@ -56,10 +63,14 @@ const getUserPersonasService = async (userId: number): Promise<PersonaServiceRes
   }
 };
 
-const getPersonaByIdService = async (personaId: number): Promise<PersonaServiceResult<Persona>> => {
+const getPersonaByIdService = async (
+  personaId: number,
+  prisma?: PrismaClient
+): Promise<PersonaServiceResult<Persona>> => {
   try {
-    const persona = await findById(personaId);
-    if (!persona) {
+    const persona = await findById(personaId, prisma);
+
+    if (!persona || persona.deletedAt) {
       return {
         success: false,
         error: 'Persona not found',
@@ -81,11 +92,13 @@ const getPersonaByIdService = async (personaId: number): Promise<PersonaServiceR
 const updatePersonaService = async (
   userId: number,
   personaId: number,
-  data: UpdatePersonaData
+  data: UpdatePersonaData,
+  prisma?: PrismaClient
 ): Promise<PersonaServiceResult<Persona>> => {
   try {
     // Check if persona exists and belongs to user
-    const existingPersona = await findPersonaByUserAndId(userId, personaId);
+    const existingPersona = await findPersonaByUserAndId(userId, personaId, prisma);
+
     if (!existingPersona) {
       return {
         success: false,
@@ -93,15 +106,16 @@ const updatePersonaService = async (
       };
     }
 
-    // Sanitize data
-    const sanitizedData: UpdatePersonaData = {
-      ...(data.name && { name: data.name.trim() }),
-      ...(data.description && { description: data.description.trim() }),
-      ...(data.instructions && { instructions: data.instructions.trim() }),
-      ...(data.tags && { tags: data.tags.map(tag => tag.trim()) }),
-    };
-
-    const updatedPersona = await updatePersona(personaId, sanitizedData);
+    const updatedPersona = await updatePersona(
+      personaId,
+      {
+        name: data.name?.trim(),
+        description: data.description?.trim(),
+        instructions: data.instructions?.trim(),
+        tags: data.tags?.map(tag => tag.trim()),
+      },
+      prisma
+    );
 
     return {
       success: true,
@@ -117,11 +131,13 @@ const updatePersonaService = async (
 
 const deactivatePersonaService = async (
   userId: number,
-  personaId: number
-): Promise<PersonaServiceResult<void>> => {
+  personaId: number,
+  prisma?: PrismaClient
+): Promise<PersonaServiceResult<boolean>> => {
   try {
     // Check if persona exists and belongs to user
-    const existingPersona = await findPersonaByUserAndId(userId, personaId);
+    const existingPersona = await findPersonaByUserAndId(userId, personaId, prisma);
+
     if (!existingPersona) {
       return {
         success: false,
@@ -129,10 +145,11 @@ const deactivatePersonaService = async (
       };
     }
 
-    await softDeletePersona(personaId);
+    await softDeletePersona(personaId, prisma);
 
     return {
       success: true,
+      data: true,
     };
   } catch (error) {
     return {

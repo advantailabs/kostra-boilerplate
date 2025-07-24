@@ -24,6 +24,7 @@ const customJestConfig = {
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/src/test/e2e-setup.ts'],
   testTimeout: 30000, // 30 seconds for database operations
+  maxWorkers: 1, // Run tests serially to avoid database conflicts
   // Global setup and teardown
   globalSetup: '<rootDir>/src/test/global-setup.ts',
   globalTeardown: '<rootDir>/src/test/global-teardown.ts',

@@ -26,11 +26,21 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Test cleanup utilities
 export async function cleanupDatabase() {
-  // Clean up in reverse order of dependencies
-  await testPrisma.message.deleteMany({});
-  await testPrisma.thread.deleteMany({});
-  await testPrisma.persona.deleteMany({});
-  await testPrisma.user.deleteMany({});
+  try {
+    // Clean up in reverse order of dependencies with explicit transaction
+    await testPrisma.$transaction(async tx => {
+      await tx.message.deleteMany({});
+      await tx.thread.deleteMany({});
+      await tx.persona.deleteMany({});
+      await tx.user.deleteMany({});
+    });
+
+    // Ensure all operations are completed
+    await testPrisma.$executeRaw`SELECT 1`;
+  } catch (error) {
+    console.error('Database cleanup failed:', error);
+    throw error;
+  }
 }
 
 export async function disconnectTestDatabase() {
@@ -39,10 +49,11 @@ export async function disconnectTestDatabase() {
 
 // Test data factories
 export async function createTestUser(overrides: Partial<any> = {}) {
+  const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
   return testPrisma.user.create({
     data: {
-      clerkUserId: `test_user_${Date.now()}_${Math.random()}`,
-      email: `test${Date.now()}@example.com`,
+      clerkUserId: `test_user_${uniqueId}`,
+      email: `test${uniqueId}@example.com`,
       name: 'Test User',
       ...overrides,
     },

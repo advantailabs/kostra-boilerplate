@@ -1,3 +1,5 @@
+import { PrismaClient } from '@prisma/client';
+
 import { createMessage, deleteMessagesByThreadId } from '@/services/repositories/message';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
 import {
@@ -18,6 +20,11 @@ export interface ChatServiceResult<T> {
 
 const generateThreadTitle = (firstMessage: string): string => {
   const cleanMessage = firstMessage.trim();
+
+  if (!cleanMessage) {
+    return 'New Conversation';
+  }
+
   if (cleanMessage.length <= 50) {
     return cleanMessage;
   }
@@ -48,79 +55,77 @@ const generateMockResponse = async (context: MockResponseContext): Promise<strin
   // Add conversation history context if available
   if (conversationHistory && conversationHistory.length > 0) {
     const historyResponses = [
-      `Continuing our conversation, I remember we were discussing similar topics. As ${persona.name}, let me build on our previous exchange...`,
-      `Given our conversation history and my role as ${persona.name}, I can provide more context to your latest message...`,
-      `This connects well with what we discussed earlier. As outlined in my persona instructions, I can help expand on this...`,
+      `Continuing our conversation, ${persona.name} noting your previous message. ${persona.description.substring(0, 50)}${persona.description.length > 50 ? '...' : ''}`,
+      `Building on what we discussed earlier, and considering your latest question about "${userMessage.substring(0, 30)}${userMessage.length > 30 ? '...' : ''}".`,
     ];
-
-    if (Math.random() > 0.5) {
-      responses.push(...historyResponses);
-    }
+    responses.push(...historyResponses);
   }
 
-  // Select random response
-  const selectedResponse = responses[Math.floor(Math.random() * responses.length)];
-
-  return selectedResponse;
+  return responses[Math.floor(Math.random() * responses.length)];
 };
 
 const createThreadWithMessage = async (
   userId: number,
   personaId: number,
-  content: string
+  initialMessage: string,
+  prisma?: PrismaClient
 ): Promise<ChatServiceResult<ThreadWithMessages>> => {
   try {
-    // Verify persona belongs to user
-    const persona = await findPersonaByUserAndId(userId, personaId);
+    // Verify persona exists and belongs to user
+    const persona = await findPersonaByUserAndId(userId, personaId, prisma);
+
     if (!persona) {
       return {
         success: false,
-        error: 'Persona not found or access denied',
+        error: 'Persona not found',
       };
     }
 
-    // Generate thread title from first message
-    const title = generateThreadTitle(content);
+    // Generate title from message
+    const title = generateThreadTitle(initialMessage);
 
     // Create thread
-    const thread = await createThread({
-      userId,
-      personaId,
-      title,
-    });
+    const thread = await createThread(
+      {
+        userId,
+        personaId,
+        title,
+      },
+      prisma
+    );
 
-    // Create user message
-    await createMessage({
-      threadId: thread.id,
-      role: 'user',
-      content,
-    });
+    // Create initial user message
+    await createMessage(
+      {
+        threadId: thread.id,
+        role: 'user',
+        content: initialMessage,
+      },
+      prisma
+    );
 
-    // Generate mock response
-    const mockContext: MockResponseContext = {
+    // Generate and create assistant response
+    const assistantResponse = await generateMockResponse({
       persona,
-      userMessage: content,
-    };
-
-    const responseContent = await generateMockResponse(mockContext);
-
-    // Create assistant message
-    await createMessage({
-      threadId: thread.id,
-      role: 'assistant',
-      content: responseContent,
+      userMessage: initialMessage,
+      conversationHistory: [],
     });
 
-    // Get complete thread with messages
-    const threadWithMessages = await findByIdWithMessages(thread.id);
+    await createMessage(
+      {
+        threadId: thread.id,
+        role: 'assistant',
+        content: assistantResponse,
+      },
+      prisma
+    );
 
-    if (!threadWithMessages) {
-      throw new Error('Failed to retrieve created thread');
-    }
+    // Return thread with messages
+    const threadWithMessages = await findByIdWithMessages(thread.id, prisma);
 
     return {
       success: true,
-      data: threadWithMessages,
+      data: threadWithMessages!,
     };
   } catch (error) {
     return {
@@ -133,11 +138,13 @@ const createThreadWithMessage = async (
 const addMessageToThread = async (
   userId: number,
   threadId: number,
-  content: string
+  messageContent: string,
+  prisma?: PrismaClient
 ): Promise<ChatServiceResult<ThreadWithMessages>> => {
   try {
-    // Verify thread belongs to user
-    const thread = await findByUserAndId(userId, threadId);
+    // Verify thread exists and belongs to user
+    const thread = await findByUserAndId(userId, threadId, prisma);
+
     if (!thread) {
       return {
         success: false,
@@ -145,51 +152,52 @@ const addMessageToThread = async (
       };
     }
 
-    // Get thread with persona for mock response
-    const threadWithMessages = await findByIdWithMessages(threadId);
-    if (!threadWithMessages || !threadWithMessages.persona) {
+    // Get thread with messages to access persona and conversation history
+    const threadWithMessages = await findByIdWithMessages(threadId, prisma);
+
+    if (!threadWithMessages) {
       return {
         success: false,
-        error: 'Thread or persona not found',
+        error: 'Thread not found or access denied',
       };
     }
 
     // Create user message
-    await createMessage({
-      threadId,
-      role: 'user',
-      content,
-    });
+    await createMessage(
+      {
+        threadId,
+        role: 'user',
+        content: messageContent,
+      },
+      prisma
+    );
 
-    // Generate mock response with conversation history
-    const mockContext: MockResponseContext = {
-      persona: threadWithMessages.persona,
-      userMessage: content,
+    // Generate assistant response
+    const assistantResponse = await generateMockResponse({
+      persona: threadWithMessages.persona!,
+      userMessage: messageContent,
       conversationHistory: threadWithMessages.messages,
-    };
-
-    const responseContent = await generateMockResponse(mockContext);
+    });
 
     // Create assistant message
-    await createMessage({
-      threadId,
-      role: 'assistant',
-      content: responseContent,
-    });
+    await createMessage(
+      {
+        threadId,
+        role: 'assistant',
+        content: assistantResponse,
+      },
+      prisma
+    );
 
     // Update thread timestamp
-    await updateThreadTimestamp(threadId);
+    await updateThreadTimestamp(threadId, prisma);
 
-    // Get updated thread with messages
-    const updatedThread = await findByIdWithMessages(threadId);
-
-    if (!updatedThread) {
-      throw new Error('Failed to retrieve updated thread');
-    }
+    // Return updated thread with messages
+    const updatedThread = await findByIdWithMessages(threadId, prisma);
 
     return {
       success: true,
-      data: updatedThread,
+      data: updatedThread!,
     };
   } catch (error) {
     return {
@@ -199,9 +207,12 @@ const addMessageToThread = async (
   }
 };
 
-const getUserThreads = async (userId: number): Promise<ChatServiceResult<ThreadWithPersona[]>> => {
+const getUserThreads = async (
+  userId: number,
+  prisma?: PrismaClient
+): Promise<ChatServiceResult<ThreadWithPersona[]>> => {
   try {
-    const threads = await findByUserId(userId);
+    const threads = await findByUserId(userId, prisma);
     return {
       success: true,
       data: threads,
@@ -216,11 +227,13 @@ const getUserThreads = async (userId: number): Promise<ChatServiceResult<ThreadW
 
 const getThreadWithMessages = async (
   userId: number,
-  threadId: number
+  threadId: number,
+  prisma?: PrismaClient
 ): Promise<ChatServiceResult<ThreadWithMessages>> => {
   try {
     // Verify thread belongs to user
-    const thread = await findByUserAndId(userId, threadId);
+    const thread = await findByUserAndId(userId, threadId, prisma);
+
     if (!thread) {
       return {
         success: false,
@@ -228,33 +241,29 @@ const getThreadWithMessages = async (
       };
     }
 
-    const threadWithMessages = await findByIdWithMessages(threadId);
-    if (!threadWithMessages) {
-      return {
-        success: false,
-        error: 'Thread not found',
-      };
-    }
+    const threadWithMessages = await findByIdWithMessages(threadId, prisma);
 
     return {
       success: true,
-      data: threadWithMessages,
+      data: threadWithMessages!,
     };
   } catch (error) {
     return {
       success: false,
-      error: 'Failed to fetch thread with messages',
+      error: 'Failed to fetch thread',
     };
   }
 };
 
 const deleteThreadService = async (
   userId: number,
-  threadId: number
-): Promise<ChatServiceResult<void>> => {
+  threadId: number,
+  prisma?: PrismaClient
+): Promise<ChatServiceResult<boolean>> => {
   try {
-    // Verify thread belongs to user
-    const thread = await findByUserAndId(userId, threadId);
+    // Verify thread exists and belongs to user
+    const thread = await findByUserAndId(userId, threadId, prisma);
+
     if (!thread) {
       return {
         success: false,
@@ -262,14 +271,15 @@ const deleteThreadService = async (
       };
     }
 
-    // Delete all messages in thread first
-    await deleteMessagesByThreadId(threadId);
+    // Delete all messages in the thread first
+    await deleteMessagesByThreadId(threadId, prisma);
 
-    // Delete thread
-    await deleteThread(threadId);
+    // Delete the thread
+    await deleteThread(threadId, prisma);
 
     return {
       success: true,
+      data: true,
     };
   } catch (error) {
     return {
