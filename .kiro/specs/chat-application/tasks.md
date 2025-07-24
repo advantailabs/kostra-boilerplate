@@ -1,12 +1,12 @@
 # Implementation Plan
 
-- [ ] 1. Set up core type definitions
+- [x] 1. Set up core type definitions
 
   - Define API request/response types for all endpoints
   - Create database operation types for repositories
   - _Requirements: 6.5, 6.7_
 
-- [ ] 2. Implement persona repository layer
+- [x] 2. Implement persona repository layer
 
   - Create persona repository with CRUD operations
   - Implement soft delete functionality for persona deactivation
@@ -14,7 +14,7 @@
   - Write unit tests for persona repository operations
   - _Requirements: 1.1, 1.4, 6.2_
 
-- [ ] 3. Implement thread repository layer
+- [x] 3. Implement thread repository layer
 
   - Create thread repository with database operations
   - should be soft delete for thread delete
@@ -23,7 +23,7 @@
   - Write unit tests for thread repository operations
   - _Requirements: 2.4, 2.6, 6.2_
 
-- [ ] 4. Implement message repository layer
+- [x] 4. Implement message repository layer
 
   - Create message repository for storing user and assistant messages
   - Implement methods to create and retrieve messages by thread
@@ -31,7 +31,7 @@
   - Write unit tests for message repository operations
   - _Requirements: 3.3, 3.5, 6.2_
 
-- [ ] 5. Create persona service layer
+- [x] 5. Create persona service layer
 
   - Implement persona business logic and validation
   - Create service methods for persona CRUD operations
@@ -39,7 +39,7 @@
   - Write unit tests for persona service logic
   - _Requirements: 1.2, 1.3, 1.5, 6.3_
 
-- [ ] 6. Create chat service layer with mock response generation
+- [x] 6. Create chat service layer with mock response generation
 
   - Implement thread creation with first message logic
   - Create mock response generator that references persona instructions
@@ -48,7 +48,7 @@
   - Write unit tests for chat service and mock response generation
   - _Requirements: 2.3, 2.5, 4.1, 4.2, 4.3, 6.3_
 
-- [ ] 7. Implement persona API endpoints
+- [x] 7. Implement persona API endpoints
 
   - Create GET /api/personas endpoint to fetch user's active personas
   - Create POST /api/personas endpoint for persona creation
@@ -58,7 +58,7 @@
   - Write integration tests for persona API endpoints
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 6.1_
 
-- [ ] 8. Implement thread and message API endpoints
+- [x] 8. Implement thread and message API endpoints
 
   - Create POST /api/threads endpoint for lazy thread creation with first message
   - Create GET /api/threads endpoint to fetch user's threads
