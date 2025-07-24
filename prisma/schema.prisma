@@ -14,7 +14,6 @@ enum UserRole {
   USER
 }
 
-
 model User {
   id             Int              @id @default(autoincrement())
   clerkUserId    String           @unique
@@ -26,4 +25,62 @@ model User {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?        // Soft delete
+  threads        Thread[]
+  personas       Persona[]
+  files          File[]
+}
+
+model Thread {
+  id             Int        @id @default(autoincrement())
+  userId         Int
+  openaiThreadId String?
+  personaId      Int?
+  title          String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  user           User       @relation(fields: [userId], references: [id])
+  persona        Persona?   @relation(fields: [personaId], references: [id])
+  messages       Message[]
+}
+
+model Persona {
+  id                Int       @id @default(autoincrement())
+  userId            Int?
+  openaiAssistantId String?
+  vectorStoreId     String?
+  name              String
+  description       String
+  instructions      String
+  tags              String[]
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  user              User?     @relation(fields: [userId], references: [id])
+  threads           Thread[]
+}
+
+model Message {
+  id              Int      @id @default(autoincrement())
+  threadId        Int
+  openaiMessageId String?
+  role            String
+  content         String
+  timestamp       DateTime @default(now())
+  thread          Thread   @relation(fields: [threadId], references: [id])
+}
+
+model File {
+  id            Int       @id @default(autoincrement())
+  userId        Int?
+  openaiFileId  String?   @unique
+  filename      String
+  originalName  String
+  mimeType      String
+  size          Int       // File size in bytes
+  url           String?   // Storage URL (S3, Supabase, etc.)
+  metadata      Json?     // Additional file metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime? // Soft delete
+  user          User?     @relation(fields: [userId], references: [id])
 }
