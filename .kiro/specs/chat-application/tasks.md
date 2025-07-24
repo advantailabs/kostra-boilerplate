@@ -1,8 +1,7 @@
 # Implementation Plan
 
-- [ ] 1. Set up core type definitions and interfaces
+- [ ] 1. Set up core type definitions
 
-  - Create comprehensive TypeScript interfaces for chat system
   - Define API request/response types for all endpoints
   - Create database operation types for repositories
   - _Requirements: 6.5, 6.7_
@@ -18,6 +17,7 @@
 - [ ] 3. Implement thread repository layer
 
   - Create thread repository with database operations
+  - should be soft delete for thread delete
   - Implement method to find threads with associated messages and personas
   - Add thread deletion functionality
   - Write unit tests for thread repository operations
@@ -99,14 +99,14 @@
   - Write integration tests for persona management flow
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6_
 
-- [ ] 12. Implement main chat interface
+- [ ] 12. Implement main chat
 
   - Create chat page at /app/chat route
-  - Implement ChatInterface organism component with sidebar and conversation area
+  - Implement Chat organism component with sidebar and conversation area
   - Add ConversationView component for message history and input
   - Implement thread selection and conversation loading
   - Add proper state management for active thread and messages
-  - Write integration tests for chat interface functionality
+  - Write integration tests for chat functionality
   - _Requirements: 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.6, 6.4_
 
 - [ ] 13. Implement thread creation and messaging flow
@@ -152,7 +152,7 @@
 
   - Implement form validation for persona creation and editing
   - Add client-side message validation before sending
-  - Create error boundary components for chat interface
+  - Create error boundary components for chat
   - Add toast notifications for API errors and success messages
   - Implement retry mechanisms for failed requests
   - Write tests for error scenarios and edge cases

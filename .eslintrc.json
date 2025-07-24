@@ -1,21 +1,13 @@
 {
   "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
   "env": {
-    "node": true
+    "node": true,
+    "jest": true
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".jsx"] }],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
+    "import/extensions": "off",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
@@ -56,28 +48,13 @@
     "react/destructuring-assignment": "warn",
     "react/no-unused-prop-types": "warn",
     "import/no-cycle": "off",
-    "import/order": [
-      "error",
-      {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          ["parent", "sibling"],
-          "index",
-          "object",
-          "type"
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }
-    ]
+    "import/order": "off"
   },
   "settings": {
     "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      },
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
