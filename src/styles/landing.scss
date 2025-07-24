@@ -1,0 +1,84 @@
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.hero-section {
+  @apply relative flex min-h-screen w-full items-center justify-center overflow-hidden;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient-animation 15s ease infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .content-wrapper {
+    @apply relative z-10 mx-auto max-w-4xl px-4 text-center text-white;
+  }
+
+  .hero-title {
+    @apply mb-6 text-6xl font-bold md:text-7xl;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-subtitle {
+    @apply mb-8 text-xl opacity-90 md:text-2xl;
+  }
+
+  .cta-button {
+    @apply inline-flex transform items-center rounded-full bg-white px-8 py-3 text-lg font-semibold text-gray-900 transition-all duration-300 hover:scale-105 hover:bg-opacity-90;
+  }
+}
+
+.floating-shapes {
+  @apply pointer-events-none absolute inset-0 overflow-hidden;
+
+  .shape {
+    @apply absolute opacity-30;
+    animation: float 6s infinite;
+
+    &:nth-child(1) {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    &:nth-child(3) {
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+  }
+}

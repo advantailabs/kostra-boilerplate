@@ -1,0 +1,29 @@
+// schema.prisma 
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+
+model User {
+  id             Int              @id @default(autoincrement())
+  clerkUserId    String           @unique
+  name           String
+  email          String           @unique
+  profilePicture String?          // URL to the profile picture
+  role           UserRole         @default(USER)
+  isOnboarded    Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?        // Soft delete
+}

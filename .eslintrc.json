@@ -1,0 +1,86 @@
+{
+  "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".jsx"] }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "react/jsx-props-no-spreading": "off",
+    "react/require-default-props": "off",
+    "react/prop-types": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "jsx-a11y/aria-role": "off",
+
+
+
+    
+    // Error level rules
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "eqeqeq": "error",
+    "no-shadow": "off",
+    "no-unused-expressions": "error",
+    "no-use-before-define": ["error", { "functions": false, "classes": false }],
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "acc", "accumulator", "e", "ctx", "context", "req", "request", "res", "response", "$scope", "staticContext"] }],
+    
+    // Warning level rules
+    "no-console": "off",
+    "consistent-return": "warn",
+    "default-case": "warn",
+    "no-case-declarations": "off",
+    "no-restricted-syntax": "warn",
+    "camelcase": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/no-redundant-roles": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-noninteractive-tabindex": "warn",
+    "react/no-array-index-key": "off",
+    "react/no-unstable-nested-components": "warn",
+    "no-nested-ternary": "warn",
+    "react/button-has-type": "off",
+    "react/no-unescaped-entities": "off",
+    "react/destructuring-assignment": "warn",
+    "react/no-unused-prop-types": "warn",
+    "import/no-cycle": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "sibling"],
+          "index",
+          "object",
+          "type"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
+}

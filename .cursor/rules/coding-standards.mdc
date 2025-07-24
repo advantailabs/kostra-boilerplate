@@ -1,0 +1,108 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Coding Standards
+
+**Description:**
+Defines coding conventions and best practices for the Peon project. Ensures code quality and consistency across the codebase.
+
+**Auto Attachments:**
+
+- Applies to all TypeScript, JavaScript, and CSS files.
+
+## General Guidelines
+
+1. **File Naming**
+
+   - Use kebab-case for file names (e.g., `user-profile.tsx`)
+   - Use PascalCase for component files (e.g., `Button.tsx`)
+   - Use camelCase for utility files (e.g., `formatDate.ts`)
+
+2. **Code Formatting**
+
+   - Use 2 spaces for indentation
+   - Use semicolons at the end of statements
+   - Use single quotes for strings
+   - Maximum line length: 100 characters
+   - Use trailing commas in multi-line objects and arrays
+
+3. **TypeScript**
+
+   - Enable strict mode
+   - Use explicit types instead of `any`
+   - Use interfaces for object types
+   - Use type aliases for union types
+   - Use enums for fixed sets of values
+
+4. **React Components**
+
+   - Use functional components with hooks
+   - Use TypeScript for props typing
+   - Keep components small and focused
+   - Use proper prop types and default props
+   - Follow the Atomic Design pattern
+
+5. **State Management**
+
+   - Use Zustand for global state
+   - Use React Context for theme and auth
+   - Use local state for component-specific state
+   - Keep state as close as possible to where it's used
+
+6. **API Calls**
+
+   - Use React Query for data fetching
+   - Implement proper error handling
+   - Use TypeScript for API response types
+   - Keep API calls in service files
+
+7. **Testing**
+
+   - Write unit tests for utilities
+   - Write component tests for UI
+   - Write integration tests for features
+   - Use Jest and React Testing Library
+
+8. **Performance**
+
+   - Use proper memoization (useMemo, useCallback)
+   - Implement proper code splitting
+   - Optimize images and assets
+   - Use proper loading states
+
+9. **Accessibility**
+
+   - Use semantic HTML
+   - Implement proper ARIA attributes
+   - Ensure keyboard navigation
+   - Maintain proper color contrast
+
+10. **Documentation**
+    - Document complex functions
+    - Add JSDoc comments for public APIs
+    - Keep README files up to date
+    - Document component props
+
+## Git Workflow
+
+1. **Branch Naming**
+
+   - feature/feature-name
+   - bugfix/bug-description
+   - hotfix/issue-description
+   - release/version-number
+
+2. **Commit Messages**
+
+   - Use conventional commits
+   - Be descriptive and concise
+   - Reference issue numbers
+
+3. **Pull Requests**
+   - Include description of changes
+   - Reference related issues
+   - Include screenshots if UI changes
+   - Request reviews from team members
