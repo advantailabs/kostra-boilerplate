@@ -36,7 +36,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      data: result.data,
+      threads: result.data,
       message: 'Threads retrieved successfully',
     });
   } catch (error) {
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        data: result.data,
+        thread: result.data,
         message: 'Thread created successfully',
       },
       { status: 201 }

@@ -47,6 +47,10 @@ const PUBLIC_ROUTES: RouteConfig[] = [
       POST: [ADMIN, USER],
     },
   },
+  // Chat API routes - require authentication
+  { path: '/api/personas', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
+  { path: '/api/threads', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
+  { path: '/api/threads/', methods: ['POST'], exact: false }, // messages endpoint
 ] as const;
 
 // Helper functions

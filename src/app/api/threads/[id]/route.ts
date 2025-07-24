@@ -4,13 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
 import { getUserByClerkId } from '@/services/repositories/user';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId: clerkUserId } = await auth();
 
@@ -49,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({
-      data: result.data,
+      thread: result.data,
       message: 'Thread retrieved successfully',
     });
   } catch (error) {
@@ -61,7 +55,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId: clerkUserId } = await auth();
 

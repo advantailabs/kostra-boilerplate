@@ -1,5 +1,3 @@
-import { Thread } from '@prisma/client';
-
 import { createMessage, deleteMessagesByThreadId } from '@/services/repositories/message';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
 import {
@@ -10,7 +8,7 @@ import {
   findByUserId,
   updateThreadTimestamp,
 } from '@/services/repositories/thread';
-import { MockResponseContext, ThreadWithMessages } from '@/types/chat';
+import { MockResponseContext, ThreadWithMessages, ThreadWithPersona } from '@/types/chat';
 
 export interface ChatServiceResult<T> {
   success: boolean;
@@ -201,7 +199,7 @@ const addMessageToThread = async (
   }
 };
 
-const getUserThreads = async (userId: number): Promise<ChatServiceResult<Thread[]>> => {
+const getUserThreads = async (userId: number): Promise<ChatServiceResult<ThreadWithPersona[]>> => {
   try {
     const threads = await findByUserId(userId);
     return {

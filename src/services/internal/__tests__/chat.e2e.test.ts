@@ -399,7 +399,7 @@ describe('Chat Service - End-to-End Tests', () => {
     it('should generate contextual response based on persona instructions', async () => {
       const userMessage = 'What is your purpose?';
 
-      const response = await generateMockResponse(testPersona, userMessage);
+      const response = await generateMockResponse({ persona: testPersona, userMessage });
 
       expect(typeof response).toBe('string');
       expect(response.length).toBeGreaterThan(0);
@@ -408,8 +408,11 @@ describe('Chat Service - End-to-End Tests', () => {
     });
 
     it('should generate different responses for different messages', async () => {
-      const response1 = await generateMockResponse(testPersona, 'Hello');
-      const response2 = await generateMockResponse(testPersona, 'Goodbye');
+      const response1 = await generateMockResponse({ persona: testPersona, userMessage: 'Hello' });
+      const response2 = await generateMockResponse({
+        persona: testPersona,
+        userMessage: 'Goodbye',
+      });
 
       expect(response1).not.toBe(response2);
     });
@@ -417,7 +420,7 @@ describe('Chat Service - End-to-End Tests', () => {
     it('should have realistic delay (between 1-2 seconds)', async () => {
       const startTime = Date.now();
 
-      await generateMockResponse(testPersona, 'Test message');
+      await generateMockResponse({ persona: testPersona, userMessage: 'Test message' });
 
       const endTime = Date.now();
       const duration = endTime - startTime;

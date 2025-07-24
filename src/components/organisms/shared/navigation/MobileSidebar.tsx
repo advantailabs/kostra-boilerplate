@@ -1,4 +1,4 @@
-import { RiHome2Line, RiLinkM, RiMenuLine } from '@remixicon/react';
+import { RiChat1Line, RiHome2Line, RiLinkM, RiMenuLine, RiUserLine } from '@remixicon/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -17,6 +17,8 @@ import { cx, focusRing } from '@/lib/utils';
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.home, icon: RiHome2Line },
+  { name: 'Chat', href: '/app/chat', icon: RiChat1Line },
+  { name: 'Personas', href: '/app/personas', icon: RiUserLine },
 ] as const;
 
 const shortcuts = [

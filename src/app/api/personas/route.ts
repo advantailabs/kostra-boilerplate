@@ -36,7 +36,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      data: result.data,
+      personas: result.data,
       message: 'Personas retrieved successfully',
     });
   } catch (error) {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        data: result.data,
+        persona: result.data,
         message: 'Persona created successfully',
       },
       { status: 201 }

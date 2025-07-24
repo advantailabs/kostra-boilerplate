@@ -5,13 +5,7 @@ import { addMessageToThread } from '@/services/internal/chat';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { addMessageSchema } from '@/validations/chat';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId: clerkUserId } = await auth();
 
@@ -69,10 +63,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    return NextResponse.json({
-      data: result.data,
-      message: 'Message added successfully',
-    });
+    return NextResponse.json(
+      {
+        thread: result.data,
+        message: 'Message added successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error adding message:', error);
     return NextResponse.json(

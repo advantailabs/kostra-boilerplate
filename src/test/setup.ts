@@ -14,7 +14,7 @@ export const testPrisma =
   new PrismaClient({
     datasources: {
       db: {
-        url: process.env.POSTGRES_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/test',
+        url: 'postgresql://postgres:postgres@127.0.0.1:5432/test',
       },
     },
   });

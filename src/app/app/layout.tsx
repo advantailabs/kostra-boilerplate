@@ -10,7 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="mx-auto scroll-auto antialiased selection:bg-indigo-100 selection:text-indigo-700 dark:bg-gray-950">
       <ThemeProvider defaultTheme="system" attribute="class">
         <Sidebar />
-        <main className="lg:pl-72">{children}</main>
+        <main className="lg:pl-60">{children}</main>
       </ThemeProvider>
     </div>
   );

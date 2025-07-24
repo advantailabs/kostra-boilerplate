@@ -16,9 +16,6 @@
     "react/jsx-no-useless-fragment": "off",
     "jsx-a11y/aria-role": "off",
 
-
-
-    
     // Error level rules
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "no-undef": "error",
@@ -26,8 +23,27 @@
     "no-shadow": "off",
     "no-unused-expressions": "error",
     "no-use-before-define": ["error", { "functions": false, "classes": false }],
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "acc", "accumulator", "e", "ctx", "context", "req", "request", "res", "response", "$scope", "staticContext"] }],
-    
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "state",
+          "acc",
+          "accumulator",
+          "e",
+          "ctx",
+          "context",
+          "req",
+          "request",
+          "res",
+          "response",
+          "$scope",
+          "staticContext"
+        ]
+      }
+    ],
+
     // Warning level rules
     "no-console": "off",
     "consistent-return": "warn",
