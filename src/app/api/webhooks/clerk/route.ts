@@ -61,6 +61,7 @@ async function handleUserCreatedOrUpdated(data: any) {
     name: `${first_name} ${last_name}`,
     email: primaryEmail,
     profilePicture: image_url,
+    isOnboarded: true,
   });
 
   return user;

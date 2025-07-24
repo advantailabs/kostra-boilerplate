@@ -3,6 +3,7 @@ type ClerkUserUpdate = {
   name: string;
   email: string;
   profilePicture?: string;
+  isOnboarded: boolean;
 };
 
 export type { ClerkUserUpdate };
