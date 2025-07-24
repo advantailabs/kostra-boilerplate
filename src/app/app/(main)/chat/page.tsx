@@ -57,7 +57,7 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
           <p className="mt-2 text-sm text-gray-500">Loading chat...</p>
@@ -67,15 +67,17 @@ export default function ChatPage() {
   }
 
   return (
-    <ChatInterface
-      personas={personas}
-      threads={threads}
-      activeThread={activeThread || null}
-      onCreateThread={handleCreateThread}
-      onSelectThread={handleSelectThread}
-      onSendMessage={handleSendMessage}
-      onDeleteThread={handleDeleteThread}
-      onNewThread={handleNewThread}
-    />
+    <div className="h-screen">
+      <ChatInterface
+        personas={personas}
+        threads={threads}
+        activeThread={activeThread || null}
+        onCreateThread={handleCreateThread}
+        onSelectThread={handleSelectThread}
+        onSendMessage={handleSendMessage}
+        onDeleteThread={handleDeleteThread}
+        onNewThread={handleNewThread}
+      />
+    </div>
   );
 }

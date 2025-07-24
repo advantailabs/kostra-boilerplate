@@ -1,8 +1,9 @@
 import { Button } from '@/components/atom/Button';
-import { Input } from '@/components/atom/Input';
+import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { Persona, Thread } from '@prisma/client';
 import { RiAddLine, RiDeleteBinLine, RiMessage2Line, RiSearchLine } from '@remixicon/react';
 import React, { useState } from 'react';
+import { ThreadSearchModal } from './ThreadSearchModal';
 
 interface ThreadSidebarProps {
   threads: (Thread & { persona: Persona | null })[];
@@ -32,7 +33,7 @@ function ThreadListItem({
 
   return (
     <div
-      className={`group flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
+      className={`group flex items-center justify-between rounded-lg px-2 py-1.5 text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
         isActive ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100' : ''
       }`}
       onClick={() => onSelect(thread.id)}
@@ -46,10 +47,10 @@ function ThreadListItem({
       tabIndex={0}
       aria-label={`Select conversation: ${thread.title}`}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3">
-        <RiMessage2Line className="h-4 w-4 shrink-0 text-gray-400" />
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <RiMessage2Line className="h-3 w-3 shrink-0 text-gray-400" />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{thread.title}</p>
+          <p className="truncate text-sm font-medium">{thread.title}</p>
           {thread.persona && (
             <p className="truncate text-xs text-gray-500 dark:text-gray-400">
               {thread.persona.name}
@@ -63,7 +64,7 @@ function ThreadListItem({
         className="opacity-0 transition-opacity group-hover:opacity-100"
         title="Delete thread"
       >
-        <RiDeleteBinLine className="h-4 w-4 text-gray-400 hover:text-red-500" />
+        <RiDeleteBinLine className="h-3 w-3 text-gray-400 hover:text-red-500" />
       </button>
     </div>
   );
@@ -77,67 +78,116 @@ export function ThreadSidebar({
   onNewThread,
   className,
 }: ThreadSidebarProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [threadToDelete, setThreadToDelete] = useState<
+    (Thread & { persona: Persona | null }) | null
+  >(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredThreads = threads.filter(
-    thread =>
-      thread.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      thread.persona?.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleDeleteThread = (threadId: number) => {
+    const thread = threads.find(t => t.id === threadId);
+    if (thread) {
+      setThreadToDelete(thread);
+      setIsDeleteModalOpen(true);
+    }
+  };
+
+  const confirmDeleteThread = async () => {
+    if (threadToDelete) {
+      setIsDeleting(true);
+      try {
+        await onThreadDelete(threadToDelete.id);
+        // Close modal after successful deletion
+        setIsDeleteModalOpen(false);
+        setThreadToDelete(null);
+      } catch (error) {
+        console.error('Failed to delete thread:', error);
+        // Keep modal open on error so user can try again
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  const cancelDeleteThread = () => {
+    setIsDeleteModalOpen(false);
+    setThreadToDelete(null);
+  };
 
   return (
-    <div
-      className={`flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 ${className}`}
-    >
-      <div className="border-b border-gray-200 p-4 dark:border-gray-700">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Conversations</h2>
-          <Button onClick={onNewThread} variant="secondary" className="h-8 w-8 p-0">
-            <RiAddLine className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="mt-3">
-          <div className="relative">
-            <RiSearchLine className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search conversations..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+    <>
+      <div className={`flex h-full flex-col ${className}`}>
+        <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-sm">
+                <RiMessage2Line className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">Threads</h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">All Your</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setIsSearchModalOpen(true)}
+                variant="secondary"
+                className="h-6 w-6 p-0"
+                title="Search threads"
+              >
+                <RiSearchLine className="h-2.5 w-2.5" />
+              </Button>
+              <Button onClick={onNewThread} variant="secondary" className="h-6 w-6 p-0">
+                <RiAddLine className="h-2.5 w-2.5" />
+              </Button>
+            </div>
           </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-2">
+          {threads.length === 0 ? (
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <p className="text-xs text-gray-500 dark:text-gray-400">No threads yet</p>
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                  Start a new thread to begin chatting
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {threads.map(thread => (
+                <ThreadListItem
+                  key={thread.id}
+                  thread={thread}
+                  isActive={activeThreadId === thread.id}
+                  onSelect={onThreadSelect}
+                  onDelete={handleDeleteThread}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2">
-        {filteredThreads.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
-            <div className="text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {searchQuery ? 'No conversations found' : 'No conversations yet'}
-              </p>
-              {!searchQuery && (
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                  Start a new conversation to begin chatting
-                </p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {filteredThreads.map(thread => (
-              <ThreadListItem
-                key={thread.id}
-                thread={thread}
-                isActive={activeThreadId === thread.id}
-                onSelect={onThreadSelect}
-                onDelete={onThreadDelete}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      <ThreadSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        threads={threads}
+        onThreadSelect={onThreadSelect}
+        onNewThread={onNewThread}
+      />
+
+      <DeleteDialog
+        isOpen={isDeleteModalOpen}
+        onClose={cancelDeleteThread}
+        onConfirm={confirmDeleteThread}
+        title="Delete Thread"
+        itemName={threadToDelete?.title}
+        confirmText="Delete Thread"
+        isLoading={isDeleting}
+      />
+    </>
   );
 }

@@ -7,7 +7,7 @@ export default function Layout({
 }>) {
   return (
     <div className="relative">
-      <div className="p-8">{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 }

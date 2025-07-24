@@ -76,7 +76,7 @@ export default function PersonasPage() {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="">
+      <div className="p-8">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personas</h1>

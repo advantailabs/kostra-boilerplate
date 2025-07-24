@@ -1,6 +1,7 @@
 import { ThreadSidebar } from '@/components/molecules/chat/ThreadSidebar';
 import { ConversationView } from '@/components/organisms/chat/ConversationView';
 import { Message, Persona, Thread } from '@prisma/client';
+import { useState } from 'react';
 
 interface ChatInterfaceProps {
   personas: Persona[];
@@ -23,27 +24,40 @@ export function ChatInterface({
   onDeleteThread,
   onNewThread,
 }: ChatInterfaceProps) {
+  const [showPersonaModal, setShowPersonaModal] = useState(false);
+
+  const handleNewThread = () => {
+    onNewThread();
+    setShowPersonaModal(true);
+  };
+
+  const handleClosePersonaModal = () => {
+    setShowPersonaModal(false);
+  };
+
   return (
     <div className="flex h-full">
-      {/* Sidebar */}
-      <div className="w-80 flex-shrink-0">
-        <ThreadSidebar
-          threads={threads}
-          activeThreadId={activeThread?.id}
-          onThreadSelect={onSelectThread}
-          onThreadDelete={onDeleteThread}
-          onNewThread={onNewThread}
-        />
-      </div>
-
       {/* Main conversation area */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <ConversationView
           personas={personas}
           activeThread={activeThread}
           onCreateThread={onCreateThread}
           onSendMessage={onSendMessage}
           onDeleteThread={onDeleteThread}
+          showPersonaModal={showPersonaModal}
+          onClosePersonaModal={handleClosePersonaModal}
+        />
+      </div>
+
+      {/* Right Sidebar */}
+      <div className="w-60 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
+        <ThreadSidebar
+          threads={threads}
+          activeThreadId={activeThread?.id}
+          onThreadSelect={onSelectThread}
+          onThreadDelete={onDeleteThread}
+          onNewThread={handleNewThread}
         />
       </div>
     </div>
