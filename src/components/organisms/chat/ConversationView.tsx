@@ -1,12 +1,10 @@
-import { Button } from '@/components/atom/Button';
 import { MessageBubble } from '@/components/atom/MessageBubble';
 import { ConversationHeader } from '@/components/molecules/chat/ConversationHeader';
 import { EnhancedMessageInput } from '@/components/molecules/chat/EnhancedMessageInput';
 import { PersonaSelectionModal } from '@/components/molecules/chat/PersonaSelectionModal';
 import { Message, Persona, Thread } from '@prisma/client';
-import { RiRobot2Line } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ConversationViewProps {
   personas: Persona[];
@@ -16,6 +14,8 @@ interface ConversationViewProps {
   onDeleteThread: (_threadId: number) => void;
   showPersonaModal?: boolean;
   onClosePersonaModal?: () => void;
+  isStreaming?: boolean;
+  streamingMessage?: string;
 }
 
 export function ConversationView({
@@ -26,40 +26,54 @@ export function ConversationView({
   onDeleteThread,
   showPersonaModal = false,
   onClosePersonaModal,
+  isStreaming = false,
+  streamingMessage = '',
 }: ConversationViewProps) {
   const router = useRouter();
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | undefined>(personas[0]?.id);
-  const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
+  const [pendingUserMessage, setPendingUserMessage] = useState<string>('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change or streaming
+  useEffect(() => {
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Use setTimeout to ensure DOM has updated
+    const timeoutId = setTimeout(scrollToBottom, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [activeThread?.messages, isStreaming, streamingMessage, pendingUserMessage]);
 
   const handleSendMessage = async () => {
     if (!activeThread) {
       // Create new thread
       if (!selectedPersonaId || !message.trim()) return;
 
-      setSending(true);
+      // Set pending user message immediately for optimistic UI
+      setPendingUserMessage(message.trim());
+
       try {
         await onCreateThread(selectedPersonaId, message.trim());
         setMessage('');
-      } finally {
-        setSending(false);
+        setPendingUserMessage(''); // Clear pending message after thread is created
+      } catch (error) {
+        console.error('Failed to create thread:', error);
+        setPendingUserMessage(''); // Clear pending message on error
       }
     } else {
       // Send message to existing thread
       if (!message.trim()) return;
 
-      setSending(true);
       try {
         await onSendMessage(message.trim());
         setMessage('');
-      } finally {
-        setSending(false);
+      } catch (error) {
+        console.error('Failed to send message:', error);
       }
     }
-  };
-
-  const handlePersonaSelect = (personaId: number) => {
-    setSelectedPersonaId(personaId);
   };
 
   const handlePersonaModalSelect = (personaId: number) => {
@@ -79,6 +93,9 @@ export function ConversationView({
 
   const selectedPersona = personas.find(p => p.id === selectedPersonaId);
 
+  // Determine if we should show messages or empty state
+  const shouldShowMessages = activeThread || pendingUserMessage || isStreaming;
+
   return (
     <>
       <div className="flex h-full flex-col">
@@ -91,56 +108,101 @@ export function ConversationView({
 
         {/* Messages or Empty State */}
         <div className="flex-1 overflow-y-auto">
-          {activeThread ? (
+          {shouldShowMessages ? (
             <div className="space-y-3 p-4">
-              {activeThread.messages.map(message => (
+              {/* Show existing thread messages */}
+              {activeThread?.messages.map(message => (
                 <MessageBubble key={message.id} message={message} />
               ))}
+
+              {/* Show pending user message when creating new thread */}
+              {!activeThread && pendingUserMessage && (
+                <MessageBubble
+                  message={{
+                    id: 0, // Temporary ID for pending message
+                    content: pendingUserMessage,
+                    role: 'user',
+                    threadId: 0, // Temporary thread ID
+                    timestamp: new Date(),
+                    openaiMessageId: null,
+                  }}
+                />
+              )}
+
+              {/* Show streaming message if currently streaming */}
+              {isStreaming && streamingMessage && (
+                <div className="flex justify-start">
+                  <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
+                    <div className="flex items-start space-x-2">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500">
+                          <span className="text-xs font-medium text-white">AI</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
+                          {streamingMessage}
+                          <span className="animate-pulse">|</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Show loading indicator next to assistant icon when streaming */}
+              {isStreaming && !streamingMessage && (
+                <div className="flex justify-start">
+                  <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
+                    <div className="flex items-start space-x-2">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500">
+                          <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        </div>
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
+                          AI is thinking...
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Auto-scroll anchor */}
+              <div ref={messagesEndRef} />
             </div>
           ) : (
+            // Empty state remains the same
             <div className="flex h-full flex-col items-center justify-center p-6">
               <div className="max-w-xl text-center">
-                {personas.length === 0 ? (
-                  <div className="text-center">
-                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                      No personas available. Create a persona to start chatting.
-                    </p>
-                    <Button onClick={handleCreatePersona}>Create Your First Persona</Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm">
-                      <RiRobot2Line className="h-4 w-4 text-white" />
-                    </div>
-
-                    {selectedPersona && (
-                      <div className="text-center">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          Ready to chat with {selectedPersona.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Type your message below to start the conversation
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Welcome to your AI Assistant
+                </h3>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Start a conversation by selecting a persona and typing your message below.
+                </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* Input */}
+        {/* Message Input */}
         <div className="border-t border-gray-200 p-4 dark:border-gray-700">
           <EnhancedMessageInput
             value={message}
             onChange={setMessage}
             onSend={handleSendMessage}
-            disabled={sending || (!activeThread && (!selectedPersonaId || personas.length === 0))}
-            loading={sending}
+            disabled={
+              isStreaming || (!activeThread && (!selectedPersonaId || personas.length === 0))
+            }
+            loading={false} // Remove loading from send button since we show it next to assistant icon
             placeholder={
               activeThread
-                ? 'Type your message...'
+                ? isStreaming
+                  ? 'AI is responding...'
+                  : 'Type your message...'
                 : selectedPersona
                   ? `Message ${selectedPersona.name}...`
                   : personas.length === 0
@@ -151,7 +213,7 @@ export function ConversationView({
         </div>
       </div>
 
-      {/* Persona Selection Modal - Rendered at the end to ensure proper overlay */}
+      {/* Persona Selection Modal */}
       {showPersonaModal && (
         <PersonaSelectionModal
           isOpen={showPersonaModal}

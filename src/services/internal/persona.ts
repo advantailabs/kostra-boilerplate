@@ -3,7 +3,7 @@ import { Persona, PrismaClient } from '@prisma/client';
 import {
   createAssistant,
   createVectorStore,
-  updateAssistant
+  updateAssistant,
 } from '@/services/external/openai/assistant';
 import {
   createPersona,
@@ -151,7 +151,8 @@ const updatePersonaService = async (
       const assistantUpdateData: any = {};
       if (data.name !== undefined) assistantUpdateData.name = data.name.trim();
       if (data.description !== undefined) assistantUpdateData.description = data.description.trim();
-      if (data.instructions !== undefined) assistantUpdateData.instructions = data.instructions.trim();
+      if (data.instructions !== undefined)
+        assistantUpdateData.instructions = data.instructions.trim();
 
       if (Object.keys(assistantUpdateData).length > 0) {
         const assistantResult = await updateAssistant({
@@ -225,6 +226,5 @@ export {
   deactivatePersonaService,
   getPersonaByIdService,
   getUserPersonasService,
-  updatePersonaService
+  updatePersonaService,
 };
-

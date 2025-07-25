@@ -5,52 +5,50 @@ import { useChat } from '@/hooks/useChat';
 import { usePersonas } from '@/hooks/usePersonas';
 import { useThreads } from '@/hooks/useThreads';
 import { CreateThreadRequest } from '@/types/chat';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ChatPage() {
+  const router = useRouter();
   const { personas, isLoading: personasLoading } = usePersonas();
-  const { threads, isLoading: threadsLoading, createThread, deleteThread } = useThreads();
+  const { threads, isLoading: threadsLoading, deleteThread } = useThreads();
 
-  const [activeThreadId, setActiveThreadId] = useState<number | null>(null);
-  const { thread: activeThread, addMessage } = useChat(activeThreadId || undefined);
+  const { createThreadStreaming, isStreaming, streamingMessage } = useChat(undefined); // No active thread on main chat page
 
   const handleCreateThread = async (personaId: number, message: string) => {
     try {
       const threadData: CreateThreadRequest = { personaId, message };
-      const newThread = await createThread(threadData);
-      setActiveThreadId(newThread.id);
+      const newThreadId = await createThreadStreaming(threadData);
+      if (newThreadId) {
+        router.replace(`/app/chat/${newThreadId}`);
+      } else {
+        alert('Failed to create thread. Please try again.');
+      }
     } catch (error) {
       console.error('Failed to create thread:', error);
     }
   };
 
   const handleSelectThread = (threadId: number) => {
-    setActiveThreadId(threadId);
+    router.push(`/app/chat/${threadId}`);
   };
 
-  const handleSendMessage = async (message: string) => {
-    if (!activeThreadId) return;
-
-    try {
-      await addMessage({ content: message });
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    }
+  const handleSendMessage = async (_message: string) => {
+    // This shouldn't be called on the main chat page
+    console.warn('handleSendMessage called on main chat page');
   };
 
   const handleDeleteThread = async (threadId: number) => {
     try {
       await deleteThread(threadId);
-      if (activeThreadId === threadId) {
-        setActiveThreadId(null);
-      }
+      // Refresh the page to update the threads list
+      router.refresh();
     } catch (error) {
       console.error('Failed to delete thread:', error);
     }
   };
 
   const handleNewThread = () => {
-    setActiveThreadId(null);
+    // Already on the main chat page, no need to navigate
   };
 
   const isLoading = personasLoading || threadsLoading;
@@ -71,12 +69,14 @@ export default function ChatPage() {
       <ChatInterface
         personas={personas}
         threads={threads}
-        activeThread={activeThread || null}
+        activeThread={null} // No active thread on main chat page
         onCreateThread={handleCreateThread}
         onSelectThread={handleSelectThread}
         onSendMessage={handleSendMessage}
         onDeleteThread={handleDeleteThread}
         onNewThread={handleNewThread}
+        isStreaming={isStreaming}
+        streamingMessage={streamingMessage}
       />
     </div>
   );

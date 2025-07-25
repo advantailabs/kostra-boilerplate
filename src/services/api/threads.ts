@@ -1,12 +1,25 @@
 import axiosInstance from '@/lib/axios';
 import { AddMessageRequest, CreateThreadRequest, ThreadWithMessages } from '@/types/chat';
-import { Message, Thread } from '@prisma/client';
+import { Thread } from '@prisma/client';
+
+export interface StreamMessageResponse {
+  type: 'chunk' | 'completed' | 'error' | 'thread_created';
+  content?: string;
+  messageId?: string | null;
+  fullContent?: string;
+  error?: string;
+  runId?: string;
+  threadId?: number;
+}
 
 export interface ThreadsApiClient {
   getThreads(): Promise<Thread[]>;
   getThread(_id: number): Promise<ThreadWithMessages>;
-  createThread(_data: CreateThreadRequest): Promise<Thread>;
-  addMessage(_threadId: number, _data: AddMessageRequest): Promise<Message>;
+  createThreadStreaming(_data: CreateThreadRequest): AsyncGenerator<StreamMessageResponse>;
+  addMessageStreaming(
+    _threadId: number,
+    _data: AddMessageRequest
+  ): AsyncGenerator<StreamMessageResponse>;
   deleteThread(_id: number): Promise<void>;
 }
 
@@ -23,16 +36,115 @@ export const threadsApi: ThreadsApiClient = {
     return thread;
   },
 
-  async createThread(data: CreateThreadRequest): Promise<Thread> {
-    const response = await axiosInstance.post('/threads', data);
-    const { thread } = response.data;
-    return thread;
+  async *createThreadStreaming(data: CreateThreadRequest): AsyncGenerator<StreamMessageResponse> {
+    try {
+      const response = await fetch('/api/threads/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create thread');
+      }
+
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        // eslint-disable-next-line no-await-in-loop
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              yield data as StreamMessageResponse;
+
+              if (data.type === 'completed' || data.type === 'error') {
+                return;
+              }
+            } catch (e) {
+              // Skip malformed JSON
+              console.warn('Failed to parse streaming data:', e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      yield {
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
   },
 
-  async addMessage(threadId: number, data: AddMessageRequest): Promise<Message> {
-    const response = await axiosInstance.post(`/threads/${threadId}/messages`, data);
-    const { message } = response.data;
-    return message;
+  async *addMessageStreaming(
+    threadId: number,
+    data: AddMessageRequest
+  ): AsyncGenerator<StreamMessageResponse> {
+    try {
+      const response = await fetch(`/api/threads/${threadId}/messages/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to send message');
+      }
+
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        // eslint-disable-next-line no-await-in-loop
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              yield data as StreamMessageResponse;
+
+              if (data.type === 'completed' || data.type === 'error') {
+                return;
+              }
+            } catch (e) {
+              // Skip malformed JSON
+              console.warn('Failed to parse streaming data:', e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      yield {
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
   },
 
   async deleteThread(id: number): Promise<void> {

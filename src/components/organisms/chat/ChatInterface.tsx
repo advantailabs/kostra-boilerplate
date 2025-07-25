@@ -12,6 +12,8 @@ interface ChatInterfaceProps {
   onSendMessage: (_message: string) => void;
   onDeleteThread: (_threadId: number) => void;
   onNewThread: () => void;
+  isStreaming?: boolean;
+  streamingMessage?: string;
 }
 
 export function ChatInterface({
@@ -23,6 +25,8 @@ export function ChatInterface({
   onSendMessage,
   onDeleteThread,
   onNewThread,
+  isStreaming = false,
+  streamingMessage = '',
 }: ChatInterfaceProps) {
   const [showPersonaModal, setShowPersonaModal] = useState(false);
 
@@ -47,19 +51,20 @@ export function ChatInterface({
           onDeleteThread={onDeleteThread}
           showPersonaModal={showPersonaModal}
           onClosePersonaModal={handleClosePersonaModal}
+          isStreaming={isStreaming}
+          streamingMessage={streamingMessage}
         />
       </div>
 
-      {/* Right Sidebar */}
-      <div className="w-60 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
-        <ThreadSidebar
-          threads={threads}
-          activeThreadId={activeThread?.id}
-          onThreadSelect={onSelectThread}
-          onThreadDelete={onDeleteThread}
-          onNewThread={handleNewThread}
-        />
-      </div>
+      {/* Thread Sidebar */}
+      <ThreadSidebar
+        threads={threads}
+        activeThreadId={activeThread?.id}
+        onThreadSelect={onSelectThread}
+        onThreadDelete={onDeleteThread}
+        onNewThread={handleNewThread}
+        className="w-80 border-l border-gray-200 dark:border-gray-700"
+      />
     </div>
   );
 }

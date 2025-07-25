@@ -30,6 +30,7 @@ export interface CreateMessageData {
   threadId: number;
   role: 'user' | 'assistant';
   content: string;
+  openaiMessageId?: string;
 }
 
 export interface CreatePersonaData {

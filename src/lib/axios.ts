@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 const axiosInstance = axios.create({
   baseURL: '/api',
-  timeout: 10000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json',
   },

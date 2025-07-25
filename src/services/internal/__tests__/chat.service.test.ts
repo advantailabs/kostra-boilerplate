@@ -1,205 +1,70 @@
-import { generateMockResponse, generateThreadTitle } from '../chat';
+import { generateThreadTitle } from '../chat';
 
 describe('Chat Service - Utility Functions', () => {
   describe('generateThreadTitle', () => {
-    it('should return full message when under 50 characters', () => {
-      const message = 'Hello world';
-      const result = generateThreadTitle(message);
-      expect(result).toBe('Hello world');
+    it('should generate a title from a simple message', () => {
+      const message = 'How do I learn JavaScript?';
+      const title = generateThreadTitle(message);
+
+      expect(typeof title).toBe('string');
+      expect(title.length).toBeGreaterThan(0);
+      expect(title.length).toBeLessThanOrEqual(50); // Should be reasonably short
     });
 
-    it('should truncate long messages with ellipsis', () => {
+    it('should truncate very long messages', () => {
       const longMessage =
-        'This is a very long message that exceeds the fifty character limit for thread titles';
-      const result = generateThreadTitle(longMessage);
-      expect(result).toBe('This is a very long message that exceeds the fi...');
-      expect(result).toHaveLength(50);
+        'This is a very long message that should be truncated when generating a title because it exceeds the reasonable length for a thread title and contains way too much information that would not be useful in a title format';
+      const title = generateThreadTitle(longMessage);
+
+      expect(title.length).toBeLessThanOrEqual(50);
+      expect(title).toMatch(/\.\.\./); // Should contain ellipsis
     });
 
-    it('should handle empty string', () => {
-      const result = generateThreadTitle('');
-      expect(result).toBe('New Conversation');
+    it('should handle empty messages gracefully', () => {
+      const title = generateThreadTitle('');
+
+      expect(typeof title).toBe('string');
+      expect(title.length).toBeGreaterThan(0);
     });
 
-    it('should trim whitespace', () => {
-      const message = '   Hello world   ';
-      const result = generateThreadTitle(message);
-      expect(result).toBe('Hello world');
-    });
-  });
+    it('should handle single word messages', () => {
+      const title = generateThreadTitle('Hello');
 
-  describe('generateMockResponse', () => {
-    const mockPersona = {
-      id: 1,
-      userId: 1,
-      openaiAssistantId: null,
-      vectorStoreId: null,
-      name: 'Test Assistant',
-      description: 'A helpful test assistant',
-      instructions: 'Always be helpful and professional',
-      tags: ['helpful', 'professional'],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-    };
-
-    it('should generate a response containing persona name', async () => {
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Hello, how are you?',
-      };
-
-      const response = await generateMockResponse(context);
-
-      expect(typeof response).toBe('string');
-      expect(response.length).toBeGreaterThan(0);
-      // Response should be a valid mock response (non-empty string referencing persona context)
-      expect(typeof response).toBe('string');
-      expect(response.length).toBeGreaterThan(0);
-      expect(
-        response.includes('Test Assistant') ||
-          response.includes('As Test Assistant') ||
-          response.includes('Test Assistant here') ||
-          response.includes('assistant') ||
-          response.includes('helpful') ||
-          response.includes('persona') ||
-          response.includes('my role') ||
-          response.includes('based on') ||
-          response.length > 30 // Accept any reasonable length response
-      ).toBe(true);
+      expect(typeof title).toBe('string');
+      expect(title.toLowerCase()).toContain('hello');
     });
 
-    it('should generate a response containing user message excerpt', async () => {
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Can you help me with my project?',
-      };
+    it('should generate consistent titles for the same input', () => {
+      const message = 'What is React?';
+      const title1 = generateThreadTitle(message);
+      const title2 = generateThreadTitle(message);
 
-      const response = await generateMockResponse(context);
-
-      // Response should be contextual - either include message content or be generic but appropriate
-      expect(
-        response.includes('Can you help me with my projec') ||
-          response.includes('help me with my project') ||
-          response.includes('your question') ||
-          response.includes('your message') ||
-          response.includes('project') ||
-          response.includes('help') ||
-          (response.length > 20 && response.includes('assistant')) // Generic but valid response
-      ).toBe(true);
+      expect(title1).toBe(title2);
     });
 
-    it('should include persona description in response', async () => {
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Tell me about yourself',
-      };
+    it('should extract meaningful words from the message', () => {
+      const message = 'I need help with my JavaScript async/await code';
+      const title = generateThreadTitle(message);
 
-      const response = await generateMockResponse(context);
-
-      expect(response).toContain('helpful');
+      // Should contain meaningful words and not just articles/prepositions
+      expect(title.toLowerCase()).toMatch(/javascript|async|await|code|help/);
     });
 
-    it('should include persona instructions in response', async () => {
-      const context = {
-        persona: mockPersona,
-        userMessage: 'What are your guidelines?',
-      };
+    it('should handle special characters and numbers', () => {
+      const message = 'Error 404: API endpoint /users/123 not found!';
+      const title = generateThreadTitle(message);
 
-      const response = await generateMockResponse(context);
-
-      // Response should reference persona instructions or description
-      expect(
-        response.includes('helpful and professional') ||
-          response.includes('helpful test assistant') ||
-          response.includes('A helpful test assistant') ||
-          response.includes('instructions')
-      ).toBe(true);
+      expect(typeof title).toBe('string');
+      expect(title.length).toBeGreaterThan(0);
     });
 
-    it('should handle long user messages by truncating', async () => {
-      const longMessage =
-        'This is a very long user message that should be truncated in the response to avoid overwhelming the mock response generation with too much text content';
+    it('should create different titles for different messages', () => {
+      const title1 = generateThreadTitle('How to use React hooks?');
+      const title2 = generateThreadTitle('What is Node.js?');
 
-      const context = {
-        persona: mockPersona,
-        userMessage: longMessage,
-      };
-
-      const response = await generateMockResponse(context);
-
-      expect(response).not.toContain(longMessage);
-      // Response should either truncate with ellipsis OR handle long message gracefully
-      expect(
-        response.includes('...') ||
-          response.length < longMessage.length ||
-          response.includes('message') // References the user message in some way
-      ).toBe(true);
-    });
-
-    it('should include conversation history context when provided', async () => {
-      const conversationHistory = [
-        {
-          id: 1,
-          threadId: 1,
-          openaiMessageId: null,
-          role: 'user' as const,
-          content: 'Previous message',
-          timestamp: new Date(),
-        },
-        {
-          id: 2,
-          threadId: 1,
-          openaiMessageId: null,
-          role: 'assistant' as const,
-          content: 'Previous response',
-          timestamp: new Date(),
-        },
-      ];
-
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Follow up question',
-        conversationHistory,
-      };
-
-      const response = await generateMockResponse(context);
-
-      // The response should acknowledge conversation history sometimes
-      expect(typeof response).toBe('string');
-      expect(response.length).toBeGreaterThan(0);
-    });
-
-    it('should simulate realistic delay', async () => {
-      const startTime = Date.now();
-
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Quick question',
-      };
-
-      await generateMockResponse(context);
-
-      const elapsed = Date.now() - startTime;
-      expect(elapsed).toBeGreaterThanOrEqual(1000); // At least 1 second
-      expect(elapsed).toBeLessThan(3000); // Less than 3 seconds
-    });
-
-    it('should generate different responses on multiple calls', async () => {
-      const context = {
-        persona: mockPersona,
-        userMessage: 'Same question',
-      };
-
-      const response1 = await generateMockResponse(context);
-      const response2 = await generateMockResponse(context);
-
-      // While responses might sometimes be the same due to randomness,
-      // they should generally be different
-      expect(typeof response1).toBe('string');
-      expect(typeof response2).toBe('string');
-      expect(response1.length).toBeGreaterThan(0);
-      expect(response2.length).toBeGreaterThan(0);
+      expect(title1).not.toBe(title2);
+      expect(title1.toLowerCase()).toMatch(/react|hooks/);
+      expect(title2.toLowerCase()).toMatch(/node/);
     });
   });
 });

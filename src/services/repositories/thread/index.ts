@@ -114,6 +114,20 @@ const updateThreadTimestamp = async (
   });
 };
 
+const updateThreadOpenAIId = async (
+  threadId: number,
+  openaiThreadId: string,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread> => {
+  return prisma.thread.update({
+    where: { id: threadId },
+    data: {
+      openaiThreadId,
+      updatedAt: new Date(),
+    },
+  });
+};
+
 export {
   createThread,
   deleteThread,
@@ -122,5 +136,6 @@ export {
   findByUserAndId,
   findByUserId,
   updateThread,
+  updateThreadOpenAIId,
   updateThreadTimestamp,
 };

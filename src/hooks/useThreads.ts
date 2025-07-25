@@ -1,5 +1,5 @@
 import { threadsApi } from '@/services/api/threads';
-import { CreateThreadRequest, ThreadWithPersona } from '@/types/chat';
+import { ThreadWithPersona } from '@/types/chat';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useThreads() {
@@ -15,13 +15,6 @@ export function useThreads() {
     queryFn: threadsApi.getThreads,
   });
 
-  const createThreadMutation = useMutation({
-    mutationFn: (data: CreateThreadRequest) => threadsApi.createThread(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['threads'] });
-    },
-  });
-
   const deleteThreadMutation = useMutation({
     mutationFn: (id: number) => threadsApi.deleteThread(id),
     onSuccess: () => {
@@ -34,9 +27,7 @@ export function useThreads() {
     isLoading,
     error,
     refetch,
-    createThread: createThreadMutation.mutateAsync,
     deleteThread: deleteThreadMutation.mutateAsync,
-    isCreating: createThreadMutation.isPending,
     isDeleting: deleteThreadMutation.isPending,
   };
 }

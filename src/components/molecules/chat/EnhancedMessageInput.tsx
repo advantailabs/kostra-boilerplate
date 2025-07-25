@@ -97,7 +97,7 @@ export function EnhancedMessageInput({
     return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
   };
 
-  const canSend = value.trim() && !disabled && !loading;
+  const canSend = value.trim() && !disabled;
   const visibleFiles = selectedFiles.slice(0, VISIBLE_FILES);
   const hiddenFiles = selectedFiles.slice(VISIBLE_FILES);
   const hasHiddenFiles = hiddenFiles.length > 0;
@@ -150,7 +150,6 @@ export function EnhancedMessageInput({
           type="button"
           onClick={onSend}
           disabled={!canSend}
-          isLoading={loading}
           className="flex-shrink-0 px-3 py-2"
         >
           <RiSendPlaneFill className="h-4 w-4" />

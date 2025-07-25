@@ -284,4 +284,4 @@ export const listVectorStores = async (
       error: error instanceof Error ? error.message : 'Failed to list vector stores',
     };
   }
-}; 
+};

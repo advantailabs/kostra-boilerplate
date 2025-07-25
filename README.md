@@ -217,7 +217,6 @@ This project is proprietary and licensed to Advant. All rights reserved. Unautho
 - [Prisma](https://www.prisma.io/)
 - [Supabase](https://supabase.com/)
 
-
 ## Environment Variables
 
 Required environment variables:

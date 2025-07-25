@@ -90,12 +90,12 @@ export function ThreadSearchModal({
   onThreadSelect,
   onNewThread,
 }: ThreadSearchModalProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredThreads = threads.filter(
     thread =>
-      thread.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      thread.persona?.name.toLowerCase().includes(searchQuery.toLowerCase())
+      thread.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      thread.persona?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const groupedThreads = groupThreadsByDate(filteredThreads);
@@ -103,18 +103,18 @@ export function ThreadSearchModal({
   const handleThreadSelect = (threadId: number) => {
     onThreadSelect(threadId);
     onClose();
-    setSearchQuery('');
+    setSearchTerm('');
   };
 
   const handleNewChat = () => {
     onNewThread?.();
     onClose();
-    setSearchQuery('');
+    setSearchTerm('');
   };
 
   const handleClose = () => {
     onClose();
-    setSearchQuery('');
+    setSearchTerm('');
   };
 
   return (
@@ -125,11 +125,10 @@ export function ThreadSearchModal({
           <div className="flex-1">
             <input
               type="text"
-              placeholder="Search chats..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full border-none bg-transparent text-lg text-gray-300 placeholder-gray-500 outline-none focus:border-none focus:outline-none focus:ring-0"
-              autoFocus
+              placeholder="Search threads..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             />
           </div>
           <Button
@@ -144,13 +143,13 @@ export function ThreadSearchModal({
         {/* Search Results */}
         <div className="max-h-96 overflow-y-auto p-2">
           {/* New Chat Option */}
-          {!searchQuery && (
+          {!searchTerm && (
             <div className="mb-4">
               <NewChatOption onClick={handleNewChat} />
             </div>
           )}
 
-          {filteredThreads.length === 0 && searchQuery ? (
+          {filteredThreads.length === 0 && searchTerm ? (
             <div className="py-8 text-center">
               <p className="text-sm text-gray-400">No threads found</p>
             </div>

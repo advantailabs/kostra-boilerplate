@@ -122,6 +122,5 @@ export {
   findPersonaByUserAndId,
   restorePersona,
   softDeletePersona,
-  updatePersona
+  updatePersona,
 };
-
