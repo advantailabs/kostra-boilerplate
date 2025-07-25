@@ -216,3 +216,14 @@ This project is proprietary and licensed to Advant. All rights reserved. Unautho
 - [Clerk](https://clerk.com/)
 - [Prisma](https://www.prisma.io/)
 - [Supabase](https://supabase.com/)
+
+
+## Environment Variables
+
+Required environment variables:
+
+- `OPENAI_API_KEY`: Your OpenAI API key for assistant creation and management
+  - Get it from: https://platform.openai.com/api-keys
+  - Format: `sk-...`
+
+Copy `.env.example` to `.env` and fill in your values.

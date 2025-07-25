@@ -38,6 +38,8 @@ export interface CreatePersonaData {
   description: string;
   instructions: string;
   tags: string[];
+  openaiAssistantId?: string;
+  vectorStoreId?: string;
 }
 
 export interface UpdatePersonaData {

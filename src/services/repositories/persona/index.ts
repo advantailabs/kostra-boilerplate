@@ -15,6 +15,8 @@ const createPersona = async (
       description: data.description,
       instructions: data.instructions,
       tags: data.tags,
+      openaiAssistantId: data.openaiAssistantId,
+      vectorStoreId: data.vectorStoreId,
     },
   });
 };
@@ -120,5 +122,6 @@ export {
   findPersonaByUserAndId,
   restorePersona,
   softDeletePersona,
-  updatePersona,
+  updatePersona
 };
+

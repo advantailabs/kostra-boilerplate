@@ -1,6 +1,11 @@
 import { Persona, PrismaClient } from '@prisma/client';
 
 import {
+  createAssistant,
+  createVectorStore,
+  updateAssistant
+} from '@/services/external/openai/assistant';
+import {
   createPersona,
   findActiveByUserId,
   findById,
@@ -22,6 +27,38 @@ const createPersonaService = async (
   prisma?: PrismaClient
 ): Promise<PersonaServiceResult<Persona>> => {
   try {
+    // Create vector store first
+    const vectorStoreResult = await createVectorStore(`${data.name.trim()} Knowledge Base`);
+
+    if (!vectorStoreResult.success || !vectorStoreResult.data) {
+      return {
+        success: false,
+        error: `Failed to create vector store: ${vectorStoreResult.error}`,
+      };
+    }
+
+    // Create OpenAI assistant with file_search tool and vector store
+    const assistantResult = await createAssistant({
+      name: data.name.trim(),
+      description: data.description.trim(),
+      instructions: data.instructions.trim(),
+      temperature: 0.3,
+      tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
+      tool_resources: {
+        file_search: {
+          vector_store_ids: [vectorStoreResult.data.id],
+        },
+      },
+    });
+
+    if (!assistantResult.success || !assistantResult.data) {
+      return {
+        success: false,
+        error: `Failed to create OpenAI assistant: ${assistantResult.error}`,
+      };
+    }
+
+    // Create persona with both assistant and vector store IDs
     const persona = await createPersona(
       {
         userId,
@@ -29,6 +66,8 @@ const createPersonaService = async (
         description: data.description.trim(),
         instructions: data.instructions.trim(),
         tags: data.tags?.map(tag => tag.trim()) || [],
+        openaiAssistantId: assistantResult.data.id,
+        vectorStoreId: vectorStoreResult.data.id,
       },
       prisma
     );
@@ -38,6 +77,7 @@ const createPersonaService = async (
       data: persona,
     };
   } catch (error) {
+    console.error('Error in createPersonaService:', error);
     return {
       success: false,
       error: 'Failed to create persona',
@@ -106,6 +146,26 @@ const updatePersonaService = async (
       };
     }
 
+    // Update OpenAI assistant if it exists
+    if (existingPersona.openaiAssistantId) {
+      const assistantUpdateData: any = {};
+      if (data.name !== undefined) assistantUpdateData.name = data.name.trim();
+      if (data.description !== undefined) assistantUpdateData.description = data.description.trim();
+      if (data.instructions !== undefined) assistantUpdateData.instructions = data.instructions.trim();
+
+      if (Object.keys(assistantUpdateData).length > 0) {
+        const assistantResult = await updateAssistant({
+          assistantId: existingPersona.openaiAssistantId,
+          ...assistantUpdateData,
+        });
+
+        if (!assistantResult.success) {
+          console.error('Failed to update OpenAI assistant:', assistantResult.error);
+          // Continue with persona update even if assistant update fails
+        }
+      }
+    }
+
     const updatedPersona = await updatePersona(
       personaId,
       {
@@ -122,6 +182,7 @@ const updatePersonaService = async (
       data: updatedPersona,
     };
   } catch (error) {
+    console.error('Error in updatePersonaService:', error);
     return {
       success: false,
       error: 'Failed to update persona',
@@ -164,5 +225,6 @@ export {
   deactivatePersonaService,
   getPersonaByIdService,
   getUserPersonasService,
-  updatePersonaService,
+  updatePersonaService
 };
+
