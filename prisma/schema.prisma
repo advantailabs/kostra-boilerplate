@@ -38,6 +38,7 @@ model Thread {
   title          String
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?  // Soft delete
   user           User       @relation(fields: [userId], references: [id])
   persona        Persona?   @relation(fields: [personaId], references: [id])
   messages       Message[]
@@ -60,13 +61,14 @@ model Persona {
 }
 
 model Message {
-  id              Int      @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   threadId        Int
   openaiMessageId String?
   role            String
   content         String
-  timestamp       DateTime @default(now())
-  thread          Thread   @relation(fields: [threadId], references: [id])
+  timestamp       DateTime  @default(now())
+  deletedAt       DateTime? // Soft delete
+  thread          Thread    @relation(fields: [threadId], references: [id])
 }
 
 model File {

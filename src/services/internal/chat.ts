@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 
-import { deleteMessagesByThreadId } from '@/services/repositories/message';
+import {
+  deleteMessagesByThreadId,
+  restoreMessagesByThreadId,
+} from '@/services/repositories/message';
 import {
   deleteThread,
   findByIdWithMessages,
   findByUserAndId,
   findByUserId,
+  restoreThread,
 } from '@/services/repositories/thread';
 import { ThreadWithMessages, ThreadWithPersona } from '@/types/chat';
 
@@ -92,10 +96,10 @@ const deleteThreadService = async (
       };
     }
 
-    // Delete all messages in the thread first
+    // Soft delete all messages in the thread first
     await deleteMessagesByThreadId(threadId, prisma);
 
-    // Delete the thread
+    // Soft delete the thread
     await deleteThread(threadId, prisma);
 
     return {
@@ -110,4 +114,45 @@ const deleteThreadService = async (
   }
 };
 
-export { deleteThreadService, generateThreadTitle, getThreadWithMessages, getUserThreads };
+const restoreThreadService = async (
+  userId: number,
+  threadId: number,
+  prisma?: PrismaClient
+): Promise<ChatServiceResult<boolean>> => {
+  try {
+    // Verify thread exists and belongs to user (check even deleted threads)
+    const thread = await findByUserAndId(userId, threadId, prisma);
+
+    if (!thread) {
+      return {
+        success: false,
+        error: 'Thread not found or access denied',
+      };
+    }
+
+    // Restore all messages in the thread first
+    await restoreMessagesByThreadId(threadId, prisma);
+
+    // Restore the thread
+    await restoreThread(threadId, prisma);
+
+    return {
+      success: true,
+      data: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Failed to restore thread',
+    };
+  }
+};
+
+export {
+  deleteThreadService,
+  generateThreadTitle,
+  getThreadWithMessages,
+  getUserThreads,
+  restoreThreadService
+};
+

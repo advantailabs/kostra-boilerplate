@@ -29,6 +29,7 @@ const findByUserId = async (
   return prisma.thread.findMany({
     where: {
       userId,
+      deletedAt: null, // Only fetch non-deleted threads
     },
     include: {
       persona: true,
@@ -44,9 +45,14 @@ const findByIdWithMessages = async (
   prisma: PrismaClient = defaultPrisma
 ): Promise<ThreadWithMessages | null> => {
   return prisma.thread.findUnique({
-    where: { id: threadId },
+    where: { 
+      id: threadId,
+    },
     include: {
       messages: {
+        where: {
+          deletedAt: null, // Only fetch non-deleted messages
+        },
         orderBy: {
           timestamp: 'asc',
         },
@@ -74,6 +80,7 @@ const findByUserAndId = async (
     where: {
       id: threadId,
       userId,
+      deletedAt: null, // Only fetch non-deleted threads
     },
   });
 };
@@ -97,8 +104,34 @@ const deleteThread = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
 ): Promise<void> => {
+  await prisma.thread.update({
+    where: { id: threadId },
+    data: {
+      deletedAt: new Date(),
+      updatedAt: new Date(),
+    },
+  });
+};
+
+const hardDeleteThread = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<void> => {
   await prisma.thread.delete({
     where: { id: threadId },
+  });
+};
+
+const restoreThread = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread> => {
+  return prisma.thread.update({
+    where: { id: threadId },
+    data: {
+      deletedAt: null,
+      updatedAt: new Date(),
+    },
   });
 };
 
@@ -135,7 +168,10 @@ export {
   findByIdWithMessages,
   findByUserAndId,
   findByUserId,
+  hardDeleteThread,
+  restoreThread,
   updateThread,
   updateThreadOpenAIId,
-  updateThreadTimestamp,
+  updateThreadTimestamp
 };
+
