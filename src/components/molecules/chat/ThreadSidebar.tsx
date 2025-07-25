@@ -33,7 +33,7 @@ function ThreadListItem({
 
   return (
     <div
-      className={`group flex items-center justify-between rounded-lg px-2 py-1.5 text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
+      className={`group flex w-full cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
         isActive ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100' : ''
       }`}
       onClick={() => onSelect(thread.id)}
@@ -47,12 +47,17 @@ function ThreadListItem({
       tabIndex={0}
       aria-label={`Select conversation: ${thread.title}`}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
         <RiMessage2Line className="h-3 w-3 shrink-0 text-gray-400" />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{thread.title}</p>
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <p className="truncate text-sm font-medium" title={thread.title}>
+            {thread.title}
+          </p>
           {thread.persona && (
-            <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+            <p
+              className="truncate text-xs text-gray-500 dark:text-gray-400"
+              title={thread.persona.name}
+            >
               {thread.persona.name}
             </p>
           )}
@@ -61,7 +66,7 @@ function ThreadListItem({
       <button
         type="button"
         onClick={handleDelete}
-        className="opacity-0 transition-opacity group-hover:opacity-100"
+        className="ml-2 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
         title="Delete thread"
       >
         <RiDeleteBinLine className="h-3 w-3 text-gray-400 hover:text-red-500" />
@@ -117,7 +122,7 @@ export function ThreadSidebar({
 
   return (
     <>
-      <div className={`flex h-full flex-col ${className}`}>
+      <div className={`flex h-full w-60 min-w-60 max-w-60 flex-col ${className}`}>
         <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -126,7 +131,7 @@ export function ThreadSidebar({
               </div>
               <div>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">Threads</h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400">All Your</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">All Threads</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

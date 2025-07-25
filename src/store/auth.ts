@@ -4,6 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 interface User {
   id: string;
   email: string;
+  name: string;
+  profilePicture: string | null;
   role: string;
   isOnboarded: boolean;
 }

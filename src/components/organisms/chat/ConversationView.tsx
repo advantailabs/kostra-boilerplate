@@ -125,6 +125,7 @@ export function ConversationView({
                     threadId: 0, // Temporary thread ID
                     timestamp: new Date(),
                     openaiMessageId: null,
+                    deletedAt: null,
                   }}
                 />
               )}

@@ -1,4 +1,5 @@
 import { Button } from '@/components/atom/Button';
+import { Input } from '@/components/atom/Input';
 import { Dialog, DialogContent } from '@/components/molecules/common/Dialog';
 import { Persona, Thread } from '@prisma/client';
 import { RiCloseLine, RiEditBoxLine, RiMessage2Line } from '@remixicon/react';
@@ -123,19 +124,15 @@ export function ThreadSearchModal({
         {/* Search Header */}
         <div className="flex items-center border-b border-gray-700 px-4 py-3">
           <div className="flex-1">
-            <input
+            <Input
               type="text"
               placeholder="Search threads..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              inputClassName="!border-0 !bg-transparent !shadow-none focus:!ring-0 focus:!border-0 dark:!bg-transparent"
             />
           </div>
-          <Button
-            variant="secondary"
-            onClick={handleClose}
-            className="h-8 w-8 border-0 bg-transparent p-0 hover:bg-gray-700"
-          >
+          <Button variant="ghost" onClick={handleClose} className="h-8 w-8 p-0">
             <RiCloseLine className="h-4 w-4 text-gray-400" />
           </Button>
         </div>

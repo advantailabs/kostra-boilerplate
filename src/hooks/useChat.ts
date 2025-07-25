@@ -104,6 +104,7 @@ export function useChat(threadId?: number) {
       threadId,
       timestamp: new Date(),
       openaiMessageId: null,
+      deletedAt: null,
     };
 
     // Add optimistic message to pending messages

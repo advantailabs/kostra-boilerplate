@@ -1,6 +1,9 @@
-import { cx } from '@/lib/utils';
 import { Message } from '@prisma/client';
 import { RiRobotLine, RiUser3Line } from '@remixicon/react';
+import Image from 'next/image';
+
+import { cx } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
 
 interface MessageBubbleProps {
   message: Message;
@@ -10,6 +13,38 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const Icon = isUser ? RiUser3Line : RiRobotLine;
+  const { user } = useAuthStore();
+
+  // Helper function to render user avatar
+  const renderUserAvatar = () => {
+    if (user?.profilePicture) {
+      return (
+        <Image
+          src={user.profilePicture}
+          alt={user.name || 'User'}
+          width={32}
+          height={32}
+          className="h-8 w-8 rounded-full object-cover"
+        />
+      );
+    }
+
+    // Fallback to initials or icon
+    const initials = user?.name
+      ? user.name
+          .split(' ')
+          .map(n => n[0])
+          .join('')
+          .toUpperCase()
+          .slice(0, 2)
+      : '?';
+
+    return (
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{initials}</span>
+      </div>
+    );
+  };
 
   return (
     <div className={cx('flex gap-3 p-4', isUser ? 'justify-end' : 'justify-start', className)}>
@@ -39,11 +74,7 @@ export function MessageBubble({ message, className }: MessageBubbleProps) {
           })}
         </p>
       </div>
-      {isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-        </div>
-      )}
+      {isUser && renderUserAvatar()}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Button } from '@/components/atom/Button';
 import { RiAttachment2, RiCloseLine, RiMoreLine, RiSendPlaneFill } from '@remixicon/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface EnhancedMessageInputProps {
   value: string;
@@ -10,6 +10,9 @@ interface EnhancedMessageInputProps {
   loading?: boolean;
   placeholder?: string;
   className?: string;
+  maxLength?: number;
+  showCharCount?: boolean;
+  autoFocus?: boolean;
 }
 
 interface SelectedFile {
@@ -21,6 +24,9 @@ interface SelectedFile {
 
 const MAX_FILES = 10;
 const VISIBLE_FILES = 3;
+const MIN_TEXTAREA_HEIGHT = 80; // Minimum height in pixels
+const MAX_TEXTAREA_HEIGHT = 200; // Maximum height before scrolling
+const DEFAULT_MAX_LENGTH = 2000; // Default character limit
 
 export function EnhancedMessageInput({
   value,
@@ -30,11 +36,64 @@ export function EnhancedMessageInput({
   loading = false,
   placeholder = 'Type your message...',
   className,
+  maxLength = DEFAULT_MAX_LENGTH,
+  showCharCount = true,
+  autoFocus = true,
 }: EnhancedMessageInputProps) {
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [showAllFiles, setShowAllFiles] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Auto-focus the textarea when component mounts
+  useEffect(() => {
+    if (autoFocus && textareaRef.current && !disabled) {
+      // Use a slight delay to ensure the component is fully rendered
+      const timer = setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus, disabled]);
+
+  // Re-focus textarea after sending a message (if it was focused before)
+  useEffect(() => {
+    if (autoFocus && !value && textareaRef.current && !disabled) {
+      // Re-focus after the input is cleared (message sent)
+      const timer = setTimeout(() => {
+        if (document.activeElement !== textareaRef.current) {
+          textareaRef.current?.focus();
+        }
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, [value, autoFocus, disabled]);
+
+  // Auto-resize textarea based on content
+  const adjustTextareaHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = 'auto';
+
+    // Calculate new height based on content
+    const newHeight = Math.min(
+      Math.max(textarea.scrollHeight, MIN_TEXTAREA_HEIGHT),
+      MAX_TEXTAREA_HEIGHT
+    );
+
+    textarea.style.height = `${newHeight}px`;
+  }, []);
+
+  // Adjust height when value changes
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [value, adjustTextareaHeight]);
 
   // Click outside handler
   useEffect(() => {
@@ -53,14 +112,34 @@ export function EnhancedMessageInput({
     };
   }, [showAllFiles]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Send message on Enter (but not Shift+Enter)
     if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (value.trim() && !disabled && !loading) {
+        onSend();
+      }
+      return;
+    }
+
+    // Handle Ctrl/Cmd + Enter as alternative send shortcut
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       if (value.trim() && !disabled && !loading) {
         onSend();
       }
     }
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    if (newValue.length <= maxLength) {
+      onChange(newValue);
+    }
+  };
+
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -79,6 +158,11 @@ export function EnhancedMessageInput({
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+
+    // Re-focus textarea after file selection
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
   };
 
   const removeFile = (fileId: string) => {
@@ -101,6 +185,9 @@ export function EnhancedMessageInput({
   const visibleFiles = selectedFiles.slice(0, VISIBLE_FILES);
   const hiddenFiles = selectedFiles.slice(VISIBLE_FILES);
   const hasHiddenFiles = hiddenFiles.length > 0;
+  const charCount = value.length;
+  const isNearLimit = charCount > maxLength * 0.8;
+  const isAtLimit = charCount >= maxLength;
 
   return (
     <div className={`space-y-3 ${className}`}>
@@ -135,24 +222,61 @@ export function EnhancedMessageInput({
         {/* Message Input */}
         <div className="relative flex-1">
           <textarea
+            ref={textareaRef}
             value={value}
-            onChange={e => onChange(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder={placeholder}
             disabled={disabled || loading}
-            rows={3}
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-indigo-400"
+            maxLength={maxLength}
+            className={`chat-input-textarea w-full resize-none rounded-lg border px-3 py-2 text-sm placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 ${
+              isFocused || value.trim()
+                ? 'border-indigo-500 focus:ring-indigo-500 dark:border-indigo-400 dark:focus:ring-indigo-400'
+                : 'border-gray-300 dark:border-gray-600'
+            } ${isAtLimit ? 'border-red-500 focus:ring-red-500 dark:border-red-400' : ''}`}
+            style={{
+              minHeight: `${MIN_TEXTAREA_HEIGHT}px`,
+              maxHeight: `${MAX_TEXTAREA_HEIGHT}px`,
+              overflow: 'auto',
+            }}
           />
+
+          {/* Loading indicator inside textarea */}
+          {loading && (
+            <div className="absolute bottom-2 right-2 flex items-center space-x-1">
+              <div className="h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
+              <div className="animation-delay-75 h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
+              <div className="animation-delay-150 h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
+            </div>
+          )}
+
+          {/* Character count indicator */}
+          {showCharCount && (isFocused || isNearLimit) && (
+            <div
+              className={`absolute bottom-1 right-8 text-xs transition-colors ${
+                isAtLimit
+                  ? 'text-red-500 dark:text-red-400'
+                  : isNearLimit
+                    ? 'text-amber-500 dark:text-amber-400'
+                    : 'text-gray-400'
+              }`}
+            >
+              {charCount}/{maxLength}
+            </div>
+          )}
         </div>
 
         {/* Send Button */}
         <Button
           type="button"
           onClick={onSend}
-          disabled={!canSend}
-          className="flex-shrink-0 px-3 py-2"
+          disabled={!canSend || loading || isAtLimit}
+          className="flex-shrink-0 px-3 py-2 transition-all duration-200"
+          title="Send message (Enter or Ctrl+Enter)"
         >
-          <RiSendPlaneFill className="h-4 w-4" />
+          <RiSendPlaneFill className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
         </Button>
       </div>
 
@@ -168,7 +292,7 @@ export function EnhancedMessageInput({
             {visibleFiles.map(file => (
               <div
                 key={file.id}
-                className="flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 dark:bg-gray-800"
+                className="animate-fadeIn flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 dark:bg-gray-800"
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
@@ -178,7 +302,7 @@ export function EnhancedMessageInput({
                 <button
                   type="button"
                   onClick={() => removeFile(file.id)}
-                  className="flex-shrink-0 rounded-full p-0.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  className="flex-shrink-0 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                   title="Remove file"
                 >
                   <RiCloseLine className="h-2.5 w-2.5" />
@@ -203,7 +327,7 @@ export function EnhancedMessageInput({
 
                 {/* Click-based popup showing all files */}
                 {showAllFiles && (
-                  <div className="absolute bottom-full left-0 z-10 mb-2 w-80 max-w-sm rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                  <div className="animate-fadeIn absolute bottom-full left-0 z-10 mb-2 w-80 max-w-sm rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
                     <div className="mb-2 text-xs font-medium text-gray-900 dark:text-gray-100">
                       All Files ({selectedFiles.length}/{MAX_FILES})
                     </div>
@@ -221,7 +345,7 @@ export function EnhancedMessageInput({
                           <button
                             type="button"
                             onClick={() => removeFile(file.id)}
-                            className="ml-2 flex-shrink-0 rounded-full p-0.5 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-300"
+                            className="ml-2 flex-shrink-0 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-300"
                             title="Remove file"
                           >
                             <RiCloseLine className="h-2.5 w-2.5" />
@@ -237,14 +361,22 @@ export function EnhancedMessageInput({
         </div>
       )}
 
-      {/* Helper Text */}
+      {/* Enhanced Helper Text */}
       <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-        <span>Press Enter to send, Shift+Enter for new line</span>
-        {selectedFiles.length > 0 && (
-          <span className="text-xs">
-            {selectedFiles.length}/{MAX_FILES} file{selectedFiles.length > 1 ? 's' : ''} selected
-          </span>
-        )}
+        <div className="flex items-center space-x-4">
+          <span>Press Enter to send, Shift+Enter for new line</span>
+          <span className="hidden sm:inline">Ctrl+Enter to send</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          {selectedFiles.length > 0 && (
+            <span>
+              {selectedFiles.length}/{MAX_FILES} file{selectedFiles.length > 1 ? 's' : ''}
+            </span>
+          )}
+          {showCharCount && !isFocused && !isNearLimit && charCount > 0 && (
+            <span className="text-gray-400">{charCount} chars</span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ interface AuthResponse {
   user: {
     id: string;
     email: string;
+    name: string;
+    profilePicture: string | null;
     role: string;
     isOnboarded: boolean;
   };
