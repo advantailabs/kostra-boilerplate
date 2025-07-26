@@ -85,6 +85,19 @@ const findByUserAndId = async (
   });
 };
 
+const findByUserAndIdIncludingDeleted = async (
+  userId: number,
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<Thread | null> => {
+  return prisma.thread.findFirst({
+    where: {
+      id: threadId,
+      userId,
+    },
+  });
+};
+
 const updateThread = async (
   threadId: number,
   data: UpdateThreadData,
@@ -167,6 +180,7 @@ export {
   findById,
   findByIdWithMessages,
   findByUserAndId,
+  findByUserAndIdIncludingDeleted,
   findByUserId,
   hardDeleteThread,
   restoreThread,

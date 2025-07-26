@@ -17,9 +17,7 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:e2e": "jest --config jest.e2e.config.js",
-    "test:e2e:watch": "jest --config jest.e2e.config.js --watch"
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",

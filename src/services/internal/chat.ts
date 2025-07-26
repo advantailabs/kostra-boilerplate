@@ -8,6 +8,7 @@ import {
   deleteThread,
   findByIdWithMessages,
   findByUserAndId,
+  findByUserAndIdIncludingDeleted,
   findByUserId,
   restoreThread,
 } from '@/services/repositories/thread';
@@ -121,7 +122,7 @@ const restoreThreadService = async (
 ): Promise<ChatServiceResult<boolean>> => {
   try {
     // Verify thread exists and belongs to user (check even deleted threads)
-    const thread = await findByUserAndId(userId, threadId, prisma);
+    const thread = await findByUserAndIdIncludingDeleted(userId, threadId, prisma);
 
     if (!thread) {
       return {
