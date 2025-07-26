@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, description, instructions, tags } = validationResult.data;
+    const { name, description, instructions, tags, logo } = validationResult.data;
 
     // Create persona
     const result = await createPersonaService(user.id, {
@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
       description,
       instructions,
       tags,
+      logo,
     });
 
     if (!result.success) {

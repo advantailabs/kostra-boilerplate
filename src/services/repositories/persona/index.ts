@@ -15,6 +15,7 @@ const createPersona = async (
       description: data.description,
       instructions: data.instructions,
       tags: data.tags,
+      logo: data.logo,
       openaiAssistantId: data.openaiAssistantId,
       vectorStoreId: data.vectorStoreId,
     },
@@ -69,6 +70,7 @@ const updatePersona = async (
       ...(data.description && { description: data.description }),
       ...(data.instructions && { instructions: data.instructions }),
       ...(data.tags && { tags: data.tags }),
+      ...(data.logo !== undefined && { logo: data.logo }),
       updatedAt: new Date(),
     },
   });

@@ -39,6 +39,7 @@ export interface CreatePersonaData {
   description: string;
   instructions: string;
   tags: string[];
+  logo?: string;
   openaiAssistantId?: string;
   vectorStoreId?: string;
 }
@@ -48,6 +49,7 @@ export interface UpdatePersonaData {
   description?: string;
   instructions?: string;
   tags?: string[];
+  logo?: string;
 }
 
 // API Request types

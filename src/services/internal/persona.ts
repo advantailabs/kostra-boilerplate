@@ -66,6 +66,7 @@ const createPersonaService = async (
         description: data.description.trim(),
         instructions: data.instructions.trim(),
         tags: data.tags?.map(tag => tag.trim()) || [],
+        logo: data.logo,
         openaiAssistantId: assistantResult.data.id,
         vectorStoreId: vectorStoreResult.data.id,
       },
@@ -174,6 +175,7 @@ const updatePersonaService = async (
         description: data.description?.trim(),
         instructions: data.instructions?.trim(),
         tags: data.tags?.map(tag => tag.trim()),
+        logo: data.logo,
       },
       prisma
     );

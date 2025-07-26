@@ -2,10 +2,10 @@
 
 const nextConfig = {
   images: {
-    domains: ["img.clerk.com", "images.clerk.dev"],
+    domains: ['img.clerk.com', 'images.clerk.dev', 'pub-1c83380c5e270f0d584e576e038edc6b.r2.dev'],
   },
   afterSignInUrl: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
   afterSignUpUrl: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
-}
+};
 
-export default nextConfig
+export default nextConfig;
