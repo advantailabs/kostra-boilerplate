@@ -53,6 +53,7 @@ model Persona {
   description       String
   instructions      String
   tags              String[]
+  logo              String?   // URL to the logo image in S3
   deletedAt         DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

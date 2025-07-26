@@ -60,7 +60,8 @@ export interface CreatePersonaRequest {
   name: string;
   description: string;
   instructions: string;
-  tags: string[];
+  tags?: string[] | string;
+  logo?: string;
 }
 
 export interface UpdatePersonaRequest {
@@ -68,6 +69,7 @@ export interface UpdatePersonaRequest {
   description?: string;
   instructions?: string;
   tags?: string[];
+  logo?: string;
 }
 
 export interface AddMessageRequest {
@@ -130,4 +132,10 @@ export interface MockResponseContext {
   persona: Persona;
   userMessage: string;
   conversationHistory?: Message[];
+}
+
+export interface PresignedUrlResponse {
+  presignedUrl: string;
+  key: string;
+  message: string;
 }

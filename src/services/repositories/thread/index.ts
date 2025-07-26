@@ -45,7 +45,7 @@ const findByIdWithMessages = async (
   prisma: PrismaClient = defaultPrisma
 ): Promise<ThreadWithMessages | null> => {
   return prisma.thread.findUnique({
-    where: { 
+    where: {
       id: threadId,
     },
     include: {
@@ -172,6 +172,5 @@ export {
   restoreThread,
   updateThread,
   updateThreadOpenAIId,
-  updateThreadTimestamp
+  updateThreadTimestamp,
 };
-

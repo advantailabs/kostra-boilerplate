@@ -17,6 +17,7 @@ export const createPersonaSchema = z.object({
     .max(10, 'Maximum 10 tags allowed')
     .optional()
     .default([]),
+  logo: z.string().optional(),
 });
 
 export const updatePersonaSchema = z.object({
@@ -41,6 +42,7 @@ export const updatePersonaSchema = z.object({
     )
     .max(10, 'Maximum 10 tags allowed')
     .optional(),
+  logo: z.string().optional(),
 });
 
 export type CreatePersonaRequest = z.infer<typeof createPersonaSchema>;

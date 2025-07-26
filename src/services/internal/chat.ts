@@ -153,6 +153,5 @@ export {
   generateThreadTitle,
   getThreadWithMessages,
   getUserThreads,
-  restoreThreadService
+  restoreThreadService,
 };
-

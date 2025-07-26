@@ -1,9 +1,9 @@
 import { cleanupDatabase, createTestUser, testPrisma } from '../../../test/setup';
 import {
-    deleteThreadService,
-    generateThreadTitle,
-    getThreadWithMessages,
-    getUserThreads,
+  deleteThreadService,
+  generateThreadTitle,
+  getThreadWithMessages,
+  getUserThreads,
 } from '../chat';
 
 describe('Chat Service - End-to-End Tests', () => {

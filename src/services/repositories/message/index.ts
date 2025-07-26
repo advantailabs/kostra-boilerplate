@@ -157,6 +157,5 @@ export {
   hardDeleteMessage,
   hardDeleteMessagesByThreadId,
   restoreMessage,
-  restoreMessagesByThreadId
+  restoreMessagesByThreadId,
 };
-
