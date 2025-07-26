@@ -1,7 +1,7 @@
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
-import { S3_BASE_URL } from '@/lib/s3';
+import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { Persona } from '@prisma/client';
 import { RiDeleteBinLine, RiEditLine } from '@remixicon/react';
 import Image from 'next/image';
@@ -36,7 +36,7 @@ export function PersonaCard({
             {persona.logo ? (
               <div className="relative h-10 w-10 overflow-hidden rounded-full">
                 <Image
-                  src={`${S3_BASE_URL}/${persona.logo}`}
+                  src={`${S3_PUBLIC_BASE_URL}/${persona.logo}`}
                   alt={`${persona.name} logo`}
                   fill
                   className="object-cover"

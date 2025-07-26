@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/molecules/common/Dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { S3_BASE_URL } from '@/lib/s3';
+import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { Persona } from '@prisma/client';
 import { RiCloseLine, RiImageAddLine } from '@remixicon/react';
 import Image from 'next/image';
@@ -41,6 +41,9 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     error: uploadError,
     clearError,
   } = useFileUpload({
+    uploadPurpose: 'PersonaLogo',
+    objectName: 'persona',
+    objectId: persona?.id || 'new',
     onSuccess: url => {
       setFormData(prev => ({ ...prev, logo: url }));
     },
@@ -56,7 +59,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         logo: persona.logo || '',
       });
       // Set logo preview with full S3 URL if logo exists
-      setLogoPreview(persona.logo ? `${S3_BASE_URL}/${persona.logo}` : null);
+      setLogoPreview(persona.logo ? `${S3_PUBLIC_BASE_URL}/${persona.logo}` : null);
     } else if (mode === 'create') {
       setFormData({
         name: '',

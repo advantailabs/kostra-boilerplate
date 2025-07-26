@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axios';
-import { CreatePersonaRequest, PresignedUrlResponse, UpdatePersonaRequest } from '@/types/chat';
+import { CreatePersonaRequest, UpdatePersonaRequest } from '@/types/chat';
 import { Persona } from '@prisma/client';
 
 interface PersonasApiClient {
@@ -7,7 +7,6 @@ interface PersonasApiClient {
   createPersona(_data: CreatePersonaRequest): Promise<Persona>;
   updatePersona(_id: number, _data: UpdatePersonaRequest): Promise<Persona>;
   deletePersona(_id: number): Promise<void>;
-  getPresignedUrl(_fileType: string): Promise<PresignedUrlResponse>;
 }
 
 export const personasApi: PersonasApiClient = {
@@ -28,10 +27,5 @@ export const personasApi: PersonasApiClient = {
 
   async deletePersona(id: number): Promise<void> {
     await axiosInstance.delete(`/personas/${id}`);
-  },
-
-  async getPresignedUrl(fileType: string): Promise<PresignedUrlResponse> {
-    const response = await axiosInstance.post('/personas/presigned-url', { fileType });
-    return response.data;
   },
 };

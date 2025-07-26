@@ -1,7 +1,11 @@
-import { personasApi } from '@/services/api/personas';
+import { fileUploadApi } from '@/services/api/file-upload';
+import { UploadPurpose } from '@/types/file-upload';
 import { useCallback, useState } from 'react';
 
 interface UseFileUploadOptions {
+  uploadPurpose: UploadPurpose;
+  objectName: string;
+  objectId: string | number;
   onSuccess?: (_url: string) => void;
   onError?: (_error: string) => void;
 }
@@ -13,7 +17,7 @@ interface UseFileUploadReturn {
   clearError: () => void;
 }
 
-export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUploadReturn {
+export function useFileUpload(options: UseFileUploadOptions): UseFileUploadReturn {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +27,12 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
       setError(null);
 
       // Generate pre-signed URL
-      const { presignedUrl, key } = await personasApi.getPresignedUrl(file.type);
+      const { presignedUrl, key } = await fileUploadApi.getPresignedUrl({
+        uploadPurpose: options.uploadPurpose,
+        fileType: file.type,
+        objectName: options.objectName,
+        objectId: options.objectId,
+      });
 
       // Upload file to S3
       const response = await fetch(presignedUrl, {

@@ -135,9 +135,3 @@ export interface MockResponseContext {
   userMessage: string;
   conversationHistory?: Message[];
 }
-
-export interface PresignedUrlResponse {
-  presignedUrl: string;
-  key: string;
-  message: string;
-}

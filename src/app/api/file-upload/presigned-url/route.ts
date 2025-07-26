@@ -1,5 +1,7 @@
+import { validateFileUpload } from '@/lib/file-upload-config';
 import { generatePresignedUrl } from '@/lib/s3';
 import { getUserByClerkId } from '@/services/repositories/user';
+import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
 import { getAuth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -23,32 +25,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { fileType } = body;
+    const body: FileUploadRequest = await request.json();
+    const { uploadPurpose, fileType, objectName, objectId } = body;
 
-    if (!fileType || typeof fileType !== 'string') {
+    // Validate required fields
+    if (!uploadPurpose || !fileType || !objectName || objectId === undefined) {
       return NextResponse.json(
-        { error: 'Invalid request', message: 'File type is required' },
+        {
+          error: 'Invalid request',
+          message: 'uploadPurpose, fileType, objectName, and objectId are required',
+        },
         { status: 400 }
       );
     }
 
-    // Only allow image file types
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(fileType)) {
+    // Validate file upload configuration
+    const validation = validateFileUpload(uploadPurpose, fileType);
+    if (!validation.isValid) {
       return NextResponse.json(
-        { error: 'Invalid file type', message: 'Only image files are allowed' },
+        { error: 'Invalid file', message: validation.error },
         { status: 400 }
       );
     }
 
-    const { presignedUrl, key } = await generatePresignedUrl(fileType);
+    // Generate presigned URL
+    const { presignedUrl, key, bucket } = await generatePresignedUrl(
+      fileType,
+      uploadPurpose,
+      objectName,
+      objectId
+    );
 
-    return NextResponse.json({
+    const response: FileUploadResponse = {
       presignedUrl,
       key,
+      bucket,
       message: 'Pre-signed URL generated successfully',
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error generating pre-signed URL:', error);
     return NextResponse.json(

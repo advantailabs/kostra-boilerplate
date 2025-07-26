@@ -1,14 +1,16 @@
+import { UploadPurpose } from '@/types/file-upload';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
+import { getBucketName, getUploadPurposeConfig } from './file-upload-config';
 
 // Client-side environment variables (available in browser)
 const CLIENT_ACCOUNT_ID = process.env.NEXT_PUBLIC_R2_ACCOUNT_ID;
-const CLIENT_BUCKET_NAME = process.env.NEXT_PUBLIC_R2_BUCKET_NAME;
+const CLIENT_PUBLIC_BUCKET_NAME = process.env.NEXT_PUBLIC_R2_PUBLIC_BUCKET_NAME;
 
-export const S3_BASE_URL =
-  CLIENT_ACCOUNT_ID && CLIENT_BUCKET_NAME
-    ? `https://pub-${CLIENT_ACCOUNT_ID}.r2.dev/${CLIENT_BUCKET_NAME}`
+export const S3_PUBLIC_BASE_URL =
+  CLIENT_ACCOUNT_ID && CLIENT_PUBLIC_BUCKET_NAME
+    ? `https://pub-${CLIENT_ACCOUNT_ID}.r2.dev/${CLIENT_PUBLIC_BUCKET_NAME}`
     : '';
 
 function createS3Client() {
@@ -32,28 +34,46 @@ function createS3Client() {
 }
 
 export async function generatePresignedUrl(
-  fileType: string
-): Promise<{ presignedUrl: string; key: string }> {
-  // Validate bucket name on each call (server-side only)
-  const { R2_BUCKET_NAME } = process.env;
-  if (!R2_BUCKET_NAME) throw new Error('R2_BUCKET_NAME is required');
+  fileType: string,
+  uploadPurpose: UploadPurpose,
+  objectName: string,
+  objectId: string | number
+): Promise<{ presignedUrl: string; key: string; bucket: string }> {
+  const purposeConfig = getUploadPurposeConfig(uploadPurpose);
+  if (!purposeConfig) {
+    throw new Error('Invalid upload purpose');
+  }
 
-  const key = `persona-logos/${randomUUID()}${getFileExtension(fileType)}`;
+  const bucketName = getBucketName(purposeConfig.bucket);
+  const key = generateKey(purposeConfig.keyPrefix, objectName, objectId, fileType);
   const s3Client = createS3Client();
 
   const command = new PutObjectCommand({
-    Bucket: R2_BUCKET_NAME,
+    Bucket: bucketName,
     Key: key,
     ContentType: fileType,
   });
 
   try {
     const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
-    return { presignedUrl, key };
+    return { presignedUrl, key, bucket: bucketName };
   } catch (error) {
     console.error('Error generating presigned URL:', error);
     throw new Error('Failed to generate presigned URL');
   }
+}
+
+function generateKey(
+  keyPrefix: string,
+  objectName: string,
+  objectId: string | number,
+  fileType: string
+): string {
+  const timestamp = Date.now();
+  const uuid = randomUUID();
+  const extension = getFileExtension(fileType);
+
+  return `${keyPrefix}/${objectName}/${objectId}/${timestamp}-${uuid}${extension}`;
 }
 
 function getFileExtension(mimeType: string): string {
@@ -62,6 +82,12 @@ function getFileExtension(mimeType: string): string {
     'image/png': '.png',
     'image/gif': '.gif',
     'image/webp': '.webp',
+    'application/pdf': '.pdf',
+    'text/plain': '.txt',
+    'application/msword': '.doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+    'application/vnd.ms-excel': '.xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
   };
   return extensions[mimeType] || '';
 }
