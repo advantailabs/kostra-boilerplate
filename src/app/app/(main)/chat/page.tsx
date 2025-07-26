@@ -21,7 +21,7 @@ export default function ChatPage() {
       if (newThreadId) {
         router.replace(`/app/chat/${newThreadId}`);
       } else {
-        alert('Failed to create thread. Please try again.');
+        console.error('Failed to create thread. Please try again.');
       }
     } catch (error) {
       console.error('Failed to create thread:', error);

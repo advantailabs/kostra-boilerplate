@@ -148,81 +148,9 @@ export const runAssistant = async (
 };
 
 /**
- * Gets the status of a run
- */
-export const getRunStatus = async (
-  threadId: string,
-  runId: string
-): Promise<ThreadServiceResult<OpenAI.Beta.Threads.Runs.Run>> => {
-  try {
-    const run = await openai.beta.threads.runs.retrieve(threadId, runId);
-
-    return {
-      success: true,
-      data: run,
-    };
-  } catch (error) {
-    console.error('Error getting run status:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to get run status',
-    };
-  }
-};
-
-/**
- * Waits for a run to complete and returns the final status
- */
-export const waitForRunCompletion = async (
-  threadId: string,
-  runId: string,
-  maxWaitTime: number = 120000, // 2 minutes default
-  pollInterval: number = 1000 // 1 second default
-): Promise<ThreadServiceResult<OpenAI.Beta.Threads.Runs.Run>> => {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < maxWaitTime) {
-    const runResult = await getRunStatus(threadId, runId);
-
-    if (!runResult.success) {
-      return runResult;
-    }
-
-    const run = runResult.data!;
-
-    // Check if run is complete
-    if (run.status === 'completed') {
-      return {
-        success: true,
-        data: run,
-      };
-    }
-
-    // Check if run failed
-    if (run.status === 'failed' || run.status === 'cancelled' || run.status === 'expired') {
-      return {
-        success: false,
-        error: `Run ${run.status}: ${run.last_error?.message || 'Unknown error'}`,
-      };
-    }
-
-    // Wait before polling again
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise<void>(resolve => setTimeout(resolve, pollInterval));
-  }
-
-  return {
-    success: false,
-    error: 'Run timed out waiting for completion',
-  };
-};
-
-/**
  * Streams assistant response for a thread run
  */
-export const streamAssistantResponse = async (
-  params: RunAssistantParams
-): Promise<OpenAI.Beta.AssistantStream> => {
+export const streamAssistantResponse = async (params: RunAssistantParams): Promise<any> => {
   try {
     const stream = openai.beta.threads.runs.stream(params.threadId, {
       assistant_id: params.assistantId,

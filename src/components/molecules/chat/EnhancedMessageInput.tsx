@@ -255,13 +255,11 @@ export function EnhancedMessageInput({
           {/* Character count indicator */}
           {showCharCount && (isFocused || isNearLimit) && (
             <div
-              className={`absolute bottom-1 right-8 text-xs transition-colors ${
-                isAtLimit
-                  ? 'text-red-500 dark:text-red-400'
-                  : isNearLimit
-                    ? 'text-amber-500 dark:text-amber-400'
-                    : 'text-gray-400'
-              }`}
+              className={`absolute bottom-1 right-8 text-xs transition-colors ${(() => {
+                if (isAtLimit) return 'text-red-500 dark:text-red-400';
+                if (isNearLimit) return 'text-amber-500 dark:text-amber-400';
+                return 'text-gray-400';
+              })()}`}
             >
               {charCount}/{maxLength}
             </div>

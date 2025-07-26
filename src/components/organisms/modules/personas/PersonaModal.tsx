@@ -71,7 +71,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
       setLogoPreview(null);
     }
     clearError();
-  }, [persona, mode, isOpen]);
+  }, [persona, mode, isOpen, clearError]);
 
   const handleLogoClick = () => {
     clearError();

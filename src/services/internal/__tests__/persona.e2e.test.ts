@@ -1,3 +1,5 @@
+import { createAssistant, createVectorStore } from '@/services/external/openai/assistant';
+
 import {
   cleanupDatabase,
   createTestPersona,
@@ -12,12 +14,42 @@ import {
   updatePersonaService,
 } from '../persona';
 
+// Mock the external OpenAI services
+jest.mock('@/services/external/openai/assistant', () => ({
+  createAssistant: jest.fn(),
+  createVectorStore: jest.fn(),
+  updateAssistant: jest.fn(),
+}));
+
+const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof createAssistant>;
+const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
+
 describe('Persona Service - End-to-End Tests', () => {
   let testUser: any;
 
   beforeEach(async () => {
     await cleanupDatabase();
     testUser = await createTestUser();
+
+    // Setup mocks for external services
+    mockCreateVectorStore.mockResolvedValue({
+      success: true,
+      data: { id: 'vs_test123' },
+    });
+    mockCreateAssistant.mockResolvedValue({
+      success: true,
+      data: {
+        id: 'asst_test123',
+        created_at: new Date().getTime(),
+        description: 'Test Description',
+        instructions: 'Test Instructions',
+        metadata: {},
+        model: 'gpt-4',
+        name: 'Test Persona',
+        object: 'assistant',
+        tools: [],
+      },
+    });
   });
 
   describe('createPersonaService', () => {

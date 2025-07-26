@@ -1,3 +1,5 @@
+import { createAssistant, createVectorStore } from '@/services/external/openai/assistant';
+
 import {
   createPersonaService,
   deactivatePersonaService,
@@ -22,6 +24,13 @@ jest.mock('../../repositories/persona', () => ({
   softDeletePersona: jest.fn(),
 }));
 
+// Mock the external OpenAI services
+jest.mock('@/services/external/openai/assistant', () => ({
+  createAssistant: jest.fn(),
+  createVectorStore: jest.fn(),
+  updateAssistant: jest.fn(),
+}));
+
 const mockCreatePersona = createPersona as jest.MockedFunction<typeof createPersona>;
 const mockFindActiveByUserId = findActiveByUserId as jest.MockedFunction<typeof findActiveByUserId>;
 const mockFindPersonaByUserAndId = findPersonaByUserAndId as jest.MockedFunction<
@@ -29,6 +38,9 @@ const mockFindPersonaByUserAndId = findPersonaByUserAndId as jest.MockedFunction
 >;
 const mockUpdatePersona = updatePersona as jest.MockedFunction<typeof updatePersona>;
 const mockSoftDeletePersona = softDeletePersona as jest.MockedFunction<typeof softDeletePersona>;
+
+const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof createAssistant>;
+const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
 
 describe('Persona Service', () => {
   beforeEach(() => {
@@ -48,21 +60,54 @@ describe('Persona Service', () => {
       const mockCreatedPersona = {
         id: 1,
         userId: 1,
-        openaiAssistantId: null,
-        vectorStoreId: null,
+        openaiAssistantId: 'asst_test123',
+        vectorStoreId: 'vs_test123',
         name: 'Test Persona',
         description: 'Test Description',
         instructions: 'Test Instructions',
         tags: ['tag1', 'tag2'],
+        logo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
       };
 
+      // Mock external services
+      mockCreateVectorStore.mockResolvedValue({
+        success: true,
+        data: { id: 'vs_test123' },
+      });
+      mockCreateAssistant.mockResolvedValue({
+        success: true,
+        data: {
+          id: 'asst_test123',
+          created_at: new Date().getTime(),
+          description: 'Test Description',
+          instructions: 'Test Instructions',
+          metadata: {},
+          model: 'gpt-4',
+          name: 'Test Persona',
+          object: 'assistant',
+          tools: [],
+        },
+      });
       mockCreatePersona.mockResolvedValue(mockCreatedPersona);
 
       const result = await createPersonaService(1, mockInputData);
 
+      expect(mockCreateVectorStore).toHaveBeenCalledWith('Test Persona Knowledge Base');
+      expect(mockCreateAssistant).toHaveBeenCalledWith({
+        name: 'Test Persona',
+        description: 'Test Description',
+        instructions: 'Test Instructions',
+        temperature: 0.3,
+        tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
+        tool_resources: {
+          file_search: {
+            vector_store_ids: ['vs_test123'],
+          },
+        },
+      });
       expect(mockCreatePersona).toHaveBeenCalledWith(
         {
           userId: 1,
@@ -70,6 +115,9 @@ describe('Persona Service', () => {
           description: 'Test Description',
           instructions: 'Test Instructions',
           tags: ['tag1', 'tag2'],
+          logo: undefined,
+          openaiAssistantId: 'asst_test123',
+          vectorStoreId: 'vs_test123',
         },
         undefined
       );
@@ -86,12 +134,18 @@ describe('Persona Service', () => {
         tags: [],
       };
 
-      mockCreatePersona.mockRejectedValue(new Error('Database error'));
+      // Mock external services to fail
+      mockCreateVectorStore.mockResolvedValue({
+        success: false,
+        error: '401 Incorrect API key provided: sk-proj-**********************',
+      });
 
       const result = await createPersonaService(1, mockInputData);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Failed to create persona');
+      expect(result.error).toBe(
+        'Failed to create vector store: 401 Incorrect API key provided: sk-proj-**********************'
+      );
     });
   });
 
@@ -105,6 +159,7 @@ describe('Persona Service', () => {
           description: 'Description 1',
           instructions: 'Instructions 1',
           tags: [],
+          logo: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
@@ -139,6 +194,7 @@ describe('Persona Service', () => {
         description: 'Original Description',
         instructions: 'Original Instructions',
         tags: [],
+        logo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -192,6 +248,7 @@ describe('Persona Service', () => {
         description: 'Test Description',
         instructions: 'Test Instructions',
         tags: [],
+        logo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,

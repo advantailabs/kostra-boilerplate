@@ -199,17 +199,18 @@ export function ConversationView({
               isStreaming || (!activeThread && (!selectedPersonaId || personas.length === 0))
             }
             loading={false} // Remove loading from send button since we show it next to assistant icon
-            placeholder={
-              activeThread
-                ? isStreaming
-                  ? 'AI is responding...'
-                  : 'Type your message...'
-                : selectedPersona
-                  ? `Message ${selectedPersona.name}...`
-                  : personas.length === 0
-                    ? 'Create a persona first...'
-                    : 'Select a persona first...'
-            }
+            placeholder={(() => {
+              if (activeThread) {
+                return isStreaming ? 'AI is responding...' : 'Type your message...';
+              }
+              if (selectedPersona) {
+                return `Message ${selectedPersona.name}...`;
+              }
+              if (personas.length === 0) {
+                return 'Create a persona first...';
+              }
+              return 'Select a persona first...';
+            })()}
           />
         </div>
       </div>

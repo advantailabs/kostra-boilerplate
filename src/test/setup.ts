@@ -68,6 +68,7 @@ export async function createTestPersona(userId: number, overrides: Partial<any> 
       description: 'A helpful test assistant',
       instructions: 'You are a helpful test assistant.',
       tags: ['test', 'assistant'],
+      logo: null,
       ...overrides,
     },
   });
