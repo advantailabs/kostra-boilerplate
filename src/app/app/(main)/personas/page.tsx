@@ -105,13 +105,18 @@ export default function PersonasPage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {personas.map(persona => (
                 <PersonaCard
                   key={persona.id}
                   persona={persona}
                   onEdit={() => openEditModal(persona)}
                   onDelete={() => openDeleteModal(persona)}
+                  fileCount={Math.floor(Math.random() * 5) + 1}
+                  fileTypes={['PDF', 'Excel', 'Document', 'Image'].slice(
+                    0,
+                    Math.floor(Math.random() * 4) + 1
+                  )}
                 />
               ))}
             </div>
