@@ -28,7 +28,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     name: '',
     description: '',
     instructions: '',
-    tags: '',
     logo: '',
   });
   const [loading, setLoading] = useState(false);
@@ -55,7 +54,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         name: persona.name,
         description: persona.description || '',
         instructions: persona.instructions,
-        tags: persona.tags?.join(', ') || '',
         logo: persona.logo || '',
       });
       // Set logo preview with full S3 URL if logo exists
@@ -65,7 +63,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         name: '',
         description: '',
         instructions: '',
-        tags: '',
         logo: '',
       });
       setLogoPreview(null);
@@ -104,14 +101,8 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     setLoading(true);
 
     try {
-      const tags = formData.tags
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0);
-
       await onSubmit({
         ...formData,
-        tags,
       });
       onClose();
     } catch (error) {
@@ -226,19 +217,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Brief description of the persona"
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="tags" className="font-medium">
-                    Tags
-                  </Label>
-                  <Input
-                    id="tags"
-                    value={formData.tags}
-                    onChange={e => setFormData({ ...formData, tags: e.target.value })}
-                    placeholder="Enter tags separated by commas"
                     className="mt-2"
                   />
                 </div>
