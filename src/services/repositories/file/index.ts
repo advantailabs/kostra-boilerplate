@@ -106,8 +106,8 @@ export async function findFileById(
 
 export async function findFilesByUserId(
   userId: number,
-  page: number = 1,
-  limit: number = 20,
+  page = 1,
+  limit = 20,
   filters?: FileFilters
 ): Promise<RepositoryResult<{ files: FileWithKnowledgeBases[]; total: number }>> {
   try {

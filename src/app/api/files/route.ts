@@ -115,9 +115,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { files, knowledgeBaseIds } = validationResult.data;
-    const uploadedFiles = [];
 
-    for (const fileData of files) {
+    // Process files in parallel using Promise.all
+    const uploadPromises = files.map(async fileData => {
       // Create a mock File object for the service
       const mockFile = new File([], fileData.originalName, { type: fileData.mimeType });
       Object.defineProperty(mockFile, 'size', { value: fileData.size });
@@ -131,22 +131,31 @@ export async function POST(request: NextRequest) {
       });
 
       if (!result.success) {
-        return NextResponse.json(
-          { error: 'Failed to upload file', message: result.error, file: fileData.originalName },
-          { status: 500 }
-        );
+        throw new Error(`Failed to upload file ${fileData.originalName}: ${result.error}`);
       }
 
-      uploadedFiles.push(result.data);
-    }
+      return result.data;
+    });
 
-    return NextResponse.json(
-      {
-        files: uploadedFiles,
-        message: `${uploadedFiles.length} file(s) uploaded successfully`,
-      },
-      { status: 201 }
-    );
+    try {
+      const uploadedFiles = await Promise.all(uploadPromises);
+
+      return NextResponse.json(
+        {
+          files: uploadedFiles,
+          message: `${uploadedFiles.length} file(s) uploaded successfully`,
+        },
+        { status: 201 }
+      );
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error: 'Failed to upload files',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error('Error uploading files:', error);
     return NextResponse.json(

@@ -26,16 +26,16 @@ interface FileFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
   filters: FileFilters;
-  onFiltersChange: (filters: FileFilters) => void;
+  onFiltersChange: (_filters: FileFilters) => void;
 }
 
 export function FileFilterModal({
   isOpen,
   onClose,
-  filters,
+  filters: _filters,
   onFiltersChange,
 }: FileFilterModalProps) {
-  const [localFilters, setLocalFilters] = useState<FileFilters>(filters);
+  const [localFilters, setLocalFilters] = useState<FileFilters>(_filters);
 
   // Fetch knowledge bases for the filter
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
@@ -57,12 +57,12 @@ export function FileFilterModal({
   };
 
   const handleKnowledgeBaseFilter = (value: string) => {
-    const knowledgeBaseId = value === 'all' ? undefined : parseInt(value);
+    const knowledgeBaseId = value === 'all' ? undefined : parseInt(value, 10);
     setLocalFilters(prev => ({ ...prev, knowledgeBaseId }));
   };
 
   const handlePersonaFilter = (value: string) => {
-    const personaId = value === 'all' ? undefined : parseInt(value);
+    const personaId = value === 'all' ? undefined : parseInt(value, 10);
     setLocalFilters(prev => ({ ...prev, personaId }));
   };
 
@@ -88,10 +88,14 @@ export function FileFilterModal({
         <div className="mt-4 space-y-6">
           {/* Search - Full Width */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="search-files"
+              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Search Files
             </label>
             <Input
+              id="search-files"
               type="text"
               placeholder="Search files by name..."
               value={localFilters.search || ''}
@@ -105,7 +109,10 @@ export function FileFilterModal({
             <div className="space-y-4">
               {/* Knowledge Base Filter */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="knowledge-base-filter"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Knowledge Base
                 </label>
                 {loadingKnowledgeBases ? (
@@ -117,8 +124,9 @@ export function FileFilterModal({
                   <Select
                     value={localFilters.knowledgeBaseId?.toString() || 'all'}
                     onValueChange={handleKnowledgeBaseFilter}
+                    aria-label="Select knowledge base"
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="knowledge-base-filter">
                       <SelectValue placeholder="All Knowledge Bases" />
                     </SelectTrigger>
                     <SelectContent>
@@ -135,7 +143,10 @@ export function FileFilterModal({
 
               {/* Persona Filter */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="persona-filter"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Persona
                 </label>
                 {loadingPersonas ? (
@@ -147,8 +158,9 @@ export function FileFilterModal({
                   <Select
                     value={localFilters.personaId?.toString() || 'all'}
                     onValueChange={handlePersonaFilter}
+                    aria-label="Select persona"
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="persona-filter">
                       <SelectValue placeholder="All Personas" />
                     </SelectTrigger>
                     <SelectContent>
@@ -165,14 +177,18 @@ export function FileFilterModal({
 
               {/* File Type Filter */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="file-type-filter"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   File Type
                 </label>
                 <Select
                   value={localFilters.mimeType || 'all'}
                   onValueChange={value => handleFilter('mimeType', value === 'all' ? '' : value)}
+                  aria-label="Select file type"
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="file-type-filter">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
@@ -192,14 +208,18 @@ export function FileFilterModal({
             <div className="space-y-4">
               {/* Sort Options */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="sort-by-filter"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Sort By
                 </label>
                 <Select
                   value={localFilters.sortBy || 'createdAt'}
                   onValueChange={value => handleSort(value, localFilters.sortOrder || 'desc')}
+                  aria-label="Select sort by"
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="sort-by-filter">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -212,10 +232,14 @@ export function FileFilterModal({
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="sort-order-button"
+                  className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Sort Order
                 </label>
                 <Button
+                  id="sort-order-button"
                   variant="secondary"
                   onClick={() =>
                     handleSort(

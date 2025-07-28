@@ -91,8 +91,8 @@ describe('Persona Service', () => {
       });
 
       // Mock knowledge base creation
-      const { createKnowledgeBase } = require('../../repositories/knowledge-base');
-      createKnowledgeBase.mockResolvedValue({
+      const { createKnowledgeBase } = await import('../../repositories/knowledge-base');
+      (createKnowledgeBase as jest.Mock).mockResolvedValue({
         success: true,
         data: { id: 1 },
       });

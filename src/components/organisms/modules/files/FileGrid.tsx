@@ -36,7 +36,7 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
   }, [hasMore, loading, onLoadMore]);
 
   const handleDelete = useCallback(
-    (file: any) => {
+    (_file: any) => {
       // The delete functionality is now handled directly in the FileCard component
       // This callback is called after successful deletion to refresh the list
       onFileDeleted();

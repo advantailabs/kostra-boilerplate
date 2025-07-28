@@ -17,7 +17,7 @@ const removeFileSchema = z.object({
   fileId: z.number().positive('File ID must be a positive number'),
 });
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId: clerkUserId } = await auth();
 
@@ -37,8 +37,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       );
     }
 
-    const knowledgeBaseId = parseInt(params.id);
-    if (isNaN(knowledgeBaseId)) {
+    const knowledgeBaseId = parseInt(params.id, 10);
+    if (Number.isNaN(knowledgeBaseId)) {
       return NextResponse.json(
         { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
         { status: 400 }
@@ -88,8 +88,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
-    const knowledgeBaseId = parseInt(params.id);
-    if (isNaN(knowledgeBaseId)) {
+    const knowledgeBaseId = parseInt(params.id, 10);
+    if (Number.isNaN(knowledgeBaseId)) {
       return NextResponse.json(
         { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
         { status: 400 }
@@ -158,8 +158,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       );
     }
 
-    const knowledgeBaseId = parseInt(params.id);
-    if (isNaN(knowledgeBaseId)) {
+    const knowledgeBaseId = parseInt(params.id, 10);
+    if (Number.isNaN(knowledgeBaseId)) {
       return NextResponse.json(
         { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
         { status: 400 }

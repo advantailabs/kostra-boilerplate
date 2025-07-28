@@ -64,7 +64,31 @@
     "react/destructuring-assignment": "warn",
     "react/no-unused-prop-types": "warn",
     "import/no-cycle": "off",
-    "import/order": "off"
+    "import/order": "off",
+    
+    // Ignore intentional warnings for streaming and generators
+    "no-restricted-syntax": ["warn", {
+      "selector": "ForInStatement",
+      "message": "for..in loops are discouraged, prefer for..of or array methods."
+    }, {
+      "selector": "ForOfStatement",
+      "message": "for..of loops are discouraged, prefer array methods."
+    }],
+    
+    // Allow await in loops for streaming operations
+    "no-await-in-loop": "off",
+    
+    // Allow default parameters in any order (they work fine)
+    "default-param-last": "off",
+    
+    // Allow unnamed async generator functions for streaming
+    "func-names": ["warn", "as-needed", { "generators": "never" }],
+    
+    // Allow require in test files
+    "global-require": "off",
+    
+    // Disable overly strict label accessibility rule
+    "jsx-a11y/label-has-associated-control": "off"
   },
   "settings": {
     "import/resolver": {

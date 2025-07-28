@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
 import {
   addFileToKnowledgeBase,
   createKnowledgeBase,
@@ -23,9 +21,8 @@ export interface KnowledgeBaseServiceResult<T> {
 }
 
 const createKnowledgeBaseService = async (
-  userId: number,
-  data: CreateKnowledgeBaseData,
-  prisma?: PrismaClient
+  _userId: number,
+  data: CreateKnowledgeBaseData
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
     const result = await createKnowledgeBase(data);
@@ -51,8 +48,7 @@ const createKnowledgeBaseService = async (
 };
 
 const getUserKnowledgeBasesService = async (
-  userId: number,
-  prisma?: PrismaClient
+  userId: number
 ): Promise<KnowledgeBaseServiceResult<any[]>> => {
   try {
     const result = await findKnowledgeBasesByUserId(userId);
@@ -78,8 +74,7 @@ const getUserKnowledgeBasesService = async (
 };
 
 const getKnowledgeBaseByIdService = async (
-  id: number,
-  prisma?: PrismaClient
+  id: number
 ): Promise<KnowledgeBaseServiceResult<KnowledgeBaseWithFiles | null>> => {
   try {
     const result = await findKnowledgeBaseById(id);
@@ -106,8 +101,7 @@ const getKnowledgeBaseByIdService = async (
 
 const updateKnowledgeBaseService = async (
   id: number,
-  data: UpdateKnowledgeBaseData,
-  prisma?: PrismaClient
+  data: UpdateKnowledgeBaseData
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
     const result = await updateKnowledgeBase(id, data);
@@ -133,8 +127,7 @@ const updateKnowledgeBaseService = async (
 };
 
 const deleteKnowledgeBaseService = async (
-  id: number,
-  prisma?: PrismaClient
+  id: number
 ): Promise<KnowledgeBaseServiceResult<boolean>> => {
   try {
     const result = await deleteKnowledgeBase(id);
@@ -161,8 +154,7 @@ const deleteKnowledgeBaseService = async (
 
 const addFileToKnowledgeBaseService = async (
   knowledgeBaseId: number,
-  fileId: number,
-  prisma?: PrismaClient
+  fileId: number
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
     const result = await addFileToKnowledgeBase(knowledgeBaseId, fileId);
@@ -189,8 +181,7 @@ const addFileToKnowledgeBaseService = async (
 
 const removeFileFromKnowledgeBaseService = async (
   knowledgeBaseId: number,
-  fileId: number,
-  prisma?: PrismaClient
+  fileId: number
 ): Promise<KnowledgeBaseServiceResult<boolean>> => {
   try {
     const result = await removeFileFromKnowledgeBase(knowledgeBaseId, fileId);
@@ -216,8 +207,7 @@ const removeFileFromKnowledgeBaseService = async (
 };
 
 const getKnowledgeBaseFilesService = async (
-  knowledgeBaseId: number,
-  prisma?: PrismaClient
+  knowledgeBaseId: number
 ): Promise<KnowledgeBaseServiceResult<any[]>> => {
   try {
     const result = await getKnowledgeBaseFiles(knowledgeBaseId);

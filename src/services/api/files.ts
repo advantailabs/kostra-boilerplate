@@ -34,66 +34,66 @@ export interface UpdateFileRequest {
 }
 
 interface FilesApiClient {
-  getFiles(page?: number, limit?: number, filters?: FileFilters): Promise<FileListResponse>;
-  getFile(id: number): Promise<any>;
-  uploadFiles(data: UploadFilesRequest): Promise<any>;
-  updateFile(id: number, data: UpdateFileRequest): Promise<any>;
-  deleteFile(id: number, permanent?: boolean): Promise<any>;
-  addFileToKnowledgeBase(id: number, knowledgeBaseId: number): Promise<any>;
-  removeFileFromKnowledgeBase(id: number, knowledgeBaseId: number): Promise<any>;
+  getFiles(_page?: number, _limit?: number, _filters?: FileFilters): Promise<FileListResponse>;
+  getFile(_id: number): Promise<any>;
+  uploadFiles(_data: UploadFilesRequest): Promise<any>;
+  updateFile(_id: number, _data: UpdateFileRequest): Promise<any>;
+  deleteFile(_id: number, _permanent?: boolean): Promise<any>;
+  addFileToKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
+  removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
 }
 
 export const filesApi: FilesApiClient = {
-  async getFiles(page = 1, limit = 20, filters?: FileFilters): Promise<FileListResponse> {
+  async getFiles(_page = 1, _limit = 20, _filters?: FileFilters): Promise<FileListResponse> {
     const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
+      page: _page.toString(),
+      limit: _limit.toString(),
     });
 
-    if (filters?.search) params.append('search', filters.search);
-    if (filters?.sortBy) params.append('sortBy', filters.sortBy);
-    if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
-    if (filters?.knowledgeBaseId)
-      params.append('knowledgeBaseId', filters.knowledgeBaseId.toString());
-    if (filters?.personaId) params.append('personaId', filters.personaId.toString());
-    if (filters?.mimeType) params.append('mimeType', filters.mimeType);
+    if (_filters?.search) params.append('search', _filters.search);
+    if (_filters?.sortBy) params.append('sortBy', _filters.sortBy);
+    if (_filters?.sortOrder) params.append('sortOrder', _filters.sortOrder);
+    if (_filters?.knowledgeBaseId)
+      params.append('knowledgeBaseId', _filters.knowledgeBaseId.toString());
+    if (_filters?.personaId) params.append('personaId', _filters.personaId.toString());
+    if (_filters?.mimeType) params.append('mimeType', _filters.mimeType);
 
     const response = await axiosInstance.get(`/files?${params.toString()}`);
     return response.data;
   },
 
-  async getFile(id: number): Promise<any> {
-    const response = await axiosInstance.get(`/files/${id}`);
+  async getFile(_id: number): Promise<any> {
+    const response = await axiosInstance.get(`/files/${_id}`);
     return response.data;
   },
 
-  async uploadFiles(data: UploadFilesRequest): Promise<any> {
-    const response = await axiosInstance.post('/files', data);
+  async uploadFiles(_data: UploadFilesRequest): Promise<any> {
+    const response = await axiosInstance.post('/files', _data);
     return response.data;
   },
 
-  async updateFile(id: number, data: UpdateFileRequest): Promise<any> {
-    const response = await axiosInstance.put(`/files/${id}`, data);
+  async updateFile(_id: number, _data: UpdateFileRequest): Promise<any> {
+    const response = await axiosInstance.put(`/files/${_id}`, _data);
     return response.data;
   },
 
-  async deleteFile(id: number, permanent = false): Promise<any> {
-    const response = await axiosInstance.delete(`/files/${id}`, {
-      params: { permanent },
+  async deleteFile(_id: number, _permanent = false): Promise<any> {
+    const response = await axiosInstance.delete(`/files/${_id}`, {
+      params: { permanent: _permanent },
     });
     return response.data;
   },
 
-  async addFileToKnowledgeBase(id: number, knowledgeBaseId: number): Promise<any> {
-    const response = await axiosInstance.post(`/files/${id}/knowledge-base`, {
-      knowledgeBaseId,
+  async addFileToKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
+    const response = await axiosInstance.post(`/files/${_id}/knowledge-base`, {
+      knowledgeBaseId: _knowledgeBaseId,
     });
     return response.data;
   },
 
-  async removeFileFromKnowledgeBase(id: number, knowledgeBaseId: number): Promise<any> {
-    const response = await axiosInstance.delete(`/files/${id}/knowledge-base`, {
-      data: { knowledgeBaseId },
+  async removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
+    const response = await axiosInstance.delete(`/files/${_id}/knowledge-base`, {
+      data: { knowledgeBaseId: _knowledgeBaseId },
     });
     return response.data;
   },

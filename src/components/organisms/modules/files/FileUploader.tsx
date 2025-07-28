@@ -236,56 +236,70 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
             >
               Add to Knowledge Bases (Optional)
             </label>
-            {loadingKnowledgeBases ? (
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-                <span>Loading knowledge bases...</span>
-              </div>
-            ) : knowledgeBases.length > 0 ? (
-              <div id="knowledge-bases" className="grid grid-cols-2 gap-3">
-                {knowledgeBases.map(kb => (
-                  <div
-                    key={kb.id}
-                    className={`relative cursor-pointer rounded-lg border p-3 transition-colors ${
-                      selectedKnowledgeBases.includes(kb.id)
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                        : 'border-gray-200 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500'
-                    }`}
-                    onClick={() => toggleKnowledgeBase(kb.id)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleKnowledgeBase(kb.id);
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                          {kb.title}
-                        </p>
-                        {kb.description && (
-                          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                            {kb.description}
-                          </p>
-                        )}
-                      </div>
-                      {selectedKnowledgeBases.includes(kb.id) && (
-                        <div className="ml-2 flex-shrink-0">
-                          <RiCheckLine className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                      )}
-                    </div>
+            {(() => {
+              if (loadingKnowledgeBases) {
+                return (
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+                    <span>Loading knowledge bases...</span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                No knowledge bases available. Create one first to organize your files.
-              </p>
-            )}
+                );
+              }
+
+              if (knowledgeBases.length > 0) {
+                return (
+                  <div
+                    id="knowledge-bases"
+                    className="grid grid-cols-2 gap-3"
+                    aria-label="Knowledge base selection"
+                  >
+                    {knowledgeBases.map(kb => (
+                      <div
+                        key={kb.id}
+                        className={`relative cursor-pointer rounded-lg border p-3 transition-colors ${
+                          selectedKnowledgeBases.includes(kb.id)
+                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                            : 'border-gray-200 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500'
+                        }`}
+                        onClick={() => toggleKnowledgeBase(kb.id)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleKnowledgeBase(kb.id);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                              {kb.title}
+                            </p>
+                            {kb.description && (
+                              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                                {kb.description}
+                              </p>
+                            )}
+                          </div>
+                          {selectedKnowledgeBases.includes(kb.id) && (
+                            <div className="ml-2 flex-shrink-0">
+                              <RiCheckLine className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+
+              return (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No knowledge bases available. Create one first to organize your files.
+                </p>
+              );
+            })()}
           </div>
 
           {/* Drop Zone */}
@@ -402,7 +416,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           )}
 
           {/* Separator */}
-          <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700" />
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-3">

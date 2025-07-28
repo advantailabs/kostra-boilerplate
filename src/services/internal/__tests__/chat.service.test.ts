@@ -127,6 +127,7 @@ describe('Chat Service', () => {
             userId: 1,
             openaiAssistantId: 'asst_123',
             vectorStoreId: 'vs_123',
+            knowledgeBaseId: null,
           },
         },
       ];
@@ -194,6 +195,7 @@ describe('Chat Service', () => {
           userId: 1,
           openaiAssistantId: 'asst_123',
           vectorStoreId: 'vs_123',
+          knowledgeBaseId: null,
         },
       };
 
