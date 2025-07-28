@@ -5,13 +5,7 @@ import { randomUUID } from 'crypto';
 import { getBucketName, getUploadPurposeConfig } from './file-upload-config';
 
 // Client-side environment variables (available in browser)
-const CLIENT_ACCOUNT_ID = process.env.NEXT_PUBLIC_R2_ACCOUNT_ID;
-const CLIENT_PUBLIC_BUCKET_NAME = process.env.NEXT_PUBLIC_R2_PUBLIC_BUCKET_NAME;
-
-export const S3_PUBLIC_BASE_URL =
-  CLIENT_ACCOUNT_ID && CLIENT_PUBLIC_BUCKET_NAME
-    ? `https://pub-${CLIENT_ACCOUNT_ID}.r2.dev/${CLIENT_PUBLIC_BUCKET_NAME}`
-    : '';
+export const S3_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
 
 function createS3Client() {
   // Server-side environment variables validation
