@@ -1,0 +1,186 @@
+import { FileKnowledgeBase, KnowledgeBase, PrismaClient } from '@prisma/client';
+import {
+  CreateKnowledgeBaseData,
+  KnowledgeBaseWithFiles,
+  RepositoryResult,
+  UpdateKnowledgeBaseData,
+} from '../../../types/chat';
+
+const prisma = new PrismaClient();
+
+export async function createKnowledgeBase(
+  data: CreateKnowledgeBaseData
+): Promise<RepositoryResult<KnowledgeBase>> {
+  try {
+    const knowledgeBase = await prisma.knowledgeBase.create({
+      data: {
+        userId: data.userId,
+        title: data.title,
+        description: data.description,
+        metadata: data.metadata,
+        vectorStoreId: data.vectorStoreId,
+      },
+    });
+
+    return { success: true, data: knowledgeBase };
+  } catch (error) {
+    console.error('Error creating knowledge base:', error);
+    return { success: false, error: 'Failed to create knowledge base' };
+  }
+}
+
+export async function findKnowledgeBaseById(
+  id: number
+): Promise<RepositoryResult<KnowledgeBaseWithFiles | null>> {
+  try {
+    const knowledgeBase = await prisma.knowledgeBase.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        fileKnowledgeBases: {
+          where: { file: { deletedAt: null } },
+          include: {
+            file: {
+              select: {
+                id: true,
+                filename: true,
+                originalName: true,
+                mimeType: true,
+                size: true,
+                url: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { success: true, data: knowledgeBase };
+  } catch (error) {
+    console.error('Error finding knowledge base:', error);
+    return { success: false, error: 'Failed to find knowledge base' };
+  }
+}
+
+export async function findKnowledgeBasesByUserId(
+  userId: number
+): Promise<RepositoryResult<KnowledgeBase[]>> {
+  try {
+    const knowledgeBases = await prisma.knowledgeBase.findMany({
+      where: { userId, deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return { success: true, data: knowledgeBases };
+  } catch (error) {
+    console.error('Error finding knowledge bases by user:', error);
+    return { success: false, error: 'Failed to find knowledge bases' };
+  }
+}
+
+export async function updateKnowledgeBase(
+  id: number,
+  data: UpdateKnowledgeBaseData
+): Promise<RepositoryResult<KnowledgeBase>> {
+  try {
+    const knowledgeBase = await prisma.knowledgeBase.update({
+      where: { id },
+      data: {
+        title: data.title,
+        description: data.description,
+        metadata: data.metadata,
+        vectorStoreId: data.vectorStoreId,
+        updatedAt: new Date(),
+      },
+    });
+
+    return { success: true, data: knowledgeBase };
+  } catch (error) {
+    console.error('Error updating knowledge base:', error);
+    return { success: false, error: 'Failed to update knowledge base' };
+  }
+}
+
+export async function deleteKnowledgeBase(id: number): Promise<RepositoryResult<boolean>> {
+  try {
+    await prisma.knowledgeBase.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return { success: true, data: true };
+  } catch (error) {
+    console.error('Error deleting knowledge base:', error);
+    return { success: false, error: 'Failed to delete knowledge base' };
+  }
+}
+
+export async function addFileToKnowledgeBase(
+  knowledgeBaseId: number,
+  fileId: number
+): Promise<RepositoryResult<FileKnowledgeBase>> {
+  try {
+    const fileKnowledgeBase = await prisma.fileKnowledgeBase.create({
+      data: {
+        knowledgeBaseId,
+        fileId,
+      },
+    });
+
+    return { success: true, data: fileKnowledgeBase };
+  } catch (error) {
+    console.error('Error adding file to knowledge base:', error);
+    return { success: false, error: 'Failed to add file to knowledge base' };
+  }
+}
+
+export async function removeFileFromKnowledgeBase(
+  knowledgeBaseId: number,
+  fileId: number
+): Promise<RepositoryResult<boolean>> {
+  try {
+    await prisma.fileKnowledgeBase.delete({
+      where: {
+        fileId_knowledgeBaseId: {
+          fileId,
+          knowledgeBaseId,
+        },
+      },
+    });
+
+    return { success: true, data: true };
+  } catch (error) {
+    console.error('Error removing file from knowledge base:', error);
+    return { success: false, error: 'Failed to remove file from knowledge base' };
+  }
+}
+
+export async function getKnowledgeBaseFiles(
+  knowledgeBaseId: number
+): Promise<RepositoryResult<any[]>> {
+  try {
+    const files = await prisma.fileKnowledgeBase.findMany({
+      where: {
+        knowledgeBaseId,
+        file: { deletedAt: null },
+      },
+      include: {
+        file: {
+          select: {
+            id: true,
+            filename: true,
+            originalName: true,
+            mimeType: true,
+            size: true,
+            url: true,
+            metadata: true,
+          },
+        },
+      },
+    });
+
+    return { success: true, data: files.map(f => f.file) };
+  } catch (error) {
+    console.error('Error getting files for knowledge base:', error);
+    return { success: false, error: 'Failed to get files for knowledge base' };
+  }
+}

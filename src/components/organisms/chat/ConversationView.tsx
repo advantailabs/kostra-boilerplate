@@ -1,3 +1,4 @@
+import { Avatar } from '@/components/atom/Avatar';
 import { MessageBubble } from '@/components/atom/MessageBubble';
 import { ConversationHeader } from '@/components/molecules/chat/ConversationHeader';
 import { EnhancedMessageInput } from '@/components/molecules/chat/EnhancedMessageInput';
@@ -112,7 +113,7 @@ export function ConversationView({
             <div className="space-y-3 p-4">
               {/* Show existing thread messages */}
               {activeThread?.messages.map(message => (
-                <MessageBubble key={message.id} message={message} />
+                <MessageBubble key={message.id} message={message} persona={activeThread.persona} />
               ))}
 
               {/* Show pending user message when creating new thread */}
@@ -127,6 +128,7 @@ export function ConversationView({
                     openaiMessageId: null,
                     deletedAt: null,
                   }}
+                  persona={selectedPersona || undefined}
                 />
               )}
 
@@ -136,9 +138,12 @@ export function ConversationView({
                   <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
                     <div className="flex items-start space-x-2">
                       <div className="flex-shrink-0">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500">
-                          <span className="text-xs font-medium text-white">AI</span>
-                        </div>
+                        <Avatar
+                          src={activeThread?.persona?.logo || selectedPersona?.logo}
+                          alt={`${activeThread?.persona?.name || selectedPersona?.name || 'AI'} avatar`}
+                          fallback={activeThread?.persona?.name || selectedPersona?.name || 'AI'}
+                          size="sm"
+                        />
                       </div>
                       <div className="flex-1 space-y-1">
                         <div className="text-sm text-gray-900 dark:text-gray-100">
@@ -157,9 +162,12 @@ export function ConversationView({
                   <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
                     <div className="flex items-start space-x-2">
                       <div className="flex-shrink-0">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500">
-                          <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        </div>
+                        <Avatar
+                          src={activeThread?.persona?.logo || selectedPersona?.logo}
+                          alt={`${activeThread?.persona?.name || selectedPersona?.name || 'AI'} avatar`}
+                          fallback={activeThread?.persona?.name || selectedPersona?.name || 'AI'}
+                          size="sm"
+                        />
                       </div>
                       <div className="flex-1 space-y-1">
                         <div className="text-sm text-gray-900 dark:text-gray-100">
@@ -175,14 +183,28 @@ export function ConversationView({
               <div ref={messagesEndRef} />
             </div>
           ) : (
-            // Empty state remains the same
+            // Empty state with selected persona
             <div className="flex h-full flex-col items-center justify-center p-6">
               <div className="max-w-xl text-center">
+                {selectedPersona && (
+                  <div className="mb-4 flex justify-center">
+                    <Avatar
+                      src={selectedPersona.logo}
+                      alt={`${selectedPersona.name} avatar`}
+                      fallback={selectedPersona.name}
+                      size="lg"
+                    />
+                  </div>
+                )}
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Welcome to your AI Assistant
+                  {selectedPersona
+                    ? `Welcome to ${selectedPersona.name}`
+                    : 'Welcome to your AI Assistant'}
                 </h3>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  Start a conversation by selecting a persona and typing your message below.
+                  {selectedPersona
+                    ? 'Start a conversation by typing your message below.'
+                    : 'Start a conversation by selecting a persona and typing your message below.'}
                 </p>
               </div>
             </div>

@@ -1,4 +1,8 @@
-import { createAssistant, createVectorStore } from '@/services/external/openai/assistant';
+import {
+  createAssistant,
+  createVectorStore,
+  updateAssistant,
+} from '@/services/external/openai/assistant';
 
 import {
   cleanupDatabase,
@@ -21,8 +25,36 @@ jest.mock('@/services/external/openai/assistant', () => ({
   updateAssistant: jest.fn(),
 }));
 
+// Mock the KnowledgeBase repository functions
+jest.mock('@/services/repositories/knowledge-base', () => ({
+  createKnowledgeBase: jest.fn().mockImplementation(async data => {
+    // Actually create a knowledge base record in the test database
+    const knowledgeBase = await testPrisma.knowledgeBase.create({
+      data: {
+        userId: data.userId,
+        title: data.title,
+        description: data.description,
+        metadata: data.metadata || {},
+        vectorStoreId: data.vectorStoreId,
+      },
+    });
+    return {
+      success: true,
+      data: knowledgeBase,
+    };
+  }),
+  findKnowledgeBaseById: jest.fn(),
+  findKnowledgeBasesByUserId: jest.fn(),
+  updateKnowledgeBase: jest.fn(),
+  deleteKnowledgeBase: jest.fn(),
+  addFileToKnowledgeBase: jest.fn(),
+  removeFileFromKnowledgeBase: jest.fn(),
+  getKnowledgeBaseFiles: jest.fn(),
+}));
+
 const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof createAssistant>;
 const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
+const mockUpdateAssistant = updateAssistant as jest.MockedFunction<typeof updateAssistant>;
 
 describe('Persona Service - End-to-End Tests', () => {
   let testUser: any;
@@ -46,6 +78,20 @@ describe('Persona Service - End-to-End Tests', () => {
         metadata: {},
         model: 'gpt-4',
         name: 'Test Persona',
+        object: 'assistant',
+        tools: [],
+      },
+    });
+    mockUpdateAssistant.mockResolvedValue({
+      success: true,
+      data: {
+        id: 'asst_test123',
+        created_at: new Date().getTime(),
+        description: 'Updated Description',
+        instructions: 'Updated Instructions',
+        metadata: {},
+        model: 'gpt-4',
+        name: 'Updated Name',
         object: 'assistant',
         tools: [],
       },

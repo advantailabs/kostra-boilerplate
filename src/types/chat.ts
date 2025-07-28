@@ -1,4 +1,4 @@
-import { Message, Persona, Thread, User } from '@prisma/client';
+import { FileKnowledgeBase, KnowledgeBase, Message, Persona, Thread, User } from '@prisma/client';
 
 // Extended types for complex queries
 export interface ThreadWithMessages extends Thread {
@@ -12,6 +12,24 @@ export interface ThreadWithPersona extends Thread {
 
 export interface PersonaWithUser extends Persona {
   user: User | null;
+  knowledgeBase: KnowledgeBase | null;
+}
+
+export interface KnowledgeBaseWithFiles extends KnowledgeBase {
+  fileKnowledgeBases: (FileKnowledgeBase & {
+    file: {
+      id: number;
+      filename: string;
+      originalName: string;
+      mimeType: string;
+      size: number;
+      url: string | null;
+    };
+  })[];
+}
+
+export interface PersonaWithKnowledgeBase extends Persona {
+  knowledgeBase: KnowledgeBaseWithFiles | null;
 }
 
 // Database operation types
@@ -33,6 +51,21 @@ export interface CreateMessageData {
   openaiMessageId?: string;
 }
 
+export interface CreateKnowledgeBaseData {
+  userId: number;
+  title: string;
+  description: string;
+  metadata?: any;
+  vectorStoreId?: string;
+}
+
+export interface UpdateKnowledgeBaseData {
+  title?: string;
+  description?: string;
+  metadata?: any;
+  vectorStoreId?: string;
+}
+
 export interface CreatePersonaData {
   userId: number;
   name: string;
@@ -41,7 +74,7 @@ export interface CreatePersonaData {
   tags: string[];
   logo?: string;
   openaiAssistantId?: string;
-  vectorStoreId?: string;
+  knowledgeBaseId?: number;
 }
 
 export interface UpdatePersonaData {
@@ -50,6 +83,7 @@ export interface UpdatePersonaData {
   instructions?: string;
   tags?: string[];
   logo?: string;
+  knowledgeBaseId?: number;
 }
 
 // API Request types
@@ -72,6 +106,18 @@ export interface UpdatePersonaRequest {
   instructions?: string;
   tags?: string[];
   logo?: string;
+}
+
+export interface CreateKnowledgeBaseRequest {
+  title: string;
+  description: string;
+  metadata?: any;
+}
+
+export interface UpdateKnowledgeBaseRequest {
+  title?: string;
+  description?: string;
+  metadata?: any;
 }
 
 export interface AddMessageRequest {
@@ -112,12 +158,23 @@ export interface ThreadWithMessagesResponse extends ThreadResponse {
   messages: MessageResponse[];
 }
 
+export interface KnowledgeBaseResponse {
+  id: number;
+  title: string;
+  description: string;
+  metadata: any;
+  vectorStoreId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PersonaResponse {
   id: number;
   name: string;
   description: string;
   instructions: string;
   tags: string[];
+  knowledgeBaseId: number | null;
   createdAt: string;
   updatedAt: string;
 }

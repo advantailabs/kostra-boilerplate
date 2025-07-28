@@ -1,5 +1,6 @@
+import { Avatar } from '@/components/atom/Avatar';
 import { Persona, Thread } from '@prisma/client';
-import { RiMore2Fill, RiRobot2Line } from '@remixicon/react';
+import { RiMore2Fill } from '@remixicon/react';
 
 interface ConversationHeaderProps {
   thread?: Thread & { persona: Persona | null };
@@ -21,9 +22,12 @@ export function ConversationHeader({
       >
         <div className="flex items-center gap-3">
           {selectedPersona && (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm">
-              <RiRobot2Line className="h-4 w-4 text-white" />
-            </div>
+            <Avatar
+              src={selectedPersona.logo}
+              alt={`${selectedPersona.name} avatar`}
+              fallback={selectedPersona.name}
+              size="sm"
+            />
           )}
           <div>
             <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -44,9 +48,12 @@ export function ConversationHeader({
     >
       <div className="flex items-center gap-3">
         {thread.persona && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm">
-            <RiRobot2Line className="h-4 w-4 text-white" />
-          </div>
+          <Avatar
+            src={thread.persona.logo}
+            alt={`${thread.persona.name} avatar`}
+            fallback={thread.persona.name}
+            size="sm"
+          />
         )}
         <div>
           <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">{thread.title}</h2>

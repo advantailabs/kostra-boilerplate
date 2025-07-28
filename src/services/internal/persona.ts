@@ -5,6 +5,7 @@ import {
   createVectorStore,
   updateAssistant,
 } from '@/services/external/openai/assistant';
+import { createKnowledgeBase } from '@/services/repositories/knowledge-base';
 import {
   createPersona,
   findActiveByUserId,
@@ -13,7 +14,7 @@ import {
   softDeletePersona,
   updatePersona,
 } from '@/services/repositories/persona';
-import { CreatePersonaData, UpdatePersonaData } from '@/types/chat';
+import { CreateKnowledgeBaseData, CreatePersonaData, UpdatePersonaData } from '@/types/chat';
 
 export interface PersonaServiceResult<T> {
   success: boolean;
@@ -34,6 +35,27 @@ const createPersonaService = async (
       return {
         success: false,
         error: `Failed to create vector store: ${vectorStoreResult.error}`,
+      };
+    }
+
+    // Create knowledge base
+    const knowledgeBaseData: CreateKnowledgeBaseData = {
+      userId,
+      title: `${data.name.trim()} Knowledge Base`,
+      description: `Knowledge base for ${data.name.trim()} persona`,
+      metadata: {
+        personaName: data.name.trim(),
+        personaDescription: data.description.trim(),
+      },
+      vectorStoreId: vectorStoreResult.data.id,
+    };
+
+    const knowledgeBaseResult = await createKnowledgeBase(knowledgeBaseData);
+
+    if (!knowledgeBaseResult.success || !knowledgeBaseResult.data) {
+      return {
+        success: false,
+        error: `Failed to create knowledge base: ${knowledgeBaseResult.error}`,
       };
     }
 
@@ -58,7 +80,7 @@ const createPersonaService = async (
       };
     }
 
-    // Create persona with both assistant and vector store IDs
+    // Create persona with assistant ID and knowledge base ID
     const persona = await createPersona(
       {
         userId,
@@ -68,7 +90,7 @@ const createPersonaService = async (
         tags: data.tags?.map(tag => tag.trim()) || [],
         logo: data.logo,
         openaiAssistantId: assistantResult.data.id,
-        vectorStoreId: vectorStoreResult.data.id,
+        knowledgeBaseId: knowledgeBaseResult.data.id,
       },
       prisma
     );
@@ -176,6 +198,7 @@ const updatePersonaService = async (
         instructions: data.instructions?.trim(),
         tags: data.tags?.map(tag => tag.trim()),
         logo: data.logo,
+        knowledgeBaseId: data.knowledgeBaseId,
       },
       prisma
     );

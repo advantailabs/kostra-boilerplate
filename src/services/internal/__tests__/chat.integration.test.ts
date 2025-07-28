@@ -60,7 +60,6 @@ describe('Chat Service - End-to-End Tests', () => {
       instructions: 'You are a helpful test assistant.',
       tags: ['test', 'assistant'],
       openaiAssistantId: 'asst_test123',
-      vectorStoreId: 'vs_test123',
     });
 
     // Setup mocks for external services
@@ -127,7 +126,6 @@ describe('Chat Service - End-to-End Tests', () => {
       const otherPersona = await createTestPersona(otherUser.id, {
         name: 'Other Assistant',
         openaiAssistantId: 'asst_other123',
-        vectorStoreId: 'vs_other123',
       });
 
       // Create thread for other user
@@ -170,7 +168,6 @@ describe('Chat Service - End-to-End Tests', () => {
       const otherPersona = await createTestPersona(otherUser.id, {
         name: 'Other Assistant',
         openaiAssistantId: 'asst_other123',
-        vectorStoreId: 'vs_other123',
       });
 
       // Create thread for other user
@@ -227,7 +224,6 @@ describe('Chat Service - End-to-End Tests', () => {
       const otherPersona = await createTestPersona(otherUser.id, {
         name: 'Other Assistant',
         openaiAssistantId: 'asst_other123',
-        vectorStoreId: 'vs_other123',
       });
 
       // Create thread for other user
@@ -344,7 +340,6 @@ describe('Chat Service - End-to-End Tests', () => {
       const otherPersona = await createTestPersona(otherUser.id, {
         name: 'Other Assistant',
         openaiAssistantId: 'asst_other123',
-        vectorStoreId: 'vs_other123',
       });
 
       // Create thread for other user
@@ -401,7 +396,6 @@ describe('Chat Service - End-to-End Tests', () => {
       const otherPersona = await createTestPersona(otherUser.id, {
         name: 'Other Assistant',
         openaiAssistantId: 'asst_other123',
-        vectorStoreId: 'vs_other123',
       });
 
       // Create threads for both users

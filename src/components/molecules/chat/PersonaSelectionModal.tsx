@@ -1,3 +1,4 @@
+import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import {
   Dialog,
@@ -83,11 +84,19 @@ export function PersonaSelectionModal({
                           index === personas.length - 1 ? 'rounded-b-lg' : ''
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{persona.name}</span>
-                          {selectedPersonaId === persona.id && (
-                            <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-                          )}
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={persona.logo}
+                            alt={`${persona.name} avatar`}
+                            fallback={persona.name}
+                            size="sm"
+                          />
+                          <div className="flex flex-1 items-center justify-between">
+                            <span className="font-medium">{persona.name}</span>
+                            {selectedPersonaId === persona.id && (
+                              <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                            )}
+                          </div>
                         </div>
                       </button>
 

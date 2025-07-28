@@ -1,6 +1,11 @@
 import { Persona, PrismaClient } from '@prisma/client';
 
-import { CreatePersonaData, PersonaWithUser, UpdatePersonaData } from '@/types/chat';
+import {
+  CreatePersonaData,
+  PersonaWithKnowledgeBase,
+  PersonaWithUser,
+  UpdatePersonaData,
+} from '@/types/chat';
 
 const defaultPrisma = new PrismaClient();
 
@@ -17,7 +22,7 @@ const createPersona = async (
       tags: data.tags,
       logo: data.logo,
       openaiAssistantId: data.openaiAssistantId,
-      vectorStoreId: data.vectorStoreId,
+      knowledgeBaseId: data.knowledgeBaseId,
     },
   });
 };
@@ -54,6 +59,37 @@ const findByIdWithUser = async (
     where: { id },
     include: {
       user: true,
+      knowledgeBase: true,
+    },
+  });
+};
+
+const findByIdWithKnowledgeBase = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PersonaWithKnowledgeBase | null> => {
+  return prisma.persona.findUnique({
+    where: { id },
+    include: {
+      knowledgeBase: {
+        include: {
+          fileKnowledgeBases: {
+            where: { file: { deletedAt: null } },
+            include: {
+              file: {
+                select: {
+                  id: true,
+                  filename: true,
+                  originalName: true,
+                  mimeType: true,
+                  size: true,
+                  url: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 };
@@ -71,6 +107,7 @@ const updatePersona = async (
       ...(data.instructions && { instructions: data.instructions }),
       ...(data.tags && { tags: data.tags }),
       ...(data.logo !== undefined && { logo: data.logo }),
+      ...(data.knowledgeBaseId !== undefined && { knowledgeBaseId: data.knowledgeBaseId }),
       updatedAt: new Date(),
     },
   });
@@ -120,6 +157,7 @@ export {
   createPersona,
   findActiveByUserId,
   findById,
+  findByIdWithKnowledgeBase,
   findByIdWithUser,
   findPersonaByUserAndId,
   restorePersona,

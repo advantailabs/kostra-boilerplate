@@ -1,5 +1,5 @@
-import { Message } from '@prisma/client';
-import { RiRobotLine, RiUser3Line } from '@remixicon/react';
+import { Avatar } from '@/components/atom/Avatar';
+import { Message, Persona } from '@prisma/client';
 import Image from 'next/image';
 
 import { cx } from '@/lib/utils';
@@ -7,12 +7,12 @@ import { useAuthStore } from '@/store/auth';
 
 interface MessageBubbleProps {
   message: Message;
+  persona?: Persona | null;
   className?: string;
 }
 
-export function MessageBubble({ message, className }: MessageBubbleProps) {
+export function MessageBubble({ message, persona, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
-  const Icon = isUser ? RiUser3Line : RiRobotLine;
   const { user } = useAuthStore();
 
   // Helper function to render user avatar
@@ -46,13 +46,39 @@ export function MessageBubble({ message, className }: MessageBubbleProps) {
     );
   };
 
+  // Helper function to render assistant avatar
+  const renderAssistantAvatar = () => {
+    if (persona?.logo) {
+      return (
+        <Avatar
+          src={persona.logo}
+          alt={`${persona.name} avatar`}
+          fallback={persona.name}
+          size="sm"
+        />
+      );
+    }
+
+    // Fallback to initials or icon
+    const initials = persona?.name
+      ? persona.name
+          .split(' ')
+          .map(n => n[0])
+          .join('')
+          .toUpperCase()
+          .slice(0, 2)
+      : 'AI';
+
+    return (
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900">
+        <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">{initials}</span>
+      </div>
+    );
+  };
+
   return (
     <div className={cx('flex gap-3 p-4', isUser ? 'justify-end' : 'justify-start', className)}>
-      {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900">
-          <Icon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-        </div>
-      )}
+      {!isUser && renderAssistantAvatar()}
       <div
         className={cx(
           'max-w-[80%] rounded-lg px-4 py-2 text-sm',

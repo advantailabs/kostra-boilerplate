@@ -1,3 +1,4 @@
+import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { Persona, Thread } from '@prisma/client';
@@ -48,7 +49,16 @@ function ThreadListItem({
       aria-label={`Select conversation: ${thread.title}`}
     >
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-        <RiMessage2Line className="h-3 w-3 shrink-0 text-gray-400" />
+        {thread.persona ? (
+          <Avatar
+            src={thread.persona.logo}
+            alt={`${thread.persona.name} avatar`}
+            fallback={thread.persona.name}
+            size="sm"
+          />
+        ) : (
+          <RiMessage2Line className="h-3 w-3 shrink-0 text-gray-400" />
+        )}
         <div className="min-w-0 flex-1 overflow-hidden">
           <p className="truncate text-sm font-medium" title={thread.title}>
             {thread.title}

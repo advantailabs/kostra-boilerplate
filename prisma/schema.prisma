@@ -28,6 +28,7 @@ model User {
   threads        Thread[]
   personas       Persona[]
   files          File[]
+  knowledgeBases KnowledgeBase[]
 }
 
 model Thread {
@@ -45,20 +46,36 @@ model Thread {
 }
 
 model Persona {
-  id                Int       @id @default(autoincrement())
+  id                Int           @id @default(autoincrement())
   userId            Int?
   openaiAssistantId String?
-  vectorStoreId     String?
+  knowledgeBaseId   Int?
   name              String
   description       String
   instructions      String
   tags              String[]
-  logo              String?   // URL to the logo image in S3
+  logo              String?       // URL to the logo image in S3
   deletedAt         DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  user              User?         @relation(fields: [userId], references: [id])
+  knowledgeBase     KnowledgeBase? @relation(fields: [knowledgeBaseId], references: [id])
+  threads           Thread[]
+}
+
+model KnowledgeBase {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  title             String
+  description       String
+  metadata          Json?
+  vectorStoreId     String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  user              User?     @relation(fields: [userId], references: [id])
-  threads           Thread[]
+  deletedAt         DateTime? // Soft delete
+  user              User      @relation(fields: [userId], references: [id])
+  personas          Persona[]
+  fileKnowledgeBases FileKnowledgeBase[]
 }
 
 model Message {
@@ -73,17 +90,29 @@ model Message {
 }
 
 model File {
-  id            Int       @id @default(autoincrement())
-  userId        Int?
-  openaiFileId  String?   @unique
-  filename      String
-  originalName  String
-  mimeType      String
-  size          Int       // File size in bytes
-  url           String?   // Storage URL (S3, Supabase, etc.)
-  metadata      Json?     // Additional file metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime? // Soft delete
-  user          User?     @relation(fields: [userId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  userId              Int?
+  openaiFileId        String?               @unique
+  filename            String
+  originalName        String
+  mimeType            String
+  size                Int                   // File size in bytes
+  url                 String?               // Storage URL (S3, Supabase, etc.)
+  metadata            Json?                 // Additional file metadata
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  deletedAt           DateTime?             // Soft delete
+  user                User?                 @relation(fields: [userId], references: [id])
+  fileKnowledgeBases  FileKnowledgeBase[]
+}
+
+model FileKnowledgeBase {
+  id             Int          @id @default(autoincrement())
+  fileId         Int
+  knowledgeBaseId Int
+  createdAt      DateTime     @default(now())
+  file           File         @relation(fields: [fileId], references: [id])
+  knowledgeBase  KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id])
+
+  @@unique([fileId, knowledgeBaseId])
 }

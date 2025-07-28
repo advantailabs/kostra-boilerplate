@@ -31,6 +31,18 @@ jest.mock('@/services/external/openai/assistant', () => ({
   updateAssistant: jest.fn(),
 }));
 
+// Mock the KnowledgeBase repository functions
+jest.mock('../../repositories/knowledge-base', () => ({
+  createKnowledgeBase: jest.fn(),
+  findKnowledgeBaseById: jest.fn(),
+  findKnowledgeBasesByUserId: jest.fn(),
+  updateKnowledgeBase: jest.fn(),
+  deleteKnowledgeBase: jest.fn(),
+  addFileToKnowledgeBase: jest.fn(),
+  removeFileFromKnowledgeBase: jest.fn(),
+  getKnowledgeBaseFiles: jest.fn(),
+}));
+
 const mockCreatePersona = createPersona as jest.MockedFunction<typeof createPersona>;
 const mockFindActiveByUserId = findActiveByUserId as jest.MockedFunction<typeof findActiveByUserId>;
 const mockFindPersonaByUserAndId = findPersonaByUserAndId as jest.MockedFunction<
@@ -61,7 +73,7 @@ describe('Persona Service', () => {
         id: 1,
         userId: 1,
         openaiAssistantId: 'asst_test123',
-        vectorStoreId: 'vs_test123',
+        knowledgeBaseId: 1,
         name: 'Test Persona',
         description: 'Test Description',
         instructions: 'Test Instructions',
@@ -77,6 +89,14 @@ describe('Persona Service', () => {
         success: true,
         data: { id: 'vs_test123' },
       });
+
+      // Mock knowledge base creation
+      const { createKnowledgeBase } = require('../../repositories/knowledge-base');
+      createKnowledgeBase.mockResolvedValue({
+        success: true,
+        data: { id: 1 },
+      });
+
       mockCreateAssistant.mockResolvedValue({
         success: true,
         data: {
@@ -117,7 +137,7 @@ describe('Persona Service', () => {
           tags: ['tag1', 'tag2'],
           logo: undefined,
           openaiAssistantId: 'asst_test123',
-          vectorStoreId: 'vs_test123',
+          knowledgeBaseId: 1, // This will be set by the service
         },
         undefined
       );

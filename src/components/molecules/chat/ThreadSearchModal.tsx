@@ -1,3 +1,4 @@
+import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Dialog, DialogContent } from '@/components/molecules/common/Dialog';
@@ -27,7 +28,16 @@ function SearchResultItem({
       onClick={onClick}
       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
     >
-      <RiMessage2Line className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
+      {thread.persona ? (
+        <Avatar
+          src={thread.persona.logo}
+          alt={`${thread.persona.name} avatar`}
+          fallback={thread.persona.name}
+          size="sm"
+        />
+      ) : (
+        <RiMessage2Line className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
+      )}
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-gray-900 dark:text-gray-100">{thread.title}</p>
         {thread.persona && (
