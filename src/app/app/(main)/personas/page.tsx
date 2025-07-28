@@ -75,53 +75,53 @@ export default function PersonasPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
-      <div className="p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personas</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Manage your AI assistant personas and their instructions
-            </p>
-          </div>
-          <Button onClick={() => setShowAddModal(true)}>
-            <RiAddLine className="mr-2 h-4 w-4" />
-            Create Persona
-          </Button>
+    <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personas</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Manage your AI assistant personas and their instructions
+          </p>
         </div>
+        <Button onClick={() => setShowAddModal(true)}>
+          <RiAddLine className="mr-2 h-4 w-4" />
+          Create Persona
+        </Button>
+      </div>
 
-        <div className="flex-1 overflow-auto">
-          {personas.length === 0 ? (
-            <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-              <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">No personas yet</p>
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                  Create your first persona to start chatting
-                </p>
-                <Button onClick={() => setShowAddModal(true)} className="mt-3">
-                  <RiAddLine className="mr-2 h-4 w-4" />
-                  Create Persona
-                </Button>
-              </div>
+      {/* Content */}
+      <div className="h-full">
+        {personas.length === 0 ? (
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <div className="text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">No personas yet</p>
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                Create your first persona to start chatting
+              </p>
+              <Button onClick={() => setShowAddModal(true)} className="mt-3">
+                <RiAddLine className="mr-2 h-4 w-4" />
+                Create Persona
+              </Button>
             </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-              {personas.map(persona => (
-                <PersonaCard
-                  key={persona.id}
-                  persona={persona}
-                  onEdit={() => openEditModal(persona)}
-                  onDelete={() => openDeleteModal(persona)}
-                  fileCount={Math.floor(Math.random() * 5) + 1}
-                  fileTypes={['PDF', 'Excel', 'Document', 'Image'].slice(
-                    0,
-                    Math.floor(Math.random() * 4) + 1
-                  )}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {personas.map(persona => (
+              <PersonaCard
+                key={persona.id}
+                persona={persona}
+                onEdit={() => openEditModal(persona)}
+                onDelete={() => openDeleteModal(persona)}
+                fileCount={Math.floor(Math.random() * 5) + 1}
+                fileTypes={['PDF', 'Excel', 'Document', 'Image'].slice(
+                  0,
+                  Math.floor(Math.random() * 4) + 1
+                )}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {showAddModal && (

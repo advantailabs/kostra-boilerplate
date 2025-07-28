@@ -51,6 +51,8 @@ const PUBLIC_ROUTES: RouteConfig[] = [
   { path: '/api/personas', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
   { path: '/api/threads', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
   { path: '/api/threads/', methods: ['POST'], exact: false }, // messages endpoint
+  { path: '/api/files', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
+  { path: '/api/knowledge-bases', methods: ['GET', 'POST', 'PUT', 'DELETE'], exact: false },
 ] as const;
 
 // Helper functions

@@ -1,0 +1,61 @@
+import { knowledgeBasesApi } from '@/services/api/knowledge-bases';
+import { useAuthStore } from '@/store/auth';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+export function useKnowledgeBases(page = 1, limit = 50) {
+  const { user } = useAuthStore();
+
+  return useQuery({
+    queryKey: ['knowledge-bases', page, limit],
+    queryFn: () => knowledgeBasesApi.getKnowledgeBases(page, limit),
+    enabled: !!user?.id,
+  });
+}
+
+export function useKnowledgeBase(id: number) {
+  const { user } = useAuthStore();
+
+  return useQuery({
+    queryKey: ['knowledge-base', id],
+    queryFn: () => knowledgeBasesApi.getKnowledgeBase(id),
+    enabled: !!user?.id && !!id,
+  });
+}
+
+export function useCreateKnowledgeBase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: any) => knowledgeBasesApi.createKnowledgeBase(data),
+    onSuccess: () => {
+      // Invalidate and refetch knowledge bases list
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    },
+  });
+}
+
+export function useUpdateKnowledgeBase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      knowledgeBasesApi.updateKnowledgeBase(id, data),
+    onSuccess: (_, { id }) => {
+      // Invalidate specific knowledge base and knowledge bases list
+      queryClient.invalidateQueries({ queryKey: ['knowledge-base', id] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    },
+  });
+}
+
+export function useDeleteKnowledgeBase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => knowledgeBasesApi.deleteKnowledgeBase(id),
+    onSuccess: () => {
+      // Invalidate knowledge bases list
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    },
+  });
+}

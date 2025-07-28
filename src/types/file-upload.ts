@@ -3,7 +3,8 @@ export type UploadPurpose =
   | 'UserAvatar'
   | 'UserFile'
   | 'ThreadAttachment'
-  | 'MessageAttachment';
+  | 'MessageAttachment'
+  | 'UserDocument'; // New purpose for file explorer
 
 export interface UploadPurposeConfig {
   bucket: 'public' | 'private';

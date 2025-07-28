@@ -57,6 +57,44 @@ export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
       maxFileSize: 5 * 1024 * 1024, // 5MB
       keyPrefix: 'messages/attachments',
     },
+    UserDocument: {
+      bucket: 'private',
+      allowedMimeTypes: [
+        // Text files
+        'text/x-c',
+        'text/x-c++',
+        'text/x-csharp',
+        'text/css',
+        'text/html',
+        'text/x-golang',
+        'text/x-java',
+        'text/javascript',
+        'application/json',
+        'text/markdown',
+        'text/x-php',
+        'text/x-python',
+        'text/x-script.python',
+        'text/x-ruby',
+        'text/x-tex',
+        'application/typescript',
+        'text/plain',
+        // Documents
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        // Scripts
+        'application/x-sh',
+        // PDF
+        'application/pdf',
+        // Images
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ],
+      maxFileSize: 100 * 1024 * 1024, // 100MB
+      keyPrefix: 'users/documents',
+    },
   },
   buckets: {
     public: process.env.R2_PUBLIC_BUCKET_NAME || 'peon-data-public',
