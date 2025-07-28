@@ -5,13 +5,18 @@ import { createVectorStore } from '@/services/external/openai/vector-store';
 import { createKnowledgeBase } from '@/services/repositories/knowledge-base';
 import {
   createPersona,
-  findActiveByUserId,
+  findActiveByUserIdWithFiles,
   findById,
   findPersonaByUserAndId,
   softDeletePersona,
   updatePersona,
 } from '@/services/repositories/persona';
-import { CreateKnowledgeBaseData, CreatePersonaData, UpdatePersonaData } from '@/types/chat';
+import {
+  CreateKnowledgeBaseData,
+  CreatePersonaData,
+  PersonaWithKnowledgeBase,
+  UpdatePersonaData,
+} from '@/types/chat';
 
 export interface PersonaServiceResult<T> {
   success: boolean;
@@ -110,9 +115,9 @@ const createPersonaService = async (
 const getUserPersonasService = async (
   userId: number,
   prisma?: PrismaClient
-): Promise<PersonaServiceResult<Persona[]>> => {
+): Promise<PersonaServiceResult<PersonaWithKnowledgeBase[]>> => {
   try {
-    const personas = await findActiveByUserId(userId, prisma);
+    const personas = await findActiveByUserIdWithFiles(userId, prisma);
     return {
       success: true,
       data: personas,

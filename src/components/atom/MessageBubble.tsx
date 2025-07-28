@@ -77,7 +77,7 @@ export function MessageBubble({ message, persona, className }: MessageBubbleProp
   };
 
   return (
-    <div className={cx('flex gap-3 p-4', isUser ? 'justify-end' : 'justify-start', className)}>
+    <div className={cx('flex gap-3', isUser ? 'justify-end' : 'justify-start', className)}>
       {!isUser && renderAssistantAvatar()}
       <div
         className={cx(

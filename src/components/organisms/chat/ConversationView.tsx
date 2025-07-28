@@ -1,5 +1,7 @@
 import { Avatar } from '@/components/atom/Avatar';
+import { LoadingIndicator } from '@/components/atom/LoadingIndicator';
 import { MessageBubble } from '@/components/atom/MessageBubble';
+import { StreamingMessage } from '@/components/atom/StreamingMessage';
 import { ConversationHeader } from '@/components/molecules/chat/ConversationHeader';
 import { EnhancedMessageInput } from '@/components/molecules/chat/EnhancedMessageInput';
 import { PersonaSelectionModal } from '@/components/molecules/chat/PersonaSelectionModal';
@@ -134,49 +136,20 @@ export function ConversationView({
 
               {/* Show streaming message if currently streaming */}
               {isStreaming && streamingMessage && (
-                <div className="flex justify-start">
-                  <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
-                    <div className="flex items-start space-x-2">
-                      <div className="flex-shrink-0">
-                        <Avatar
-                          src={activeThread?.persona?.logo || selectedPersona?.logo}
-                          alt={`${activeThread?.persona?.name || selectedPersona?.name || 'AI'} avatar`}
-                          fallback={activeThread?.persona?.name || selectedPersona?.name || 'AI'}
-                          size="sm"
-                        />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-sm text-gray-900 dark:text-gray-100">
-                          {streamingMessage}
-                          <span className="animate-pulse">|</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <StreamingMessage
+                  message={streamingMessage}
+                  personaLogo={activeThread?.persona?.logo || selectedPersona?.logo}
+                  personaName={activeThread?.persona?.name || selectedPersona?.name}
+                />
               )}
 
-              {/* Show loading indicator next to assistant icon when streaming */}
+              {/* Show loading indicator when streaming but no message yet */}
               {isStreaming && !streamingMessage && (
-                <div className="flex justify-start">
-                  <div className="max-w-3xl rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800">
-                    <div className="flex items-start space-x-2">
-                      <div className="flex-shrink-0">
-                        <Avatar
-                          src={activeThread?.persona?.logo || selectedPersona?.logo}
-                          alt={`${activeThread?.persona?.name || selectedPersona?.name || 'AI'} avatar`}
-                          fallback={activeThread?.persona?.name || selectedPersona?.name || 'AI'}
-                          size="sm"
-                        />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-sm text-gray-900 dark:text-gray-100">
-                          AI is thinking...
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <LoadingIndicator
+                  personaLogo={activeThread?.persona?.logo || selectedPersona?.logo}
+                  personaName={activeThread?.persona?.name || selectedPersona?.name}
+                  message="AI is thinking..."
+                />
               )}
 
               {/* Auto-scroll anchor */}

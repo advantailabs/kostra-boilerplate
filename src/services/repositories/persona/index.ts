@@ -42,6 +42,42 @@ const findActiveByUserId = async (
   });
 };
 
+const findActiveByUserIdWithFiles = async (
+  userId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PersonaWithKnowledgeBase[]> => {
+  return prisma.persona.findMany({
+    where: {
+      userId,
+      deletedAt: null,
+    },
+    include: {
+      knowledgeBase: {
+        include: {
+          fileKnowledgeBases: {
+            where: { file: { deletedAt: null } },
+            include: {
+              file: {
+                select: {
+                  id: true,
+                  filename: true,
+                  originalName: true,
+                  mimeType: true,
+                  size: true,
+                  url: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+};
+
 const findById = async (
   id: number,
   prisma: PrismaClient = defaultPrisma
@@ -156,6 +192,7 @@ const restorePersona = async (
 export {
   createPersona,
   findActiveByUserId,
+  findActiveByUserIdWithFiles,
   findById,
   findByIdWithKnowledgeBase,
   findByIdWithUser,

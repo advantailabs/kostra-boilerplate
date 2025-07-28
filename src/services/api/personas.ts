@@ -1,26 +1,25 @@
 import axiosInstance from '@/lib/axios';
-import { CreatePersonaRequest, UpdatePersonaRequest } from '@/types/chat';
-import { Persona } from '@prisma/client';
+import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
 
 interface PersonasApiClient {
-  getPersonas(): Promise<Persona[]>;
-  createPersona(_data: CreatePersonaRequest): Promise<Persona>;
-  updatePersona(_id: number, _data: UpdatePersonaRequest): Promise<Persona>;
+  getPersonas(): Promise<PersonaWithKnowledgeBase[]>;
+  createPersona(_data: CreatePersonaRequest): Promise<PersonaWithKnowledgeBase>;
+  updatePersona(_id: number, _data: UpdatePersonaRequest): Promise<PersonaWithKnowledgeBase>;
   deletePersona(_id: number): Promise<void>;
 }
 
 export const personasApi: PersonasApiClient = {
-  async getPersonas(): Promise<Persona[]> {
+  async getPersonas(): Promise<PersonaWithKnowledgeBase[]> {
     const response = await axiosInstance.get('/personas');
     return response.data.personas || [];
   },
 
-  async createPersona(data: CreatePersonaRequest): Promise<Persona> {
+  async createPersona(data: CreatePersonaRequest): Promise<PersonaWithKnowledgeBase> {
     const response = await axiosInstance.post('/personas', data);
     return response.data.persona;
   },
 
-  async updatePersona(id: number, data: UpdatePersonaRequest): Promise<Persona> {
+  async updatePersona(id: number, data: UpdatePersonaRequest): Promise<PersonaWithKnowledgeBase> {
     const response = await axiosInstance.put(`/personas/${id}`, data);
     return response.data.persona;
   },

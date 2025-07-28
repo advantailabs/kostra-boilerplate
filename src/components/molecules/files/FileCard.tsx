@@ -79,6 +79,30 @@ export function FileCard({
     return { icon: RiFileLine, color: 'bg-gray-500 text-white' };
   };
 
+  const formatMimeType = (mimeType: string) => {
+    // Handle common MIME types with friendly names
+    if (mimeType === 'application/pdf') return 'PDF Document';
+    if (mimeType.startsWith('image/')) return 'Image File';
+    if (mimeType === 'text/plain') return 'Text File';
+    if (mimeType === 'text/markdown') return 'Markdown File';
+    if (mimeType === 'application/json') return 'JSON File';
+    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'Excel Spreadsheet';
+    if (mimeType.includes('word') || mimeType.includes('document')) return 'Word Document';
+
+    // For other types, extract the main type and subtype
+    const parts = mimeType.split('/');
+    if (parts.length === 2) {
+      const [type, subtype] = parts;
+      // Capitalize and format the type
+      const formattedType = type.charAt(0).toUpperCase() + type.slice(1);
+      const formattedSubtype = subtype.split('.').pop()?.toUpperCase() || subtype;
+      return `${formattedType} (${formattedSubtype})`;
+    }
+
+    // Fallback: truncate if too long
+    return mimeType.length > 20 ? `${mimeType.substring(0, 20)}...` : mimeType;
+  };
+
   const { icon: IconComponent, color } = getFileTypeIcon(file.mimeType);
 
   const handleViewDetails = () => {
@@ -160,8 +184,8 @@ export function FileCard({
 
         {/* Content */}
         <div className="flex flex-1 flex-col px-3 pb-2">
-          <p className="flex-1 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
-            {file.mimeType}
+          <p className="flex-1 break-words text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+            {formatMimeType(file.mimeType)}
           </p>
         </div>
 

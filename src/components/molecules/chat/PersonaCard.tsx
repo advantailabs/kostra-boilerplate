@@ -1,7 +1,8 @@
 import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
-import { Persona } from '@prisma/client';
+import { getPersonaFileInfo } from '@/hooks/usePersonas';
+import { PersonaWithKnowledgeBase } from '@/types/chat';
 import {
   RiDeleteBinLine,
   RiEditLine,
@@ -13,15 +14,12 @@ import {
 } from '@remixicon/react';
 
 interface PersonaCardProps {
-  persona: Persona;
+  persona: PersonaWithKnowledgeBase;
   onEdit?: () => void;
   onDelete?: () => void;
   className?: string;
   isSelected?: boolean;
   onClick?: () => void;
-  // Dummy props for file display
-  fileCount?: number;
-  fileTypes?: string[];
 }
 
 export function PersonaCard({
@@ -31,9 +29,9 @@ export function PersonaCard({
   className,
   isSelected,
   onClick,
-  fileCount = 3,
-  fileTypes = ['PDF', 'Excel', 'Document'],
 }: PersonaCardProps) {
+  const { fileCount, fileTypes } = getPersonaFileInfo(persona);
+
   const fileTypeConfig = {
     PDF: {
       icon: RiFilePdfLine,
@@ -117,8 +115,8 @@ export function PersonaCard({
       {/* Content */}
       <div className="flex flex-1 flex-col px-4 pb-3">
         <p className="flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-          {persona.description && persona.description.length > 70
-            ? `${persona.description.substring(0, 70)}...`
+          {persona.description && persona.description.length > 60
+            ? `${persona.description.substring(0, 60)}...`
             : persona.description ||
               'You are a professional assistant specialized in content creation, strategies, and optimization. I help users with their tasks efficiently and effectively.'}
         </p>

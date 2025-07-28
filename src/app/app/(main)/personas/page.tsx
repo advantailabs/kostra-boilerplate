@@ -6,8 +6,7 @@ import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { ModalAddPersona } from '@/components/organisms/modules/personas/ModalAddPersona';
 import { ModalEditPersona } from '@/components/organisms/modules/personas/ModalEditPersona';
 import { usePersonas } from '@/hooks/usePersonas';
-import { CreatePersonaRequest, UpdatePersonaRequest } from '@/types/chat';
-import { Persona } from '@prisma/client';
+import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
 import { RiAddLine } from '@remixicon/react';
 import { useState } from 'react';
 
@@ -17,8 +16,8 @@ export default function PersonasPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [editingPersona, setEditingPersona] = useState<Persona | null>(null);
-  const [deletingPersona, setDeletingPersona] = useState<Persona | null>(null);
+  const [editingPersona, setEditingPersona] = useState<PersonaWithKnowledgeBase | null>(null);
+  const [deletingPersona, setDeletingPersona] = useState<PersonaWithKnowledgeBase | null>(null);
 
   const handleAddPersona = async (personaData: CreatePersonaRequest) => {
     try {
@@ -53,12 +52,12 @@ export default function PersonasPage() {
     }
   };
 
-  const openEditModal = (persona: Persona) => {
+  const openEditModal = (persona: PersonaWithKnowledgeBase) => {
     setEditingPersona(persona);
     setShowEditModal(true);
   };
 
-  const openDeleteModal = (persona: Persona) => {
+  const openDeleteModal = (persona: PersonaWithKnowledgeBase) => {
     setDeletingPersona(persona);
     setShowDeleteModal(true);
   };
@@ -113,11 +112,6 @@ export default function PersonasPage() {
                 persona={persona}
                 onEdit={() => openEditModal(persona)}
                 onDelete={() => openDeleteModal(persona)}
-                fileCount={Math.floor(Math.random() * 5) + 1}
-                fileTypes={['PDF', 'Excel', 'Document', 'Image'].slice(
-                  0,
-                  Math.floor(Math.random() * 4) + 1
-                )}
               />
             ))}
           </div>

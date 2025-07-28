@@ -1,6 +1,28 @@
 import { personasApi } from '@/services/api/personas';
-import { CreatePersonaRequest, UpdatePersonaRequest } from '@/types/chat';
+import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+// Utility function to extract file information from a persona
+export const getPersonaFileInfo = (persona: PersonaWithKnowledgeBase) => {
+  const files = persona.knowledgeBase?.fileKnowledgeBases || [];
+  const fileCount = files.length;
+
+  // Extract unique file types from MIME types
+  const fileTypes = Array.from(
+    new Set(
+      files.map(file => {
+        const mimeType = file.file.mimeType.toLowerCase();
+        if (mimeType.includes('pdf')) return 'PDF';
+        if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'Excel';
+        if (mimeType.includes('word') || mimeType.includes('document')) return 'Document';
+        if (mimeType.includes('image')) return 'Image';
+        return 'Document'; // Default fallback
+      })
+    )
+  );
+
+  return { fileCount, fileTypes };
+};
 
 export function usePersonas() {
   const queryClient = useQueryClient();
