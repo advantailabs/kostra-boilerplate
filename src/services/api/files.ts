@@ -98,3 +98,12 @@ export const filesApi: FilesApiClient = {
     return response.data;
   },
 };
+
+export async function generateFileDownloadUrl(fileId: number): Promise<{
+  downloadUrl: string;
+  expiresAt: Date;
+  filename: string;
+}> {
+  const response = await axiosInstance.post(`/files/${fileId}/download`);
+  return response.data;
+}

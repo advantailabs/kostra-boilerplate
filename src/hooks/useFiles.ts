@@ -1,4 +1,10 @@
-import { FileFilters, filesApi, UpdateFileRequest, UploadFilesRequest } from '@/services/api/files';
+import {
+  FileFilters,
+  filesApi,
+  generateFileDownloadUrl,
+  UpdateFileRequest,
+  UploadFilesRequest,
+} from '@/services/api/files';
 import { useAuthStore } from '@/store/auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -85,6 +91,28 @@ export function useRemoveFileFromKnowledgeBase() {
       // Invalidate file knowledge bases and files list
       queryClient.invalidateQueries({ queryKey: ['file', fileId] });
       queryClient.invalidateQueries({ queryKey: ['files'] });
+    },
+  });
+}
+
+export function useFileDownload() {
+  return useMutation({
+    mutationFn: generateFileDownloadUrl,
+    onSuccess: (data: { downloadUrl: string; expiresAt: Date; filename: string }) => {
+      console.log('data', data);
+
+      // Trigger download using the generated URL
+      const link = document.createElement('a');
+      link.href = data.downloadUrl;
+      link.download = data.filename;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    onError: error => {
+      console.error('Error downloading file:', error);
+      // You can add toast notification here if needed
     },
   });
 }

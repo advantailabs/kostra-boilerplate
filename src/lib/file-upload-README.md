@@ -1,170 +1,142 @@
-# File Upload System
+# File Upload and Download System
 
-This document describes the new dynamic file upload system that supports multiple upload purposes, buckets, and file types.
+This document describes the file upload and download system for the Peon application.
 
 ## Overview
 
-The file upload system is designed to be flexible and scalable, supporting:
+The system supports both file uploads and downloads using Cloudflare R2 (S3-compatible) storage. Files can be stored in either public or private buckets depending on the upload purpose.
 
-- Multiple upload purposes (PersonaLogo, UserAvatar, UserFile, etc.)
-- Public and private buckets
-- Configurable file type restrictions
-- Dynamic key generation based on object details
-
-## Configuration
+## Upload System
 
 ### Upload Purposes
 
-Each upload purpose is configured with:
+- **PersonaLogo**: Public bucket, images only (5MB max)
+- **UserAvatar**: Public bucket, images only (2MB max)
+- **UserFile**: Private bucket, various file types (10MB max)
+- **ThreadAttachment**: Private bucket, documents and images (5MB max)
+- **MessageAttachment**: Private bucket, documents and images (5MB max)
+- **UserDocument**: Private bucket, extensive file type support (100MB max)
 
-- **Bucket**: 'public' or 'private'
-- **Allowed MIME Types**: Array of allowed file types
-- **Max File Size**: Maximum file size in bytes
-- **Key Prefix**: Base path for file storage
+### Upload Process
 
-### Current Upload Purposes
+1. Client requests pre-signed URL for upload
+2. Server generates PUT pre-signed URL with 1-hour expiration
+3. Client uploads file directly to R2 using the pre-signed URL
+4. Server creates file record in database
 
-1. **PersonaLogo** (Public)
+## Download System
 
-   - Allowed: image/jpeg, image/png, image/gif, image/webp
-   - Max Size: 5MB
-   - Key Prefix: personas/logos
+### Download Process
 
-2. **UserAvatar** (Public)
+1. Client requests download URL for a file
+2. Server validates user permissions (file ownership)
+3. Server generates GET pre-signed URL with 1-hour expiration
+4. Client downloads file using the pre-signed URL
 
-   - Allowed: image/jpeg, image/png, image/gif, image/webp
-   - Max Size: 2MB
-   - Key Prefix: users/avatars
+### Security Features
 
-3. **UserFile** (Private)
+- **Authentication**: Only authenticated users can request download URLs
+- **Authorization**: Users can only download their own files
+- **Temporary URLs**: Download URLs expire after 1 hour
+- **Private Bucket**: Files are stored in private buckets for enhanced security
 
-   - Allowed: PDF, text, Word, Excel, images
-   - Max Size: 10MB
-   - Key Prefix: users/files
+### API Endpoints
 
-4. **ThreadAttachment** (Private)
+#### Generate Download URL
 
-   - Allowed: PDF, text, images
-   - Max Size: 5MB
-   - Key Prefix: threads/attachments
+```
+POST /api/files/[id]/download
+```
 
-5. **MessageAttachment** (Private)
-   - Allowed: PDF, text, images
-   - Max Size: 5MB
-   - Key Prefix: messages/attachments
+**Response:**
 
-## Usage
+```json
+{
+  "downloadUrl": "https://...",
+  "expiresAt": "2024-01-01T12:00:00Z",
+  "filename": "original-filename.pdf"
+}
+```
 
-### Using the Hook
+### Usage in Components
 
 ```typescript
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { useFileDownload } from '@/hooks/useFiles';
 
 function MyComponent() {
-  const { uploadFile, isUploading, error } = useFileUpload({
-    uploadPurpose: 'PersonaLogo',
-    objectName: 'persona',
-    objectId: personaId,
-    onSuccess: (url) => {
-      console.log('File uploaded:', url);
-    },
-    onError: (error) => {
-      console.error('Upload failed:', error);
-    },
-  });
+  const downloadFileMutation = useFileDownload();
 
-  const handleFileChange = async (file: File) => {
-    const uploadedUrl = await uploadFile(file);
-    if (uploadedUrl) {
-      // File uploaded successfully
-    }
+  const handleDownload = (fileId: number) => {
+    downloadFileMutation.mutate(fileId);
   };
 
   return (
-    <input
-      type="file"
-      onChange={(e) => handleFileChange(e.target.files?.[0])}
-      disabled={isUploading}
-    />
+    <button
+      onClick={() => handleDownload(file.id)}
+      disabled={downloadFileMutation.isPending}
+    >
+      {downloadFileMutation.isPending ? 'Downloading...' : 'Download'}
+    </button>
   );
 }
 ```
 
-### Using the API Directly
+## Configuration
 
-```typescript
-import { fileUploadApi } from '@/services/api/file-upload';
+### Environment Variables
 
-const uploadFile = async (file: File) => {
-  // Get presigned URL
-  const { presignedUrl, key } = await fileUploadApi.getPresignedUrl({
-    uploadPurpose: 'PersonaLogo',
-    fileType: file.type,
-    objectName: 'persona',
-    objectId: personaId,
-  });
-
-  // Upload to S3
-  const response = await fetch(presignedUrl, {
-    method: 'PUT',
-    body: file,
-    headers: {
-      'Content-Type': file.type,
-    },
-  });
-
-  if (response.ok) {
-    return key; // Return the file key
-  }
-};
+```env
+# R2 Configuration
+R2_ACCESS_KEY_ID=your_access_key
+R2_SECRET_ACCESS_KEY=your_secret_key
+R2_ACCOUNT_ID=your_account_id
+R2_PUBLIC_BUCKET_NAME=peon-data-public
+R2_PRIVATE_BUCKET_NAME=peon-data-private
+NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://your-public-bucket.your-subdomain.r2.cloudflarestorage.com
 ```
 
-## Key Generation
+### Bucket Configuration
 
-Files are stored with keys following this pattern:
+- **Public Bucket**: For files that need direct access (logos, avatars)
+- **Private Bucket**: For sensitive files that require authentication (documents, attachments)
+
+## File Storage Structure
+
+Files are organized in the following structure:
 
 ```
-{keyPrefix}/{objectName}/{objectId}/{timestamp}-{uuid}.{extension}
+bucket/
+├── personas/logos/
+├── users/avatars/
+├── users/files/
+├── users/documents/
+├── threads/attachments/
+└── messages/attachments/
 ```
 
-Example:
+Each file path includes:
 
-```
-personas/logos/persona/123/1703123456789-abc123-def456.jpg
-```
+- Purpose-specific prefix
+- Object name (e.g., "user", "thread")
+- Object ID
+- Timestamp and UUID for uniqueness
+- File extension
 
-## Environment Variables
+## Error Handling
 
-Required environment variables:
+The system includes comprehensive error handling for:
 
-- `R2_PUBLIC_BUCKET_NAME`: Public bucket name (default: peon-data-public)
-- `R2_PRIVATE_BUCKET_NAME`: Private bucket name (default: peon-data-private)
-- `NEXT_PUBLIC_R2_PUBLIC_BUCKET_NAME`: Public bucket name for client-side
-- `NEXT_PUBLIC_R2_ACCOUNT_ID`: R2 account ID for client-side
+- Invalid file types
+- File size limits
+- Authentication failures
+- Authorization failures
+- Network errors
+- Storage service errors
 
-## Adding New Upload Purposes
+## Best Practices
 
-1. Add the purpose to the `UploadPurpose` type in `src/types/file-upload.ts`
-2. Add configuration to `FILE_UPLOAD_CONFIG` in `src/lib/file-upload-config.ts`
-3. Update validation logic if needed
-
-Example:
-
-```typescript
-// In types/file-upload.ts
-export type UploadPurpose = 'PersonaLogo' | 'UserAvatar' | 'NewPurpose'; // Add here
-
-// In lib/file-upload-config.ts
-export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
-  purposes: {
-    // ... existing purposes
-    NewPurpose: {
-      bucket: 'public',
-      allowedMimeTypes: ['image/jpeg', 'image/png'],
-      maxFileSize: 1 * 1024 * 1024, // 1MB
-      keyPrefix: 'new-purpose/files',
-    },
-  },
-  // ... rest of config
-};
-```
+1. **Always validate file types and sizes** before upload
+2. **Use appropriate upload purposes** for different file types
+3. **Implement proper error handling** in UI components
+4. **Monitor download usage** for security and cost management
+5. **Regularly audit file access** and permissions

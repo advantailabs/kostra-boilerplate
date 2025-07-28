@@ -33,9 +33,17 @@ interface FileCardProps {
   onView?: () => void;
   onDownload?: () => void;
   className?: string;
+  isDownloading?: boolean;
 }
 
-export function FileCard({ file, onDelete, onView, onDownload, className }: FileCardProps) {
+export function FileCard({
+  file,
+  onDelete,
+  onView: _onView,
+  onDownload,
+  className,
+  isDownloading = false,
+}: FileCardProps) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteFileMutation = useDeleteFile();
@@ -46,10 +54,6 @@ export function FileCard({ file, onDelete, onView, onDownload, className }: File
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
   };
 
   const getFileTypeIcon = (mimeType: string) => {
@@ -84,13 +88,6 @@ export function FileCard({ file, onDelete, onView, onDownload, className }: File
   const handleDownload = () => {
     if (onDownload) {
       onDownload();
-    } else if (file?.url) {
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.download = file.originalName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     }
   };
 
@@ -148,9 +145,9 @@ export function FileCard({ file, onDelete, onView, onDownload, className }: File
                   <RiEyeLine className="mr-2 h-3 w-3" />
                   View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDownload}>
+                <DropdownMenuItem onClick={handleDownload} disabled={isDownloading}>
                   <RiDownloadLine className="mr-2 h-3 w-3" />
-                  Download
+                  {isDownloading ? 'Downloading...' : 'Download'}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleDeleteClick}>
                   <RiDeleteBinLine className="mr-2 h-3 w-3" />
@@ -203,6 +200,8 @@ export function FileCard({ file, onDelete, onView, onDownload, className }: File
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
         file={file}
+        onDownload={handleDownload}
+        isDownloading={isDownloading}
       />
 
       {/* Delete Confirmation Dialog */}

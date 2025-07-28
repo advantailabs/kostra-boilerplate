@@ -16,9 +16,17 @@ interface FileDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   file: any;
+  onDownload?: () => void;
+  isDownloading?: boolean;
 }
 
-export function FileDetailsModal({ isOpen, onClose, file }: FileDetailsModalProps) {
+export function FileDetailsModal({
+  isOpen,
+  onClose,
+  file,
+  onDownload,
+  isDownloading = false,
+}: FileDetailsModalProps) {
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
     const k = 1024;
@@ -38,13 +46,8 @@ export function FileDetailsModal({ isOpen, onClose, file }: FileDetailsModalProp
   };
 
   const handleDownload = () => {
-    if (file?.url) {
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.download = file.originalName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (onDownload) {
+      onDownload();
     }
   };
 
@@ -147,19 +150,21 @@ export function FileDetailsModal({ isOpen, onClose, file }: FileDetailsModalProp
         </div>
 
         {/* Separator */}
-        <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700"></div>
+        <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700" />
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 pt-6">
           <Button variant="secondary" onClick={onClose} className="px-4">
             Close
           </Button>
-          {file.url && (
-            <Button onClick={handleDownload} className="flex items-center gap-2 px-4">
-              <RiDownloadLine className="h-4 w-4" />
-              Download
-            </Button>
-          )}
+          <Button
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="flex items-center gap-2 px-4"
+          >
+            <RiDownloadLine className="h-4 w-4" />
+            {isDownloading ? 'Downloading...' : 'Download'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

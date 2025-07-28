@@ -1,5 +1,5 @@
 import { UploadPurpose } from '@/types/file-upload';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
 import { getBucketName, getUploadPurposeConfig } from './file-upload-config';
@@ -54,6 +54,30 @@ export async function generatePresignedUrl(
   } catch (error) {
     console.error('Error generating presigned URL:', error);
     throw new Error('Failed to generate presigned URL');
+  }
+}
+
+export async function generateDownloadUrl(
+  bucket: string,
+  key: string,
+  filename?: string
+): Promise<{ downloadUrl: string; expiresAt: Date }> {
+  const s3Client = createS3Client();
+
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    ResponseContentDisposition: filename ? `attachment; filename="${filename}"` : undefined,
+  });
+
+  try {
+    const downloadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
+    const expiresAt = new Date(Date.now() + 3600 * 1000); // 1 hour from now
+
+    return { downloadUrl, expiresAt };
+  } catch (error) {
+    console.error('Error generating download URL:', error);
+    throw new Error('Failed to generate download URL');
   }
 }
 

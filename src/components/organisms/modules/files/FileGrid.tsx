@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { FileCard } from '@/components/molecules/files/FileCard';
+import { useFileDownload } from '@/hooks/useFiles';
 
 interface FileGridProps {
   files: any[];
@@ -14,6 +15,7 @@ interface FileGridProps {
 
 export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }: FileGridProps) {
   const observerRef = useRef<HTMLDivElement>(null);
+  const downloadFileMutation = useFileDownload();
 
   // Intersection Observer for infinite scrolling
   useEffect(() => {
@@ -42,15 +44,18 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
     [onFileDeleted]
   );
 
-  const handleView = useCallback((file: any) => {
+  const handleView = useCallback((_file: any) => {
     // View functionality is now handled in the FileDetailsModal
-    console.log('View file:', file);
+    console.log('View file:', _file);
   }, []);
 
-  const handleDownload = useCallback((file: any) => {
-    // Download functionality is now handled directly in the FileCard component
-    console.log('Download file:', file);
-  }, []);
+  const handleDownload = useCallback(
+    (file: any) => {
+      // Handle download at the grid level
+      downloadFileMutation.mutate(file.id);
+    },
+    [downloadFileMutation]
+  );
 
   return (
     <>
@@ -62,6 +67,9 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
             onDelete={() => handleDelete(file)}
             onView={() => handleView(file)}
             onDownload={() => handleDownload(file)}
+            isDownloading={
+              downloadFileMutation.isPending && downloadFileMutation.variables === file.id
+            }
           />
         ))}
       </div>
