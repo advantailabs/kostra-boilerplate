@@ -1,11 +1,9 @@
 import {
-  addFileToKnowledgeBase,
   createKnowledgeBase,
   deleteKnowledgeBase,
   findKnowledgeBaseById,
   findKnowledgeBasesByUserId,
   getKnowledgeBaseFiles,
-  removeFileFromKnowledgeBase,
   updateKnowledgeBase,
 } from '@/services/repositories/knowledge-base';
 import {
@@ -13,6 +11,10 @@ import {
   KnowledgeBaseWithFiles,
   UpdateKnowledgeBaseData,
 } from '@/types/chat';
+import {
+  addFileToKnowledgeBaseService as addFileToKnowledgeBaseFromFileService,
+  removeFileFromKnowledgeBaseService as removeFileFromKnowledgeBaseFromFileService,
+} from './file';
 
 export interface KnowledgeBaseServiceResult<T> {
   success: boolean;
@@ -152,12 +154,14 @@ const deleteKnowledgeBaseService = async (
   }
 };
 
+// These functions are now handled by the file service
+// and are re-exported here for convenience
 const addFileToKnowledgeBaseService = async (
   knowledgeBaseId: number,
   fileId: number
-): Promise<KnowledgeBaseServiceResult<any>> => {
+): Promise<KnowledgeBaseServiceResult<void>> => {
   try {
-    const result = await addFileToKnowledgeBase(knowledgeBaseId, fileId);
+    const result = await addFileToKnowledgeBaseFromFileService(fileId, knowledgeBaseId);
 
     if (!result.success) {
       return {
@@ -168,7 +172,6 @@ const addFileToKnowledgeBaseService = async (
 
     return {
       success: true,
-      data: result.data,
     };
   } catch (error) {
     console.error('Error in addFileToKnowledgeBaseService:', error);
@@ -182,9 +185,9 @@ const addFileToKnowledgeBaseService = async (
 const removeFileFromKnowledgeBaseService = async (
   knowledgeBaseId: number,
   fileId: number
-): Promise<KnowledgeBaseServiceResult<boolean>> => {
+): Promise<KnowledgeBaseServiceResult<void>> => {
   try {
-    const result = await removeFileFromKnowledgeBase(knowledgeBaseId, fileId);
+    const result = await removeFileFromKnowledgeBaseFromFileService(fileId, knowledgeBaseId);
 
     if (!result.success) {
       return {
@@ -195,7 +198,6 @@ const removeFileFromKnowledgeBaseService = async (
 
     return {
       success: true,
-      data: result.data,
     };
   } catch (error) {
     console.error('Error in removeFileFromKnowledgeBaseService:', error);

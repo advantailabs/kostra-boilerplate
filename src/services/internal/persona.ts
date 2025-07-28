@@ -1,10 +1,7 @@
 import { Persona, PrismaClient } from '@prisma/client';
 
-import {
-  createAssistant,
-  createVectorStore,
-  updateAssistant,
-} from '@/services/external/openai/assistant';
+import { createAssistant, updateAssistant } from '@/services/external/openai/assistant';
+import { createVectorStore } from '@/services/external/openai/vector-store';
 import { createKnowledgeBase } from '@/services/repositories/knowledge-base';
 import {
   createPersona,
@@ -29,7 +26,9 @@ const createPersonaService = async (
 ): Promise<PersonaServiceResult<Persona>> => {
   try {
     // Create vector store first
-    const vectorStoreResult = await createVectorStore(`${data.name.trim()} Knowledge Base`);
+    const vectorStoreResult = await createVectorStore({
+      name: `${data.name.trim()} Knowledge Base`,
+    });
 
     if (!vectorStoreResult.success || !vectorStoreResult.data) {
       return {

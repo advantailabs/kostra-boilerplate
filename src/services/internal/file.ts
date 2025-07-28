@@ -1,3 +1,12 @@
+import { generateDownloadUrl } from '@/lib/s3';
+import {
+  createFile as createOpenAIFile,
+  deleteFile as deleteOpenAIFile,
+} from '@/services/external/openai/files';
+import {
+  addFileToVectorStore,
+  deleteFileFromVectorStore,
+} from '@/services/external/openai/vector-store';
 import {
   addFileToKnowledgeBase,
   createFile,
@@ -12,13 +21,7 @@ import {
   updateFile,
   UpdateFileData,
 } from '@/services/repositories/file';
-import { PrismaClient } from '@prisma/client';
-import OpenAI from 'openai';
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { findKnowledgeBaseById } from '@/services/repositories/knowledge-base';
 
 export interface FileServiceResult<T> {
   success: boolean;
@@ -43,10 +46,9 @@ export interface FileListResult {
 
 const getUserFilesService = async (
   userId: number,
-  page: number = 1,
-  limit: number = 20,
-  filters?: FileFilters,
-  prisma?: PrismaClient
+  page = 1,
+  limit = 20,
+  filters?: FileFilters
 ): Promise<FileServiceResult<FileListResult>> => {
   try {
     const result = await findFilesByUserId(userId, page, limit, filters);
@@ -79,21 +81,45 @@ const getUserFilesService = async (
   }
 };
 
-const uploadFileService = async (
-  data: UploadFileData,
-  prisma?: PrismaClient
-): Promise<FileServiceResult<any>> => {
+const uploadFileService = async (data: UploadFileData): Promise<FileServiceResult<any>> => {
   try {
+    // Get presigned URL for file download from S3
+    const downloadUrlResult = await generateDownloadUrl(
+      process.env.R2_PRIVATE_BUCKET_NAME || 'peon-data-private',
+      data.s3Key,
+      data.file.name
+    );
+
+    // Create a readable stream from the presigned URL
+    const response = await fetch(downloadUrlResult.downloadUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch file from S3');
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Create a file-like object that OpenAI can use
+    // In Node.js environment, we can create a File object from Buffer
+    const openaiFile = new File([buffer], data.file.name, { type: data.file.type });
+
     // Upload file to OpenAI with 'assistants' purpose
-    // const openaiFile = await openai.files.create({
-    //   file: data.file,
-    //   purpose: 'assistants',
-    // });
+    const openaiFileResult = await createOpenAIFile({
+      file: openaiFile,
+      purpose: 'assistants',
+    });
+
+    if (!openaiFileResult.success) {
+      return {
+        success: false,
+        error: openaiFileResult.error,
+      };
+    }
 
     // Create file record in database
     const fileData: CreateFileData = {
       userId: data.userId,
-      openaiFileId: 'asd',
+      openaiFileId: openaiFileResult.data!.id,
       filename: data.s3Key,
       originalName: data.file.name,
       mimeType: data.file.type,
@@ -107,25 +133,30 @@ const uploadFileService = async (
 
     const createResult = await createFile(fileData);
 
-    // if (!createResult.success) {
-    //   // If database creation fails, delete the OpenAI file
-    //   await openai.files.delete(openaiFile.id);
-    //   return {
-    //     success: false,
-    //     error: createResult.error,
-    //   };
-    // }
+    if (!createResult.success) {
+      // If database creation fails, delete the OpenAI file
+      await deleteOpenAIFile(openaiFileResult.data!.id);
+      return {
+        success: false,
+        error: createResult.error,
+      };
+    }
 
     // If knowledge bases are specified, add file to them
     if (data.knowledgeBaseIds && data.knowledgeBaseIds.length > 0) {
-      for (const knowledgeBaseId of data.knowledgeBaseIds) {
-        const kbResult = await addFileToKnowledgeBase(createResult.data!.id, knowledgeBaseId);
-
+      const addToKbPromises = data.knowledgeBaseIds.map(async knowledgeBaseId => {
+        const kbResult = await addFileToKnowledgeBaseService(
+          createResult.data!.id,
+          knowledgeBaseId
+        );
         if (!kbResult.success) {
           console.warn('Failed to add file to knowledge base:', kbResult.error);
           // Don't fail the upload, just log the warning
         }
-      }
+        return kbResult;
+      });
+
+      await Promise.all(addToKbPromises);
     }
 
     return {
@@ -142,8 +173,7 @@ const uploadFileService = async (
 };
 
 const getFileByIdService = async (
-  id: number,
-  prisma?: PrismaClient
+  id: number
 ): Promise<FileServiceResult<FileWithKnowledgeBases | null>> => {
   try {
     const result = await findFileById(id);
@@ -170,8 +200,7 @@ const getFileByIdService = async (
 
 const updateFileService = async (
   id: number,
-  data: UpdateFileData,
-  prisma?: PrismaClient
+  data: UpdateFileData
 ): Promise<FileServiceResult<any>> => {
   try {
     const result = await updateFile(id, data);
@@ -196,11 +225,49 @@ const updateFileService = async (
   }
 };
 
-const deleteFileService = async (
-  id: number,
-  prisma?: PrismaClient
-): Promise<FileServiceResult<void>> => {
+const deleteFileService = async (id: number): Promise<FileServiceResult<void>> => {
   try {
+    // First, get the file to check if it exists and get its OpenAI file ID
+    const fileResult = await findFileById(id);
+
+    if (!fileResult.success || !fileResult.data) {
+      return {
+        success: false,
+        error: 'File not found',
+      };
+    }
+
+    const file = fileResult.data;
+
+    // Delete from OpenAI if we have an OpenAI file ID
+    if (file.openaiFileId) {
+      try {
+        const deleteResult = await deleteOpenAIFile(file.openaiFileId);
+        if (!deleteResult.success) {
+          console.warn('Failed to delete OpenAI file:', deleteResult.error);
+          // Don't fail the operation if OpenAI deletion fails
+        }
+      } catch (openaiError) {
+        console.warn('Failed to delete OpenAI file:', openaiError);
+        // Don't fail the operation if OpenAI deletion fails
+      }
+    }
+
+    // Remove file from all associated knowledge bases and vector stores
+    if (file.fileKnowledgeBases && file.fileKnowledgeBases.length > 0) {
+      const removeFromKbPromises = file.fileKnowledgeBases.map(async fileKb => {
+        const kbResult = await removeFileFromKnowledgeBaseService(id, fileKb.knowledgeBase.id);
+        if (!kbResult.success) {
+          console.warn('Failed to remove file from knowledge base:', kbResult.error);
+          // Don't fail the operation if knowledge base removal fails
+        }
+        return kbResult;
+      });
+
+      await Promise.all(removeFromKbPromises);
+    }
+
+    // Soft delete from database
     const result = await deleteFile(id);
 
     if (!result.success) {
@@ -222,13 +289,11 @@ const deleteFileService = async (
   }
 };
 
-const permanentlyDeleteFileService = async (
-  id: number,
-  prisma?: PrismaClient
-): Promise<FileServiceResult<void>> => {
+const permanentlyDeleteFileService = async (id: number): Promise<FileServiceResult<void>> => {
   try {
-    // Get file to get OpenAI file ID
+    // First, get the file to check if it exists and get its OpenAI file ID
     const fileResult = await findFileById(id);
+
     if (!fileResult.success || !fileResult.data) {
       return {
         success: false,
@@ -238,17 +303,35 @@ const permanentlyDeleteFileService = async (
 
     const file = fileResult.data;
 
-    // Delete from OpenAI if it has an OpenAI file ID
+    // Delete from OpenAI if we have an OpenAI file ID
     if (file.openaiFileId) {
       try {
-        await openai.files.delete(file.openaiFileId);
-      } catch (error) {
-        console.warn('Failed to delete OpenAI file:', error);
-        // Continue with deletion even if OpenAI deletion fails
+        const deleteResult = await deleteOpenAIFile(file.openaiFileId);
+        if (!deleteResult.success) {
+          console.warn('Failed to delete OpenAI file:', deleteResult.error);
+          // Don't fail the operation if OpenAI deletion fails
+        }
+      } catch (openaiError) {
+        console.warn('Failed to delete OpenAI file:', openaiError);
+        // Don't fail the operation if OpenAI deletion fails
       }
     }
 
-    // Delete from database
+    // Remove file from all associated knowledge bases and vector stores
+    if (file.fileKnowledgeBases && file.fileKnowledgeBases.length > 0) {
+      const removeFromKbPromises = file.fileKnowledgeBases.map(async fileKb => {
+        const kbResult = await removeFileFromKnowledgeBaseService(id, fileKb.knowledgeBase.id);
+        if (!kbResult.success) {
+          console.warn('Failed to remove file from knowledge base:', kbResult.error);
+          // Don't fail the operation if knowledge base removal fails
+        }
+        return kbResult;
+      });
+
+      await Promise.all(removeFromKbPromises);
+    }
+
+    // Permanently delete from database
     const result = await permanentlyDeleteFile(id);
 
     if (!result.success) {
@@ -272,17 +355,59 @@ const permanentlyDeleteFileService = async (
 
 const addFileToKnowledgeBaseService = async (
   fileId: number,
-  knowledgeBaseId: number,
-  prisma?: PrismaClient
+  knowledgeBaseId: number
 ): Promise<FileServiceResult<void>> => {
   try {
-    const result = await addFileToKnowledgeBase(fileId, knowledgeBaseId);
+    // Get the file to check if it exists and get its OpenAI file ID
+    const fileResult = await findFileById(fileId);
 
-    if (!result.success) {
+    if (!fileResult.success || !fileResult.data) {
       return {
         success: false,
-        error: result.error,
+        error: 'File not found',
       };
+    }
+
+    const _file = fileResult.data;
+
+    // Get the knowledge base to check if it exists and get its vector store ID
+    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
+
+    if (!kbResult.success || !kbResult.data) {
+      return {
+        success: false,
+        error: 'Knowledge base not found',
+      };
+    }
+
+    const _knowledgeBase = kbResult.data;
+
+    // Add file to knowledge base in database
+    const dbResult = await addFileToKnowledgeBase(fileId, knowledgeBaseId);
+
+    if (!dbResult.success) {
+      return {
+        success: false,
+        error: dbResult.error,
+      };
+    }
+
+    // Add file to vector store if both OpenAI file ID and vector store ID exist
+    if (_file.openaiFileId && _knowledgeBase.vectorStoreId) {
+      try {
+        const vectorStoreResult = await addFileToVectorStore({
+          vectorStoreId: _knowledgeBase.vectorStoreId,
+          fileId: _file.openaiFileId,
+        });
+
+        if (!vectorStoreResult.success) {
+          console.warn('Failed to add file to vector store:', vectorStoreResult.error);
+          // Don't fail the operation if vector store addition fails, but log the warning
+        }
+      } catch (vectorStoreError) {
+        console.warn('Failed to add file to vector store:', vectorStoreError);
+        // Don't fail the operation if vector store addition fails
+      }
     }
 
     return {
@@ -299,17 +424,59 @@ const addFileToKnowledgeBaseService = async (
 
 const removeFileFromKnowledgeBaseService = async (
   fileId: number,
-  knowledgeBaseId: number,
-  prisma?: PrismaClient
+  knowledgeBaseId: number
 ): Promise<FileServiceResult<void>> => {
   try {
-    const result = await removeFileFromKnowledgeBase(fileId, knowledgeBaseId);
+    // Get the file to check if it exists and get its OpenAI file ID
+    const fileResult = await findFileById(fileId);
 
-    if (!result.success) {
+    if (!fileResult.success || !fileResult.data) {
       return {
         success: false,
-        error: result.error,
+        error: 'File not found',
       };
+    }
+
+    const _file = fileResult.data;
+
+    // Get the knowledge base to check if it exists and get its vector store ID
+    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
+
+    if (!kbResult.success || !kbResult.data) {
+      return {
+        success: false,
+        error: 'Knowledge base not found',
+      };
+    }
+
+    const _knowledgeBase = kbResult.data;
+
+    // Remove file from knowledge base in database
+    const dbResult = await removeFileFromKnowledgeBase(fileId, knowledgeBaseId);
+
+    if (!dbResult.success) {
+      return {
+        success: false,
+        error: dbResult.error,
+      };
+    }
+
+    // Remove file from vector store if both OpenAI file ID and vector store ID exist
+    if (_file.openaiFileId && _knowledgeBase.vectorStoreId) {
+      try {
+        const vectorStoreResult = await deleteFileFromVectorStore({
+          vectorStoreId: _knowledgeBase.vectorStoreId,
+          fileId: _file.openaiFileId,
+        });
+
+        if (!vectorStoreResult.success) {
+          console.warn('Failed to delete file from vector store:', vectorStoreResult.error);
+          // Don't fail the operation if vector store deletion fails, but log the warning
+        }
+      } catch (vectorStoreError) {
+        console.warn('Failed to delete file from vector store:', vectorStoreError);
+        // Don't fail the operation if vector store deletion fails
+      }
     }
 
     return {

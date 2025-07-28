@@ -101,6 +101,23 @@ export async function POST(request: NextRequest) {
     const validationResult = uploadFilesSchema.safeParse(body);
 
     if (!validationResult.success) {
+      // Check if this is an image file validation error
+      const imageValidationError = validationResult.error.issues.find(
+        (err: any) => err.path.includes('files') && err.message.includes('Image files')
+      );
+
+      if (imageValidationError) {
+        return NextResponse.json(
+          {
+            error: 'Image files not supported',
+            message:
+              'Image files (JPG, PNG, SVG, WebP, etc.) cannot be uploaded to knowledge bases.',
+            code: 'IMAGE_FILES_NOT_SUPPORTED',
+          },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
         {
           error: 'Validation failed',
