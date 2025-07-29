@@ -1,11 +1,9 @@
 import { Avatar } from '@/components/atom/Avatar';
-import { Message, Persona } from '@prisma/client';
-import Image from 'next/image';
-
 import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { CitationFile, StoredCitation } from '@/types/chat';
-import { Clipboard } from 'lucide-react';
+import { Message, Persona } from '@prisma/client';
+import Image from 'next/image';
 import { useState } from 'react';
 import { CitationList } from './CitationList';
 import MarkdownRenderer from './SyntaxHighlighter';
@@ -148,7 +146,21 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
               title="Copy full message"
             >
-              {copied ? <span className="text-xs">Copied</span> : <Clipboard size={16} />}
+              {copied ? (
+                <span className="text-xs">Copied</span>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 fill-current"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 
+      1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 
+      18H8V7h11v16z"
+                  />
+                </svg>
+              )}
             </button>
           </div>
         </div>
