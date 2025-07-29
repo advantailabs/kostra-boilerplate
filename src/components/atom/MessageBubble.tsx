@@ -121,41 +121,36 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          <div className="mb-1 flex justify-end">
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(displayContent);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-              title="Copy full message"
-            >
-              {copied ? <span className="text-xs">Copied</span> : <Clipboard size={16} />}
-            </button>
-          </div>
-
           {/* 📝 Message content */}
           <p className="break-words text-sm">
             <MarkdownRenderer content={displayContent} />
           </p>
 
           {/* ⏰ Timestamp */}
-          <p
-            className={cx(
-              'mt-2 text-sm',
-              isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
-            )}
-          >
-            {new Date(message.timestamp).toLocaleDateString([], {
-              month: 'short',
-              day: 'numeric',
-            })}{' '}
-            {new Date(message.timestamp).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </p>
+          <div className="mt-2 flex w-full items-center justify-between text-sm">
+            <span className={cx(isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400')}>
+              {new Date(message.timestamp).toLocaleDateString([], {
+                month: 'short',
+                day: 'numeric',
+              })}{' '}
+              {new Date(message.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(displayContent);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+              title="Copy full message"
+            >
+              {copied ? <span className="text-xs">Copied</span> : <Clipboard size={16} />}
+            </button>
+          </div>
         </div>
 
         {/* 📎 Citations (Assistant only) */}
