@@ -15,16 +15,16 @@ enum UserRole {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
-  clerkUserId    String           @unique
+  id             Int             @id @default(autoincrement())
+  clerkUserId    String          @unique
   name           String
-  email          String           @unique
-  profilePicture String?          // URL to the profile picture
-  role           UserRole         @default(USER)
-  isOnboarded    Boolean          @default(false)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?        // Soft delete
+  email          String          @unique
+  profilePicture String? // URL to the profile picture
+  role           UserRole        @default(USER)
+  isOnboarded    Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime? // Soft delete
   threads        Thread[]
   personas       Persona[]
   files          File[]
@@ -32,21 +32,21 @@ model User {
 }
 
 model Thread {
-  id             Int        @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   userId         Int
   openaiThreadId String?
   personaId      Int?
   title          String
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  deletedAt      DateTime?  // Soft delete
-  user           User       @relation(fields: [userId], references: [id])
-  persona        Persona?   @relation(fields: [personaId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime? // Soft delete
+  user           User      @relation(fields: [userId], references: [id])
+  persona        Persona?  @relation(fields: [personaId], references: [id])
   messages       Message[]
 }
 
 model Persona {
-  id                Int           @id @default(autoincrement())
+  id                Int            @id @default(autoincrement())
   userId            Int?
   openaiAssistantId String?
   knowledgeBaseId   Int?
@@ -54,27 +54,27 @@ model Persona {
   description       String
   instructions      String
   tags              String[]
-  logo              String?       // URL to the logo image in S3
+  logo              String? // URL to the logo image in S3
   deletedAt         DateTime?
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  user              User?         @relation(fields: [userId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  user              User?          @relation(fields: [userId], references: [id])
   knowledgeBase     KnowledgeBase? @relation(fields: [knowledgeBaseId], references: [id])
   threads           Thread[]
 }
 
 model KnowledgeBase {
-  id                Int       @id @default(autoincrement())
-  userId            Int
-  title             String
-  description       String
-  metadata          Json?
-  vectorStoreId     String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime? // Soft delete
-  user              User      @relation(fields: [userId], references: [id])
-  personas          Persona[]
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  title              String
+  description        String
+  metadata           Json?
+  vectorStoreId      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime? // Soft delete
+  user               User                @relation(fields: [userId], references: [id])
+  personas           Persona[]
   fileKnowledgeBases FileKnowledgeBase[]
 }
 
@@ -84,36 +84,36 @@ model Message {
   openaiMessageId String?
   role            String
   content         String
-  citations       Json?     // Store citation data as JSON
+  citations       Json? // Store citation data as JSON
   timestamp       DateTime  @default(now())
   deletedAt       DateTime? // Soft delete
   thread          Thread    @relation(fields: [threadId], references: [id])
 }
 
 model File {
-  id                  Int                   @id @default(autoincrement())
-  userId              Int?
-  openaiFileId        String?               @unique
-  filename            String
-  originalName        String
-  mimeType            String
-  size                Int                   // File size in bytes
-  url                 String?               // Storage URL (S3, Supabase, etc.)
-  metadata            Json?                 // Additional file metadata
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  deletedAt           DateTime?             // Soft delete
-  user                User?                 @relation(fields: [userId], references: [id])
-  fileKnowledgeBases  FileKnowledgeBase[]
+  id                 Int                 @id @default(autoincrement())
+  userId             Int?
+  openaiFileId       String?             @unique
+  filename           String
+  originalName       String
+  mimeType           String
+  size               Int // File size in bytes
+  url                String? // Storage URL (S3, Supabase, etc.)
+  metadata           Json? // Additional file metadata
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime? // Soft delete
+  user               User?               @relation(fields: [userId], references: [id])
+  fileKnowledgeBases FileKnowledgeBase[]
 }
 
 model FileKnowledgeBase {
-  id             Int          @id @default(autoincrement())
-  fileId         Int
+  id              Int           @id @default(autoincrement())
+  fileId          Int
   knowledgeBaseId Int
-  createdAt      DateTime     @default(now())
-  file           File         @relation(fields: [fileId], references: [id])
-  knowledgeBase  KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id])
+  createdAt       DateTime      @default(now())
+  file            File          @relation(fields: [fileId], references: [id])
+  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id])
 
   @@unique([fileId, knowledgeBaseId])
 }

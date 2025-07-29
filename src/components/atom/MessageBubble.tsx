@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { CitationFile, StoredCitation } from '@/types/chat';
+import { Clipboard } from 'lucide-react';
+import { useState } from 'react';
 import { CitationList } from './CitationList';
 import MarkdownRenderer from './SyntaxHighlighter';
 
@@ -18,6 +20,7 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, persona, citations, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const { user } = useAuthStore();
+  const [copied, setCopied] = useState(false);
 
   // Parse stored citations from message
   const storedCitations: StoredCitation[] = (message as any).citations
@@ -118,9 +121,26 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
+          <div className="mb-1 flex justify-end">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(displayContent);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+              title="Copy full message"
+            >
+              {copied ? <span className="text-xs">Copied</span> : <Clipboard size={16} />}
+            </button>
+          </div>
+
+          {/* 📝 Message content */}
           <p className="break-words text-sm">
             <MarkdownRenderer content={displayContent} />
           </p>
+
+          {/* ⏰ Timestamp */}
           <p
             className={cx(
               'mt-2 text-sm',
@@ -137,7 +157,8 @@ export function MessageBubble({ message, persona, citations, className }: Messag
             })}
           </p>
         </div>
-        {/* Show citations for assistant messages outside the bubble */}
+
+        {/* 📎 Citations (Assistant only) */}
         {!isUser && finalCitations && finalCitations.length > 0 && (
           <CitationList citations={finalCitations} />
         )}
