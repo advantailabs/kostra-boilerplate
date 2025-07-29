@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { ChatInterface } from '@/components/organisms/chat/ChatInterface';
 import { useChat } from '@/hooks/useChat';
 import { usePersonas } from '@/hooks/usePersonas';
@@ -12,7 +13,8 @@ export default function ChatPage() {
   const { personas, isLoading: personasLoading } = usePersonas();
   const { threads, isLoading: threadsLoading, deleteThread } = useThreads();
 
-  const { createThreadStreaming, isStreaming, streamingMessage } = useChat(undefined); // No active thread on main chat page
+  const { createThreadStreaming, isStreaming, streamingMessage, currentCitations } =
+    useChat(undefined); // No active thread on main chat page
 
   const handleCreateThread = async (personaId: number, message: string) => {
     try {
@@ -54,14 +56,7 @@ export default function ChatPage() {
   const isLoading = personasLoading || threadsLoading;
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-          <p className="mt-2 text-sm text-gray-500">Loading chat...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading chat..." />;
   }
 
   return (
@@ -77,6 +72,7 @@ export default function ChatPage() {
         onNewThread={handleNewThread}
         isStreaming={isStreaming}
         streamingMessage={streamingMessage}
+        currentCitations={currentCitations}
       />
     </div>
   );

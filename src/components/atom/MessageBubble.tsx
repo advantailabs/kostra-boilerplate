@@ -2,19 +2,48 @@ import { Avatar } from '@/components/atom/Avatar';
 import { Message, Persona } from '@prisma/client';
 import Image from 'next/image';
 
-import { cx } from '@/lib/utils';
+import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
+import { CitationFile, StoredCitation } from '@/types/chat';
+import { CitationList } from './CitationList';
 import MarkdownRenderer from './SyntaxHighlighter';
 
 interface MessageBubbleProps {
   message: Message;
   persona?: Persona | null;
+  citations?: CitationFile[];
   className?: string;
 }
 
-export function MessageBubble({ message, persona, className }: MessageBubbleProps) {
+export function MessageBubble({ message, persona, citations, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const { user } = useAuthStore();
+
+  // Parse stored citations from message
+  const storedCitations: StoredCitation[] = (message as any).citations
+    ? typeof (message as any).citations === 'string'
+      ? JSON.parse((message as any).citations)
+      : (message as any).citations
+    : [];
+
+  // Convert stored citations to CitationFile format for display
+  const displayCitations: CitationFile[] = storedCitations.map(citation => ({
+    openaiFileId: citation.openaiFileId,
+    fileId: citation.fileId,
+    originalName: citation.originalName,
+    filename: citation.filename,
+    mimeType: citation.mimeType,
+    size: citation.size,
+    citationText: citation.citationText,
+    startIndex: citation.startIndex,
+    endIndex: citation.endIndex,
+  }));
+
+  // Use passed citations (for streaming) or parsed citations (for stored messages)
+  const finalCitations = citations || displayCitations;
+
+  // Process content to remove citation text for display
+  const displayContent = processContentWithCitations(message.content, storedCitations, false);
 
   // Helper function to render user avatar
   const renderUserAvatar = () => {
@@ -80,32 +109,38 @@ export function MessageBubble({ message, persona, className }: MessageBubbleProp
   return (
     <div className={cx('flex gap-3', isUser ? 'justify-end' : 'justify-start', className)}>
       {!isUser && renderAssistantAvatar()}
-      <div
-        className={cx(
-          'max-w-[80%] rounded-lg px-4 py-2 text-sm',
-          isUser
-            ? 'bg-indigo-600 text-white'
-            : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-        )}
-      >
-        {isUser ? (
-          <p className="whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <MarkdownRenderer content={message.content} />
-          </div>
-        )}
-        <p
+      <div className={cx('flex flex-col', isUser ? 'flex-1' : '')}>
+        <div
           className={cx(
-            'mt-1 text-xs',
-            isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
+            'rounded-lg px-3 py-2',
+            isUser
+              ? 'ml-auto max-w-[85%] bg-indigo-600 text-white'
+              : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          {new Date(message.timestamp).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </p>
+          <p className="whitespace-pre-wrap break-words text-sm">
+            <MarkdownRenderer content={displayContent} />
+          </p>
+          <p
+            className={cx(
+              'mt-2 text-sm',
+              isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
+            )}
+          >
+            {new Date(message.timestamp).toLocaleDateString([], {
+              month: 'short',
+              day: 'numeric',
+            })}{' '}
+            {new Date(message.timestamp).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </p>
+        </div>
+        {/* Show citations for assistant messages outside the bubble */}
+        {!isUser && finalCitations && finalCitations.length > 0 && (
+          <CitationList citations={finalCitations} />
+        )}
       </div>
       {isUser && renderUserAvatar()}
     </div>

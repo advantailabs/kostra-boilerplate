@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamAssistantRun } from '@/services/external/openai/messages';
 import { createThread as createOpenAIThread } from '@/services/external/openai/threads';
 import { generateThreadTitle as generateOpenAITitle } from '@/services/external/openai/title-generator';
-import { createMessage } from '@/services/repositories/message';
+import { createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
 import { getUserByClerkId } from '@/services/repositories/user';
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     await updateThreadOpenAIId(thread.id, openaiThreadResult.data!.id);
 
     // Create user message in database
-    await createMessage({
+    await createMessageWithCitations({
       threadId: thread.id,
       role: 'user',
       content: initialMessage,
@@ -155,20 +155,35 @@ export async function POST(request: NextRequest) {
               case 'completed':
                 assistantMessageId = chunk.messageId;
 
-                // Save the complete assistant response to database
-                await createMessage({
+                // Convert citations to stored format
+                const storedCitations = chunk.citations?.map(citation => ({
+                  openaiFileId: citation.openaiFileId,
+                  fileId: citation.fileId,
+                  originalName: citation.originalName,
+                  filename: citation.filename,
+                  mimeType: citation.mimeType,
+                  size: citation.size,
+                  citationText: citation.citationText,
+                  startIndex: citation.startIndex,
+                  endIndex: citation.endIndex,
+                }));
+
+                // Save the complete assistant response to database with citations
+                await createMessageWithCitations({
                   threadId: thread.id,
                   role: 'assistant',
                   content: fullResponse,
                   openaiMessageId: assistantMessageId,
+                  citations: storedCitations,
                 });
 
-                // Send completion signal
+                // Send completion signal with citations
                 const completionData = JSON.stringify({
                   type: 'completed',
                   threadId: thread.id,
                   messageId: assistantMessageId,
                   fullContent: fullResponse,
+                  citations: chunk.citations || [],
                 });
                 controller.enqueue(encoder.encode(`data: ${completionData}\n\n`));
 

@@ -286,3 +286,36 @@ export async function removeFileFromKnowledgeBase(
     return { success: false, error: 'Failed to remove file from knowledge base' };
   }
 }
+
+export async function findFileByOpenaiFileId(
+  openaiFileId: string
+): Promise<RepositoryResult<FileWithKnowledgeBases | null>> {
+  try {
+    const file = await prisma.file.findFirst({
+      where: { openaiFileId, deletedAt: null },
+      include: {
+        fileKnowledgeBases: {
+          include: {
+            knowledgeBase: {
+              include: {
+                personas: {
+                  select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    logo: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { success: true, data: file };
+  } catch (error) {
+    console.error('Error finding file by OpenAI file ID:', error);
+    return { success: false, error: 'Failed to find file' };
+  }
+}

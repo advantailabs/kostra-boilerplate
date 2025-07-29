@@ -5,6 +5,7 @@ import { StreamingMessage } from '@/components/atom/StreamingMessage';
 import { ConversationHeader } from '@/components/molecules/chat/ConversationHeader';
 import { EnhancedMessageInput } from '@/components/molecules/chat/EnhancedMessageInput';
 import { PersonaSelectionModal } from '@/components/molecules/chat/PersonaSelectionModal';
+import { CitationFile } from '@/types/chat';
 import { Message, Persona, Thread } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -19,6 +20,7 @@ interface ConversationViewProps {
   onClosePersonaModal?: () => void;
   isStreaming?: boolean;
   streamingMessage?: string;
+  currentCitations?: CitationFile[];
 }
 
 export function ConversationView({
@@ -31,6 +33,7 @@ export function ConversationView({
   onClosePersonaModal,
   isStreaming = false,
   streamingMessage = '',
+  currentCitations = [],
 }: ConversationViewProps) {
   const router = useRouter();
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | undefined>(personas[0]?.id);
@@ -121,15 +124,18 @@ export function ConversationView({
               {/* Show pending user message when creating new thread */}
               {!activeThread && pendingUserMessage && (
                 <MessageBubble
-                  message={{
-                    id: 0, // Temporary ID for pending message
-                    content: pendingUserMessage,
-                    role: 'user',
-                    threadId: 0, // Temporary thread ID
-                    timestamp: new Date(),
-                    openaiMessageId: null,
-                    deletedAt: null,
-                  }}
+                  message={
+                    {
+                      id: 0, // Temporary ID for pending message
+                      content: pendingUserMessage,
+                      role: 'user',
+                      threadId: 0, // Temporary thread ID
+                      timestamp: new Date(),
+                      openaiMessageId: null,
+                      deletedAt: null,
+                      citations: null,
+                    } as any
+                  }
                   persona={selectedPersona || undefined}
                 />
               )}
@@ -140,6 +146,7 @@ export function ConversationView({
                   message={streamingMessage}
                   personaLogo={activeThread?.persona?.logo || selectedPersona?.logo}
                   personaName={activeThread?.persona?.name || selectedPersona?.name}
+                  citations={currentCitations}
                 />
               )}
 

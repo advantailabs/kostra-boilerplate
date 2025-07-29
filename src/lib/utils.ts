@@ -1,10 +1,46 @@
 // Tremor Raw cx [v0.0.0]
 
-import clsx, { type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export function cx(...args: ClassValue[]) {
-  return twMerge(clsx(...args));
+import { StoredCitation } from '@/types/chat';
+
+export function cx(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+/**
+ * Process content by replacing citation text with links or removing them
+ */
+export function processContentWithCitations(
+  content: string,
+  citations: StoredCitation[],
+  replaceWithLinks: boolean = false
+): string {
+  if (!citations || citations.length === 0) {
+    return content;
+  }
+
+  // Sort citations by start index in descending order to avoid index shifting
+  const sortedCitations = [...citations].sort((a, b) => b.startIndex - a.startIndex);
+
+  let processedContent = content;
+
+  for (const citation of sortedCitations) {
+    const { startIndex, endIndex, originalName } = citation;
+
+    if (replaceWithLinks) {
+      // Replace citation text with a clickable link
+      const linkText = `[${originalName}]`;
+      processedContent =
+        processedContent.slice(0, startIndex) + linkText + processedContent.slice(endIndex);
+    } else {
+      // Remove citation text completely
+      processedContent = processedContent.slice(0, startIndex) + processedContent.slice(endIndex);
+    }
+  }
+
+  return processedContent;
 }
 
 // Tremor Raw focusInput [v0.0.1]

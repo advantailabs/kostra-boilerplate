@@ -4,6 +4,7 @@ import { RiAddLine, RiFileLine, RiFilterLine } from '@remixicon/react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
@@ -84,14 +85,7 @@ export default function FilesPage() {
     Object.values(filters).some(value => value !== undefined && value !== '');
 
   if (loading && files.length === 0) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-          <p className="mt-2 text-sm text-gray-500">Loading files...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading files..." />;
   }
 
   return (

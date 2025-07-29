@@ -1,6 +1,6 @@
 import { Message, PrismaClient } from '@prisma/client';
 
-import { CreateMessageData } from '@/types/chat';
+import { CreateMessageData, StoredCitation } from '@/types/chat';
 
 const defaultPrisma = new PrismaClient();
 
@@ -13,6 +13,22 @@ const createMessage = async (
       threadId: data.threadId,
       role: data.role,
       content: data.content,
+      openaiMessageId: data.openaiMessageId,
+    },
+  });
+};
+
+const createMessageWithCitations = async (
+  data: CreateMessageData & { citations?: StoredCitation[] },
+  prisma: PrismaClient = defaultPrisma
+): Promise<Message> => {
+  return prisma.message.create({
+    data: {
+      threadId: data.threadId,
+      role: data.role,
+      content: data.content,
+      openaiMessageId: data.openaiMessageId,
+      citations: data.citations ? JSON.stringify(data.citations) : undefined,
     },
   });
 };
@@ -148,6 +164,7 @@ const restoreMessagesByThreadId = async (
 
 export {
   createMessage,
+  createMessageWithCitations,
   deleteMessage,
   deleteMessagesByThreadId,
   findById,

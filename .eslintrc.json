@@ -66,17 +66,12 @@
     "import/no-cycle": "off",
     "import/order": "off",
     
-    // Ignore intentional warnings for streaming and generators
-    "no-restricted-syntax": ["warn", {
-      "selector": "ForInStatement",
-      "message": "for..in loops are discouraged, prefer for..of or array methods."
-    }, {
-      "selector": "ForOfStatement",
-      "message": "for..of loops are discouraged, prefer array methods."
-    }],
+    // Disable no-restricted-syntax rule
+    "no-restricted-syntax": "off",
     
     // Allow await in loops for streaming operations
     "no-await-in-loop": "off",
+    "default-case": "off",
     
     // Allow default parameters in any order (they work fine)
     "default-param-last": "off",

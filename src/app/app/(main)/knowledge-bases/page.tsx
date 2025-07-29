@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/atom/Button';
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { KnowledgeBaseCard } from '@/components/molecules/chat/KnowledgeBaseCard';
 import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { ModalKnowledgeBase } from '@/components/organisms/modules/knowledge-bases/ModalKnowledgeBase';
@@ -79,14 +80,7 @@ export default function KnowledgeBasesPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-          <p className="mt-2 text-sm text-gray-500">Loading knowledge bases...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading knowledge bases..." />;
   }
 
   return (
