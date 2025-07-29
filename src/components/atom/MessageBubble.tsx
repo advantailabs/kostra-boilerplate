@@ -6,6 +6,7 @@ import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { CitationFile, StoredCitation } from '@/types/chat';
 import { CitationList } from './CitationList';
+import MarkdownRenderer from './SyntaxHighlighter';
 
 interface MessageBubbleProps {
   message: Message;
@@ -117,7 +118,9 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          <p className="whitespace-pre-wrap break-words text-sm">{displayContent}</p>
+          <p className="whitespace-pre-wrap break-words text-sm">
+            <MarkdownRenderer content={displayContent} />
+          </p>
           <p
             className={cx(
               'mt-2 text-sm',
