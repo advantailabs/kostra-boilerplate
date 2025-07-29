@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { ChatInterface } from '@/components/organisms/chat/ChatInterface';
 import { useChat } from '@/hooks/useChat';
 import { usePersonas } from '@/hooks/usePersonas';
@@ -54,14 +55,7 @@ export default function ChatPage() {
   const isLoading = personasLoading || threadsLoading;
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-          <p className="mt-2 text-sm text-gray-500">Loading chat...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading chat..." />;
   }
 
   return (
