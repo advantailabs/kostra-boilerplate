@@ -1,24 +1,18 @@
 import axiosInstance from '@/lib/axios';
-
-export interface KnowledgeBase {
-  id: number;
-  title: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { KnowledgeBaseWithFiles } from '@/types/chat';
 
 export interface KnowledgeBasesResponse {
-  knowledgeBases: KnowledgeBase[];
+  knowledgeBases: KnowledgeBaseWithFiles[];
   total: number;
 }
 
 interface KnowledgeBasesApiClient {
   getKnowledgeBases(_page?: number, _limit?: number): Promise<KnowledgeBasesResponse>;
-  getKnowledgeBase(_id: number): Promise<KnowledgeBase>;
-  createKnowledgeBase(_data: any): Promise<KnowledgeBase>;
-  updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBase>;
+  getKnowledgeBase(_id: number): Promise<KnowledgeBaseWithFiles>;
+  createKnowledgeBase(_data: any): Promise<KnowledgeBaseWithFiles>;
+  updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBaseWithFiles>;
   deleteKnowledgeBase(_id: number): Promise<void>;
+  removeFileFromKnowledgeBase(_knowledgeBaseId: number, _fileId: number): Promise<void>;
 }
 
 export const knowledgeBasesApi: KnowledgeBasesApiClient = {
@@ -29,22 +23,28 @@ export const knowledgeBasesApi: KnowledgeBasesApiClient = {
     return response.data;
   },
 
-  async getKnowledgeBase(_id: number): Promise<KnowledgeBase> {
+  async getKnowledgeBase(_id: number): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.get(`/knowledge-bases/${_id}`);
-    return response.data;
+    return response.data.knowledgeBase;
   },
 
-  async createKnowledgeBase(_data: any): Promise<KnowledgeBase> {
+  async createKnowledgeBase(_data: any): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.post('/knowledge-bases', _data);
-    return response.data;
+    return response.data.knowledgeBase;
   },
 
-  async updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBase> {
+  async updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.put(`/knowledge-bases/${_id}`, _data);
-    return response.data;
+    return response.data.knowledgeBase;
   },
 
   async deleteKnowledgeBase(_id: number): Promise<void> {
     await axiosInstance.delete(`/knowledge-bases/${_id}`);
+  },
+
+  async removeFileFromKnowledgeBase(knowledgeBaseId: number, fileId: number): Promise<void> {
+    await axiosInstance.delete(`/knowledge-bases/${knowledgeBaseId}/files`, {
+      data: { fileId },
+    });
   },
 };

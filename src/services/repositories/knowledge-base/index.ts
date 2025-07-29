@@ -51,6 +51,9 @@ export async function findKnowledgeBaseById(
             },
           },
         },
+        personas: {
+          where: { deletedAt: null },
+        },
       },
     });
 
@@ -63,10 +66,30 @@ export async function findKnowledgeBaseById(
 
 export async function findKnowledgeBasesByUserId(
   userId: number
-): Promise<RepositoryResult<KnowledgeBase[]>> {
+): Promise<RepositoryResult<KnowledgeBaseWithFiles[]>> {
   try {
     const knowledgeBases = await prisma.knowledgeBase.findMany({
       where: { userId, deletedAt: null },
+      include: {
+        fileKnowledgeBases: {
+          where: { file: { deletedAt: null } },
+          include: {
+            file: {
+              select: {
+                id: true,
+                filename: true,
+                originalName: true,
+                mimeType: true,
+                size: true,
+                url: true,
+              },
+            },
+          },
+        },
+        personas: {
+          where: { deletedAt: null },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
 

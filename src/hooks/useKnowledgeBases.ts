@@ -59,3 +59,27 @@ export function useDeleteKnowledgeBase() {
     },
   });
 }
+
+export function useRemoveFileFromKnowledgeBase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ knowledgeBaseId, fileId }: { knowledgeBaseId: number; fileId: number }) =>
+      knowledgeBasesApi.removeFileFromKnowledgeBase(knowledgeBaseId, fileId),
+    onSuccess: (_, { knowledgeBaseId }) => {
+      // Invalidate specific knowledge base and knowledge bases list
+      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    },
+  });
+}
+
+// Export all mutations for convenience
+export function useKnowledgeBaseMutations() {
+  return {
+    createKnowledgeBase: useCreateKnowledgeBase(),
+    updateKnowledgeBase: useUpdateKnowledgeBase(),
+    deleteKnowledgeBase: useDeleteKnowledgeBase(),
+    removeFileFromKnowledgeBase: useRemoveFileFromKnowledgeBase(),
+  };
+}

@@ -26,6 +26,7 @@ export interface KnowledgeBaseWithFiles extends KnowledgeBase {
       url: string | null;
     };
   })[];
+  personas: Persona[];
 }
 
 export interface PersonaWithKnowledgeBase extends Persona {

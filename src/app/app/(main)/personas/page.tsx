@@ -105,16 +105,23 @@ export default function PersonasPage() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {personas.map(persona => (
-              <PersonaCard
-                key={persona.id}
-                persona={persona}
-                onEdit={() => openEditModal(persona)}
-                onDelete={() => openDeleteModal(persona)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mb-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {personas.length} persona{personas.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {personas.map(persona => (
+                <PersonaCard
+                  key={persona.id}
+                  persona={persona}
+                  onEdit={() => openEditModal(persona)}
+                  onDelete={() => openDeleteModal(persona)}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
