@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { streamAssistantRun } from '@/services/external/openai/messages';
-import { createMessage } from '@/services/repositories/message';
+import { createMessageWithCitations } from '@/services/repositories/message';
 import {
   findByIdWithMessages,
   findByUserAndId,
@@ -100,11 +100,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Create user message in database first
-    await createMessage({
+    await createMessageWithCitations({
       threadId,
       role: 'user',
       content: messageContent,
       openaiMessageId: undefined, // OpenAI will create the message
+      citations: [], // No citations for user messages
     });
 
     // Create a streaming response
@@ -142,22 +143,37 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
               case 'completed':
                 assistantMessageId = chunk.messageId;
 
-                // Save the complete assistant response to database
-                await createMessage({
+                // Convert citations to stored format
+                const storedCitations = chunk.citations?.map(citation => ({
+                  openaiFileId: citation.openaiFileId,
+                  fileId: citation.fileId,
+                  originalName: citation.originalName,
+                  filename: citation.filename,
+                  mimeType: citation.mimeType,
+                  size: citation.size,
+                  citationText: citation.citationText,
+                  startIndex: citation.startIndex,
+                  endIndex: citation.endIndex,
+                }));
+
+                // Save the complete assistant response to database with citations
+                await createMessageWithCitations({
                   threadId,
                   role: 'assistant',
                   content: fullResponse,
                   openaiMessageId: assistantMessageId,
+                  citations: storedCitations,
                 });
 
                 // Update thread timestamp
                 await updateThreadTimestamp(threadId);
 
-                // Send completion signal
+                // Send completion signal with citations
                 const completionData = JSON.stringify({
                   type: 'completed',
                   messageId: assistantMessageId,
                   fullContent: fullResponse,
+                  citations: chunk.citations || [],
                 });
                 controller.enqueue(encoder.encode(`data: ${completionData}\n\n`));
 

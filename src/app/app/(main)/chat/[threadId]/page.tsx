@@ -22,6 +22,7 @@ export default function ThreadPage() {
     createThreadStreaming,
     isStreaming,
     streamingMessage,
+    currentCitations,
   } = useChat(threadId || undefined);
 
   // Redirect to main chat page if no threadId or thread not found
@@ -104,6 +105,7 @@ export default function ThreadPage() {
         onNewThread={handleNewThread}
         isStreaming={isStreaming}
         streamingMessage={streamingMessage}
+        currentCitations={currentCitations}
       />
     </div>
   );

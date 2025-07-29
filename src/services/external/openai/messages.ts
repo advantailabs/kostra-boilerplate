@@ -18,6 +18,28 @@ export interface AssistantRunResponse {
   messageId: string;
 }
 
+export interface FileCitation {
+  type: 'file_citation';
+  text: string;
+  start_index: number;
+  end_index: number;
+  file_citation: {
+    file_id: string;
+  };
+}
+
+export interface CitationFile {
+  openaiFileId: string;
+  fileId: number;
+  originalName: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  citationText: string;
+  startIndex: number;
+  endIndex: number;
+}
+
 /**
  * Streams an assistant run response in real-time
  */
@@ -32,6 +54,7 @@ export const streamAssistantRun = async function* (
     runId?: string;
     messageId?: string;
     error?: string;
+    citations?: CitationFile[];
   },
   void,
   unknown
@@ -46,11 +69,15 @@ export const streamAssistantRun = async function* (
     // Create and stream the run
     const stream = openai.beta.threads.runs.stream(threadId, {
       assistant_id: assistantId,
+      tool_choice: {
+        type: 'file_search',
+      },
     });
 
     let assistantMessageId: string | undefined;
     let runId: string | undefined;
     let accumulatedContent = '';
+    let citations: CitationFile[] = [];
 
     for await (const event of stream) {
       switch (event.event) {
@@ -78,13 +105,52 @@ export const streamAssistantRun = async function* (
             }
           }
           break;
+        case 'thread.message.completed':
+          // Extract citations from the completed message
+          if (event.data.content && event.data.content.length > 0) {
+            const firstContent = event.data.content[0];
+            if (firstContent.type === 'text' && firstContent.text?.annotations) {
+              const fileCitations = firstContent.text.annotations.filter(
+                (annotation: any) => annotation.type === 'file_citation'
+              ) as FileCitation[];
 
+              // Process citations to get file details
+              if (fileCitations.length > 0) {
+                const { findFileByOpenaiFileId } = await import('@/services/repositories/file');
+
+                const citationPromises = fileCitations.map(async citation => {
+                  const fileResult = await findFileByOpenaiFileId(citation.file_citation.file_id);
+                  if (fileResult.success && fileResult.data) {
+                    return {
+                      openaiFileId: citation.file_citation.file_id,
+                      fileId: fileResult.data.id,
+                      originalName: fileResult.data.originalName,
+                      filename: fileResult.data.filename,
+                      mimeType: fileResult.data.mimeType,
+                      size: fileResult.data.size,
+                      citationText: citation.text,
+                      startIndex: citation.start_index,
+                      endIndex: citation.end_index,
+                    };
+                  }
+                  return null;
+                });
+
+                const citationResults = await Promise.all(citationPromises);
+                citations = citationResults.filter(
+                  (citation): citation is CitationFile => citation !== null
+                );
+              }
+            }
+          }
+          break;
         case 'thread.run.completed':
           yield {
             type: 'completed',
             content: accumulatedContent,
             runId,
             messageId: assistantMessageId,
+            citations,
           };
           return;
 

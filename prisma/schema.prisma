@@ -84,6 +84,7 @@ model Message {
   openaiMessageId String?
   role            String
   content         String
+  citations       Json?     // Store citation data as JSON
   timestamp       DateTime  @default(now())
   deletedAt       DateTime? // Soft delete
   thread          Thread    @relation(fields: [threadId], references: [id])

@@ -193,3 +193,37 @@ export interface MockResponseContext {
   userMessage: string;
   conversationHistory?: Message[];
 }
+
+// Citation types
+export interface CitationFile {
+  openaiFileId: string;
+  fileId: number;
+  originalName: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  citationText: string; // The text that appears in the content
+  startIndex: number; // Start position in the content
+  endIndex: number; // End position in the content
+}
+
+export interface StoredCitation {
+  openaiFileId: string;
+  fileId: number;
+  originalName: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  citationText: string;
+  startIndex: number;
+  endIndex: number;
+}
+
+export interface StreamMessageResponse {
+  type: 'chunk' | 'completed' | 'error';
+  content?: string;
+  messageId?: string;
+  fullContent?: string;
+  citations?: CitationFile[];
+  error?: string;
+}

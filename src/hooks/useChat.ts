@@ -1,5 +1,5 @@
 import { threadsApi } from '@/services/api/threads';
-import { AddMessageRequest, CreateThreadRequest } from '@/types/chat';
+import { AddMessageRequest, CitationFile, CreateThreadRequest } from '@/types/chat';
 import { Message } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
@@ -10,6 +10,7 @@ export function useChat(threadId?: number) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [createdThreadId, setCreatedThreadId] = useState<number | null>(null);
   const [pendingMessages, setPendingMessages] = useState<Message[]>([]);
+  const [currentCitations, setCurrentCitations] = useState<CitationFile[]>([]);
   const streamAbortRef = useRef<AbortController | null>(null);
 
   const {
@@ -97,7 +98,7 @@ export function useChat(threadId?: number) {
     if (!threadId) throw new Error('No thread selected');
 
     // Create optimistic user message
-    const optimisticMessage: Message = {
+    const optimisticMessage = {
       id: Date.now(), // Temporary ID
       content: data.content,
       role: 'user',
@@ -105,13 +106,15 @@ export function useChat(threadId?: number) {
       timestamp: new Date(),
       openaiMessageId: null,
       deletedAt: null,
-    };
+      citations: null,
+    } as any;
 
     // Add optimistic message to pending messages
     setPendingMessages(prev => [...prev, optimisticMessage]);
 
     setIsStreaming(true);
     setStreamingMessage('');
+    setCurrentCitations([]);
 
     // Create abort controller for this stream
     streamAbortRef.current = new AbortController();
@@ -138,6 +141,11 @@ export function useChat(threadId?: number) {
             setIsStreaming(false);
             setPendingMessages([]); // Clear pending messages
 
+            // Store citations for the completed message
+            if (response.citations) {
+              setCurrentCitations(response.citations);
+            }
+
             // Refresh the thread to get the complete message
             queryClient.invalidateQueries({ queryKey: ['thread', threadId] });
             queryClient.invalidateQueries({ queryKey: ['threads'] });
@@ -148,13 +156,16 @@ export function useChat(threadId?: number) {
             setStreamingMessage('');
             setIsStreaming(false);
             setPendingMessages([]); // Clear pending messages on error
+            setCurrentCitations([]);
             throw new Error(response.error || 'Streaming failed');
         }
       }
     } catch (error) {
+      console.error('Error in streaming:', error);
       setStreamingMessage('');
       setIsStreaming(false);
-      setPendingMessages([]); // Clear pending messages on error
+      setPendingMessages([]);
+      setCurrentCitations([]);
       throw error;
     }
   };
@@ -179,5 +190,6 @@ export function useChat(threadId?: number) {
     streamingMessage,
     createdThreadId,
     stopStreaming,
+    currentCitations,
   };
 }

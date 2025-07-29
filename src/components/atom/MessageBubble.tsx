@@ -2,18 +2,47 @@ import { Avatar } from '@/components/atom/Avatar';
 import { Message, Persona } from '@prisma/client';
 import Image from 'next/image';
 
-import { cx } from '@/lib/utils';
+import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
+import { CitationFile, StoredCitation } from '@/types/chat';
+import { CitationList } from './CitationList';
 
 interface MessageBubbleProps {
   message: Message;
   persona?: Persona | null;
+  citations?: CitationFile[];
   className?: string;
 }
 
-export function MessageBubble({ message, persona, className }: MessageBubbleProps) {
+export function MessageBubble({ message, persona, citations, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const { user } = useAuthStore();
+
+  // Parse stored citations from message
+  const storedCitations: StoredCitation[] = (message as any).citations
+    ? typeof (message as any).citations === 'string'
+      ? JSON.parse((message as any).citations)
+      : (message as any).citations
+    : [];
+
+  // Convert stored citations to CitationFile format for display
+  const displayCitations: CitationFile[] = storedCitations.map(citation => ({
+    openaiFileId: citation.openaiFileId,
+    fileId: citation.fileId,
+    originalName: citation.originalName,
+    filename: citation.filename,
+    mimeType: citation.mimeType,
+    size: citation.size,
+    citationText: citation.citationText,
+    startIndex: citation.startIndex,
+    endIndex: citation.endIndex,
+  }));
+
+  // Use passed citations (for streaming) or parsed citations (for stored messages)
+  const finalCitations = citations || displayCitations;
+
+  // Process content to remove citation text for display
+  const displayContent = processContentWithCitations(message.content, storedCitations, false);
 
   // Helper function to render user avatar
   const renderUserAvatar = () => {
@@ -87,7 +116,7 @@ export function MessageBubble({ message, persona, className }: MessageBubbleProp
             : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
         )}
       >
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        <p className="whitespace-pre-wrap">{displayContent}</p>
         <p
           className={cx(
             'mt-1 text-xs',
@@ -99,6 +128,10 @@ export function MessageBubble({ message, persona, className }: MessageBubbleProp
             minute: '2-digit',
           })}
         </p>
+        {/* Show citations for assistant messages */}
+        {!isUser && finalCitations && finalCitations.length > 0 && (
+          <CitationList citations={finalCitations} />
+        )}
       </div>
       {isUser && renderUserAvatar()}
     </div>

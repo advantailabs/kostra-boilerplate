@@ -13,7 +13,8 @@ export default function ChatPage() {
   const { personas, isLoading: personasLoading } = usePersonas();
   const { threads, isLoading: threadsLoading, deleteThread } = useThreads();
 
-  const { createThreadStreaming, isStreaming, streamingMessage } = useChat(undefined); // No active thread on main chat page
+  const { createThreadStreaming, isStreaming, streamingMessage, currentCitations } =
+    useChat(undefined); // No active thread on main chat page
 
   const handleCreateThread = async (personaId: number, message: string) => {
     try {
@@ -71,6 +72,7 @@ export default function ChatPage() {
         onNewThread={handleNewThread}
         isStreaming={isStreaming}
         streamingMessage={streamingMessage}
+        currentCitations={currentCitations}
       />
     </div>
   );
