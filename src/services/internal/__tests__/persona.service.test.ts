@@ -1,4 +1,5 @@
-import { createAssistant, createVectorStore } from '@/services/external/openai/assistant';
+import { createAssistant } from '@/services/external/openai/assistant';
+import { createVectorStore } from '@/services/external/openai/vector-store';
 
 import {
   createPersonaService,
@@ -27,8 +28,11 @@ jest.mock('../../repositories/persona', () => ({
 // Mock the external OpenAI services
 jest.mock('@/services/external/openai/assistant', () => ({
   createAssistant: jest.fn(),
-  createVectorStore: jest.fn(),
   updateAssistant: jest.fn(),
+}));
+
+jest.mock('@/services/external/openai/vector-store', () => ({
+  createVectorStore: jest.fn(),
 }));
 
 // Mock the KnowledgeBase repository functions
@@ -115,7 +119,9 @@ describe('Persona Service', () => {
 
       const result = await createPersonaService(1, mockInputData);
 
-      expect(mockCreateVectorStore).toHaveBeenCalledWith('Test Persona Knowledge Base');
+      expect(mockCreateVectorStore).toHaveBeenCalledWith({
+        name: 'Test Persona Knowledge Base',
+      });
       expect(mockCreateAssistant).toHaveBeenCalledWith({
         name: 'Test Persona',
         description: 'Test Description',

@@ -1,17 +1,16 @@
 'use client';
 
 import {
-  RiDeleteBinLine,
-  RiDownloadLine,
-  RiEyeLine,
-  RiFileExcelLine,
-  RiFileImageLine,
-  RiFileLine,
-  RiFilePdfLine,
-  RiFileTextLine,
-  RiFileWordLine,
-  RiMoreLine,
-} from '@remixicon/react';
+  Download,
+  Eye,
+  FileImage,
+  FileSpreadsheet,
+  FileText,
+  FileType,
+  MoreHorizontal,
+  Trash2,
+  Unlink,
+} from 'lucide-react';
 import { useState } from 'react';
 
 import { Avatar } from '@/components/atom/Avatar';
@@ -34,6 +33,11 @@ interface FileCardProps {
   onDownload?: () => void;
   className?: string;
   isDownloading?: boolean;
+  isRemoving?: boolean;
+  showKnowledgeBaseOptions?: boolean;
+  onRemoveFromKnowledgeBase?: () => void;
+  onDeleteFile?: () => void;
+  knowledgeBaseId?: number;
 }
 
 export function FileCard({
@@ -43,9 +47,15 @@ export function FileCard({
   onDownload,
   className,
   isDownloading = false,
+  isRemoving = false,
+  showKnowledgeBaseOptions = false,
+  onRemoveFromKnowledgeBase,
+  onDeleteFile,
+  knowledgeBaseId,
 }: FileCardProps) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const deleteFileMutation = useDeleteFile();
 
   const formatFileSize = (bytes: number) => {
@@ -58,25 +68,25 @@ export function FileCard({
 
   const getFileTypeIcon = (mimeType: string) => {
     if (mimeType === 'application/pdf') {
-      return { icon: RiFilePdfLine, color: 'bg-red-500 text-white' };
+      return { icon: FileText, color: 'bg-red-500 text-white' };
     }
     if (mimeType.startsWith('image/')) {
-      return { icon: RiFileImageLine, color: 'bg-purple-500 text-white' };
+      return { icon: FileImage, color: 'bg-purple-500 text-white' };
     }
     if (mimeType === 'text/plain' || mimeType === 'text/markdown') {
-      return { icon: RiFileTextLine, color: 'bg-blue-500 text-white' };
+      return { icon: FileText, color: 'bg-blue-500 text-white' };
     }
     if (mimeType === 'application/json') {
-      return { icon: RiFileTextLine, color: 'bg-green-500 text-white' };
+      return { icon: FileText, color: 'bg-green-500 text-white' };
     }
     if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
-      return { icon: RiFileExcelLine, color: 'bg-green-600 text-white' };
+      return { icon: FileSpreadsheet, color: 'bg-green-600 text-white' };
     }
     if (mimeType.includes('word') || mimeType.includes('document')) {
-      return { icon: RiFileWordLine, color: 'bg-blue-600 text-white' };
+      return { icon: FileType, color: 'bg-blue-600 text-white' };
     }
     // Fallback for unknown file types
-    return { icon: RiFileLine, color: 'bg-gray-500 text-white' };
+    return { icon: FileText, color: 'bg-gray-500 text-white' };
   };
 
   const formatMimeType = (mimeType: string) => {
@@ -119,10 +129,33 @@ export function FileCard({
     setShowDeleteDialog(true);
   };
 
-  const confirmDelete = async () => {
+  const handleRemoveFromKnowledgeBase = () => {
+    setShowRemoveDialog(true);
+  };
+
+  const handleDeleteFile = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const confirmRemoveFromKnowledgeBase = async () => {
     try {
-      await deleteFileMutation.mutateAsync({ id: file.id, permanent: true });
-      onDelete();
+      if (onRemoveFromKnowledgeBase) {
+        onRemoveFromKnowledgeBase();
+      }
+      setShowRemoveDialog(false);
+    } catch (error) {
+      console.error('Error removing file from knowledge base:', error);
+    }
+  };
+
+  const confirmDeleteFile = async () => {
+    try {
+      await deleteFileMutation.mutateAsync({ id: file.id });
+      if (onDeleteFile) {
+        onDeleteFile();
+      } else {
+        onDelete();
+      }
       setShowDeleteDialog(false);
     } catch (error) {
       console.error('Error deleting file:', error);
@@ -155,30 +188,49 @@ export function FileCard({
 
           {/* Action Buttons */}
           <div className="ml-2 flex flex-shrink-0 items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-5 w-5 p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                >
-                  <RiMoreLine className="h-3 w-3" aria-label="More options" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleViewDetails}>
-                  <RiEyeLine className="mr-2 h-3 w-3" />
-                  View Details
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDownload} disabled={isDownloading}>
-                  <RiDownloadLine className="mr-2 h-3 w-3" />
-                  {isDownloading ? 'Downloading...' : 'Download'}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDeleteClick}>
-                  <RiDeleteBinLine className="mr-2 h-3 w-3" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isRemoving ? (
+              <div className="flex h-5 w-5 items-center justify-center">
+                <div className="h-3 w-3 animate-spin rounded-full border border-gray-300 border-t-indigo-600" />
+              </div>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-5 w-5 p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                  >
+                    <MoreHorizontal className="h-3 w-3" aria-label="More options" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleViewDetails}>
+                    <Eye className="mr-2 h-3 w-3" />
+                    View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDownload} disabled={isDownloading}>
+                    <Download className="mr-2 h-3 w-3" />
+                    {isDownloading ? 'Downloading...' : 'Download'}
+                  </DropdownMenuItem>
+                  {showKnowledgeBaseOptions ? (
+                    <>
+                      <DropdownMenuItem onClick={handleRemoveFromKnowledgeBase}>
+                        <Unlink className="mr-2 h-3 w-3" />
+                        Remove from Knowledge Base
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDeleteFile}>
+                        <Trash2 className="mr-2 h-3 w-3" />
+                        Delete File
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <DropdownMenuItem onClick={handleDeleteClick}>
+                      <Trash2 className="mr-2 h-3 w-3" />
+                      Delete
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
@@ -192,7 +244,7 @@ export function FileCard({
         {/* Footer */}
         <div className="flex flex-shrink-0 items-center justify-between border-t border-gray-100 px-3 py-2 dark:border-gray-800">
           <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-            <RiFileLine className="h-3 w-3 flex-shrink-0" />
+            <FileText className="h-3 w-3 flex-shrink-0" />
             <span>{formatFileSize(file.size)}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -228,13 +280,25 @@ export function FileCard({
         isDownloading={isDownloading}
       />
 
-      {/* Delete Confirmation Dialog */}
+      {/* Remove from Knowledge Base Confirmation Dialog */}
+      <DeleteDialog
+        isOpen={showRemoveDialog}
+        onClose={() => setShowRemoveDialog(false)}
+        onConfirm={confirmRemoveFromKnowledgeBase}
+        title="Remove from Knowledge Base"
+        description={`Are you sure you want to remove "${file?.originalName}" from this knowledge base? This will remove it from the vector database but keep the file in your storage.`}
+        confirmText="Remove from Knowledge Base"
+        isLoading={false}
+      />
+
+      {/* Delete File Confirmation Dialog */}
       <DeleteDialog
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
-        onConfirm={confirmDelete}
+        onConfirm={confirmDeleteFile}
         title="Delete File"
-        description={`Are you sure you want to permanently delete "${file?.originalName}"? This action cannot be undone.`}
+        description={`Are you sure you want to permanently delete "${file?.originalName}"? This will delete the file from the knowledge base, vector database, and storage. This action cannot be undone.`}
+        confirmText="Delete File"
         isLoading={deleteFileMutation.isPending}
       />
     </>

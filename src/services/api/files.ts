@@ -41,6 +41,7 @@ interface FilesApiClient {
   deleteFile(_id: number, _permanent?: boolean): Promise<any>;
   addFileToKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
   removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
+  deleteFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
 }
 
 export const filesApi: FilesApiClient = {
@@ -93,6 +94,13 @@ export const filesApi: FilesApiClient = {
 
   async removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
     const response = await axiosInstance.delete(`/files/${_id}/knowledge-base`, {
+      data: { knowledgeBaseId: _knowledgeBaseId },
+    });
+    return response.data;
+  },
+
+  async deleteFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
+    const response = await axiosInstance.delete(`/files/${_id}/knowledge-base-delete`, {
       data: { knowledgeBaseId: _knowledgeBaseId },
     });
     return response.data;

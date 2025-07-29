@@ -123,14 +123,72 @@ export async function updateKnowledgeBase(
   }
 }
 
-export async function deleteKnowledgeBase(id: number): Promise<RepositoryResult<boolean>> {
+export async function deleteKnowledgeBase(
+  id: number,
+  deleteFiles: boolean = false
+): Promise<
+  RepositoryResult<{
+    deleted: boolean;
+    filesToDelete?: Array<{ fileId: number; openaiFileId: string | null }>;
+    vectorStoreId?: string | null;
+  }>
+> {
   try {
+    let filesToDelete: Array<{ fileId: number; openaiFileId: string | null }> = [];
+    let vectorStoreId: string | null = null;
+
+    // Get the knowledge base to access vectorStoreId
+    const knowledgeBase = await prisma.knowledgeBase.findUnique({
+      where: { id },
+      select: { vectorStoreId: true },
+    });
+
+    vectorStoreId = knowledgeBase?.vectorStoreId || null;
+
+    if (deleteFiles) {
+      // Get all files in this knowledge base
+      const fileKnowledgeBases = await prisma.fileKnowledgeBase.findMany({
+        where: { knowledgeBaseId: id },
+        include: { file: true },
+      });
+
+      // Collect file information for vector store deletion
+      filesToDelete = fileKnowledgeBases.map(fkb => ({
+        fileId: fkb.fileId,
+        openaiFileId: fkb.file.openaiFileId,
+      }));
+
+      // Get all file IDs for bulk update
+      const fileIds = fileKnowledgeBases.map(fkb => fkb.fileId);
+
+      // Bulk update all files to mark as deleted
+      if (fileIds.length > 0) {
+        await prisma.file.updateMany({
+          where: { id: { in: fileIds } },
+          data: { deletedAt: new Date() },
+        });
+      }
+
+      // Delete all file-knowledge base relationships
+      await prisma.fileKnowledgeBase.deleteMany({
+        where: { knowledgeBaseId: id },
+      });
+    }
+
+    // Soft delete the knowledge base
     await prisma.knowledgeBase.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
 
-    return { success: true, data: true };
+    return {
+      success: true,
+      data: {
+        deleted: true,
+        filesToDelete: deleteFiles ? filesToDelete : undefined,
+        vectorStoreId: vectorStoreId,
+      },
+    };
   } catch (error) {
     console.error('Error deleting knowledge base:', error);
     return { success: false, error: 'Failed to delete knowledge base' };

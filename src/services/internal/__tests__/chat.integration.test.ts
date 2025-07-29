@@ -1,6 +1,7 @@
-import { createAssistant, createVectorStore } from '@/services/external/openai/assistant';
+import { createAssistant } from '@/services/external/openai/assistant';
 import { createThread as createOpenAIThread } from '@/services/external/openai/threads';
 import { generateThreadTitle as generateOpenAITitle } from '@/services/external/openai/title-generator';
+import { createVectorStore } from '@/services/external/openai/vector-store';
 import {
   cleanupDatabase,
   createTestPersona,

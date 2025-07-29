@@ -16,7 +16,6 @@ import {
   FileWithKnowledgeBases,
   findFileById,
   findFilesByUserId,
-  permanentlyDeleteFile,
   removeFileFromKnowledgeBase,
   updateFile,
   UpdateFileData,
@@ -289,70 +288,6 @@ const deleteFileService = async (id: number): Promise<FileServiceResult<void>> =
   }
 };
 
-const permanentlyDeleteFileService = async (id: number): Promise<FileServiceResult<void>> => {
-  try {
-    // First, get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(id);
-
-    if (!fileResult.success || !fileResult.data) {
-      return {
-        success: false,
-        error: 'File not found',
-      };
-    }
-
-    const file = fileResult.data;
-
-    // Delete from OpenAI if we have an OpenAI file ID
-    if (file.openaiFileId) {
-      try {
-        const deleteResult = await deleteOpenAIFile(file.openaiFileId);
-        if (!deleteResult.success) {
-          console.warn('Failed to delete OpenAI file:', deleteResult.error);
-          // Don't fail the operation if OpenAI deletion fails
-        }
-      } catch (openaiError) {
-        console.warn('Failed to delete OpenAI file:', openaiError);
-        // Don't fail the operation if OpenAI deletion fails
-      }
-    }
-
-    // Remove file from all associated knowledge bases and vector stores
-    if (file.fileKnowledgeBases && file.fileKnowledgeBases.length > 0) {
-      const removeFromKbPromises = file.fileKnowledgeBases.map(async fileKb => {
-        const kbResult = await removeFileFromKnowledgeBaseService(id, fileKb.knowledgeBase.id);
-        if (!kbResult.success) {
-          console.warn('Failed to remove file from knowledge base:', kbResult.error);
-          // Don't fail the operation if knowledge base removal fails
-        }
-        return kbResult;
-      });
-
-      await Promise.all(removeFromKbPromises);
-    }
-
-    // Permanently delete from database
-    const result = await permanentlyDeleteFile(id);
-
-    if (!result.success) {
-      return {
-        success: false,
-        error: result.error,
-      };
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error in permanentlyDeleteFileService:', error);
-    return {
-      success: false,
-      error: 'Failed to permanently delete file',
-    };
-  }
-};
-
 const addFileToKnowledgeBaseService = async (
   fileId: number,
   knowledgeBaseId: number
@@ -496,7 +431,6 @@ export {
   deleteFileService,
   getFileByIdService,
   getUserFilesService,
-  permanentlyDeleteFileService,
   removeFileFromKnowledgeBaseService,
   updateFileService,
   uploadFileService,

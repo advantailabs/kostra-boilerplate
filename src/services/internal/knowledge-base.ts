@@ -1,3 +1,5 @@
+import { deleteFile } from '@/services/external/openai/files';
+import { createVectorStore, deleteVectorStore } from '@/services/external/openai/vector-store';
 import {
   createKnowledgeBase,
   deleteKnowledgeBase,
@@ -27,7 +29,31 @@ const createKnowledgeBaseService = async (
   data: CreateKnowledgeBaseData
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
-    const result = await createKnowledgeBase(data);
+    // Create vector store first if not provided
+    let vectorStoreId = data.vectorStoreId;
+
+    if (!vectorStoreId) {
+      const vectorStoreResult = await createVectorStore({
+        name: `${data.title.trim()} Knowledge Base`,
+      });
+
+      if (!vectorStoreResult.success || !vectorStoreResult.data) {
+        return {
+          success: false,
+          error: `Failed to create vector store: ${vectorStoreResult.error}`,
+        };
+      }
+
+      vectorStoreId = vectorStoreResult.data.id;
+    }
+
+    // Create knowledge base with vector store ID
+    const knowledgeBaseData = {
+      ...data,
+      vectorStoreId,
+    };
+
+    const result = await createKnowledgeBase(knowledgeBaseData);
 
     if (!result.success) {
       return {
@@ -129,10 +155,11 @@ const updateKnowledgeBaseService = async (
 };
 
 const deleteKnowledgeBaseService = async (
-  id: number
+  id: number,
+  deleteFiles: boolean = false
 ): Promise<KnowledgeBaseServiceResult<boolean>> => {
   try {
-    const result = await deleteKnowledgeBase(id);
+    const result = await deleteKnowledgeBase(id, deleteFiles);
 
     if (!result.success) {
       return {
@@ -141,9 +168,42 @@ const deleteKnowledgeBaseService = async (
       };
     }
 
+    console.log('Result:', result);
+
+    // Always delete the vector store if it exists
+    if (result.data?.vectorStoreId) {
+      console.log('Deleting vector store:', result.data.vectorStoreId);
+      try {
+        const res = await deleteVectorStore(result.data.vectorStoreId);
+        console.log('Vector store deleted:', res);
+      } catch (error) {
+        console.error('Error deleting vector store:', error);
+        // Continue with deletion even if vector store deletion fails
+      }
+    }
+
+    // If deleteFiles is true, also delete the OpenAI files
+    if (deleteFiles && result.data?.filesToDelete) {
+      // Filter files that have openaiFileId
+      const filesWithOpenaiId = result.data.filesToDelete.filter(file => file.openaiFileId);
+
+      if (filesWithOpenaiId.length > 0) {
+        // Delete OpenAI files concurrently
+        const deletionPromises = filesWithOpenaiId.map(file =>
+          deleteFile(file.openaiFileId!).catch((error: any) => {
+            console.error(`Error deleting OpenAI file ${file.openaiFileId}:`, error);
+            return { success: false, error };
+          })
+        );
+
+        // Wait for all deletions to complete (success or failure)
+        await Promise.allSettled(deletionPromises);
+      }
+    }
+
     return {
       success: true,
-      data: result.data,
+      data: true,
     };
   } catch (error) {
     console.error('Error in deleteKnowledgeBaseService:', error);

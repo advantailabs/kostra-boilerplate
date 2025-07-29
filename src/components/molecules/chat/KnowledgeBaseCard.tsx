@@ -4,16 +4,7 @@ import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
 import { KnowledgeBaseWithFiles } from '@/types/chat';
-import {
-  RiDeleteBinLine,
-  RiEditLine,
-  RiFileExcelLine,
-  RiFilePdfLine,
-  RiFileTextLine,
-  RiFileWordLine,
-  RiImageLine,
-  RiUserLine,
-} from '@remixicon/react';
+import { Edit, FileImage, FileSpreadsheet, FileText, FileType, Trash2, User } from 'lucide-react';
 import Link from 'next/link';
 
 interface KnowledgeBaseCardProps {
@@ -52,19 +43,19 @@ export function KnowledgeBaseCard({
 
   const fileTypeConfig = {
     PDF: {
-      icon: RiFilePdfLine,
+      icon: FileText,
       color: 'bg-red-500 text-white',
     },
     Excel: {
-      icon: RiFileExcelLine,
+      icon: FileSpreadsheet,
       color: 'bg-green-500 text-white',
     },
     Document: {
-      icon: RiFileWordLine,
+      icon: FileType,
       color: 'bg-blue-500 text-white',
     },
     Image: {
-      icon: RiImageLine,
+      icon: FileImage,
       color: 'bg-purple-500 text-white',
     },
   };
@@ -72,7 +63,7 @@ export function KnowledgeBaseCard({
   const getFileTypeIcon = (type: string) => {
     const config = fileTypeConfig[type as keyof typeof fileTypeConfig];
     if (!config) {
-      return { icon: RiFileTextLine, color: 'bg-gray-500 text-white' };
+      return { icon: FileText, color: 'bg-gray-500 text-white' };
     }
     return config;
   };
@@ -122,7 +113,7 @@ export function KnowledgeBaseCard({
                 }}
                 className="h-7 w-7 p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
               >
-                <RiEditLine className="h-3.5 w-3.5" aria-label="Edit knowledge base" />
+                <Edit className="h-3.5 w-3.5" aria-label="Edit knowledge base" />
               </Button>
             )}
             {onDelete && (
@@ -135,7 +126,7 @@ export function KnowledgeBaseCard({
                 }}
                 className="h-7 w-7 p-0 text-gray-400 hover:bg-red-50 hover:text-red-600 dark:text-gray-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
               >
-                <RiDeleteBinLine className="h-3.5 w-3.5" aria-label="Delete knowledge base" />
+                <Trash2 className="h-3.5 w-3.5" aria-label="Delete knowledge base" />
               </Button>
             )}
           </div>
@@ -155,11 +146,11 @@ export function KnowledgeBaseCard({
         <div className="flex flex-shrink-0 items-center justify-between border-t border-gray-100 px-4 py-3 dark:border-gray-800">
           <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-1.5">
-              <RiFileTextLine className="h-3.5 w-3.5 flex-shrink-0" />
+              <FileText className="h-3.5 w-3.5 flex-shrink-0" />
               <span>{fileCount} files</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <RiUserLine className="h-3.5 w-3.5 flex-shrink-0" />
+              <User className="h-3.5 w-3.5 flex-shrink-0" />
               <span>{personaCount} personas</span>
             </div>
           </div>

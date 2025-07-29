@@ -1,10 +1,12 @@
 'use client';
 
 import { Button } from '@/components/atom/Button';
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { FileCard } from '@/components/molecules/files/FileCard';
 import { KnowledgeBaseFileUploader } from '@/components/organisms/modules/knowledge-bases/KnowledgeBaseFileUploader';
 import { useKnowledgeBase, useKnowledgeBaseMutations } from '@/hooks/useKnowledgeBases';
-import { RiAddLine, RiArrowLeftLine } from '@remixicon/react';
+import { filesApi } from '@/services/api/files';
+import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -17,16 +19,10 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
   const { data: knowledgeBaseData, isLoading, refetch } = useKnowledgeBase(knowledgeBaseId);
   const { removeFileFromKnowledgeBase } = useKnowledgeBaseMutations();
   const [showFileUploader, setShowFileUploader] = useState(false);
+  const [removingFileId, setRemovingFileId] = useState<number | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-          <p className="mt-2 text-sm text-gray-500">Loading knowledge base...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading knowledge base..." />;
   }
 
   if (!knowledgeBaseData) {
@@ -57,6 +53,31 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
     }
   };
 
+  const handleFileRemoveFromKnowledgeBase = async (fileId: number) => {
+    try {
+      setRemovingFileId(fileId);
+      await removeFileFromKnowledgeBase.mutateAsync({ knowledgeBaseId, fileId });
+      await refetch();
+    } catch (error) {
+      console.error('Failed to remove file from knowledge base:', error);
+    } finally {
+      setRemovingFileId(null);
+    }
+  };
+
+  const handleFileDeleteCompletely = async (fileId: number) => {
+    try {
+      setRemovingFileId(fileId);
+      // Delete the file from knowledge base and storage
+      await filesApi.deleteFileFromKnowledgeBase(fileId, knowledgeBaseId);
+      await refetch();
+    } catch (error) {
+      console.error('Failed to delete file completely:', error);
+    } finally {
+      setRemovingFileId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
       {/* Header */}
@@ -70,11 +91,11 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
             href="/app/knowledge-bases"
             className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
           >
-            <RiArrowLeftLine className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
             Back
           </Link>
           <Button onClick={() => setShowFileUploader(true)} className="flex items-center gap-2">
-            <RiAddLine className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Add Files
           </Button>
         </div>
@@ -120,6 +141,13 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
                   key={fileKb.file.id}
                   file={fileKb.file}
                   onDelete={() => handleFileDelete(fileKb.file.id)}
+                  showKnowledgeBaseOptions={true}
+                  onRemoveFromKnowledgeBase={() =>
+                    handleFileRemoveFromKnowledgeBase(fileKb.file.id)
+                  }
+                  onDeleteFile={() => handleFileDeleteCompletely(fileKb.file.id)}
+                  knowledgeBaseId={knowledgeBaseId}
+                  isRemoving={removingFileId === fileKb.file.id}
                 />
               ))}
             </div>

@@ -3,7 +3,7 @@
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { KnowledgeBaseCard } from '@/components/molecules/chat/KnowledgeBaseCard';
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { DeleteKnowledgeBaseDialog } from '@/components/molecules/common/DeleteKnowledgeBaseDialog';
 import { ModalKnowledgeBase } from '@/components/organisms/modules/knowledge-bases/ModalKnowledgeBase';
 import { useKnowledgeBaseMutations, useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import {
@@ -11,7 +11,7 @@ import {
   KnowledgeBaseWithFiles,
   UpdateKnowledgeBaseRequest,
 } from '@/types/chat';
-import { RiAddLine } from '@remixicon/react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 export default function KnowledgeBasesPage() {
@@ -47,11 +47,14 @@ export default function KnowledgeBasesPage() {
     }
   };
 
-  const handleDeleteKnowledgeBase = async () => {
+  const handleDeleteKnowledgeBase = async (options?: { deleteFiles?: boolean }) => {
     if (!deletingKnowledgeBase) return;
 
     try {
-      await deleteKnowledgeBase.mutateAsync(deletingKnowledgeBase.id);
+      await deleteKnowledgeBase.mutateAsync({
+        id: deletingKnowledgeBase.id,
+        deleteFiles: options?.deleteFiles,
+      });
       setShowDeleteModal(false);
       setDeletingKnowledgeBase(null);
     } catch (error) {
@@ -94,7 +97,7 @@ export default function KnowledgeBasesPage() {
           </p>
         </div>
         <Button onClick={openCreateModal}>
-          <RiAddLine className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4" />
           Create Knowledge Base
         </Button>
       </div>
@@ -109,7 +112,7 @@ export default function KnowledgeBasesPage() {
                 Create your first knowledge base to organize your files
               </p>
               <Button onClick={openCreateModal} className="mt-3">
-                <RiAddLine className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
                 Create Knowledge Base
               </Button>
             </div>
@@ -143,16 +146,16 @@ export default function KnowledgeBasesPage() {
         mode={editingKnowledgeBase ? 'edit' : 'create'}
       />
 
-      <DeleteDialog
+      <DeleteKnowledgeBaseDialog
         isOpen={showDeleteModal}
         onClose={() => {
           setShowDeleteModal(false);
           setDeletingKnowledgeBase(null);
         }}
         onConfirm={handleDeleteKnowledgeBase}
-        title="Delete Knowledge Base"
-        itemName={deletingKnowledgeBase?.title}
-        confirmText="Delete Knowledge Base"
+        knowledgeBaseName={deletingKnowledgeBase?.title || ''}
+        fileCount={deletingKnowledgeBase?.fileKnowledgeBases?.length || 0}
+        isLoading={deleteKnowledgeBase.isPending}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import { Button } from '@/components/atom/Button';
+import { Input } from '@/components/atom/Input';
 import {
   Dialog,
   DialogClose,
@@ -8,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/molecules/common/Dialog';
+import { useState } from 'react';
 
 interface DeleteDialogProps {
   isOpen: boolean;
@@ -19,6 +21,8 @@ interface DeleteDialogProps {
   cancelText?: string;
   isLoading?: boolean;
   itemName?: string;
+  showNameConfirmation?: boolean;
+  confirmationPlaceholder?: string;
 }
 
 export function DeleteDialog({
@@ -31,13 +35,31 @@ export function DeleteDialog({
   cancelText = 'Cancel',
   isLoading = false,
   itemName,
+  showNameConfirmation = false,
+  confirmationPlaceholder = 'Type the name to confirm',
 }: DeleteDialogProps) {
+  const [confirmationName, setConfirmationName] = useState('');
+
   const defaultDescription = itemName
     ? `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
     : 'Are you sure you want to delete this item? This action cannot be undone.';
 
+  const handleConfirm = () => {
+    if (showNameConfirmation && confirmationName !== itemName) {
+      return;
+    }
+    onConfirm();
+  };
+
+  const isConfirmDisabled = isLoading || (showNameConfirmation && confirmationName !== itemName);
+
+  const handleClose = () => {
+    setConfirmationName('');
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -46,13 +68,29 @@ export function DeleteDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {showNameConfirmation && (
+          <div className="mt-4">
+            <label htmlFor="confirmation-name" className="text-sm font-medium">
+              Type "{itemName}" to confirm deletion
+            </label>
+            <Input
+              id="confirmation-name"
+              type="text"
+              placeholder={confirmationPlaceholder}
+              value={confirmationName}
+              onChange={e => setConfirmationName(e.target.value)}
+              className="mt-2"
+            />
+          </div>
+        )}
+
         <DialogFooter className="mt-6">
           <DialogClose asChild>
             <Button
               type="button"
               className="mt-2 w-full sm:mt-0 sm:w-fit"
               variant="secondary"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isLoading}
             >
               {cancelText}
@@ -62,8 +100,8 @@ export function DeleteDialog({
             type="button"
             className="w-full sm:w-fit"
             variant="destructive"
-            onClick={onConfirm}
-            disabled={isLoading}
+            onClick={handleConfirm}
+            disabled={isConfirmDisabled}
             isLoading={isLoading}
           >
             {confirmText}

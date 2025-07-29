@@ -52,7 +52,8 @@ export function useDeleteKnowledgeBase() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => knowledgeBasesApi.deleteKnowledgeBase(id),
+    mutationFn: ({ id, deleteFiles }: { id: number; deleteFiles?: boolean }) =>
+      knowledgeBasesApi.deleteKnowledgeBase(id, deleteFiles),
     onSuccess: () => {
       // Invalidate knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });

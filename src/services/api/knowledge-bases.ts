@@ -11,7 +11,7 @@ interface KnowledgeBasesApiClient {
   getKnowledgeBase(_id: number): Promise<KnowledgeBaseWithFiles>;
   createKnowledgeBase(_data: any): Promise<KnowledgeBaseWithFiles>;
   updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBaseWithFiles>;
-  deleteKnowledgeBase(_id: number): Promise<void>;
+  deleteKnowledgeBase(_id: number, _deleteFiles?: boolean): Promise<void>;
   removeFileFromKnowledgeBase(_knowledgeBaseId: number, _fileId: number): Promise<void>;
 }
 
@@ -38,8 +38,10 @@ export const knowledgeBasesApi: KnowledgeBasesApiClient = {
     return response.data.knowledgeBase;
   },
 
-  async deleteKnowledgeBase(_id: number): Promise<void> {
-    await axiosInstance.delete(`/knowledge-bases/${_id}`);
+  async deleteKnowledgeBase(_id: number, _deleteFiles = false): Promise<void> {
+    await axiosInstance.delete(`/knowledge-bases/${_id}`, {
+      params: { deleteFiles: _deleteFiles },
+    });
   },
 
   async removeFileFromKnowledgeBase(knowledgeBaseId: number, fileId: number): Promise<void> {

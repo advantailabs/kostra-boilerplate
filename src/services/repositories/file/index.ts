@@ -228,25 +228,6 @@ export async function deleteFile(id: number): Promise<RepositoryResult<void>> {
   }
 }
 
-export async function permanentlyDeleteFile(id: number): Promise<RepositoryResult<void>> {
-  try {
-    // Delete file knowledge base associations first
-    await prisma.fileKnowledgeBase.deleteMany({
-      where: { fileId: id },
-    });
-
-    // Delete the file
-    await prisma.file.delete({
-      where: { id },
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error permanently deleting file:', error);
-    return { success: false, error: 'Failed to permanently delete file' };
-  }
-}
-
 export async function addFileToKnowledgeBase(
   fileId: number,
   knowledgeBaseId: number

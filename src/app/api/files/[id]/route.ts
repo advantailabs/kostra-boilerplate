@@ -1,9 +1,4 @@
-import {
-  deleteFileService,
-  getFileByIdService,
-  permanentlyDeleteFileService,
-  updateFileService,
-} from '@/services/internal/file';
+import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
 import { auth } from '@clerk/nextjs/server';
@@ -194,17 +189,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: 'Forbidden', message: 'Access denied' }, { status: 403 });
     }
 
-    // Check if permanent deletion is requested
-    const { searchParams } = new URL(request.url);
-    const permanent = searchParams.get('permanent') === 'true';
-
     // Delete file
-    let result;
-    if (permanent) {
-      result = await permanentlyDeleteFileService(fileId);
-    } else {
-      result = await deleteFileService(fileId);
-    }
+    const result = await deleteFileService(fileId);
 
     if (!result.success) {
       return NextResponse.json(
@@ -214,7 +200,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     return NextResponse.json({
-      message: `File ${permanent ? 'permanently deleted' : 'moved to trash'} successfully`,
+      message: `File moved to trash successfully`,
     });
   } catch (error) {
     console.error('Error deleting file:', error);

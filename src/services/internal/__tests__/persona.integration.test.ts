@@ -1,8 +1,5 @@
-import {
-  createAssistant,
-  createVectorStore,
-  updateAssistant,
-} from '@/services/external/openai/assistant';
+import { createAssistant, updateAssistant } from '@/services/external/openai/assistant';
+import { createVectorStore } from '@/services/external/openai/vector-store';
 
 import {
   cleanupDatabase,
@@ -21,8 +18,11 @@ import {
 // Mock the external OpenAI services
 jest.mock('@/services/external/openai/assistant', () => ({
   createAssistant: jest.fn(),
-  createVectorStore: jest.fn(),
   updateAssistant: jest.fn(),
+}));
+
+jest.mock('@/services/external/openai/vector-store', () => ({
+  createVectorStore: jest.fn(),
 }));
 
 // Mock the KnowledgeBase repository functions
