@@ -108,27 +108,33 @@ export function MessageBubble({ message, persona, citations, className }: Messag
   return (
     <div className={cx('flex gap-3', isUser ? 'justify-end' : 'justify-start', className)}>
       {!isUser && renderAssistantAvatar()}
-      <div
-        className={cx(
-          'max-w-[80%] rounded-lg px-4 py-2 text-sm',
-          isUser
-            ? 'bg-indigo-600 text-white'
-            : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-        )}
-      >
-        <p className="whitespace-pre-wrap">{displayContent}</p>
-        <p
+      <div className={cx('flex flex-col', isUser ? 'flex-1' : '')}>
+        <div
           className={cx(
-            'mt-1 text-xs',
-            isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
+            'rounded-lg px-3 py-2',
+            isUser
+              ? 'ml-auto max-w-[85%] bg-indigo-600 text-white'
+              : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          {new Date(message.timestamp).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </p>
-        {/* Show citations for assistant messages */}
+          <p className="whitespace-pre-wrap break-words text-sm">{displayContent}</p>
+          <p
+            className={cx(
+              'mt-2 text-sm',
+              isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
+            )}
+          >
+            {new Date(message.timestamp).toLocaleDateString([], {
+              month: 'short',
+              day: 'numeric',
+            })}{' '}
+            {new Date(message.timestamp).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </p>
+        </div>
+        {/* Show citations for assistant messages outside the bubble */}
         {!isUser && finalCitations && finalCitations.length > 0 && (
           <CitationList citations={finalCitations} />
         )}

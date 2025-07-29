@@ -1,7 +1,6 @@
 import { useFileDownload } from '@/hooks/useFiles';
 import { CitationFile } from '@/types/chat';
-import { RiDownloadLine, RiFileTextLine } from '@remixicon/react';
-import { Button } from './Button';
+import { RiFileTextLine } from '@remixicon/react';
 
 interface CitationListProps {
   citations: CitationFile[];
@@ -27,38 +26,20 @@ export function CitationList({ citations, className }: CitationListProps) {
   };
 
   return (
-    <div className={`mt-3 space-y-2 ${className}`}>
-      <div className="text-xs font-medium text-gray-500 dark:text-gray-400">
-        Cited Files ({citations.length})
-      </div>
-      <div className="space-y-1">
+    <div className={`mt-2 flex items-center gap-2 ${className}`}>
+      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Sources:</span>
+      <div className="flex flex-wrap gap-1">
         {citations.map((citation, index) => (
-          <div
+          <button
             key={`${citation.openaiFileId}-${index}`}
-            className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 dark:bg-gray-800"
+            onClick={() => handleDownload(citation.fileId, citation.originalName)}
+            disabled={downloadFile.isPending}
+            className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+            title={`Download ${citation.originalName}`}
           >
-            <div className="flex items-center space-x-2">
-              <RiFileTextLine className="h-4 w-4 text-gray-400" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {citation.originalName}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {citation.mimeType} • {(citation.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => handleDownload(citation.fileId, citation.originalName)}
-              disabled={downloadFile.isPending}
-              className="flex-shrink-0 p-2"
-              title="Download file"
-            >
-              <RiDownloadLine className="h-4 w-4" />
-            </Button>
-          </div>
+            <RiFileTextLine className="h-3 w-3" />
+            <span>{citation.originalName}</span>
+          </button>
         ))}
       </div>
     </div>

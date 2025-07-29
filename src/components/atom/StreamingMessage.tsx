@@ -40,12 +40,14 @@ export function StreamingMessage({
         fallback={personaName || 'AI'}
         size="sm"
       />
-      <div className="max-w-[80%] rounded-lg bg-gray-100 px-4 py-2 text-sm dark:bg-gray-800 dark:text-gray-100">
-        <div className="text-gray-900 dark:text-gray-100">
-          {displayContent}
-          <span className="animate-pulse">|</span>
+      <div className="flex flex-col">
+        <div className="max-w-[80%] rounded-lg bg-gray-100 px-4 py-2 text-sm dark:bg-gray-800 dark:text-gray-100">
+          <div className="text-gray-900 dark:text-gray-100">
+            {displayContent}
+            <span className="animate-pulse">|</span>
+          </div>
         </div>
-        {/* Show citations if available */}
+        {/* Show citations if available outside the bubble */}
         {citations && citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
