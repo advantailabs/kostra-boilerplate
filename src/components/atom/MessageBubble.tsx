@@ -118,7 +118,7 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          <p className="whitespace-pre-wrap break-words text-sm">
+          <p className="break-words text-sm">
             <MarkdownRenderer content={displayContent} />
           </p>
           <p
