@@ -112,7 +112,7 @@ export function MessageBubble({ message, persona, citations, className }: Messag
       <div className={cx('flex flex-col', isUser ? 'flex-1' : '')}>
         <div
           className={cx(
-            'rounded-lg px-3 py-2',
+            'min-w-0 rounded-lg px-3 py-2',
             isUser
               ? 'ml-auto max-w-[85%] bg-indigo-600 text-white'
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
