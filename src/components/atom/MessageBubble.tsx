@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { cx } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
+import MarkdownRenderer from './SyntaxHighlighter';
 
 interface MessageBubbleProps {
   message: Message;
@@ -87,7 +88,13 @@ export function MessageBubble({ message, persona, className }: MessageBubbleProp
             : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
         )}
       >
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        {isUser ? (
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            <MarkdownRenderer content={message.content} />
+          </div>
+        )}
         <p
           className={cx(
             'mt-1 text-xs',

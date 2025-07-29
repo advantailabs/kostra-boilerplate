@@ -1,4 +1,5 @@
 import { Avatar } from './Avatar';
+import MarkdownRenderer from './SyntaxHighlighter';
 
 interface StreamingMessageProps {
   message: string;
@@ -21,7 +22,7 @@ export function StreamingMessage({
       />
       <div className="max-w-[80%] rounded-lg bg-gray-100 px-4 py-2 text-sm dark:bg-gray-800 dark:text-gray-100">
         <div className="text-gray-900 dark:text-gray-100">
-          {message}
+          <MarkdownRenderer content={message} />
           <span className="animate-pulse">|</span>
         </div>
       </div>

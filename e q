@@ -1,0 +1,143 @@
+[33mcommit 43a35aeb28292c6d056bc27b4925b0a72b5afbd0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: hironate <hiren@advant.xyz>
+Date:   Mon Jul 28 14:26:55 2025 +0530
+
+    persona logos added
+
+[33mcommit 0a6854836e8e95a016b9c01070f6f0dad4d1a0bf[m
+Author: hironate <hiren@advant.xyz>
+Date:   Mon Jul 28 13:50:14 2025 +0530
+
+    envs updated
+
+[33mcommit 261d016adb2ab339a7c1b81d2438e182d14d3073[m
+Author: hironate <hiren@advant.xyz>
+Date:   Mon Jul 28 12:36:14 2025 +0530
+
+    env example added
+
+[33mcommit c36059b45ec71c3b9616d8758487f76948585438[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sun Jul 27 20:56:17 2025 +0530
+
+    light mode updated
+
+[33mcommit 3f463ca155cd669c6709841d68760602d45b18d7[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sun Jul 27 20:53:01 2025 +0530
+
+    tag removed
+
+[33mcommit 44cbe16f30c4058626d7a828d6919dccd1145d64[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sun Jul 27 20:44:14 2025 +0530
+
+    persona card updated
+
+[33mcommit 932b9947a6aecc9a2ce37f2ced988750b0280d3d[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sat Jul 26 15:34:35 2025 +0530
+
+    integration tests path changed
+
+[33mcommit 7d58c4661fa03c6b30fd0672fb7ef3d4c685a6bb[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sat Jul 26 14:18:27 2025 +0530
+
+    fix tests
+
+[33mcommit ef8f7cc570a0ab987154262496a8a6c69989724f[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sat Jul 26 13:51:10 2025 +0530
+
+    generic file upload created
+
+[33mcommit 76954cd36f82fa28a17e84994c33d03a15218b69[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sat Jul 26 13:12:57 2025 +0530
+
+    log update
+
+[33mcommit 1905808d6f876335d81dfcff5fe06cf117506091[m
+Author: hironate <hiren@advant.xyz>
+Date:   Sat Jul 26 12:27:07 2025 +0530
+
+    logo upload done
+
+[33mcommit bf19e43147abd8cf7f22ee624248001b736bb8a5[m
+Author: hironate <hiren@advant.xyz>
+Date:   Fri Jul 25 19:12:24 2025 +0530
+
+    assistant chat is finished
+
+[33mcommit 9226db7c8b4a58c16e00e05e221bbc3dfd62aa1e[m
+Author: hironate <hiren@advant.xyz>
+Date:   Fri Jul 25 18:19:12 2025 +0530
+
+    soft delete added
+
+[33mcommit 28180492c4f3eda831df6bfb9747c874e122d112[m
+Author: hironate <hiren@advant.xyz>
+Date:   Fri Jul 25 18:04:09 2025 +0530
+
+    chat done
+
+[33mcommit 66ed0555d540f33616cd6a015957cdeabc76deb0[m
+Author: hironate <hiren@advant.xyz>
+Date:   Fri Jul 25 11:18:06 2025 +0530
+
+    assistant created
+
+[33mcommit a5f480064ea9595e834ea1ca4819f97ea7931883[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 23:42:25 2025 +0530
+
+    thread and messages working
+
+[33mcommit e82510fe9eb7528a70bb95800227da032d957b78[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 22:31:54 2025 +0530
+
+    tests fix
+
+[33mcommit 3ed81a71c46dc78812fa1979f585bcec01e1504c[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 22:13:37 2025 +0530
+
+    tests and lint fix
+
+[33mcommit 779ded93b5fad52bf54607cfb1d0101f3b2855a8[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 20:33:13 2025 +0530
+
+    integration test
+
+[33mcommit b56167889c0e03bbdf33b193cd71b270de999e1b[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 19:45:19 2025 +0530
+
+    repo and service created
+
+[33mcommit ebbc20691e50e3c914dfc03b9ac018519dbadfeb[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 16:53:26 2025 +0530
+
+    design plan is ready
+
+[33mcommit ea9198bfcb87c42a3ebab07b2a1593ffad1d24da[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 16:19:00 2025 +0530
+
+    new schema added
+
+[33mcommit 01a9409928c97088331248e6b8e1a74ef194f035[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 15:04:43 2025 +0530
+
+    initial things setup
+
+[33mcommit eba2ffee73ee0ae0187d744d44e8cbbb3d7f55c1[m
+Author: hironate <hiren@advant.xyz>
+Date:   Thu Jul 24 14:56:36 2025 +0530
+
+    initial commit
