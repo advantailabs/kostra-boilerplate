@@ -10,7 +10,7 @@ import {
 
 import {
   createPersona,
-  findActiveByUserId,
+  findActiveByUserIdWithFiles,
   findPersonaByUserAndId,
   softDeletePersona,
   updatePersona,
@@ -19,7 +19,7 @@ import {
 // Mock the repository functions
 jest.mock('../../repositories/persona', () => ({
   createPersona: jest.fn(),
-  findActiveByUserId: jest.fn(),
+  findActiveByUserIdWithFiles: jest.fn(),
   findPersonaByUserAndId: jest.fn(),
   updatePersona: jest.fn(),
   softDeletePersona: jest.fn(),
@@ -48,7 +48,9 @@ jest.mock('../../repositories/knowledge-base', () => ({
 }));
 
 const mockCreatePersona = createPersona as jest.MockedFunction<typeof createPersona>;
-const mockFindActiveByUserId = findActiveByUserId as jest.MockedFunction<typeof findActiveByUserId>;
+const mockFindActiveByUserIdWithFiles = findActiveByUserIdWithFiles as jest.MockedFunction<
+  typeof findActiveByUserIdWithFiles
+>;
 const mockFindPersonaByUserAndId = findPersonaByUserAndId as jest.MockedFunction<
   typeof findPersonaByUserAndId
 >;
@@ -192,17 +194,17 @@ describe('Persona Service', () => {
         },
       ];
 
-      mockFindActiveByUserId.mockResolvedValue(mockPersonas as any);
+      mockFindActiveByUserIdWithFiles.mockResolvedValue(mockPersonas as any);
 
       const result = await getUserPersonasService(1);
 
-      expect(mockFindActiveByUserId).toHaveBeenCalledWith(1, undefined);
+      expect(mockFindActiveByUserIdWithFiles).toHaveBeenCalledWith(1, undefined);
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockPersonas);
     });
 
     it('should handle fetch failure', async () => {
-      mockFindActiveByUserId.mockRejectedValue(new Error('Database error'));
+      mockFindActiveByUserIdWithFiles.mockRejectedValue(new Error('Database error'));
 
       const result = await getUserPersonasService(1);
 

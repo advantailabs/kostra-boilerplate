@@ -24,14 +24,8 @@ interface AttachedFile {
 
 type SearchMode = 'web' | 'deep';
 
-interface KnowledgeBase {
-  id: number;
-  title: string;
-  description: string;
-}
-
 interface SearchBoxProps {
-  onSearch: (data: {
+  onSearch: (_data: {
     query: string;
     files: AttachedFile[];
     knowledgeBaseId: string;
@@ -48,7 +42,10 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
 
   // Fetch knowledge bases
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
-  const knowledgeBases = knowledgeBasesData?.knowledgeBases || [];
+  const knowledgeBases = React.useMemo(
+    () => knowledgeBasesData?.knowledgeBases || [],
+    [knowledgeBasesData?.knowledgeBases]
+  );
 
   // Set first knowledge base as default when data loads
   React.useEffect(() => {

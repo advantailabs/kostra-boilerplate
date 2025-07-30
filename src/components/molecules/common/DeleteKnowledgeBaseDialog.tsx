@@ -16,7 +16,7 @@ import { useState } from 'react';
 interface DeleteKnowledgeBaseDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (options: { deleteFiles: boolean }) => void;
+  onConfirm: (_options: { deleteFiles: boolean }) => void;
   knowledgeBaseName: string;
   fileCount: number;
   isLoading?: boolean;

@@ -43,6 +43,145 @@ export interface FileListResult {
   totalPages: number;
 }
 
+// Forward declarations of functions that are used before they are defined
+const addFileToKnowledgeBaseService = async (
+  fileId: number,
+  knowledgeBaseId: number
+): Promise<FileServiceResult<void>> => {
+  try {
+    // Get the file to check if it exists and get its OpenAI file ID
+    const fileResult = await findFileById(fileId);
+
+    if (!fileResult.success || !fileResult.data) {
+      return {
+        success: false,
+        error: 'File not found',
+      };
+    }
+
+    const file = fileResult.data;
+
+    // Get the knowledge base to check if it exists and get its vector store ID
+    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
+
+    if (!kbResult.success || !kbResult.data) {
+      return {
+        success: false,
+        error: 'Knowledge base not found',
+      };
+    }
+
+    const knowledgeBase = kbResult.data;
+
+    // Add file to knowledge base in database
+    const dbResult = await addFileToKnowledgeBase(fileId, knowledgeBaseId);
+
+    if (!dbResult.success) {
+      return {
+        success: false,
+        error: dbResult.error,
+      };
+    }
+
+    // Add file to vector store if both OpenAI file ID and vector store ID exist
+    if (file.openaiFileId && knowledgeBase.vectorStoreId) {
+      try {
+        const vectorStoreResult = await addFileToVectorStore({
+          vectorStoreId: knowledgeBase.vectorStoreId,
+          fileId: file.openaiFileId,
+        });
+
+        if (!vectorStoreResult.success) {
+          console.warn('Failed to add file to vector store:', vectorStoreResult.error);
+          // Don't fail the operation if vector store addition fails, but log the warning
+        }
+      } catch (vectorStoreError) {
+        console.warn('Failed to add file to vector store:', vectorStoreError);
+        // Don't fail the operation if vector store addition fails
+      }
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error in addFileToKnowledgeBaseService:', error);
+    return {
+      success: false,
+      error: 'Failed to add file to knowledge base',
+    };
+  }
+};
+
+const removeFileFromKnowledgeBaseService = async (
+  fileId: number,
+  knowledgeBaseId: number
+): Promise<FileServiceResult<void>> => {
+  try {
+    // Get the file to check if it exists and get its OpenAI file ID
+    const fileResult = await findFileById(fileId);
+
+    if (!fileResult.success || !fileResult.data) {
+      return {
+        success: false,
+        error: 'File not found',
+      };
+    }
+
+    const file = fileResult.data;
+
+    // Get the knowledge base to check if it exists and get its vector store ID
+    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
+
+    if (!kbResult.success || !kbResult.data) {
+      return {
+        success: false,
+        error: 'Knowledge base not found',
+      };
+    }
+
+    const knowledgeBase = kbResult.data;
+
+    // Remove file from knowledge base in database
+    const dbResult = await removeFileFromKnowledgeBase(fileId, knowledgeBaseId);
+
+    if (!dbResult.success) {
+      return {
+        success: false,
+        error: dbResult.error,
+      };
+    }
+
+    // Remove file from vector store if both OpenAI file ID and vector store ID exist
+    if (file.openaiFileId && knowledgeBase.vectorStoreId) {
+      try {
+        const vectorStoreResult = await deleteFileFromVectorStore({
+          vectorStoreId: knowledgeBase.vectorStoreId,
+          fileId: file.openaiFileId,
+        });
+
+        if (!vectorStoreResult.success) {
+          console.warn('Failed to delete file from vector store:', vectorStoreResult.error);
+          // Don't fail the operation if vector store deletion fails, but log the warning
+        }
+      } catch (vectorStoreError) {
+        console.warn('Failed to delete file from vector store:', vectorStoreError);
+        // Don't fail the operation if vector store deletion fails
+      }
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error in removeFileFromKnowledgeBaseService:', error);
+    return {
+      success: false,
+      error: 'Failed to remove file from knowledge base',
+    };
+  }
+};
+
 const getUserFilesService = async (
   userId: number,
   page = 1,
@@ -284,144 +423,6 @@ const deleteFileService = async (id: number): Promise<FileServiceResult<void>> =
     return {
       success: false,
       error: 'Failed to delete file',
-    };
-  }
-};
-
-const addFileToKnowledgeBaseService = async (
-  fileId: number,
-  knowledgeBaseId: number
-): Promise<FileServiceResult<void>> => {
-  try {
-    // Get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(fileId);
-
-    if (!fileResult.success || !fileResult.data) {
-      return {
-        success: false,
-        error: 'File not found',
-      };
-    }
-
-    const _file = fileResult.data;
-
-    // Get the knowledge base to check if it exists and get its vector store ID
-    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
-
-    if (!kbResult.success || !kbResult.data) {
-      return {
-        success: false,
-        error: 'Knowledge base not found',
-      };
-    }
-
-    const _knowledgeBase = kbResult.data;
-
-    // Add file to knowledge base in database
-    const dbResult = await addFileToKnowledgeBase(fileId, knowledgeBaseId);
-
-    if (!dbResult.success) {
-      return {
-        success: false,
-        error: dbResult.error,
-      };
-    }
-
-    // Add file to vector store if both OpenAI file ID and vector store ID exist
-    if (_file.openaiFileId && _knowledgeBase.vectorStoreId) {
-      try {
-        const vectorStoreResult = await addFileToVectorStore({
-          vectorStoreId: _knowledgeBase.vectorStoreId,
-          fileId: _file.openaiFileId,
-        });
-
-        if (!vectorStoreResult.success) {
-          console.warn('Failed to add file to vector store:', vectorStoreResult.error);
-          // Don't fail the operation if vector store addition fails, but log the warning
-        }
-      } catch (vectorStoreError) {
-        console.warn('Failed to add file to vector store:', vectorStoreError);
-        // Don't fail the operation if vector store addition fails
-      }
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error in addFileToKnowledgeBaseService:', error);
-    return {
-      success: false,
-      error: 'Failed to add file to knowledge base',
-    };
-  }
-};
-
-const removeFileFromKnowledgeBaseService = async (
-  fileId: number,
-  knowledgeBaseId: number
-): Promise<FileServiceResult<void>> => {
-  try {
-    // Get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(fileId);
-
-    if (!fileResult.success || !fileResult.data) {
-      return {
-        success: false,
-        error: 'File not found',
-      };
-    }
-
-    const _file = fileResult.data;
-
-    // Get the knowledge base to check if it exists and get its vector store ID
-    const kbResult = await findKnowledgeBaseById(knowledgeBaseId);
-
-    if (!kbResult.success || !kbResult.data) {
-      return {
-        success: false,
-        error: 'Knowledge base not found',
-      };
-    }
-
-    const _knowledgeBase = kbResult.data;
-
-    // Remove file from knowledge base in database
-    const dbResult = await removeFileFromKnowledgeBase(fileId, knowledgeBaseId);
-
-    if (!dbResult.success) {
-      return {
-        success: false,
-        error: dbResult.error,
-      };
-    }
-
-    // Remove file from vector store if both OpenAI file ID and vector store ID exist
-    if (_file.openaiFileId && _knowledgeBase.vectorStoreId) {
-      try {
-        const vectorStoreResult = await deleteFileFromVectorStore({
-          vectorStoreId: _knowledgeBase.vectorStoreId,
-          fileId: _file.openaiFileId,
-        });
-
-        if (!vectorStoreResult.success) {
-          console.warn('Failed to delete file from vector store:', vectorStoreResult.error);
-          // Don't fail the operation if vector store deletion fails, but log the warning
-        }
-      } catch (vectorStoreError) {
-        console.warn('Failed to delete file from vector store:', vectorStoreError);
-        // Don't fail the operation if vector store deletion fails
-      }
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error('Error in removeFileFromKnowledgeBaseService:', error);
-    return {
-      success: false,
-      error: 'Failed to remove file from knowledge base',
     };
   }
 };

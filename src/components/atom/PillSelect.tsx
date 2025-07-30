@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Select,
   SelectContent,
@@ -7,6 +8,7 @@ import {
 import React from 'react';
 
 interface PillSelectProps {
+  // eslint-disable-next-line no-unused-vars
   value: string;
   onValueChange: (value: string) => void;
   icon?: React.ReactNode;

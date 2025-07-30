@@ -180,6 +180,7 @@ describe('Chat Service', () => {
             timestamp: new Date(),
             deletedAt: null,
             openaiMessageId: 'msg_123',
+            citations: null,
           },
         ],
         persona: {

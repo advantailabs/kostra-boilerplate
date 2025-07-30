@@ -14,7 +14,7 @@ interface KnowledgeBaseSelectionModalProps {
   isOpen: boolean;
   knowledgeBases: KnowledgeBaseWithFiles[];
   onClose: () => void;
-  onSelectKnowledgeBase: (knowledgeBaseId: number) => void;
+  onSelectKnowledgeBase: (_knowledgeBaseId: number) => void;
   isLoading?: boolean;
   processingKnowledgeBaseId?: number | null;
   selectedFile?: any;

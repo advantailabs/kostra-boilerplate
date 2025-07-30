@@ -190,7 +190,7 @@ export async function deleteKnowledgeBase(
       data: {
         deleted: true,
         filesToDelete: deleteFiles ? filesToDelete : undefined,
-        vectorStoreId: vectorStoreId,
+        vectorStoreId,
       },
     };
   } catch (error) {

@@ -19,8 +19,11 @@ import {
 // Mock the external OpenAI services
 jest.mock('@/services/external/openai/assistant', () => ({
   createAssistant: jest.fn(),
-  createVectorStore: jest.fn(),
   updateAssistant: jest.fn(),
+}));
+
+jest.mock('@/services/external/openai/vector-store', () => ({
+  createVectorStore: jest.fn(),
 }));
 
 jest.mock('@/services/external/openai/threads', () => ({

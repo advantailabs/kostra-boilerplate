@@ -124,7 +124,7 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
                   file={fileKb.file}
                   onDelete={() => handleFileRemoveFromKnowledgeBase()}
                   onDownload={() => handleFileDownload(fileKb.file.id)}
-                  showKnowledgeBaseOptions={true}
+                  showKnowledgeBaseOptions
                   onRemoveFromKnowledgeBase={() => handleFileRemoveFromKnowledgeBase()}
                   onDeleteFile={() => handleFileDeleteCompletely()}
                   isDownloading={

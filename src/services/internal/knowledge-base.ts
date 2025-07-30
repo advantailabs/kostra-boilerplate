@@ -30,9 +30,9 @@ const createKnowledgeBaseService = async (
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
     // Create vector store first if not provided
-    let vectorStoreId = data.vectorStoreId;
+    let finalVectorStoreId = data.vectorStoreId;
 
-    if (!vectorStoreId) {
+    if (!finalVectorStoreId) {
       const vectorStoreResult = await createVectorStore({
         name: `${data.title.trim()} Knowledge Base`,
       });
@@ -44,13 +44,13 @@ const createKnowledgeBaseService = async (
         };
       }
 
-      vectorStoreId = vectorStoreResult.data.id;
+      finalVectorStoreId = vectorStoreResult.data.id;
     }
 
     // Create knowledge base with vector store ID
     const knowledgeBaseData = {
       ...data,
-      vectorStoreId,
+      vectorStoreId: finalVectorStoreId,
     };
 
     const result = await createKnowledgeBase(knowledgeBaseData);
