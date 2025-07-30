@@ -29,6 +29,9 @@ interface FileDetailsModalProps {
       logo: string | null;
     }>;
   };
+  onRemoveFromKnowledgeBase?: () => void;
+  onDeleteFile?: () => void;
+  showKnowledgeBaseOptions?: boolean;
 }
 
 export function FileDetailsModal({
