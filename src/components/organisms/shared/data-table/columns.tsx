@@ -130,8 +130,8 @@ export const columns = [
 
       return (
         <div className="flex items-center gap-0.5">
-          <span className="w-6">{value}</span>
-          <Indicator number={value} />
+          <span className="w-6">{value as number}</span>
+          <Indicator number={value as number} />
         </div>
       );
     },

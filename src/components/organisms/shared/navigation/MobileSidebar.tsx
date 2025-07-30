@@ -2,9 +2,9 @@ import {
   RiChat1Line,
   RiDatabase2Line,
   RiFileLine,
-  RiHome2Line,
   RiLinkM,
   RiMenuLine,
+  RiSearchLine,
   RiUserLine,
 } from '@remixicon/react';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ import {
 import { cx, focusRing } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Overview', href: siteConfig.baseLinks.home, icon: RiHome2Line },
+  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine },
   { name: 'Chat', href: '/app/chat', icon: RiChat1Line },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine },
   { name: 'Knowledge Bases', href: '/app/knowledge-bases', icon: RiDatabase2Line },

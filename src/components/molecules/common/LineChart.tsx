@@ -33,7 +33,12 @@ import {
 import { useOnWindowResize } from '@/lib/useOnWindowResize';
 import { cx, percentageFormatter } from '@/lib/utils';
 
-import { getBadgeType } from '../../organisms/modules/overview/DashboardChartCard';
+// Helper function for badge types
+function getBadgeType(value: number): 'success' | 'warning' | 'error' {
+  if (value >= 80) return 'success';
+  if (value >= 50) return 'warning';
+  return 'error';
+}
 
 // #region Legend
 

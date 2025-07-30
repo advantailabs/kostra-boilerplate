@@ -85,6 +85,19 @@ const buttonVariants = tv({
         'disabled:bg-red-300 disabled:text-white',
         'disabled:dark:bg-red-950 disabled:dark:text-red-400',
       ],
+      elevated: [
+        // border
+        'border-gray-200 dark:border-gray-700',
+        // text color
+        'text-gray-600 dark:text-gray-300',
+        // background color
+        'bg-white dark:bg-gray-800',
+        // hover color
+        'hover:bg-gray-50 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-200',
+        // disabled
+        'disabled:bg-gray-100 disabled:text-gray-400',
+        'disabled:dark:bg-gray-900 disabled:dark:text-gray-600',
+      ],
     },
   },
   defaultVariants: {
