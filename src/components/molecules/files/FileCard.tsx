@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookOpen,
   Download,
   Eye,
   FileImage,
@@ -37,6 +38,7 @@ interface FileCardProps {
   showKnowledgeBaseOptions?: boolean;
   onRemoveFromKnowledgeBase?: () => void;
   onDeleteFile?: () => void;
+  onAddToKnowledgeBase?: () => void;
   knowledgeBaseInfo?: {
     id: number;
     title: string;
@@ -60,6 +62,7 @@ export function FileCard({
   showKnowledgeBaseOptions = false,
   onRemoveFromKnowledgeBase,
   onDeleteFile,
+  onAddToKnowledgeBase,
   knowledgeBaseInfo,
 }: FileCardProps) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -142,6 +145,12 @@ export function FileCard({
 
   const handleRemoveFromKnowledgeBase = () => {
     setShowRemoveDialog(true);
+  };
+
+  const handleAddToKnowledgeBase = () => {
+    if (onAddToKnowledgeBase) {
+      onAddToKnowledgeBase();
+    }
   };
 
   const handleDeleteFile = () => {
@@ -270,6 +279,17 @@ export function FileCard({
                   <>
                     {/* Separator */}
                     <div className="-mx-1 my-1 border-t border-gray-200 dark:border-gray-700" />
+
+                    {/* Add to Knowledge Base Section */}
+                    <DropdownMenuItem
+                      onClick={handleAddToKnowledgeBase}
+                      className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-blue-50 hover:text-blue-700 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                    >
+                      <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-5 sm:w-5 dark:bg-blue-900/30">
+                        <BookOpen className="h-2.5 w-2.5 text-blue-600 sm:h-3 sm:w-3 dark:text-blue-400" />
+                      </div>
+                      <span className="truncate">Add to Knowledge Base</span>
+                    </DropdownMenuItem>
 
                     {/* Delete Section */}
                     <DropdownMenuItem

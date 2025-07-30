@@ -73,6 +73,7 @@ export function useAddFileToKnowledgeBase() {
       // Invalidate specific knowledge base and knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+      queryClient.invalidateQueries({ queryKey: ['files'] });
     },
   });
 }
