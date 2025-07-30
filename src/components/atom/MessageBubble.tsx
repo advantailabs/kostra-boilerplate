@@ -1,10 +1,10 @@
 import { Avatar } from '@/components/atom/Avatar';
-import { Message, Persona } from '@prisma/client';
-import Image from 'next/image';
-
 import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { CitationFile, StoredCitation } from '@/types/chat';
+import { Message, Persona } from '@prisma/client';
+import Image from 'next/image';
+import { useState } from 'react';
 import { CitationList } from './CitationList';
 import MarkdownRenderer from './SyntaxHighlighter';
 
@@ -18,6 +18,7 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, persona, citations, className }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const { user } = useAuthStore();
+  const [copied, setCopied] = useState(false);
 
   // Parse stored citations from message
   const storedCitations: StoredCitation[] = (message as any).citations
@@ -118,26 +119,53 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
+          {/* 📝 Message content */}
           <p className="break-words text-sm">
             <MarkdownRenderer content={displayContent} />
           </p>
-          <p
-            className={cx(
-              'mt-2 text-sm',
-              isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'
-            )}
-          >
-            {new Date(message.timestamp).toLocaleDateString([], {
-              month: 'short',
-              day: 'numeric',
-            })}{' '}
-            {new Date(message.timestamp).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </p>
+
+          {/* ⏰ Timestamp */}
+          <div className="mt-2 flex w-full items-center justify-between text-sm">
+            <span className={cx(isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400')}>
+              {new Date(message.timestamp).toLocaleDateString([], {
+                month: 'short',
+                day: 'numeric',
+              })}{' '}
+              {new Date(message.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(displayContent);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+              title="Copy full message"
+            >
+              {copied ? (
+                <span className="text-xs">Copied</span>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 fill-current"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 
+      1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 
+      18H8V7h11v16z"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
-        {/* Show citations for assistant messages outside the bubble */}
+
+        {/* 📎 Citations (Assistant only) */}
         {!isUser && finalCitations && finalCitations.length > 0 && (
           <CitationList citations={finalCitations} />
         )}
