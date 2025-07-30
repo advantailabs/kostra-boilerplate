@@ -1,7 +1,7 @@
 'use client';
 
 import { useClerk, useUser } from '@clerk/nextjs';
-import { RiArrowRightUpLine, RiComputerLine, RiMoonLine, RiSunLine } from '@remixicon/react';
+import { RiComputerLine, RiMoonLine, RiSunLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
@@ -80,30 +80,6 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
               </DropdownMenuRadioGroup>
             </DropdownMenuSubMenuContent>
           </DropdownMenuSubMenu>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Changelog
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Documentation
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Join Slack community
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

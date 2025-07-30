@@ -4,7 +4,6 @@ import {
   RiChat1Line,
   RiDatabase2Line,
   RiFileLine,
-  RiLinkM,
   RiSearchLine,
   RiUserLine,
 } from '@remixicon/react';
@@ -19,19 +18,16 @@ import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
 const navigation = [
-  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine },
-  { name: 'Chat', href: '/app/chat', icon: RiChat1Line },
-  { name: 'Personas', href: '/app/personas', icon: RiUserLine },
-  { name: 'Knowledge Bases', href: '/app/knowledge-bases', icon: RiDatabase2Line },
-  { name: 'Files', href: '/app/files', icon: RiFileLine },
-] as const;
-
-const shortcuts = [
+  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine, section: 'Search' },
+  { name: 'Chat', href: '/app/chat', icon: RiChat1Line, section: 'Persona' },
+  { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
   {
-    name: 'Add new user',
-    href: '/app/settings/users',
-    icon: RiLinkM,
+    name: 'Knowledge Bases',
+    href: '/app/knowledge-bases',
+    icon: RiDatabase2Line,
+    section: 'Knowledge',
   },
+  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Knowledge' },
 ] as const;
 
 export function Sidebar() {
@@ -47,46 +43,80 @@ export function Sidebar() {
           <div className="flex h-8 items-center px-2">
             <CubeLogo />
           </div>
-          <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-10">
-            <ul role="list" className="space-y-0.5">
-              {navigation.map(item => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className={cx(
-                      isActive(item.href)
-                        ? 'text-indigo-600 dark:text-indigo-400'
-                        : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                      'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
-                      focusRing
-                    )}
-                  >
-                    <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
+            {/* Search Section */}
             <div>
-              <span className="text-xs font-medium leading-6 text-gray-500">Shortcuts</span>
-              <ul aria-label="shortcuts" role="list" className="space-y-0.5">
-                {shortcuts.map(item => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className={cx(
-                        pathname === item.href || pathname.startsWith(item.href)
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
-                        focusRing
-                      )}
-                    >
-                      <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
+              <span className="text-xs font-medium leading-6 text-gray-500">Search</span>
+              <ul role="list" className="space-y-0.5">
+                {navigation
+                  .filter(item => item.section === 'Search')
+                  .map(item => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={cx(
+                          isActive(item.href)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                          focusRing
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        Find and search
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            {/* Persona Section */}
+            <div>
+              <span className="text-xs font-medium leading-6 text-gray-500">Persona</span>
+              <ul role="list" className="space-y-0.5">
+                {navigation
+                  .filter(item => item.section === 'Persona')
+                  .map(item => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={cx(
+                          isActive(item.href)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                          focusRing
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            {/* Knowledge Section */}
+            <div>
+              <span className="text-xs font-medium leading-6 text-gray-500">Knowledge</span>
+              <ul role="list" className="space-y-0.5">
+                {navigation
+                  .filter(item => item.section === 'Knowledge')
+                  .map(item => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={cx(
+                          isActive(item.href)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                          focusRing
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </div>
           </nav>

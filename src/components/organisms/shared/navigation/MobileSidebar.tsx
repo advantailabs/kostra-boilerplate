@@ -1,8 +1,8 @@
 import {
   RiChat1Line,
+  RiCloseLine,
   RiDatabase2Line,
   RiFileLine,
-  RiLinkM,
   RiMenuLine,
   RiSearchLine,
   RiUserLine,
@@ -17,26 +17,21 @@ import {
   DrawerBody,
   DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from '@/components/molecules/common/Drawer';
 import { cx, focusRing } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine },
-  { name: 'Chat', href: '/app/chat', icon: RiChat1Line },
-  { name: 'Personas', href: '/app/personas', icon: RiUserLine },
-  { name: 'Knowledge Bases', href: '/app/knowledge-bases', icon: RiDatabase2Line },
-  { name: 'Files', href: '/app/files', icon: RiFileLine },
-] as const;
-
-const shortcuts = [
+  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine, section: 'Search' },
+  { name: 'Chat', href: '/app/chat', icon: RiChat1Line, section: 'Persona' },
+  { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
   {
-    name: 'Add new user',
-    href: '/settings/users',
-    icon: RiLinkM,
+    name: 'Knowledge Bases',
+    href: '/app/knowledge-bases',
+    icon: RiDatabase2Line,
+    section: 'Knowledge',
   },
+  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Knowledge' },
 ] as const;
 
 export default function MobileSidebar() {
@@ -56,57 +51,99 @@ export default function MobileSidebar() {
         </Button>
       </DrawerTrigger>
       <DrawerContent className="sm:max-w-lg">
-        <DrawerHeader>
-          <DrawerTitle>Retail Analytics</DrawerTitle>
-        </DrawerHeader>
+        <div className="flex items-center justify-between border-b border-gray-200 px-2 py-4 dark:border-gray-800">
+          <h2 className="px-2 text-lg font-semibold">Menu</h2>
+          <DrawerClose asChild>
+            <Button variant="ghost" aria-label="close sidebar" className="h-8 w-8 p-0">
+              <RiCloseLine className="h-4 w-4" />
+            </Button>
+          </DrawerClose>
+        </div>
         <DrawerBody>
-          <nav
-            aria-label="core mobile navigation links"
-            className="flex flex-1 flex-col space-y-10"
-          >
-            <ul role="list" className="space-y-1.5">
-              {navigation.map(item => (
-                <li key={item.name}>
-                  <DrawerClose asChild>
-                    <Link
-                      href={item.href}
-                      className={cx(
-                        isActive(item.href)
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                        focusRing
-                      )}
-                    >
-                      <item.icon className="size-5 shrink-0" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  </DrawerClose>
-                </li>
-              ))}
-            </ul>
+          <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
+            {/* Search Section */}
+            <div>
+              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">Search</span>
+              <ul role="list" className="space-y-1.5">
+                {navigation
+                  .filter(item => item.section === 'Search')
+                  .map(item => (
+                    <li key={item.name}>
+                      <DrawerClose asChild>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                          Find and search
+                        </Link>
+                      </DrawerClose>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            {/* Persona Section */}
             <div>
               <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
-                Shortcuts
+                Persona
               </span>
-              <ul aria-label="shortcuts" role="list" className="space-y-0.5">
-                {shortcuts.map(item => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className={cx(
-                        pathname === item.href || pathname.includes(item.href)
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                        focusRing
-                      )}
-                    >
-                      <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
+              <ul role="list" className="space-y-1.5">
+                {navigation
+                  .filter(item => item.section === 'Persona')
+                  .map(item => (
+                    <li key={item.name}>
+                      <DrawerClose asChild>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </DrawerClose>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            {/* Knowledge Section */}
+            <div>
+              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
+                Knowledge
+              </span>
+              <ul role="list" className="space-y-1.5">
+                {navigation
+                  .filter(item => item.section === 'Knowledge')
+                  .map(item => (
+                    <li key={item.name}>
+                      <DrawerClose asChild>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </DrawerClose>
+                    </li>
+                  ))}
               </ul>
             </div>
           </nav>
