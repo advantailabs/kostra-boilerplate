@@ -39,9 +39,6 @@ interface FilesApiClient {
   uploadFiles(_data: UploadFilesRequest): Promise<any>;
   updateFile(_id: number, _data: UpdateFileRequest): Promise<any>;
   deleteFile(_id: number, _permanent?: boolean): Promise<any>;
-  addFileToKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
-  removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
-  deleteFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any>;
 }
 
 export const filesApi: FilesApiClient = {
@@ -78,31 +75,8 @@ export const filesApi: FilesApiClient = {
     return response.data;
   },
 
-  async deleteFile(_id: number, _permanent = false): Promise<any> {
-    const response = await axiosInstance.delete(`/files/${_id}`, {
-      params: { permanent: _permanent },
-    });
-    return response.data;
-  },
-
-  async addFileToKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
-    const response = await axiosInstance.post(`/files/${_id}/knowledge-base`, {
-      knowledgeBaseId: _knowledgeBaseId,
-    });
-    return response.data;
-  },
-
-  async removeFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
-    const response = await axiosInstance.delete(`/files/${_id}/knowledge-base`, {
-      data: { knowledgeBaseId: _knowledgeBaseId },
-    });
-    return response.data;
-  },
-
-  async deleteFileFromKnowledgeBase(_id: number, _knowledgeBaseId: number): Promise<any> {
-    const response = await axiosInstance.delete(`/files/${_id}/knowledge-base-delete`, {
-      data: { knowledgeBaseId: _knowledgeBaseId },
-    });
+  async deleteFile(_id: number): Promise<any> {
+    const response = await axiosInstance.delete(`/files/${_id}`);
     return response.data;
   },
 };

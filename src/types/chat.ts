@@ -24,6 +24,8 @@ export interface KnowledgeBaseWithFiles extends KnowledgeBase {
       mimeType: string;
       size: number;
       url: string | null;
+      createdAt: Date;
+      updatedAt: Date;
     };
   })[];
   personas: Persona[];

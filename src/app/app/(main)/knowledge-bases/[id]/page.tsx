@@ -4,8 +4,8 @@ import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { FileCard } from '@/components/molecules/files/FileCard';
 import { KnowledgeBaseFileUploader } from '@/components/organisms/modules/knowledge-bases/KnowledgeBaseFileUploader';
-import { useKnowledgeBase, useKnowledgeBaseMutations } from '@/hooks/useKnowledgeBases';
-import { filesApi } from '@/services/api/files';
+import { useFileDownload } from '@/hooks/useFiles';
+import { useKnowledgeBase } from '@/hooks/useKnowledgeBases';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -17,9 +17,8 @@ interface KnowledgeBaseDetailPageProps {
 export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailPageProps) {
   const knowledgeBaseId = parseInt(params.id, 10);
   const { data: knowledgeBaseData, isLoading, refetch } = useKnowledgeBase(knowledgeBaseId);
-  const { removeFileFromKnowledgeBase } = useKnowledgeBaseMutations();
+  const downloadFileMutation = useFileDownload();
   const [showFileUploader, setShowFileUploader] = useState(false);
-  const [removingFileId, setRemovingFileId] = useState<number | null>(null);
 
   if (isLoading) {
     return <LoadingScreen message="Loading knowledge base..." />;
@@ -45,37 +44,18 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
     refetch();
   };
 
-  const handleFileDelete = async (fileId: number) => {
-    try {
-      await removeFileFromKnowledgeBase.mutateAsync({ knowledgeBaseId, fileId });
-    } catch (error) {
-      console.error('Failed to remove file from knowledge base:', error);
-    }
+  const handleFileRemoveFromKnowledgeBase = async () => {
+    // The removal is handled in the FileCard component
   };
 
-  const handleFileRemoveFromKnowledgeBase = async (fileId: number) => {
-    try {
-      setRemovingFileId(fileId);
-      await removeFileFromKnowledgeBase.mutateAsync({ knowledgeBaseId, fileId });
-      await refetch();
-    } catch (error) {
-      console.error('Failed to remove file from knowledge base:', error);
-    } finally {
-      setRemovingFileId(null);
-    }
+  const handleFileDeleteCompletely = async () => {
+    // The deletion is handled in the FileDetailsModal component
+    // Manually refetch knowledge base data since we removed knowledge base invalidation from useFiles
+    refetch();
   };
 
-  const handleFileDeleteCompletely = async (fileId: number) => {
-    try {
-      setRemovingFileId(fileId);
-      // Delete the file from knowledge base and storage
-      await filesApi.deleteFileFromKnowledgeBase(fileId, knowledgeBaseId);
-      await refetch();
-    } catch (error) {
-      console.error('Failed to delete file completely:', error);
-    } finally {
-      setRemovingFileId(null);
-    }
+  const handleFileDownload = (fileId: number) => {
+    downloadFileMutation.mutate(fileId);
   };
 
   return (
@@ -83,7 +63,9 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">All Files</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Knowledge Base Files
+          </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{knowledgeBase.title}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -140,14 +122,21 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
                 <FileCard
                   key={fileKb.file.id}
                   file={fileKb.file}
-                  onDelete={() => handleFileDelete(fileKb.file.id)}
+                  onDelete={() => handleFileRemoveFromKnowledgeBase()}
+                  onDownload={() => handleFileDownload(fileKb.file.id)}
                   showKnowledgeBaseOptions={true}
-                  onRemoveFromKnowledgeBase={() =>
-                    handleFileRemoveFromKnowledgeBase(fileKb.file.id)
+                  onRemoveFromKnowledgeBase={() => handleFileRemoveFromKnowledgeBase()}
+                  onDeleteFile={() => handleFileDeleteCompletely()}
+                  isDownloading={
+                    downloadFileMutation.isPending &&
+                    downloadFileMutation.variables === fileKb.file.id
                   }
-                  onDeleteFile={() => handleFileDeleteCompletely(fileKb.file.id)}
-                  knowledgeBaseId={knowledgeBaseId}
-                  isRemoving={removingFileId === fileKb.file.id}
+                  knowledgeBaseInfo={{
+                    id: knowledgeBase.id,
+                    title: knowledgeBase.title,
+                    description: knowledgeBase.description,
+                    personas: knowledgeBase.personas || [],
+                  }}
                 />
               ))}
             </div>

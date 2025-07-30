@@ -9,6 +9,7 @@ export function useKnowledgeBases(page = 1, limit = 50) {
     queryKey: ['knowledge-bases', page, limit],
     queryFn: () => knowledgeBasesApi.getKnowledgeBases(page, limit),
     enabled: !!user?.id,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -19,6 +20,7 @@ export function useKnowledgeBase(id: number) {
     queryKey: ['knowledge-base', id],
     queryFn: () => knowledgeBasesApi.getKnowledgeBase(id),
     enabled: !!user?.id && !!id,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -61,6 +63,20 @@ export function useDeleteKnowledgeBase() {
   });
 }
 
+export function useAddFileToKnowledgeBase() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ knowledgeBaseId, fileId }: { knowledgeBaseId: number; fileId: number }) =>
+      knowledgeBasesApi.addFileToKnowledgeBase(knowledgeBaseId, fileId),
+    onSuccess: (_, { knowledgeBaseId }) => {
+      // Invalidate specific knowledge base and knowledge bases list
+      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    },
+  });
+}
+
 export function useRemoveFileFromKnowledgeBase() {
   const queryClient = useQueryClient();
 
@@ -70,7 +86,7 @@ export function useRemoveFileFromKnowledgeBase() {
     onSuccess: (_, { knowledgeBaseId }) => {
       // Invalidate specific knowledge base and knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
-      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+      queryClient.invalidateQueries({ queryKey: ['files'] });
     },
   });
 }
@@ -81,6 +97,7 @@ export function useKnowledgeBaseMutations() {
     createKnowledgeBase: useCreateKnowledgeBase(),
     updateKnowledgeBase: useUpdateKnowledgeBase(),
     deleteKnowledgeBase: useDeleteKnowledgeBase(),
+    addFileToKnowledgeBase: useAddFileToKnowledgeBase(),
     removeFileFromKnowledgeBase: useRemoveFileFromKnowledgeBase(),
   };
 }

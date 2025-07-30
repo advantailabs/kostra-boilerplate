@@ -159,12 +159,14 @@ export default function FilesPage() {
       )}
 
       {/* File Filter Modal */}
-      <FileFilterModal
-        isOpen={showFilterModal}
-        onClose={() => setShowFilterModal(false)}
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-      />
+      {showFilterModal && (
+        <FileFilterModal
+          isOpen={showFilterModal}
+          onClose={() => setShowFilterModal(false)}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
+      )}
     </div>
   );
 }

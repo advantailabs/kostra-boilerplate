@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/molecules/common/Dropdown';
 import { useDeleteFile } from '@/hooks/useFiles';
+import { useRemoveFileFromKnowledgeBase } from '@/hooks/useKnowledgeBases';
 import { FileDetailsModal } from './FileDetailsModal';
 
 interface FileCardProps {
@@ -33,11 +34,20 @@ interface FileCardProps {
   onDownload?: () => void;
   className?: string;
   isDownloading?: boolean;
-  isRemoving?: boolean;
   showKnowledgeBaseOptions?: boolean;
   onRemoveFromKnowledgeBase?: () => void;
   onDeleteFile?: () => void;
-  knowledgeBaseId?: number;
+  knowledgeBaseInfo?: {
+    id: number;
+    title: string;
+    description: string;
+    personas?: Array<{
+      id: number;
+      name: string;
+      description: string;
+      logo: string | null;
+    }>;
+  };
 }
 
 export function FileCard({
@@ -47,16 +57,17 @@ export function FileCard({
   onDownload,
   className,
   isDownloading = false,
-  isRemoving = false,
   showKnowledgeBaseOptions = false,
   onRemoveFromKnowledgeBase,
   onDeleteFile,
-  knowledgeBaseId,
+  knowledgeBaseInfo,
 }: FileCardProps) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+
   const deleteFileMutation = useDeleteFile();
+  const removeFromKBMutation = useRemoveFileFromKnowledgeBase();
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 B';
@@ -138,7 +149,13 @@ export function FileCard({
   };
 
   const confirmRemoveFromKnowledgeBase = async () => {
+    if (!knowledgeBaseInfo?.id || !file?.id) return;
+
     try {
+      await removeFromKBMutation.mutateAsync({
+        knowledgeBaseId: knowledgeBaseInfo.id,
+        fileId: file.id,
+      });
       if (onRemoveFromKnowledgeBase) {
         onRemoveFromKnowledgeBase();
       }
@@ -179,6 +196,7 @@ export function FileCard({
             >
               <IconComponent className="h-3.5 w-3.5" />
             </div>
+
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-xs font-semibold leading-tight text-gray-900 dark:text-gray-100">
                 {file.originalName}
@@ -188,49 +206,43 @@ export function FileCard({
 
           {/* Action Buttons */}
           <div className="ml-2 flex flex-shrink-0 items-center gap-1">
-            {isRemoving ? (
-              <div className="flex h-5 w-5 items-center justify-center">
-                <div className="h-3 w-3 animate-spin rounded-full border border-gray-300 border-t-indigo-600" />
-              </div>
-            ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="h-5 w-5 p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                  >
-                    <MoreHorizontal className="h-3 w-3" aria-label="More options" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={handleViewDetails}>
-                    <Eye className="mr-2 h-3 w-3" />
-                    View Details
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleDownload} disabled={isDownloading}>
-                    <Download className="mr-2 h-3 w-3" />
-                    {isDownloading ? 'Downloading...' : 'Download'}
-                  </DropdownMenuItem>
-                  {showKnowledgeBaseOptions ? (
-                    <>
-                      <DropdownMenuItem onClick={handleRemoveFromKnowledgeBase}>
-                        <Unlink className="mr-2 h-3 w-3" />
-                        Remove from Knowledge Base
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleDeleteFile}>
-                        <Trash2 className="mr-2 h-3 w-3" />
-                        Delete File
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <DropdownMenuItem onClick={handleDeleteClick}>
-                      <Trash2 className="mr-2 h-3 w-3" />
-                      Delete
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-5 w-5 p-0 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                >
+                  <MoreHorizontal className="h-3 w-3" aria-label="More options" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleViewDetails}>
+                  <Eye className="mr-2 h-3 w-3" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownload} disabled={isDownloading}>
+                  <Download className="mr-2 h-3 w-3" />
+                  {isDownloading ? 'Downloading...' : 'Download'}
+                </DropdownMenuItem>
+                {showKnowledgeBaseOptions ? (
+                  <>
+                    <DropdownMenuItem onClick={handleRemoveFromKnowledgeBase}>
+                      <Unlink className="mr-2 h-3 w-3" />
+                      Remove from Knowledge Base
                     </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+                    <DropdownMenuItem onClick={handleDeleteFile}>
+                      <Trash2 className="mr-2 h-3 w-3" />
+                      Delete File
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem onClick={handleDeleteClick}>
+                    <Trash2 className="mr-2 h-3 w-3" />
+                    Delete
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -278,6 +290,10 @@ export function FileCard({
         file={file}
         onDownload={handleDownload}
         isDownloading={isDownloading}
+        knowledgeBaseInfo={knowledgeBaseInfo}
+        onRemoveFromKnowledgeBase={onRemoveFromKnowledgeBase}
+        onDeleteFile={onDeleteFile}
+        showKnowledgeBaseOptions={showKnowledgeBaseOptions}
       />
 
       {/* Remove from Knowledge Base Confirmation Dialog */}
@@ -288,7 +304,7 @@ export function FileCard({
         title="Remove from Knowledge Base"
         description={`Are you sure you want to remove "${file?.originalName}" from this knowledge base? This will remove it from the vector database but keep the file in your storage.`}
         confirmText="Remove from Knowledge Base"
-        isLoading={false}
+        isLoading={removeFromKBMutation.isPending}
       />
 
       {/* Delete File Confirmation Dialog */}

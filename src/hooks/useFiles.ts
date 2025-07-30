@@ -58,39 +58,11 @@ export function useDeleteFile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, permanent = false }: { id: number; permanent?: boolean }) =>
-      filesApi.deleteFile(id, permanent),
+    mutationFn: ({ id }: { id: number }) => filesApi.deleteFile(id),
     onSuccess: () => {
-      // Invalidate files list
+      // Only invalidate files-related queries
       queryClient.invalidateQueries({ queryKey: ['files'] });
-    },
-  });
-}
-
-export function useAddFileToKnowledgeBase() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ fileId, knowledgeBaseId }: { fileId: number; knowledgeBaseId: number }) =>
-      filesApi.addFileToKnowledgeBase(fileId, knowledgeBaseId),
-    onSuccess: (_, { fileId }) => {
-      // Invalidate file knowledge bases and files list
-      queryClient.invalidateQueries({ queryKey: ['file', fileId] });
-      queryClient.invalidateQueries({ queryKey: ['files'] });
-    },
-  });
-}
-
-export function useRemoveFileFromKnowledgeBase() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ fileId, knowledgeBaseId }: { fileId: number; knowledgeBaseId: number }) =>
-      filesApi.removeFileFromKnowledgeBase(fileId, knowledgeBaseId),
-    onSuccess: (_, { fileId }) => {
-      // Invalidate file knowledge bases and files list
-      queryClient.invalidateQueries({ queryKey: ['file', fileId] });
-      queryClient.invalidateQueries({ queryKey: ['files'] });
+      // Remove unnecessary knowledge base invalidations that cause API calls during download
     },
   });
 }
