@@ -109,7 +109,7 @@ export default function FilesPage() {
       </div>
 
       {/* Files Content */}
-      <div className="h-full p-6">
+      <div className="h-full p-4">
         {files.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="text-center">

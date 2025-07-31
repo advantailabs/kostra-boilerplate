@@ -131,6 +131,7 @@ export function FileCard({
     <>
       <Card
         className={`group flex min-h-[100px] min-w-[200px] cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 sm:min-h-[110px] sm:min-w-[220px] dark:hover:shadow-gray-900/50 ${className}`}
+        onClick={handleViewDetails}
       >
         {/* Header */}
         <div className="flex flex-shrink-0 items-start justify-between p-2 pb-1 sm:p-3 sm:pb-2">
@@ -155,6 +156,7 @@ export function FileCard({
                 <Button
                   variant="ghost"
                   className="h-5 w-5 p-0 text-gray-400 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-600 sm:h-6 sm:w-6 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                  onClick={e => e.stopPropagation()}
                 >
                   <MoreHorizontal className="h-3 w-3 sm:h-3.5 sm:w-3.5" aria-label="More options" />
                 </Button>
@@ -162,7 +164,10 @@ export function FileCard({
               <DropdownMenuContent className="w-[240px] p-1 sm:w-[272px]" align="end">
                 {/* View Section */}
                 <DropdownMenuItem
-                  onClick={handleViewDetails}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleViewDetails();
+                  }}
                   className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-blue-50 hover:text-blue-700 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
                 >
                   <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-5 sm:w-5 dark:bg-blue-900/30">
@@ -173,7 +178,10 @@ export function FileCard({
 
                 {/* Download Section */}
                 <DropdownMenuItem
-                  onClick={handleDownload}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDownload();
+                  }}
                   disabled={isDownloading}
                   className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-200 dark:hover:bg-green-900/20 dark:hover:text-green-300"
                 >
@@ -190,7 +198,10 @@ export function FileCard({
 
                     {/* Remove from Knowledge Base Section */}
                     <DropdownMenuItem
-                      onClick={handleRemoveFromKnowledgeBase}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleRemoveFromKnowledgeBase();
+                      }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-orange-50 hover:text-orange-700 dark:text-gray-200 dark:hover:bg-orange-900/20 dark:hover:text-orange-300"
                     >
                       <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-orange-100 sm:h-5 sm:w-5 dark:bg-orange-900/30">
@@ -201,7 +212,10 @@ export function FileCard({
 
                     {/* Delete File Section */}
                     <DropdownMenuItem
-                      onClick={handleDeleteFile}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleDeleteFile();
+                      }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-red-700 transition-colors duration-200 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/20"
                     >
                       <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-5 sm:w-5 dark:bg-red-900/30">
@@ -217,7 +231,10 @@ export function FileCard({
 
                     {/* Add to Knowledge Base Section */}
                     <DropdownMenuItem
-                      onClick={handleAddToKnowledgeBase}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleAddToKnowledgeBase();
+                      }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-blue-50 hover:text-blue-700 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
                     >
                       <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-5 sm:w-5 dark:bg-blue-900/30">
@@ -228,7 +245,10 @@ export function FileCard({
 
                     {/* Delete Section */}
                     <DropdownMenuItem
-                      onClick={handleDeleteClick}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleDeleteClick();
+                      }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-red-700 transition-colors duration-200 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/20"
                     >
                       <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-5 sm:w-5 dark:bg-red-900/30">
