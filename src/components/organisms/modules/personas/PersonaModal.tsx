@@ -197,7 +197,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
 
   // Custom footer for our modal
   const customFooter = (
-    <div className="flex flex-shrink-0 flex-col-reverse justify-end gap-3 sm:flex-row">
+    <div className="flex flex-shrink-0 flex-col-reverse items-center justify-end gap-3 p-4 sm:flex-row">
       <Button
         type="button"
         variant="secondary"
@@ -228,128 +228,131 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description={description}
         maxWidth="max-w-full"
         contentClassName="h-screen max-h-screen w-screen rounded-none overflow-hidden"
+        removePadding={true}
         footer={customFooter}
       >
         <div className="grid h-full grid-cols-[25%_35%_40%]">
           {/* Column 1: Logo, Title, Description, Knowledge Base */}
-          <div className="space-y-6 overflow-y-auto border-r border-gray-200 p-6 dark:border-gray-800">
-            {/* Logo Section */}
-            <div>
-              <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
-                Logo
-              </Label>
-              <div className="relative">
-                <button
-                  type="button"
-                  className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
-                    isUploading ? 'opacity-50' : ''
-                  } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
-                  onClick={handleLogoClick}
-                  disabled={isUploading}
-                  aria-label="Upload logo"
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleLogoChange}
-                    disabled={isUploading}
-                    id="logo"
-                  />
-                  {logoPreview ? (
-                    <div className="relative h-full w-full overflow-hidden rounded-lg">
-                      <Image
-                        src={logoPreview}
-                        alt="Logo preview"
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <RiImageAddLine className="h-5 w-5" />
-                      <span className="mt-1 text-xs">Upload</span>
-                    </div>
-                  )}
-                </button>
-
-                {/* Remove Logo Button */}
-                {logoPreview && (
+          <div className="overflow-y-auto border-r border-gray-200 dark:border-gray-800">
+            <div className="space-y-4 p-4">
+              {/* Logo Section */}
+              <div>
+                <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
+                  Logo
+                </Label>
+                <div className="relative">
                   <button
                     type="button"
-                    onClick={handleRemoveLogo}
-                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
-                    aria-label="Remove logo"
+                    className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+                      isUploading ? 'opacity-50' : ''
+                    } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
+                    onClick={handleLogoClick}
+                    disabled={isUploading}
+                    aria-label="Upload logo"
                   >
-                    <RiCloseLine className="h-3 w-3" />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleLogoChange}
+                      disabled={isUploading}
+                      id="logo"
+                    />
+                    {logoPreview ? (
+                      <div className="relative h-full w-full rounded-lg">
+                        <Image
+                          src={logoPreview}
+                          alt="Logo preview"
+                          fill
+                          className="rounded-lg object-cover"
+                          sizes="80px"
+                        />
+                        {/* Remove Logo Button positioned on the logo */}
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleRemoveLogo();
+                          }}
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+                          aria-label="Remove logo"
+                        >
+                          <RiCloseLine className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-gray-500">
+                        <RiImageAddLine className="h-5 w-5" />
+                        <span className="mt-1 text-xs">Upload</span>
+                      </div>
+                    )}
                   </button>
-                )}
+                </div>
+
+                {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
+                {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
               </div>
 
-              {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
-              {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
-            </div>
+              {/* Name */}
+              <div>
+                <Label htmlFor="name" className="mb-2 text-sm font-medium">
+                  Name *
+                </Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter persona name"
+                  className="mt-2"
+                  required
+                />
+              </div>
 
-            {/* Name */}
-            <div>
-              <Label htmlFor="name" className="mb-2 text-sm font-medium">
-                Name *
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter persona name"
-                className="mt-2"
-                required
-              />
-            </div>
+              {/* Description */}
+              <div>
+                <Label htmlFor="description" className="mb-2 text-sm font-medium">
+                  Description
+                </Label>
+                <Input
+                  id="description"
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the persona"
+                  className="mt-2"
+                />
+              </div>
 
-            {/* Description */}
-            <div>
-              <Label htmlFor="description" className="mb-2 text-sm font-medium">
-                Description
-              </Label>
-              <Input
-                id="description"
-                value={formData.description}
-                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Brief description of the persona"
-                className="mt-2"
-              />
-            </div>
-
-            {/* Knowledge Base Selection */}
-            <div>
-              <Label htmlFor="knowledgeBase" className="mb-2 text-sm font-medium">
-                Knowledge Base
-              </Label>
-              <Select
-                value={formData.knowledgeBaseId || 'none'}
-                onValueChange={value =>
-                  setFormData({ ...formData, knowledgeBaseId: value === 'none' ? '' : value })
-                }
-              >
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a knowledge base (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No knowledge base</SelectItem>
-                  {knowledgeBasesData?.knowledgeBases?.map(kb => (
-                    <SelectItem key={kb.id} value={kb.id.toString()}>
-                      {kb.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Knowledge Base Selection */}
+              <div>
+                <Label htmlFor="knowledgeBase" className="mb-2 text-sm font-medium">
+                  Knowledge Base
+                </Label>
+                <Select
+                  value={formData.knowledgeBaseId || 'none'}
+                  onValueChange={value =>
+                    setFormData({ ...formData, knowledgeBaseId: value === 'none' ? '' : value })
+                  }
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select a knowledge base (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No knowledge base</SelectItem>
+                    {knowledgeBasesData?.knowledgeBases?.map(kb => (
+                      <SelectItem key={kb.id} value={kb.id.toString()}>
+                        {kb.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
           {/* Column 2: Instructions */}
           <div className="overflow-y-auto border-r border-gray-200 dark:border-gray-800">
-            <div className="h-full p-6">
+            <div className="h-full p-4">
               <Label htmlFor="instructions" className="mb-2 text-sm font-medium">
                 Instructions *
               </Label>
@@ -366,7 +369,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
 
           {/* Column 3: Files */}
           <div className="overflow-y-auto">
-            <div className="p-6">
+            <div className="p-4">
               <div className="flex items-center justify-between">
                 <Label className="mb-2 text-sm font-medium">Knowledge Base Files</Label>
                 {formData.knowledgeBaseId && (

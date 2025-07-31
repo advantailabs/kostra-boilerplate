@@ -74,6 +74,11 @@ export interface ModalProps {
    * Additional class name for the content wrapper
    */
   contentClassName?: string;
+
+  /**
+   * Whether to remove padding from content area
+   */
+  removePadding?: boolean;
 }
 
 export function Modal({
@@ -90,6 +95,7 @@ export function Modal({
   isPrimaryActionDisabled = false,
   isPrimaryActionLoading = false,
   contentClassName = '',
+  removePadding = false,
 }: ModalProps) {
   // Default footer if primaryActionText is provided but no custom footer
   const defaultFooter = (primaryActionText || secondaryActionText) && !footer && (
@@ -129,7 +135,7 @@ export function Modal({
           </DialogClose>
         </DialogHeader>
 
-        <div className="px-4 pt-4">
+        <div className={removePadding ? 'p-0' : 'px-4 pt-4'}>
           {/* Main content */}
           {children}
 

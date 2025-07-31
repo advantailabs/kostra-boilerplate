@@ -130,16 +130,16 @@ export function FileCard({
   return (
     <>
       <Card
-        className={`group flex min-h-[100px] min-w-[200px] cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 sm:min-h-[110px] sm:min-w-[220px] dark:hover:shadow-gray-900/50 ${className}`}
+        className={`group flex h-[80px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className}`}
         onClick={handleViewDetails}
       >
         {/* Header */}
         <div className="flex flex-shrink-0 items-start justify-between p-2 pb-1 sm:p-3 sm:pb-2">
           <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md sm:h-7 sm:w-7 ${color}`}
+              className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-md sm:h-5 sm:w-5 ${color}`}
             >
-              <IconComponent className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <IconComponent className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
             </div>
 
             <div className="min-w-0 flex-1">
@@ -155,10 +155,10 @@ export function FileCard({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-5 w-5 p-0 text-gray-400 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-600 sm:h-6 sm:w-6 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                  className="h-3 w-3 p-0 text-gray-400 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-600 sm:h-4 sm:w-4 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                   onClick={e => e.stopPropagation()}
                 >
-                  <MoreHorizontal className="h-3 w-3 sm:h-3.5 sm:w-3.5" aria-label="More options" />
+                  <MoreHorizontal className="h-2 w-2 sm:h-2.5 sm:w-2.5" aria-label="More options" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[240px] p-1 sm:w-[272px]" align="end">
@@ -170,8 +170,8 @@ export function FileCard({
                   }}
                   className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-blue-50 hover:text-blue-700 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
                 >
-                  <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-5 sm:w-5 dark:bg-blue-900/30">
-                    <Eye className="h-2.5 w-2.5 text-blue-600 sm:h-3 sm:w-3 dark:text-blue-400" />
+                  <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-3.5 sm:w-3.5 dark:bg-blue-900/30">
+                    <Eye className="h-1.5 w-1.5 text-blue-600 sm:h-2 sm:w-2 dark:text-blue-400" />
                   </div>
                   <span className="truncate">View Details</span>
                 </DropdownMenuItem>
@@ -185,8 +185,8 @@ export function FileCard({
                   disabled={isDownloading}
                   className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-green-50 hover:text-green-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-200 dark:hover:bg-green-900/20 dark:hover:text-green-300"
                 >
-                  <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-green-100 sm:h-5 sm:w-5 dark:bg-green-900/30">
-                    <Download className="h-2.5 w-2.5 text-green-600 sm:h-3 sm:w-3 dark:text-green-400" />
+                  <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-green-100 sm:h-3.5 sm:w-3.5 dark:bg-green-900/30">
+                    <Download className="h-1.5 w-1.5 text-green-600 sm:h-2 sm:w-2 dark:text-green-400" />
                   </div>
                   <span className="truncate">{isDownloading ? 'Downloading...' : 'Download'}</span>
                 </DropdownMenuItem>
@@ -204,8 +204,8 @@ export function FileCard({
                       }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-orange-50 hover:text-orange-700 dark:text-gray-200 dark:hover:bg-orange-900/20 dark:hover:text-orange-300"
                     >
-                      <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-orange-100 sm:h-5 sm:w-5 dark:bg-orange-900/30">
-                        <Unlink className="h-2.5 w-2.5 text-orange-600 sm:h-3 sm:w-3 dark:text-orange-400" />
+                      <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-orange-100 sm:h-3.5 sm:w-3.5 dark:bg-orange-900/30">
+                        <Unlink className="h-1.5 w-1.5 text-orange-600 sm:h-2 sm:w-2 dark:text-orange-400" />
                       </div>
                       <span className="truncate">Remove from Knowledge Base</span>
                     </DropdownMenuItem>
@@ -218,8 +218,8 @@ export function FileCard({
                       }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-red-700 transition-colors duration-200 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/20"
                     >
-                      <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-5 sm:w-5 dark:bg-red-900/30">
-                        <Trash2 className="h-2.5 w-2.5 text-red-600 sm:h-3 sm:w-3 dark:text-red-400" />
+                      <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-3.5 sm:w-3.5 dark:bg-red-900/30">
+                        <Trash2 className="h-1.5 w-1.5 text-red-600 sm:h-2 sm:w-2 dark:text-red-400" />
                       </div>
                       <span className="truncate">Delete File</span>
                     </DropdownMenuItem>
@@ -237,8 +237,8 @@ export function FileCard({
                       }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-gray-700 transition-colors duration-200 hover:bg-blue-50 hover:text-blue-700 dark:text-gray-200 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
                     >
-                      <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-5 sm:w-5 dark:bg-blue-900/30">
-                        <BookOpen className="h-2.5 w-2.5 text-blue-600 sm:h-3 sm:w-3 dark:text-blue-400" />
+                      <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-blue-100 sm:h-3.5 sm:w-3.5 dark:bg-blue-900/30">
+                        <BookOpen className="h-1.5 w-1.5 text-blue-600 sm:h-2 sm:w-2 dark:text-blue-400" />
                       </div>
                       <span className="truncate">Add to Knowledge Base</span>
                     </DropdownMenuItem>
@@ -251,8 +251,8 @@ export function FileCard({
                       }}
                       className="flex items-center gap-2 px-2 py-1.5 text-xs text-red-700 transition-colors duration-200 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/20"
                     >
-                      <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-5 sm:w-5 dark:bg-red-900/30">
-                        <Trash2 className="h-2.5 w-2.5 text-red-600 sm:h-3 sm:w-3 dark:text-red-400" />
+                      <div className="flex h-3 w-3 flex-shrink-0 items-center justify-center rounded bg-red-100 sm:h-3.5 sm:w-3.5 dark:bg-red-900/30">
+                        <Trash2 className="h-1.5 w-1.5 text-red-600 sm:h-2 sm:w-2 dark:text-red-400" />
                       </div>
                       <span className="truncate">Delete File</span>
                     </DropdownMenuItem>
@@ -263,17 +263,10 @@ export function FileCard({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex flex-1 flex-col px-2 pb-1 sm:px-3 sm:pb-2">
-          <p className="flex-1 break-words text-xs leading-relaxed text-gray-600 dark:text-gray-400">
-            {formatMimeType(file.mimeType)}
-          </p>
-        </div>
-
         {/* Footer */}
         <div className="mt-auto flex flex-shrink-0 items-center justify-between border-t border-gray-100 p-2 dark:border-gray-800">
           <div className="flex min-w-0 items-center gap-1.5">
-            <IconComponent className="h-3 w-3 flex-shrink-0 text-gray-500" />
+            <IconComponent className="h-2 w-2 flex-shrink-0 text-gray-500" />
             <span className="truncate text-xs text-gray-500">{formatMimeType(file.mimeType)}</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
@@ -286,11 +279,11 @@ export function FileCard({
                     alt={`${persona.name} avatar`}
                     fallback={persona.name}
                     size="sm"
-                    className="h-3 w-3 border border-white sm:h-4 sm:w-4 dark:border-gray-800"
+                    className="h-2 w-2 border border-white sm:h-2.5 sm:w-2.5 dark:border-gray-800"
                   />
                 ))}
                 {allPersonas.length > 3 && (
-                  <div className="flex h-3 w-3 items-center justify-center rounded-full border border-white bg-gray-200 text-xs font-medium text-gray-600 sm:h-4 sm:w-4 dark:border-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                  <div className="flex h-2 w-2 items-center justify-center rounded-full border border-white bg-gray-200 text-xs font-medium text-gray-600 sm:h-2.5 sm:w-2.5 dark:border-gray-800 dark:bg-gray-700 dark:text-gray-300">
                     +{allPersonas.length - 3}
                   </div>
                 )}

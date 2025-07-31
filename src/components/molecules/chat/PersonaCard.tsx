@@ -27,7 +27,7 @@ export function PersonaCard({
 
   return (
     <Card
-      className={`group flex h-[160px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 sm:h-[180px] dark:hover:shadow-gray-900/50 ${className} ${
+      className={`group flex h-[180px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${
         isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
       }`}
       onClick={onClick}

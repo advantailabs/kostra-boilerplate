@@ -118,7 +118,7 @@ export function PersonaCardExample() {
         <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
           Persona Card Examples
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {examplePersonas.map(persona => (
             <PersonaCard
               key={persona.id}

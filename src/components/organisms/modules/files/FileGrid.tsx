@@ -106,7 +106,7 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {files.map(file => (
           <FileCard
             key={file.id}
