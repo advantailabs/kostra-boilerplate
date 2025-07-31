@@ -194,8 +194,8 @@ const middleware = clerkMiddleware(
     return applyCorsHeaders(request, NextResponse.next());
   },
   {
-    afterSignInUrl: '/app/overview',
-    afterSignUpUrl: '/',
+    afterSignInUrl: '/app/chat',
+    afterSignUpUrl: '/app/chat',
   }
 );
 
