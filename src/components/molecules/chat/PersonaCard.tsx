@@ -2,8 +2,9 @@ import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
 import { getPersonaFileInfo } from '@/hooks/usePersonas';
+import { getFileTypeCategoryIcon } from '@/lib/file-utils';
 import { PersonaWithKnowledgeBase } from '@/types/chat';
-import { Edit, FileImage, FileSpreadsheet, FileText, FileType, Trash2 } from 'lucide-react';
+import { Edit, FileText, Trash2 } from 'lucide-react';
 
 interface PersonaCardProps {
   persona: PersonaWithKnowledgeBase;
@@ -23,33 +24,6 @@ export function PersonaCard({
   onClick,
 }: PersonaCardProps) {
   const { fileCount, fileTypes } = getPersonaFileInfo(persona);
-
-  const fileTypeConfig = {
-    PDF: {
-      icon: FileText,
-      color: 'bg-red-500 text-white',
-    },
-    Excel: {
-      icon: FileSpreadsheet,
-      color: 'bg-green-500 text-white',
-    },
-    Document: {
-      icon: FileType,
-      color: 'bg-blue-500 text-white',
-    },
-    Image: {
-      icon: FileImage,
-      color: 'bg-purple-500 text-white',
-    },
-  };
-
-  const getFileTypeIcon = (type: string) => {
-    const config = fileTypeConfig[type as keyof typeof fileTypeConfig];
-    if (!config) {
-      return { icon: FileText, color: 'bg-gray-500 text-white' };
-    }
-    return config;
-  };
 
   return (
     <Card
@@ -122,7 +96,7 @@ export function PersonaCard({
         </div>
         <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
           {fileTypes.slice(0, 3).map((type, index) => {
-            const { icon: IconComponent, color } = getFileTypeIcon(type);
+            const { icon: IconComponent, color } = getFileTypeCategoryIcon(type);
             return (
               <div
                 key={index}

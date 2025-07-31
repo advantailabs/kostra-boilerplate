@@ -1,6 +1,7 @@
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
+import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import {
   Dialog,
   DialogContent,
@@ -8,12 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/molecules/common/Dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/molecules/common/Select';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useKnowledgeBases, useRemoveFileFromKnowledgeBase } from '@/hooks/useKnowledgeBases';
+import { formatFileSize, getFileIcon } from '@/lib/file-utils';
 import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { Persona } from '@prisma/client';
-import { RiCloseLine, RiImageAddLine } from '@remixicon/react';
+import { RiAddLine, RiCloseLine, RiDeleteBinLine, RiImageAddLine } from '@remixicon/react';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
+import { KnowledgeBaseFileUploader } from '../../modules/knowledge-bases/KnowledgeBaseFileUploader';
 
 interface PersonaModalProps {
   isOpen: boolean;
@@ -29,10 +41,22 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     description: '',
     instructions: '',
     logo: '',
+    knowledgeBaseId: '',
   });
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [deleteFileDialog, setDeleteFileDialog] = useState<{
+    isOpen: boolean;
+    fileId: number | null;
+    fileName: string;
+  }>({ isOpen: false, fileId: null, fileName: '' });
+  const [fileUploaderOpen, setFileUploaderOpen] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+
+  const { data: knowledgeBasesData } = useKnowledgeBases();
+  const removeFileMutation = useRemoveFileFromKnowledgeBase();
 
   const {
     uploadFile,
@@ -48,6 +72,11 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     },
   });
 
+  // Get selected knowledge base with files
+  const selectedKnowledgeBase = knowledgeBasesData?.knowledgeBases?.find(
+    kb => kb.id === parseInt(formData.knowledgeBaseId)
+  );
+
   useEffect(() => {
     if (mode === 'edit' && persona) {
       setFormData({
@@ -55,6 +84,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description: persona.description || '',
         instructions: persona.instructions,
         logo: persona.logo || '',
+        knowledgeBaseId: persona.knowledgeBaseId?.toString() || '',
       });
       // Set logo preview with full S3 URL if logo exists
       setLogoPreview(persona.logo ? `${S3_PUBLIC_BASE_URL}/${persona.logo}` : null);
@@ -64,6 +94,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description: '',
         instructions: '',
         logo: '',
+        knowledgeBaseId: '',
       });
       setLogoPreview(null);
     }
@@ -96,6 +127,54 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     clearError();
   };
 
+  const handleDeleteFile = (fileId: number, fileName: string) => {
+    setDeleteFileDialog({
+      isOpen: true,
+      fileId,
+      fileName,
+    });
+  };
+
+  const confirmDeleteFile = async () => {
+    if (!deleteFileDialog.fileId || !formData.knowledgeBaseId) return;
+
+    try {
+      await removeFileMutation.mutateAsync({
+        knowledgeBaseId: parseInt(formData.knowledgeBaseId),
+        fileId: deleteFileDialog.fileId,
+      });
+
+      // Manually invalidate queries to refresh the file list
+      const knowledgeBaseId = parseInt(formData.knowledgeBaseId);
+      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+
+      setDeleteFileDialog({ isOpen: false, fileId: null, fileName: '' });
+    } catch (error) {
+      console.error('Failed to delete file:', error);
+    }
+  };
+
+  const handleAddFiles = () => {
+    if (formData.knowledgeBaseId) {
+      setFileUploaderOpen(true);
+    }
+  };
+
+  const handleFileUploaderClose = () => {
+    setFileUploaderOpen(false);
+  };
+
+  const handleFilesUploaded = () => {
+    // Invalidate and refetch knowledge base data to update the file list
+    if (formData.knowledgeBaseId) {
+      const knowledgeBaseId = parseInt(formData.knowledgeBaseId);
+      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
+    }
+    setFileUploaderOpen(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -103,6 +182,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     try {
       await onSubmit({
         ...formData,
+        knowledgeBaseId: formData.knowledgeBaseId ? parseInt(formData.knowledgeBaseId) : null,
       });
       onClose();
     } catch (error) {
@@ -122,145 +202,275 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
   const submitText = isEdit ? 'Update Persona' : 'Create Persona';
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-5xl">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription className="mt-1 text-sm leading-6">{description}</DialogDescription>
-          </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="m-0 h-screen max-h-screen w-screen max-w-full overflow-hidden rounded-none p-0">
+          <form onSubmit={handleSubmit} className="flex h-full flex-col">
+            <DialogHeader className="relative flex-shrink-0 border-b border-gray-200 px-6 pb-4 pt-4 dark:border-gray-800">
+              <button
+                type="button"
+                onClick={onClose}
+                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-800"
+                aria-label="Close"
+              >
+                <RiCloseLine className="h-5 w-5" />
+              </button>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription className="-mt-2 text-sm leading-6">
+                {description}
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="mt-6 space-y-6">
-            {/* Header Section with Logo and Basic Info */}
-            <div className="flex flex-col gap-6 sm:flex-row">
-              {/* Logo Section */}
-              <div className="flex-shrink-0">
-                <Label htmlFor="logo" className="mb-3 block font-medium">
-                  Logo
-                </Label>
-                <div className="relative">
-                  <button
-                    type="button"
-                    className={`hover:border-primary relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
-                      isUploading ? 'opacity-50' : ''
-                    } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
-                    onClick={handleLogoClick}
-                    disabled={isUploading}
-                    aria-label="Upload logo"
-                  >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleLogoChange}
-                      disabled={isUploading}
-                      id="logo"
-                    />
-                    {logoPreview ? (
-                      <div className="relative h-full w-full overflow-hidden rounded-lg">
-                        <Image
-                          src={logoPreview}
-                          alt="Logo preview"
-                          fill
-                          className="object-cover"
-                          sizes="96px"
+            {/* Main Content - Three Columns */}
+            <div className="flex-1 overflow-hidden">
+              <div className="grid h-full grid-cols-[25%_35%_40%]">
+                {/* Column 1: Logo, Title, Description, Knowledge Base */}
+                <div className="space-y-6 overflow-y-auto border-r border-gray-200 p-6 dark:border-gray-800">
+                  {/* Logo Section */}
+                  <div>
+                    <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
+                      Logo
+                    </Label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+                          isUploading ? 'opacity-50' : ''
+                        } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
+                        onClick={handleLogoClick}
+                        disabled={isUploading}
+                        aria-label="Upload logo"
+                      >
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleLogoChange}
+                          disabled={isUploading}
+                          id="logo"
                         />
+                        {logoPreview ? (
+                          <div className="relative h-full w-full overflow-hidden rounded-lg">
+                            <Image
+                              src={logoPreview}
+                              alt="Logo preview"
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center text-gray-500">
+                            <RiImageAddLine className="h-5 w-5" />
+                            <span className="mt-1 text-xs">Upload</span>
+                          </div>
+                        )}
+                      </button>
+
+                      {/* Remove Logo Button */}
+                      {logoPreview && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveLogo}
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+                          aria-label="Remove logo"
+                        >
+                          <RiCloseLine className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
+                    {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
+                  </div>
+
+                  {/* Name */}
+                  <div>
+                    <Label htmlFor="name" className="mb-2 text-sm font-medium">
+                      Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={e => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Enter persona name"
+                      className="mt-2"
+                      required
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <Label htmlFor="description" className="mb-2 text-sm font-medium">
+                      Description
+                    </Label>
+                    <Input
+                      id="description"
+                      value={formData.description}
+                      onChange={e => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Brief description of the persona"
+                      className="mt-2"
+                    />
+                  </div>
+
+                  {/* Knowledge Base Selection */}
+                  <div>
+                    <Label htmlFor="knowledgeBase" className="mb-2 text-sm font-medium">
+                      Knowledge Base
+                    </Label>
+                    <Select
+                      value={formData.knowledgeBaseId || 'none'}
+                      onValueChange={value =>
+                        setFormData({ ...formData, knowledgeBaseId: value === 'none' ? '' : value })
+                      }
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select a knowledge base (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No knowledge base</SelectItem>
+                        {knowledgeBasesData?.knowledgeBases?.map(kb => (
+                          <SelectItem key={kb.id} value={kb.id.toString()}>
+                            {kb.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Column 2: Instructions */}
+                <div className="overflow-y-auto border-r border-gray-200 dark:border-gray-800">
+                  <div className="h-full p-6">
+                    <Label htmlFor="instructions" className="mb-2 text-sm font-medium">
+                      Instructions *
+                    </Label>
+                    <textarea
+                      id="instructions"
+                      value={formData.instructions}
+                      onChange={e => setFormData({ ...formData, instructions: e.target.value })}
+                      placeholder="Detailed instructions for the AI assistant"
+                      required
+                      className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+                    />
+                  </div>
+                </div>
+
+                {/* Column 3: Files */}
+                <div className="overflow-y-auto">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between">
+                      <Label className="mb-2 text-sm font-medium">Knowledge Base Files</Label>
+                      {formData.knowledgeBaseId && (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="h-5 w-5 p-0"
+                          onClick={handleAddFiles}
+                          aria-label="Add Files"
+                        >
+                          <RiAddLine className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
+
+                    {!formData.knowledgeBaseId ? (
+                      <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                        Select a knowledge base to view files
+                      </div>
+                    ) : !selectedKnowledgeBase?.fileKnowledgeBases?.length ? (
+                      <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                        No files in this knowledge base
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center text-gray-500">
-                        <RiImageAddLine className="h-6 w-6" />
-                        <span className="mt-1 text-xs">Upload</span>
+                      <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto">
+                        {selectedKnowledgeBase.fileKnowledgeBases.map(({ file }) => {
+                          const FileIcon = getFileIcon(file.mimeType);
+                          return (
+                            <div
+                              key={file.id}
+                              className="group flex items-center justify-between rounded border border-gray-200 p-1.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                            >
+                              <div className="flex min-w-0 flex-1 items-center space-x-1.5">
+                                <FileIcon className="h-2.5 w-2.5 flex-shrink-0 text-gray-400" />
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
+                                    {file.originalName}
+                                  </p>
+                                  <div className="flex items-center space-x-1 text-[8px] text-gray-500">
+                                    <span>{formatFileSize(file.size)}</span>
+                                    <span>•</span>
+                                    <span>
+                                      {file.originalName.split('.').pop()?.toUpperCase() || 'FILE'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteFile(file.id, file.originalName)}
+                                className="ml-1 flex-shrink-0 text-red-500 opacity-0 transition-all hover:text-red-700 group-hover:opacity-100"
+                                aria-label="Delete file"
+                              >
+                                <RiDeleteBinLine className="h-2.5 w-2.5" />
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
-                  </button>
-
-                  {/* Remove Logo Button */}
-                  {logoPreview && (
-                    <button
-                      type="button"
-                      onClick={handleRemoveLogo}
-                      className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
-                      aria-label="Remove logo"
-                    >
-                      <RiCloseLine className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-
-                {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
-                {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
-              </div>
-
-              {/* Basic Info Section */}
-              <div className="flex-1 space-y-4">
-                <div>
-                  <Label htmlFor="name" className="font-medium">
-                    Name *
-                  </Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Enter persona name"
-                    className="mt-2"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="description" className="font-medium">
-                    Description
-                  </Label>
-                  <Input
-                    id="description"
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Brief description of the persona"
-                    className="mt-2"
-                  />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Instructions Section */}
-            <div>
-              <Label htmlFor="instructions" className="font-medium">
-                Instructions *
-              </Label>
-              <textarea
-                id="instructions"
-                value={formData.instructions}
-                onChange={e => setFormData({ ...formData, instructions: e.target.value })}
-                placeholder="Detailed instructions for the AI assistant"
-                required
-                rows={10}
-                className="mt-2 w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
-              />
+            {/* Footer */}
+            <div className="flex flex-shrink-0 flex-col-reverse justify-end gap-3 border-t border-gray-200 p-6 sm:flex-row dark:border-gray-800">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={onClose}
+                className="w-full sm:w-auto"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={loading || isUploading || !formData.name || !formData.instructions}
+                isLoading={loading}
+              >
+                {submitText}
+              </Button>
             </div>
-          </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
-          {/* Footer */}
-          <div className="mt-8 flex flex-col-reverse justify-end gap-3 sm:flex-row">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="w-full sm:w-auto"
-              disabled={loading || isUploading || !formData.name || !formData.instructions}
-              isLoading={loading}
-            >
-              {submitText}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+      {/* Delete File Confirmation Dialog */}
+      <DeleteDialog
+        isOpen={deleteFileDialog.isOpen}
+        onClose={() => setDeleteFileDialog({ isOpen: false, fileId: null, fileName: '' })}
+        onConfirm={confirmDeleteFile}
+        title="Delete File"
+        description={`Are you sure you want to remove "${deleteFileDialog.fileName}" from this knowledge base? The file itself will not be deleted.`}
+        confirmText="Remove File"
+        cancelText="Cancel"
+        isLoading={removeFileMutation.isPending}
+        itemName={deleteFileDialog.fileName}
+      />
+
+      {/* File Uploader Dialog */}
+      {fileUploaderOpen && formData.knowledgeBaseId && (
+        <KnowledgeBaseFileUploader
+          isOpen={fileUploaderOpen}
+          onClose={handleFileUploaderClose}
+          onUploaded={handleFilesUploaded}
+          knowledgeBaseId={parseInt(formData.knowledgeBaseId)}
+        />
+      )}
+    </>
   );
 }

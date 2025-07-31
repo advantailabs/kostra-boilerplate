@@ -112,6 +112,7 @@ export default function PersonasPage() {
                   persona={persona}
                   onEdit={() => openEditModal(persona)}
                   onDelete={() => openDeleteModal(persona)}
+                  onClick={() => openEditModal(persona)}
                 />
               ))}
             </div>

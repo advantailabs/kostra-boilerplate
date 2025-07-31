@@ -15,6 +15,7 @@ import { Button } from '@/components/atom/Button';
 import { PillSelect } from '@/components/atom/PillSelect';
 import { Textarea } from '@/components/atom/Textarea';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
+import { formatFileSize } from '@/lib/file-utils';
 
 interface AttachedFile {
   id: string;
@@ -100,14 +101,6 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
 
   const removeFile = (fileId: string) => {
     setAttachedFiles(prev => prev.filter(file => file.id !== fileId));
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
   };
 
   return (

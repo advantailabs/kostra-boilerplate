@@ -1,4 +1,5 @@
 import { Button } from '@/components/atom/Button';
+import { formatFileSize } from '@/lib/file-utils';
 import { RiAttachment2, RiCloseLine, RiMoreLine, RiSendPlaneFill } from '@remixicon/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -171,14 +172,6 @@ export function EnhancedMessageInput({
     if (selectedFiles.length <= VISIBLE_FILES + 1) {
       setShowAllFiles(false);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
   };
 
   const canSend = value.trim() && !disabled;

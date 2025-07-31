@@ -12,6 +12,7 @@ import {
 } from '@/components/molecules/common/Dialog';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
+import { formatFileSize } from '@/lib/file-utils';
 import { fileUploadApi } from '@/services/api/file-upload';
 import { useAuthStore } from '@/store/auth';
 
@@ -314,14 +315,6 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
     e.preventDefault();
     dropZoneRef.current?.classList.remove('border-indigo-500', 'bg-indigo-50');
   }, []);
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-  };
 
   const readyFiles = uploadingFiles.filter(f => f.status === 'ready');
   const canSave =

@@ -8,6 +8,7 @@ import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
+import { formatFileSize } from '@/lib/file-utils';
 import { FileFilters, filesApi } from '@/services/api/files';
 import { useAuth } from '@clerk/nextjs';
 
@@ -70,14 +71,6 @@ export default function FilesPage() {
   const handleFileDeleted = useCallback(() => {
     loadFiles(1, false);
   }, [loadFiles]);
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-  };
 
   // Check if any filters are active
   const hasActiveFilters =

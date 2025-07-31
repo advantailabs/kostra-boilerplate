@@ -3,8 +3,9 @@ import React from 'react';
 import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
+import { getFileTypeCategoryIcon } from '@/lib/file-utils';
 import { KnowledgeBaseWithFiles } from '@/types/chat';
-import { Edit, FileImage, FileSpreadsheet, FileText, FileType, Trash2, User } from 'lucide-react';
+import { Edit, FileText, Trash2, User } from 'lucide-react';
 import Link from 'next/link';
 
 interface KnowledgeBaseCardProps {
@@ -40,33 +41,6 @@ export function KnowledgeBaseCard({
       })
     )
   );
-
-  const fileTypeConfig = {
-    PDF: {
-      icon: FileText,
-      color: 'bg-red-500 text-white',
-    },
-    Excel: {
-      icon: FileSpreadsheet,
-      color: 'bg-green-500 text-white',
-    },
-    Document: {
-      icon: FileType,
-      color: 'bg-blue-500 text-white',
-    },
-    Image: {
-      icon: FileImage,
-      color: 'bg-purple-500 text-white',
-    },
-  };
-
-  const getFileTypeIcon = (type: string) => {
-    const config = fileTypeConfig[type as keyof typeof fileTypeConfig];
-    if (!config) {
-      return { icon: FileText, color: 'bg-gray-500 text-white' };
-    }
-    return config;
-  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on action buttons
@@ -156,7 +130,7 @@ export function KnowledgeBaseCard({
           </div>
           <div className="flex min-w-0 items-center gap-1.5">
             {fileTypes.slice(0, 3).map((type, index) => {
-              const { icon: IconComponent, color } = getFileTypeIcon(type);
+              const { icon: IconComponent, color } = getFileTypeCategoryIcon(type);
               return (
                 <div
                   key={index}

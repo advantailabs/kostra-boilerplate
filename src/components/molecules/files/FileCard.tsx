@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  BookOpen,
-  Download,
-  Eye,
-  FileImage,
-  FileSpreadsheet,
-  FileText,
-  FileType,
-  MoreHorizontal,
-  Trash2,
-  Unlink,
-} from 'lucide-react';
+import { BookOpen, Download, Eye, MoreHorizontal, Trash2, Unlink } from 'lucide-react';
 import { useState } from 'react';
 
 import { Avatar } from '@/components/atom/Avatar';
@@ -26,6 +15,7 @@ import {
 } from '@/components/molecules/common/Dropdown';
 import { useDeleteFile } from '@/hooks/useFiles';
 import { useRemoveFileFromKnowledgeBase } from '@/hooks/useKnowledgeBases';
+import { formatFileSize, formatMimeType, getFileTypeIconWithColor } from '@/lib/file-utils';
 import { FileDetailsModal } from './FileDetailsModal';
 
 interface FileCardProps {
@@ -72,62 +62,7 @@ export function FileCard({
   const deleteFileMutation = useDeleteFile();
   const removeFromKBMutation = useRemoveFileFromKnowledgeBase();
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-  };
-
-  const getFileTypeIcon = (mimeType: string) => {
-    if (mimeType === 'application/pdf') {
-      return { icon: FileText, color: 'bg-red-500 text-white' };
-    }
-    if (mimeType.startsWith('image/')) {
-      return { icon: FileImage, color: 'bg-purple-500 text-white' };
-    }
-    if (mimeType === 'text/plain' || mimeType === 'text/markdown') {
-      return { icon: FileText, color: 'bg-blue-500 text-white' };
-    }
-    if (mimeType === 'application/json') {
-      return { icon: FileText, color: 'bg-green-500 text-white' };
-    }
-    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
-      return { icon: FileSpreadsheet, color: 'bg-green-600 text-white' };
-    }
-    if (mimeType.includes('word') || mimeType.includes('document')) {
-      return { icon: FileType, color: 'bg-blue-600 text-white' };
-    }
-    // Fallback for unknown file types
-    return { icon: FileText, color: 'bg-gray-500 text-white' };
-  };
-
-  const formatMimeType = (mimeType: string) => {
-    // Handle common MIME types with friendly names
-    if (mimeType === 'application/pdf') return 'PDF Document';
-    if (mimeType.startsWith('image/')) return 'Image File';
-    if (mimeType === 'text/plain') return 'Text File';
-    if (mimeType === 'text/markdown') return 'Markdown File';
-    if (mimeType === 'application/json') return 'JSON File';
-    if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'Excel Spreadsheet';
-    if (mimeType.includes('word') || mimeType.includes('document')) return 'Word Document';
-
-    // For other types, extract the main type and subtype
-    const parts = mimeType.split('/');
-    if (parts.length === 2) {
-      const [type, subtype] = parts;
-      // Capitalize and format the type
-      const formattedType = type.charAt(0).toUpperCase() + type.slice(1);
-      const formattedSubtype = subtype.split('.').pop()?.toUpperCase() || subtype;
-      return `${formattedType} (${formattedSubtype})`;
-    }
-
-    // Fallback: truncate if too long
-    return mimeType.length > 20 ? `${mimeType.substring(0, 20)}...` : mimeType;
-  };
-
-  const { icon: IconComponent, color } = getFileTypeIcon(file.mimeType);
+  const { icon: IconComponent, color } = getFileTypeIconWithColor(file.mimeType);
 
   const handleViewDetails = () => {
     setShowDetailsModal(true);
@@ -316,10 +251,10 @@ export function FileCard({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-shrink-0 items-center justify-between border-t border-gray-100 px-2 py-1.5 sm:px-3 sm:py-2 dark:border-gray-800">
-          <div className="flex items-center gap-1 text-xs text-gray-500 sm:gap-1.5 dark:text-gray-400">
-            <FileText className="h-3 w-3 flex-shrink-0" />
-            <span>{formatFileSize(file.size)}</span>
+        <div className="mt-auto flex flex-shrink-0 items-center justify-between border-t border-gray-100 p-2 dark:border-gray-800">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <IconComponent className="h-3 w-3 flex-shrink-0 text-gray-500" />
+            <span className="truncate text-xs text-gray-500">{formatMimeType(file.mimeType)}</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             {allPersonas.length > 0 && (
@@ -341,6 +276,7 @@ export function FileCard({
                 )}
               </div>
             )}
+            <div className="text-xs text-gray-500">{formatFileSize(file.size)}</div>
           </div>
         </div>
       </Card>

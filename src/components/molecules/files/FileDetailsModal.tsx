@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Database, Download, FileText, HardDrive, Info, Users, X } from 'lucide-react';
+import { Calendar, Database, Download, HardDrive, Info, Users, X } from 'lucide-react';
 
 import { Avatar } from '@/components/atom/Avatar';
 import { Badge } from '@/components/atom/Badge';
@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/molecules/common/Dialog';
+import { formatFileSize, getFileTypeIconWithColor } from '@/lib/file-utils';
 
 interface FileDetailsModalProps {
   isOpen: boolean;
@@ -42,14 +43,6 @@ export function FileDetailsModal({
   isDownloading = false,
   knowledgeBaseInfo,
 }: FileDetailsModalProps) {
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-  };
-
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Invalid Date';
     try {
@@ -63,30 +56,6 @@ export function FileDetailsModal({
     } catch (error) {
       return 'Invalid Date';
     }
-  };
-
-  const getFileTypeIcon = (mimeType: string) => {
-    if (mimeType === 'application/pdf') {
-      return { icon: FileText, color: 'text-red-500', bgColor: 'bg-red-50 dark:bg-red-900/20' };
-    }
-    if (mimeType.startsWith('image/')) {
-      return {
-        icon: FileText,
-        color: 'text-purple-500',
-        bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-      };
-    }
-    if (mimeType === 'text/plain' || mimeType === 'text/markdown') {
-      return { icon: FileText, color: 'text-blue-500', bgColor: 'bg-blue-50 dark:bg-blue-900/20' };
-    }
-    if (mimeType === 'application/json') {
-      return {
-        icon: FileText,
-        color: 'text-green-500',
-        bgColor: 'bg-green-50 dark:bg-green-900/20',
-      };
-    }
-    return { icon: FileText, color: 'text-gray-500', bgColor: 'bg-gray-50 dark:bg-gray-900/20' };
   };
 
   const handleDownload = () => {
@@ -108,7 +77,11 @@ export function FileDetailsModal({
     knowledgeBases = file.fileKnowledgeBases?.map((fkb: any) => fkb.knowledgeBase) || [];
   }
 
-  const { icon: FileIcon, color: iconColor, bgColor: iconBgColor } = getFileTypeIcon(file.mimeType);
+  const {
+    icon: FileIcon,
+    textColor: iconColor,
+    bgColor: iconBgColor,
+  } = getFileTypeIconWithColor(file.mimeType);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
