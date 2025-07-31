@@ -322,20 +322,17 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Upload Files</DialogTitle>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0">
+        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Files</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Upload files to your knowledge bases
+          </p>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 px-6 py-6">
           {/* Knowledge Base Selection */}
           <div>
-            <label
-              htmlFor="knowledge-bases"
-              className="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Add to Knowledge Bases (Optional)
-            </label>
             {(() => {
               if (loadingKnowledgeBases) {
                 return (

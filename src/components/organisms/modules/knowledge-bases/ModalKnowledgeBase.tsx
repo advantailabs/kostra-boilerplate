@@ -8,12 +8,7 @@ import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
 import { Textarea } from '@/components/atom/Textarea';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
 import {
   CreateKnowledgeBaseRequest,
   KnowledgeBaseWithFiles,
@@ -89,13 +84,16 @@ export function ModalKnowledgeBase({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{modalTitle}</DialogTitle>
+      <DialogContent className="max-w-md p-0">
+        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">{modalTitle}</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {isEditMode ? 'Update knowledge base details' : 'Create a new knowledge base'}
+          </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="px-4 pt-4">
+          <div className="mb-4">
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
@@ -107,7 +105,7 @@ export function ModalKnowledgeBase({
             />
           </div>
 
-          <div>
+          <div className="mb-4">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -120,7 +118,9 @@ export function ModalKnowledgeBase({
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+
+          <div className="flex justify-end gap-3 py-4">
             <Button type="button" variant="secondary" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>

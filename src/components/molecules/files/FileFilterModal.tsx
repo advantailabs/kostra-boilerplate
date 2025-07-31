@@ -5,12 +5,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
 import {
   Select,
   SelectContent,
@@ -80,14 +75,17 @@ export function FileFilterModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Filter Files</DialogTitle>
+      <DialogContent className="max-w-2xl p-0">
+        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">Filter Files</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Set filters to find the files you need
+          </p>
         </DialogHeader>
 
-        <div className="mt-4 space-y-6">
+        <div className="px-4 pt-4">
           {/* Search - Full Width */}
-          <div>
+          <div className="mb-4">
             <label
               htmlFor="search-files"
               className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -104,7 +102,7 @@ export function FileFilterModal({
           </div>
 
           {/* Two Column Layout for Filters */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="mb-4 grid grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-4">
               {/* Knowledge Base Filter */}
@@ -260,8 +258,10 @@ export function FileFilterModal({
             </div>
           </div>
 
+          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 py-4">
             <Button variant="secondary" onClick={handleReset} className="flex-1">
               Reset
             </Button>

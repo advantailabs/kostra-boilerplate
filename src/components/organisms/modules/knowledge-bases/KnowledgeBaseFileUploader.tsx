@@ -3,16 +3,12 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { formatFileSize } from '@/lib/file-utils';
 import { fileUploadApi } from '@/services/api/file-upload';
 import { useAuthStore } from '@/store/auth';
+import { RiCloseLine, RiFileUploadLine, RiUpload2Line } from '@remixicon/react';
 
 interface KnowledgeBaseFileUploaderProps {
   isOpen: boolean;
@@ -280,34 +276,27 @@ export function KnowledgeBaseFileUploader({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Upload Files to Knowledge Base</DialogTitle>
+      <DialogContent className="max-w-2xl p-0">
+        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Upload Files to Knowledge Base
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Add documents to your knowledge base
+          </p>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
+        <div className="px-4 pt-4">
           {/* Drop Zone */}
           <div
             ref={dropZoneRef}
-            className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600"
+            className="mb-4 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
           >
-            <svg
-              className="mx-auto h-16 w-16 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
+            <RiUpload2Line className="mx-auto h-16 w-16 text-gray-400" />
             <div className="mt-4">
               <p className="text-lg font-medium text-gray-900 dark:text-white">
                 Drop files here or browse
@@ -340,7 +329,7 @@ export function KnowledgeBaseFileUploader({
 
           {/* Upload Progress */}
           {uploadingFiles.length > 0 && (
-            <div className="space-y-3">
+            <div className="mb-4 space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Files ({uploadingFiles.filter(f => f.status === 'success').length}/
@@ -408,19 +397,7 @@ export function KnowledgeBaseFileUploader({
                   key={uploadingFile.id}
                   className="flex items-center space-x-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
                 >
-                  <svg
-                    className="h-5 w-5 flex-shrink-0 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
+                  <RiFileUploadLine className="h-5 w-5 flex-shrink-0 text-gray-400" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                       {uploadingFile.file.name}
@@ -476,38 +453,24 @@ export function KnowledgeBaseFileUploader({
                     {uploadingFile.status === 'error' && (
                       <div className="h-5 w-5 rounded-full bg-red-500" />
                     )}
-                    <Button
+                    <button
                       onClick={() =>
                         setUploadingFiles(prev => prev.filter(f => f.id !== uploadingFile.id))
                       }
-                      variant="ghost"
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </Button>
+                      <RiCloseLine className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Separator */}
-          <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700" />
+          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 py-4">
             <Button variant="secondary" onClick={handleClose} className="px-4">
               Cancel
             </Button>
@@ -553,24 +516,29 @@ export function KnowledgeBaseFileUploader({
           open={warning.show}
           onOpenChange={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
         >
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle
-                className={`text-lg ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
+          <DialogContent className="max-w-md p-0">
+            <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+              <h1
+                className={`text-lg font-medium ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
               >
                 {warning.title}
-              </DialogTitle>
+              </h1>
             </DialogHeader>
-            <div className="mt-4">
-              <p className="text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button
-                onClick={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
-                className="px-4"
-              >
-                OK
-              </Button>
+            <div className="px-4 pt-4">
+              <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
+
+              <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+
+              <div className="flex justify-end py-4">
+                <Button
+                  onClick={() =>
+                    setWarning({ show: false, title: '', message: '', type: 'warning' })
+                  }
+                  className="px-4"
+                >
+                  OK
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

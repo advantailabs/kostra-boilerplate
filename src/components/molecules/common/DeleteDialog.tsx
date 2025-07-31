@@ -1,14 +1,6 @@
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
 import { useState } from 'react';
 
 interface DeleteDialogProps {
@@ -60,53 +52,49 @@ export function DeleteDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="mt-1 text-sm leading-6">
-            {description || defaultDescription}
-          </DialogDescription>
+      <DialogContent className="p-0 sm:max-w-md">
+        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h1>
         </DialogHeader>
 
-        {showNameConfirmation && (
-          <div className="mt-4">
-            <label htmlFor="confirmation-name" className="text-sm font-medium">
-              Type "{itemName}" to confirm deletion
-            </label>
-            <Input
-              id="confirmation-name"
-              type="text"
-              placeholder={confirmationPlaceholder}
-              value={confirmationName}
-              onChange={e => setConfirmationName(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-        )}
+        <div className="px-4 pt-4">
+          <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
+            {description || defaultDescription}
+          </p>
 
-        <DialogFooter className="mt-6">
-          <DialogClose asChild>
-            <Button
-              type="button"
-              className="mt-2 w-full sm:mt-0 sm:w-fit"
-              variant="secondary"
-              onClick={handleClose}
-              disabled={isLoading}
-            >
+          {showNameConfirmation && (
+            <div className="mb-4">
+              <label htmlFor="confirmation-name" className="text-sm font-medium">
+                Type "{itemName}" to confirm deletion
+              </label>
+              <Input
+                id="confirmation-name"
+                type="text"
+                placeholder={confirmationPlaceholder}
+                value={confirmationName}
+                onChange={e => setConfirmationName(e.target.value)}
+                className="mt-2"
+              />
+            </div>
+          )}
+
+          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+
+          <div className="flex justify-end gap-2 py-4">
+            <Button type="button" variant="secondary" onClick={handleClose} disabled={isLoading}>
               {cancelText}
             </Button>
-          </DialogClose>
-          <Button
-            type="button"
-            className="w-full sm:w-fit"
-            variant="destructive"
-            onClick={handleConfirm}
-            disabled={isConfirmDisabled}
-            isLoading={isLoading}
-          >
-            {confirmText}
-          </Button>
-        </DialogFooter>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleConfirm}
+              disabled={isConfirmDisabled}
+              isLoading={isLoading}
+            >
+              {confirmText}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

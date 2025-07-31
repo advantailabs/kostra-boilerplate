@@ -4,6 +4,7 @@ import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PersonaCard } from '@/components/molecules/chat/PersonaCard';
 import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { PageHeader } from '@/components/molecules/common/PageHeader';
 import { ModalAddPersona } from '@/components/organisms/modules/personas/ModalAddPersona';
 import { ModalEditPersona } from '@/components/organisms/modules/personas/ModalEditPersona';
 import { usePersonas } from '@/hooks/usePersonas';
@@ -68,23 +69,23 @@ export default function PersonasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personas</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Manage your AI assistant personas and their instructions
-          </p>
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <PageHeader
+          title="Personas"
+          description="Manage your AI assistant personas and their instructions"
+        />
+        <div className="px-4 py-3">
+          <Button onClick={() => setShowAddModal(true)}>
+            <RiAddLine className="mr-2 h-4 w-4" />
+            Create Persona
+          </Button>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <RiAddLine className="mr-2 h-4 w-4" />
-          Create Persona
-        </Button>
       </div>
 
       {/* Content */}
-      <div className="h-full">
+      <div className="h-full p-6">
         {personas.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="text-center">

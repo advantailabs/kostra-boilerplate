@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
+import { PageHeader } from '@/components/molecules/common/PageHeader';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
@@ -82,34 +83,33 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Files</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Manage and organize your uploaded files
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => setShowFilterModal(true)}
-            variant="secondary"
-            className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-indigo-500' : ''}`}
-          >
-            <RiFilterLine className="h-4 w-4" />
-            Filter
-            {hasActiveFilters && <span className="ml-1 flex h-2 w-2 rounded-full bg-indigo-500" />}
-          </Button>
-          <Button onClick={() => setShowUploader(true)} className="flex items-center gap-2">
-            <RiAddLine className="h-4 w-4" />
-            Upload Files
-          </Button>
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <PageHeader title="Files" description="Manage and organize your uploaded files" />
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setShowFilterModal(true)}
+              variant="secondary"
+              className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-indigo-500' : ''}`}
+            >
+              <RiFilterLine className="h-4 w-4" />
+              Filter
+              {hasActiveFilters && (
+                <span className="ml-1 flex h-2 w-2 rounded-full bg-indigo-500" />
+              )}
+            </Button>
+            <Button onClick={() => setShowUploader(true)} className="flex items-center gap-2">
+              <RiAddLine className="h-4 w-4" />
+              Upload Files
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Files Content */}
-      <div className="h-full">
+      <div className="h-full p-6">
         {files.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="text-center">

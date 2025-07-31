@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
+import { PageHeader } from '@/components/molecules/common/PageHeader';
 import { FileCard } from '@/components/molecules/files/FileCard';
 import { KnowledgeBaseFileUploader } from '@/components/organisms/modules/knowledge-bases/KnowledgeBaseFileUploader';
 import { useFileDownload } from '@/hooks/useFiles';
@@ -59,32 +60,29 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Knowledge Base Files
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{knowledgeBase.title}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/app/knowledge-bases"
-            className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Link>
-          <Button onClick={() => setShowFileUploader(true)} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Files
-          </Button>
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <PageHeader title="Knowledge Base Files" description={knowledgeBase.title} />
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/app/knowledge-bases"
+              className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Link>
+            <Button onClick={() => setShowFileUploader(true)} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add Files
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Files Content */}
-      <div className="h-full">
+      <div className="h-full p-6">
         {files.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="text-center">

@@ -5,12 +5,7 @@ import { Calendar, Database, Download, HardDrive, Info, Users, X } from 'lucide-
 import { Avatar } from '@/components/atom/Avatar';
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
 import { formatFileSize, getFileTypeIconWithColor } from '@/lib/file-utils';
 
 interface FileDetailsModalProps {
@@ -87,19 +82,19 @@ export function FileDetailsModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl overflow-hidden p-0">
         {/* Header */}
-        <DialogHeader className="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+        <DialogHeader className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
           <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-3 text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="flex items-center gap-3">
               <div className={`rounded-lg p-2 ${iconBgColor}`}>
                 <FileIcon className={`h-5 w-5 ${iconColor}`} />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="truncate text-lg font-medium text-gray-900 dark:text-gray-100">
                   {file.originalName}
                 </h3>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">{file.mimeType}</p>
+                <p className="truncate text-xs text-gray-500 dark:text-gray-400">{file.mimeType}</p>
               </div>
-            </DialogTitle>
+            </div>
             <Button
               variant="ghost"
               onClick={onClose}
