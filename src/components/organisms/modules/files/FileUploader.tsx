@@ -4,12 +4,7 @@ import { RiCheckLine, RiCloseLine, RiFileLine, RiSaveLine, RiUploadLine } from '
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
+import { Modal } from '@/components/molecules/common/Modal';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import { formatFileSize } from '@/lib/file-utils';
@@ -320,17 +315,51 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
   const canSave =
     (readyFiles.length > 0 && !uploadFilesMutation.isPending) || uploadFilesMutation.isPending;
 
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0">
-        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Files</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Upload files to your knowledge bases
-          </p>
-        </DialogHeader>
+  // Custom footer with cancel and save buttons
+  const actionFooter = (
+    <div className="flex justify-end gap-3">
+      <Button variant="secondary" onClick={handleClose} className="px-4">
+        Cancel
+      </Button>
+      {canSave && (
+        <Button
+          onClick={handleSaveToDatabase}
+          disabled={uploadFilesMutation.isPending}
+          className="flex items-center gap-2 px-4"
+        >
+          {uploadFilesMutation.isPending ? (
+            <>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span>Saving...</span>
+            </>
+          ) : (
+            <>
+              <RiSaveLine className="h-4 w-4" />
+              <span>
+                Save {uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length} File
+                {(uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length) !== 1
+                  ? 's'
+                  : ''}
+              </span>
+            </>
+          )}
+        </Button>
+      )}
+    </div>
+  );
 
-        <div className="space-y-6 px-6 py-6">
+  return (
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title="Upload Files"
+        description="Upload files to your knowledge bases"
+        maxWidth="max-w-2xl"
+        contentClassName="max-h-[90vh] overflow-y-auto"
+        footer={actionFooter}
+      >
+        <div className="space-y-6">
           {/* Knowledge Base Selection */}
           <div>
             {(() => {
@@ -570,72 +599,29 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
               ))}
             </div>
           )}
-
-          {/* Separator */}
-          <div className="-mx-6 mt-6 border-t border-gray-200 dark:border-gray-700" />
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-3">
-            <Button variant="secondary" onClick={handleClose} className="px-4">
-              Cancel
-            </Button>
-            {canSave && (
-              <Button
-                onClick={handleSaveToDatabase}
-                disabled={uploadFilesMutation.isPending}
-                className="flex items-center gap-2 px-4"
-              >
-                {uploadFilesMutation.isPending ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <RiSaveLine className="h-4 w-4" />
-                    <span>
-                      Save {uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length}{' '}
-                      File
-                      {(uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length) !== 1
-                        ? 's'
-                        : ''}
-                    </span>
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
         </div>
-      </DialogContent>
+      </Modal>
 
-      {/* Warning Modal */}
+      {/* Warning Modal - Replace with our new Modal component */}
       {warning.show && (
-        <Dialog
-          open={warning.show}
-          onOpenChange={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
+        <Modal
+          isOpen={warning.show}
+          onClose={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
+          title={warning.title}
+          primaryActionText="OK"
+          onPrimaryAction={() =>
+            setWarning({ show: false, title: '', message: '', type: 'warning' })
+          }
+          maxWidth="max-w-md"
         >
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle
-                className={`text-lg ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
-              >
-                {warning.title}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="mt-4">
-              <p className="text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button
-                onClick={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
-                className="px-4"
-              >
-                OK
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+          <div
+            className={`-mt-2 mb-2 text-sm font-medium ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
+          >
+            {warning.type === 'error' ? 'Error:' : 'Warning:'}
+          </div>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
+        </Modal>
       )}
-    </Dialog>
+    </>
   );
 }

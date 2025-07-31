@@ -2,13 +2,12 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
 import { Textarea } from '@/components/atom/Textarea';
-import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
+import { Modal } from '@/components/molecules/common/Modal';
 import {
   CreateKnowledgeBaseRequest,
   KnowledgeBaseWithFiles,
@@ -53,8 +52,7 @@ export function ModalKnowledgeBase({
     onClose();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) return;
 
     setIsSubmitting(true);
@@ -74,62 +72,55 @@ export function ModalKnowledgeBase({
   };
 
   const modalTitle = isEditMode ? 'Edit Knowledge Base' : 'Create Knowledge Base';
-  const submitButtonText = isSubmitting
-    ? isEditMode
-      ? 'Updating...'
-      : 'Creating...'
-    : isEditMode
-      ? 'Update Knowledge Base'
-      : 'Create Knowledge Base';
+  const modalDescription = isEditMode
+    ? 'Update knowledge base details'
+    : 'Create a new knowledge base';
+  const submitButtonText = isEditMode ? 'Update Knowledge Base' : 'Create Knowledge Base';
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md p-0">
-        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">{modalTitle}</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {isEditMode ? 'Update knowledge base details' : 'Create a new knowledge base'}
-          </p>
-        </DialogHeader>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={modalTitle}
+      description={modalDescription}
+      primaryActionText={submitButtonText}
+      onPrimaryAction={handleSubmit}
+      isPrimaryActionDisabled={!title.trim() || !description.trim()}
+      isPrimaryActionLoading={isSubmitting}
+      maxWidth="max-w-md"
+    >
+      <form
+        className="py-2"
+        onSubmit={e => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="mb-4">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="Enter knowledge base title"
+            required
+            disabled={isSubmitting}
+          />
+        </div>
 
-        <form onSubmit={handleSubmit} className="px-4 pt-4">
-          <div className="mb-4">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="Enter knowledge base title"
-              required
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div className="mb-4">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Enter knowledge base description"
-              required
-              disabled={isSubmitting}
-              rows={3}
-            />
-          </div>
-
-          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
-
-          <div className="flex justify-end gap-3 py-4">
-            <Button type="button" variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !title.trim() || !description.trim()}>
-              {submitButtonText}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        <div className="mb-4">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder="Enter knowledge base description"
+            required
+            disabled={isSubmitting}
+            rows={3}
+          />
+        </div>
+      </form>
+    </Modal>
   );
 }

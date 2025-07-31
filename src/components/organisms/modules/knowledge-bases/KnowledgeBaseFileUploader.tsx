@@ -2,8 +2,7 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
-import { Dialog, DialogContent, DialogHeader } from '@/components/molecules/common/Dialog';
+import { Modal } from '@/components/molecules/common/Modal';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { formatFileSize } from '@/lib/file-utils';
 import { fileUploadApi } from '@/services/api/file-upload';
@@ -275,274 +274,226 @@ export function KnowledgeBaseFileUploader({
     (readyFiles.length > 0 && !uploadFilesMutation.isPending) || uploadFilesMutation.isPending;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-0">
-        <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Upload Files to Knowledge Base
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Add documents to your knowledge base
-          </p>
-        </DialogHeader>
-
-        <div className="px-4 pt-4">
-          {/* Drop Zone */}
-          <div
-            ref={dropZoneRef}
-            className="mb-4 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-          >
-            <RiUpload2Line className="mx-auto h-16 w-16 text-gray-400" />
-            <div className="mt-4">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">
-                Drop files here or browse
-              </p>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Drag and drop files here, or{' '}
-                <button
-                  type="button"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  browse
-                </button>
-              </p>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Maximum file size: 100MB • Supported formats: PDF, Text, JSON, Markdown, and more
-                <span className="mt-1 block text-orange-600 dark:text-orange-400">
-                  Note: Image files cannot be uploaded to knowledge bases
-                </span>
-              </p>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              className="hidden"
-              onChange={e => handleFileSelect(e.target.files)}
-            />
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title="Upload Files to Knowledge Base"
+        description="Add documents to your knowledge base"
+        maxWidth="max-w-2xl"
+        secondaryActionText="Cancel"
+        primaryActionText={
+          canSave
+            ? `Save ${uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length} ${
+                (uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length) !== 1
+                  ? 'Files'
+                  : 'File'
+              }`
+            : undefined
+        }
+        onPrimaryAction={canSave ? handleSaveToDatabase : undefined}
+        isPrimaryActionDisabled={uploadFilesMutation.isPending}
+        isPrimaryActionLoading={uploadFilesMutation.isPending}
+      >
+        {/* Drop Zone */}
+        <div
+          ref={dropZoneRef}
+          className="mb-4 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+        >
+          <RiUpload2Line className="mx-auto h-16 w-16 text-gray-400" />
+          <div className="mt-4">
+            <p className="text-lg font-medium text-gray-900 dark:text-white">
+              Drop files here or browse
+            </p>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Drag and drop files here, or{' '}
+              <button
+                type="button"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                browse
+              </button>
+            </p>
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Maximum file size: 100MB • Supported formats: PDF, Text, JSON, Markdown, and more
+              <span className="mt-1 block text-orange-600 dark:text-orange-400">
+                Note: Image files cannot be uploaded to knowledge bases
+              </span>
+            </p>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={e => handleFileSelect(e.target.files)}
+          />
+        </div>
 
-          {/* Upload Progress */}
-          {uploadingFiles.length > 0 && (
-            <div className="mb-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Files ({uploadingFiles.filter(f => f.status === 'success').length}/
-                  {uploadingFiles.length})
-                </h4>
-                {readyFiles.length > 0 && (
-                  <div className="text-sm text-gray-500">{readyFiles.length} ready to save</div>
-                )}
-              </div>
+        {/* Upload Progress */}
+        {uploadingFiles.length > 0 && (
+          <div className="mb-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Files ({uploadingFiles.filter(f => f.status === 'success').length}/
+                {uploadingFiles.length})
+              </h4>
+              {readyFiles.length > 0 && (
+                <div className="text-sm text-gray-500">{readyFiles.length} ready to save</div>
+              )}
+            </div>
 
-              {/* Warning for image files */}
-              {(() => {
-                const imageMimeTypes = [
-                  'image/jpeg',
-                  'image/jpg',
-                  'image/png',
-                  'image/svg+xml',
-                  'image/webp',
-                  'image/gif',
-                  'image/bmp',
-                  'image/tiff',
-                ];
-                const imageFiles = uploadingFiles.filter(file =>
-                  imageMimeTypes.includes(file.file.type.toLowerCase())
-                );
+            {/* Warning for image files */}
+            {(() => {
+              const imageMimeTypes = [
+                'image/jpeg',
+                'image/jpg',
+                'image/png',
+                'image/svg+xml',
+                'image/webp',
+                'image/gif',
+                'image/bmp',
+                'image/tiff',
+              ];
+              const imageFiles = uploadingFiles.filter(file =>
+                imageMimeTypes.includes(file.file.type.toLowerCase())
+              );
 
-                if (imageFiles.length > 0) {
-                  return (
-                    <div className="rounded-lg bg-orange-50 p-3 dark:bg-orange-900/20">
-                      <div className="flex items-start">
-                        <div className="flex-shrink-0">
-                          <svg
-                            className="h-5 w-5 text-orange-400"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <div className="ml-3">
-                          <h3 className="text-sm font-medium text-orange-800 dark:text-orange-200">
-                            Image files detected
-                          </h3>
-                          <div className="mt-2 text-sm text-orange-700 dark:text-orange-300">
-                            <p>
-                              The following image files cannot be uploaded to knowledge bases:{' '}
-                              {imageFiles.map(f => f.file.name).join(', ')}
-                            </p>
-                            <p className="mt-1">Please remove these files to proceed.</p>
-                          </div>
+              if (imageFiles.length > 0) {
+                return (
+                  <div className="rounded-lg bg-orange-50 p-3 dark:bg-orange-900/20">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <svg
+                          className="h-5 w-5 text-orange-400"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                          Image files detected
+                        </h3>
+                        <div className="mt-2 text-sm text-orange-700 dark:text-orange-300">
+                          <p>
+                            The following image files cannot be uploaded to knowledge bases:{' '}
+                            {imageFiles.map(f => f.file.name).join(', ')}
+                          </p>
+                          <p className="mt-1">Please remove these files to proceed.</p>
                         </div>
                       </div>
                     </div>
-                  );
-                }
-                return null;
-              })()}
-
-              {uploadingFiles.map(uploadingFile => (
-                <div
-                  key={uploadingFile.id}
-                  className="flex items-center space-x-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
-                >
-                  <RiFileUploadLine className="h-5 w-5 flex-shrink-0 text-gray-400" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                      {uploadingFile.file.name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatFileSize(uploadingFile.file.size)}
-                    </p>
-                    {uploadingFile.status === 'uploading' && (
-                      <div className="mt-2 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                        <div
-                          className="h-2 rounded-full bg-indigo-600 transition-all duration-300"
-                          style={{ width: `${uploadingFile.progress}%` }}
-                        />
-                      </div>
-                    )}
-                    {uploadingFile.error && (
-                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                        {uploadingFile.error}
-                      </p>
-                    )}
-                    {uploadingFile.status === 'ready' && (
-                      <p className="mt-1 text-xs text-green-600 dark:text-green-400">
-                        Ready to save
-                      </p>
-                    )}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {uploadingFile.status === 'uploading' && (
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-                    )}
-                    {uploadingFile.status === 'ready' && (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500">
-                        <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                    {uploadingFile.status === 'success' && (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-                        <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                    {uploadingFile.status === 'error' && (
-                      <div className="h-5 w-5 rounded-full bg-red-500" />
-                    )}
-                    <button
-                      onClick={() =>
-                        setUploadingFiles(prev => prev.filter(f => f.id !== uploadingFile.id))
-                      }
-                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                    >
-                      <RiCloseLine className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                );
+              }
+              return null;
+            })()}
 
-          <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-3 py-4">
-            <Button variant="secondary" onClick={handleClose} className="px-4">
-              Cancel
-            </Button>
-            {canSave && (
-              <Button
-                onClick={handleSaveToDatabase}
-                disabled={uploadFilesMutation.isPending}
-                className="flex items-center gap-2 px-4"
+            {uploadingFiles.map(uploadingFile => (
+              <div
+                key={uploadingFile.id}
+                className="flex items-center space-x-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
               >
-                {uploadFilesMutation.isPending ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                <RiFileUploadLine className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                    {uploadingFile.file.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {formatFileSize(uploadingFile.file.size)}
+                  </p>
+                  {uploadingFile.status === 'uploading' && (
+                    <div className="mt-2 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                      <div
+                        className="h-2 rounded-full bg-indigo-600 transition-all duration-300"
+                        style={{ width: `${uploadingFile.progress}%` }}
                       />
-                    </svg>
-                    <span>
-                      Save {uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length}{' '}
-                      File
-                      {(uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length) !== 1
-                        ? 's'
-                        : ''}
-                    </span>
-                  </>
-                )}
-              </Button>
-            )}
+                    </div>
+                  )}
+                  {uploadingFile.error && (
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {uploadingFile.error}
+                    </p>
+                  )}
+                  {uploadingFile.status === 'ready' && (
+                    <p className="mt-1 text-xs text-green-600 dark:text-green-400">Ready to save</p>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  {uploadingFile.status === 'uploading' && (
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+                  )}
+                  {uploadingFile.status === 'ready' && (
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                  {uploadingFile.status === 'success' && (
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                  {uploadingFile.status === 'error' && (
+                    <div className="h-5 w-5 rounded-full bg-red-500" />
+                  )}
+                  <button
+                    onClick={() =>
+                      setUploadingFiles(prev => prev.filter(f => f.id !== uploadingFile.id))
+                    }
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    <RiCloseLine className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </DialogContent>
+        )}
+      </Modal>
 
       {/* Warning Modal */}
       {warning.show && (
-        <Dialog
-          open={warning.show}
-          onOpenChange={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
+        <Modal
+          isOpen={warning.show}
+          onClose={() => setWarning({ show: false, title: '', message: '', type: 'warning' })}
+          title={warning.title}
+          primaryActionText="OK"
+          onPrimaryAction={() =>
+            setWarning({ show: false, title: '', message: '', type: 'warning' })
+          }
+          maxWidth="max-w-md"
         >
-          <DialogContent className="max-w-md p-0">
-            <DialogHeader className="border-b border-gray-200 p-4 dark:border-gray-700">
-              <h1
-                className={`text-lg font-medium ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
-              >
-                {warning.title}
-              </h1>
-            </DialogHeader>
-            <div className="px-4 pt-4">
-              <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
-
-              <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
-
-              <div className="flex justify-end py-4">
-                <Button
-                  onClick={() =>
-                    setWarning({ show: false, title: '', message: '', type: 'warning' })
-                  }
-                  className="px-4"
-                >
-                  OK
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+          <div
+            className={`-mt-2 mb-2 text-sm font-medium ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
+          >
+            {warning.type === 'error' ? 'Error:' : 'Warning:'}
+          </div>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
+        </Modal>
       )}
-    </Dialog>
+    </>
   );
 }
