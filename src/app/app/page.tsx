@@ -18,7 +18,7 @@ export default function AppPage() {
         <div className="w-full max-w-2xl">
           {/* Title */}
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Search</h1>
+            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Coming Soon</h1>
           </div>
 
           {/* Search Container */}

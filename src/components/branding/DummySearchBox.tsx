@@ -77,7 +77,7 @@ export function DummySearchBox() {
                   onValueChange={() => {}}
                   icon={<RiUserLine className="h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />}
                   placeholder="Select knowledge base"
-                  displayValue="Crypto Analyst"
+                  displayValue="File Analyzer"
                   options={[
                     { value: 'demo-kb', label: 'File Analyzer' },
                     { value: 'demo-kb-2', label: 'Stock Trading Expert' },
