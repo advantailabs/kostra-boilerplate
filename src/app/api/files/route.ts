@@ -4,6 +4,27 @@ import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Polyfill for File in Node.js environment
+if (typeof global.File === 'undefined') {
+  const { Blob } = require('buffer');
+
+  class FilePolyfill extends Blob {
+    name: string;
+
+    lastModified: number;
+
+    webkitRelativePath: string = '';
+
+    constructor(chunks: any[], filename: string, options: any = {}) {
+      super(chunks, options);
+      this.name = filename;
+      this.lastModified = Date.now();
+    }
+  }
+
+  (global as any).File = FilePolyfill;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { userId: clerkUserId } = await auth();
