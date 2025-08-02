@@ -346,7 +346,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-6">
                   <p>
-                    <strong>Email:</strong> privacy@peon.ai
+                    <strong>Email:</strong> hi@peon.sh
                   </p>
                 </div>
               </section>

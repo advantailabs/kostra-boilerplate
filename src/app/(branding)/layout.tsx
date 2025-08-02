@@ -43,6 +43,16 @@ export default function BrandingLayout({
           <main className="relative pt-16">{children}</main>
           <MinimalFooter />
         </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent browser scroll restoration on page load
+              if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                window.history.scrollRestoration = 'manual';
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

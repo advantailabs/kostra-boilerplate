@@ -15,43 +15,65 @@ export function ModernNavigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Ensure we start at top on page load
+  useEffect(() => {
+    if (pathname === '/' && !hasInitialized) {
+      // Force scroll to top on initial load and clear any hash
+      window.scrollTo({ top: 0 });
+      window.history.replaceState(null, '', '/');
+      setActiveSection('home');
+      setHasInitialized(true);
+    }
+  }, [pathname, hasInitialized]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // Only track sections when on landing page
-      if (pathname === '/') {
-        const sections = ['product', 'features', 'security', 'integrations', 'cta'];
+      // Only track sections when on landing page and after initialization
+      if (pathname === '/' && hasInitialized) {
+        const sections = ['home', 'product', 'features', 'security', 'integrations', 'cta'];
         const scrollPosition = window.scrollY + 100; // Offset for fixed header
 
         let currentSection = '';
 
-        for (const section of sections) {
-          const element = document.getElementById(section);
-          if (element) {
-            const { offsetTop, offsetHeight } = element;
-            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-              currentSection = section;
-              break;
+        // Check if we're at the very top (hero section)
+        if (window.scrollY < 100) {
+          currentSection = 'home';
+        } else {
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const { offsetTop, offsetHeight } = element;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                currentSection = section;
+                break;
+              }
             }
           }
         }
 
         setActiveSection(currentSection);
-      } else {
+      } else if (pathname !== '/') {
         setActiveSection('');
       }
     };
 
-    // Initial check
-    handleScroll();
+    // Only run scroll handler after initialization for homepage
+    if (pathname !== '/' || hasInitialized) {
+      handleScroll();
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
+    // Return empty cleanup function for cases where no event listener is added
+    return () => {};
+  }, [pathname, hasInitialized]);
 
   const navItems = [
+    { name: 'Home', href: '/#home', section: 'home' },
     { name: 'Product', href: '/#product', section: 'product' },
     { name: 'Features', href: '/#features', section: 'features' },
     { name: 'Security', href: '/#security', section: 'security' },
@@ -86,16 +108,13 @@ export function ModernNavigation() {
           <motion.button
             onClick={() => {
               if (pathname === '/') {
-                // If already on homepage, scroll to home section and update URL
-                const homeElement = document.getElementById('home');
-                if (homeElement) {
-                  homeElement.scrollIntoView({ behavior: 'smooth' });
-                  // Update URL to reflect home section
-                  window.history.pushState(null, '', '/#home');
-                }
+                // If already on homepage, scroll to top (home section)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Update URL to remove any hash or set to home
+                window.history.pushState(null, '', '/');
               } else {
-                // If on different page, navigate to homepage then scroll to home
-                router.push('/#home');
+                // If on different page, navigate to homepage
+                router.push('/');
               }
             }}
             className="flex items-center gap-3"

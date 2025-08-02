@@ -200,7 +200,7 @@ export default function TermsOfServicePage() {
                 <h2 className="mb-4 text-2xl font-semibold text-white">13. Contact Information</h2>
                 <p>If you have any questions about these Terms of Service, please contact us at:</p>
                 <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-6">
-                  <p>Email: legal@peon.ai</p>
+                  <p>Email: hi@peon.sh</p>
                 </div>
               </section>
             </div>
