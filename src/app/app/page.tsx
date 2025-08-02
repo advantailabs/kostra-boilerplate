@@ -2,7 +2,7 @@
 
 import { SearchBox } from '@/components/molecules/search/SearchBox';
 
-export default function SearchPage() {
+export default function AppPage() {
   const handleSearch = (data: {
     query: string;
     files: Array<{ id: string; name: string; size: number }>;

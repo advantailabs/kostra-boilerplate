@@ -37,6 +37,11 @@ const navigation = [
 export default function MobileSidebar() {
   const pathname = usePathname();
   const isActive = (itemHref: string) => {
+    // Exact match for home route to avoid highlighting when on sub-routes
+    if (itemHref === siteConfig.baseLinks.home) {
+      return pathname === itemHref;
+    }
+    // For other routes, check if pathname matches or starts with the href
     return pathname === itemHref || pathname.startsWith(itemHref);
   };
   return (
