@@ -1,9 +1,5 @@
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from 'next-themes';
 import React from 'react';
-
-import { Footer } from '@/components/branding/footer';
-import { Navigation } from '@/components/branding/navigation';
 
 import type { Metadata } from 'next';
 import '../globals.css';
@@ -11,8 +7,25 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Your Brand Name',
-  description: 'Your brand description here',
+  title: 'Peon - Intelligent Knowledge Management Platform',
+  description:
+    'Transform scattered information into actionable intelligence with AI-powered knowledge assistants. Trusted by hundreds of organizations worldwide.',
+  keywords:
+    'knowledge management, AI assistants, document organization, enterprise search, intelligent automation',
+  authors: [{ name: 'Peon Team' }],
+  openGraph: {
+    title: 'Peon - Intelligent Knowledge Management Platform',
+    description:
+      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
+    type: 'website',
+    url: 'https://peon.ai',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Peon - Intelligent Knowledge Management Platform',
+    description:
+      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
+  },
 };
 
 export default function BrandingLayout({
@@ -21,19 +34,8 @@ export default function BrandingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="mx-auto">
-          <ThemeProvider defaultTheme="system" attribute="class">
-            <header className="fixed left-0 right-0 top-0 z-50 h-16 backdrop-blur-md">
-              <Navigation />
-            </header>
-            <main className="relative">{children}</main>
-
-            <Footer />
-          </ThemeProvider>
-        </div>
-      </body>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-black text-white antialiased`}>{children}</body>
     </html>
   );
 }

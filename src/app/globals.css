@@ -1,3 +1,73 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}
+
+@layer utilities {
+  /* Grid background pattern */
+  .bg-grid-white\/\[0\.02\] {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  }
+
+  /* Better text rendering */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Custom scrollbar for dark theme */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+@layer components {
+  /* Focus styles for accessibility */
+  .focus-visible:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  /* Custom button animations */
+  .btn-animate {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-animate:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-animate:active {
+    transform: translateY(0);
+  }
+}
