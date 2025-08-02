@@ -114,45 +114,29 @@ export function MessageBubble({ message, persona, citations, className }: Messag
       <div className={cx('flex flex-col', isUser ? 'flex-1' : '')}>
         <div
           className={cx(
-            'min-w-0 rounded-lg px-3 py-2',
+            'min-w-0 rounded-lg px-2 py-1.5',
             isUser
               ? 'ml-auto max-w-[85%] bg-indigo-600 text-white'
-              : 'max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
+              : 'relative max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          {/* 📝 Message content */}
-          <p className="break-words text-sm">
-            <MarkdownRenderer content={displayContent} />
-          </p>
-
-          {/* ⏰ Timestamp */}
-          <div className="mt-2 flex w-full items-center justify-between text-sm">
-            <span className={cx(isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400')}>
-              {new Date(message.timestamp).toLocaleDateString([], {
-                month: 'short',
-                day: 'numeric',
-              })}{' '}
-              {new Date(message.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </span>
-
+          {/* Copy button for assistant messages only - positioned at top right */}
+          {!isUser && (
             <button
               onClick={() => {
                 navigator.clipboard.writeText(displayContent);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}
-              className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+              className="absolute right-1 top-1 z-10 rounded bg-gray-200 p-1 text-gray-600 hover:bg-gray-300 hover:text-gray-800 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
               title="Copy full message"
             >
               {copied ? (
-                <span className="text-xs">Copied</span>
+                <div className="flex h-3 w-3 items-center justify-center text-[10px]">✓</div>
               ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 fill-current"
+                  className="h-3 w-3 fill-current"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -163,6 +147,25 @@ export function MessageBubble({ message, persona, citations, className }: Messag
                 </svg>
               )}
             </button>
+          )}
+
+          {/* 📝 Message content */}
+          <p className="break-words text-sm">
+            <MarkdownRenderer content={displayContent} forceWhiteText={isUser} />
+          </p>
+
+          {/* ⏰ Timestamp */}
+          <div className="mt-2 text-xs">
+            <span className={cx(isUser ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400')}>
+              {new Date(message.timestamp).toLocaleDateString([], {
+                month: 'short',
+                day: 'numeric',
+              })}{' '}
+              {new Date(message.timestamp).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
           </div>
         </div>
 

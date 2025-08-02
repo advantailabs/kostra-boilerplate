@@ -113,7 +113,7 @@ export function ConversationView({
         />
 
         {/* Messages or Empty State */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="scrollbar-thin flex-1 overflow-y-auto">
           {shouldShowMessages ? (
             <div className="space-y-3 p-4">
               {/* Show existing thread messages */}
