@@ -12,7 +12,7 @@ import {
   findByUserId,
   restoreThread,
 } from '@/services/repositories/thread';
-import { ThreadWithMessages, ThreadWithPersona } from '@/types/chat';
+import { PublicThreadWithMessages, PublicThreadWithPersona } from '@/types/chat';
 
 export interface ChatServiceResult<T> {
   success: boolean;
@@ -36,7 +36,7 @@ const generateThreadTitle = (firstMessage: string): string => {
 const getUserThreads = async (
   userId: number,
   prisma?: PrismaClient
-): Promise<ChatServiceResult<ThreadWithPersona[]>> => {
+): Promise<ChatServiceResult<PublicThreadWithPersona[]>> => {
   try {
     const threads = await findByUserId(userId, prisma);
     return {
@@ -55,7 +55,7 @@ const getThreadWithMessages = async (
   userId: number,
   threadId: number,
   prisma?: PrismaClient
-): Promise<ChatServiceResult<ThreadWithMessages>> => {
+): Promise<ChatServiceResult<PublicThreadWithMessages>> => {
   try {
     // Verify thread belongs to user
     const thread = await findByUserAndId(userId, threadId, prisma);

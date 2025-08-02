@@ -1,8 +1,8 @@
 import { threadsApi } from '@/services/api/threads';
 import {
   AddMessageRequest,
-  CitationFile,
   CreateThreadRequest,
+  PublicCitationFile,
   ThreadWithMessages,
 } from '@/types/chat';
 import { Message } from '@prisma/client';
@@ -15,7 +15,7 @@ export function useChat(threadId?: number) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [createdThreadId, setCreatedThreadId] = useState<number | null>(null);
   const [pendingMessages, setPendingMessages] = useState<Message[]>([]);
-  const [currentCitations, setCurrentCitations] = useState<CitationFile[]>([]);
+  const [currentCitations, setCurrentCitations] = useState<PublicCitationFile[]>([]);
   const [localThread, setLocalThread] = useState<ThreadWithMessages | null>(null);
   const streamAbortRef = useRef<AbortController | null>(null);
 

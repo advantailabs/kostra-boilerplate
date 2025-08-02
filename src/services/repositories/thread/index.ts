@@ -2,12 +2,26 @@ import { PrismaClient, Thread } from '@prisma/client';
 
 import {
   CreateThreadData,
+  PublicThread,
+  PublicThreadWithMessages,
+  PublicThreadWithPersona,
   ThreadWithMessages,
-  ThreadWithPersona,
   UpdateThreadData,
 } from '@/types/chat';
 
 const defaultPrisma = new PrismaClient();
+
+// Select object to exclude OpenAI fields from public responses
+const publicThreadSelect = {
+  id: true,
+  userId: true,
+  personaId: true,
+  title: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  // Explicitly exclude openaiThreadId
+};
 
 const createThread = async (
   data: CreateThreadData,
@@ -25,22 +39,39 @@ const createThread = async (
 const findByUserId = async (
   userId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<ThreadWithPersona[]> => {
+): Promise<PublicThreadWithPersona[]> => {
   return prisma.thread.findMany({
     where: {
       userId,
       deletedAt: null, // Only fetch non-deleted threads
     },
-    include: {
-      persona: true,
+    select: {
+      ...publicThreadSelect,
+      persona: {
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          description: true,
+          instructions: true,
+          tags: true,
+          logo: true,
+          knowledgeBaseId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          // Explicitly exclude openaiAssistantId
+        },
+      },
     },
     orderBy: {
       updatedAt: 'desc',
     },
-  });
+  }) as any;
 };
 
-const findByIdWithMessages = async (
+// Internal function that includes OpenAI fields for backend operations
+const findByIdWithMessagesInternal = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
 ): Promise<ThreadWithMessages | null> => {
@@ -62,12 +93,62 @@ const findByIdWithMessages = async (
   });
 };
 
+// Public function that excludes OpenAI fields from responses
+const findByIdWithMessages = async (
+  threadId: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PublicThreadWithMessages | null> => {
+  return prisma.thread.findUnique({
+    where: {
+      id: threadId,
+    },
+    select: {
+      ...publicThreadSelect,
+      messages: {
+        where: {
+          deletedAt: null, // Only fetch non-deleted messages
+        },
+        select: {
+          id: true,
+          threadId: true,
+          role: true,
+          content: true,
+          timestamp: true,
+          citations: true,
+          deletedAt: true,
+          // Explicitly exclude openaiMessageId
+        },
+        orderBy: {
+          timestamp: 'asc',
+        },
+      },
+      persona: {
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          description: true,
+          instructions: true,
+          tags: true,
+          logo: true,
+          knowledgeBaseId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          // Explicitly exclude openaiAssistantId
+        },
+      },
+    },
+  }) as any;
+};
+
 const findById = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Thread | null> => {
+): Promise<PublicThread | null> => {
   return prisma.thread.findUnique({
     where: { id: threadId },
+    select: publicThreadSelect,
   });
 };
 
@@ -75,13 +156,14 @@ const findByUserAndId = async (
   userId: number,
   threadId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Thread | null> => {
+): Promise<PublicThread | null> => {
   return prisma.thread.findFirst({
     where: {
       id: threadId,
       userId,
       deletedAt: null, // Only fetch non-deleted threads
     },
+    select: publicThreadSelect,
   });
 };
 
@@ -89,12 +171,13 @@ const findByUserAndIdIncludingDeleted = async (
   userId: number,
   threadId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Thread | null> => {
+): Promise<PublicThread | null> => {
   return prisma.thread.findFirst({
     where: {
       id: threadId,
       userId,
     },
+    select: publicThreadSelect,
   });
 };
 
@@ -179,6 +262,7 @@ export {
   deleteThread,
   findById,
   findByIdWithMessages,
+  findByIdWithMessagesInternal,
   findByUserAndId,
   findByUserAndIdIncludingDeleted,
   findByUserId,

@@ -1,8 +1,20 @@
 import { Message, PrismaClient } from '@prisma/client';
 
-import { CreateMessageData, StoredCitation } from '@/types/chat';
+import { CreateMessageData, PublicMessage, StoredCitation } from '@/types/chat';
 
 const defaultPrisma = new PrismaClient();
+
+// Select object to exclude OpenAI fields from public responses
+const publicMessageSelect = {
+  id: true,
+  threadId: true,
+  role: true,
+  content: true,
+  timestamp: true,
+  citations: true,
+  deletedAt: true,
+  // Explicitly exclude openaiMessageId
+};
 
 const createMessage = async (
   data: CreateMessageData,
@@ -36,12 +48,13 @@ const createMessageWithCitations = async (
 const findByThreadId = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Message[]> => {
+): Promise<PublicMessage[]> => {
   return prisma.message.findMany({
     where: {
       threadId,
       deletedAt: null, // Only fetch non-deleted messages
     },
+    select: publicMessageSelect,
     orderBy: {
       timestamp: 'asc',
     },
@@ -51,21 +64,23 @@ const findByThreadId = async (
 const findById = async (
   messageId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Message | null> => {
+): Promise<PublicMessage | null> => {
   return prisma.message.findUnique({
     where: { id: messageId },
+    select: publicMessageSelect,
   });
 };
 
 const findLatestByThreadId = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Message | null> => {
+): Promise<PublicMessage | null> => {
   return prisma.message.findFirst({
     where: {
       threadId,
       deletedAt: null, // Only fetch non-deleted messages
     },
+    select: publicMessageSelect,
     orderBy: {
       timestamp: 'desc',
     },
@@ -76,13 +91,14 @@ const findMessagesByThreadAndRole = async (
   threadId: number,
   role: 'user' | 'assistant',
   prisma: PrismaClient = defaultPrisma
-): Promise<Message[]> => {
+): Promise<PublicMessage[]> => {
   return prisma.message.findMany({
     where: {
       threadId,
       role,
       deletedAt: null, // Only fetch non-deleted messages
     },
+    select: publicMessageSelect,
     orderBy: {
       timestamp: 'asc',
     },

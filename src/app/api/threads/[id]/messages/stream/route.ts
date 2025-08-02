@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamAssistantRun } from '@/services/external/openai/messages';
 import { createMessageWithCitations } from '@/services/repositories/message';
 import {
-  findByIdWithMessages,
+  findByIdWithMessagesInternal,
   findByUserAndId,
   updateThreadTimestamp,
 } from '@/services/repositories/thread';
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { content: messageContent } = validationResult.data;
 
     // Get thread with messages for OpenAI thread ID
-    const threadWithMessages = await findByIdWithMessages(threadId);
+    const threadWithMessages = await findByIdWithMessagesInternal(threadId);
     if (!threadWithMessages) {
       return NextResponse.json(
         { error: 'Thread not found', message: 'Thread not found' },
@@ -168,12 +168,25 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
                 // Update thread timestamp
                 await updateThreadTimestamp(threadId);
 
-                // Send completion signal with citations
+                // Convert citations to public format (exclude openaiFileId)
+                const publicCitations =
+                  chunk.citations?.map(citation => ({
+                    fileId: citation.fileId,
+                    originalName: citation.originalName,
+                    filename: citation.filename,
+                    mimeType: citation.mimeType,
+                    size: citation.size,
+                    citationText: citation.citationText,
+                    startIndex: citation.startIndex,
+                    endIndex: citation.endIndex,
+                  })) || [];
+
+                // Send completion signal with clean citations
                 const completionData = JSON.stringify({
                   type: 'completed',
                   messageId: assistantMessageId,
                   fullContent: fullResponse,
-                  citations: chunk.citations || [],
+                  citations: publicCitations,
                 });
                 controller.enqueue(encoder.encode(`data: ${completionData}\n\n`));
 

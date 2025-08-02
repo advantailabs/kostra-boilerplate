@@ -1,5 +1,10 @@
 import { FileKnowledgeBase, KnowledgeBase, Message, Persona, Thread, User } from '@prisma/client';
 
+// Public types that exclude OpenAI fields
+export type PublicPersona = Omit<Persona, 'openaiAssistantId'>;
+export type PublicThread = Omit<Thread, 'openaiThreadId'>;
+export type PublicMessage = Omit<Message, 'openaiMessageId'>;
+
 // Extended types for complex queries
 export interface ThreadWithMessages extends Thread {
   messages: Message[];
@@ -11,6 +16,21 @@ export interface ThreadWithPersona extends Thread {
 }
 
 export interface PersonaWithUser extends Persona {
+  user: User | null;
+  knowledgeBase: KnowledgeBase | null;
+}
+
+// Public versions that exclude OpenAI fields
+export interface PublicThreadWithMessages extends PublicThread {
+  messages: PublicMessage[];
+  persona: PublicPersona | null;
+}
+
+export interface PublicThreadWithPersona extends PublicThread {
+  persona: PublicPersona | null;
+}
+
+export interface PublicPersonaWithUser extends PublicPersona {
   user: User | null;
   knowledgeBase: KnowledgeBase | null;
 }
@@ -31,8 +51,37 @@ export interface KnowledgeBaseWithFiles extends KnowledgeBase {
   personas: Persona[];
 }
 
+export interface PublicKnowledgeBaseWithFiles {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  metadata: any;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  // Explicitly exclude vectorStoreId
+  fileKnowledgeBases: (FileKnowledgeBase & {
+    file: {
+      id: number;
+      filename: string;
+      originalName: string;
+      mimeType: string;
+      size: number;
+      url: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+  })[];
+  personas: PublicPersona[];
+}
+
 export interface PersonaWithKnowledgeBase extends Persona {
   knowledgeBase: KnowledgeBaseWithFiles | null;
+}
+
+export interface PublicPersonaWithKnowledgeBase extends PublicPersona {
+  knowledgeBase: PublicKnowledgeBaseWithFiles | null;
 }
 
 // Database operation types
@@ -166,9 +215,9 @@ export interface KnowledgeBaseResponse {
   title: string;
   description: string;
   metadata: any;
-  vectorStoreId: string | null;
   createdAt: string;
   updatedAt: string;
+  // Explicitly exclude vectorStoreId
 }
 
 export interface PersonaResponse {
@@ -221,11 +270,34 @@ export interface StoredCitation {
   endIndex: number;
 }
 
+// Public versions that exclude OpenAI-specific fields
+export interface PublicCitationFile {
+  fileId: number;
+  originalName: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  citationText: string;
+  startIndex: number;
+  endIndex: number;
+}
+
+export interface PublicStoredCitation {
+  fileId: number;
+  originalName: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  citationText: string;
+  startIndex: number;
+  endIndex: number;
+}
+
 export interface StreamMessageResponse {
   type: 'chunk' | 'completed' | 'error';
   content?: string;
   messageId?: string;
   fullContent?: string;
-  citations?: CitationFile[];
+  citations?: PublicCitationFile[];
   error?: string;
 }

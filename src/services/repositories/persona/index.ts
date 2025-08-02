@@ -2,12 +2,29 @@ import { Persona, PrismaClient } from '@prisma/client';
 
 import {
   CreatePersonaData,
-  PersonaWithKnowledgeBase,
-  PersonaWithUser,
+  PublicPersona,
+  PublicPersonaWithKnowledgeBase,
+  PublicPersonaWithUser,
   UpdatePersonaData,
 } from '@/types/chat';
 
 const defaultPrisma = new PrismaClient();
+
+// Select object to exclude OpenAI fields from public responses
+const publicPersonaSelect = {
+  id: true,
+  userId: true,
+  name: true,
+  description: true,
+  instructions: true,
+  tags: true,
+  logo: true,
+  knowledgeBaseId: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  // Explicitly exclude openaiAssistantId
+};
 
 const createPersona = async (
   data: CreatePersonaData,
@@ -30,12 +47,13 @@ const createPersona = async (
 const findActiveByUserId = async (
   userId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<Persona[]> => {
+): Promise<PublicPersona[]> => {
   return prisma.persona.findMany({
     where: {
       userId,
       deletedAt: null,
     },
+    select: publicPersonaSelect,
     orderBy: {
       createdAt: 'desc',
     },
@@ -45,15 +63,25 @@ const findActiveByUserId = async (
 const findActiveByUserIdWithFiles = async (
   userId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<PersonaWithKnowledgeBase[]> => {
+): Promise<PublicPersonaWithKnowledgeBase[]> => {
   return prisma.persona.findMany({
     where: {
       userId,
       deletedAt: null,
     },
-    include: {
+    select: {
+      ...publicPersonaSelect,
       knowledgeBase: {
-        include: {
+        select: {
+          id: true,
+          userId: true,
+          title: true,
+          description: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          // Explicitly exclude vectorStoreId
           fileKnowledgeBases: {
             where: { file: { deletedAt: null } },
             include: {
@@ -67,12 +95,14 @@ const findActiveByUserIdWithFiles = async (
                   url: true,
                   createdAt: true,
                   updatedAt: true,
+                  // Explicitly exclude openaiFileId
                 },
               },
             },
           },
           personas: {
             where: { deletedAt: null },
+            select: publicPersonaSelect,
           },
         },
       },
@@ -80,10 +110,11 @@ const findActiveByUserIdWithFiles = async (
     orderBy: {
       createdAt: 'desc',
     },
-  });
+  }) as any;
 };
 
-const findById = async (
+// Internal function that includes OpenAI fields for backend operations
+const findByIdInternal = async (
   id: number,
   prisma: PrismaClient = defaultPrisma
 ): Promise<Persona | null> => {
@@ -92,13 +123,25 @@ const findById = async (
   });
 };
 
+// Public function that excludes OpenAI fields from responses
+const findById = async (
+  id: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PublicPersona | null> => {
+  return prisma.persona.findUnique({
+    where: { id },
+    select: publicPersonaSelect,
+  });
+};
+
 const findByIdWithUser = async (
   id: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<PersonaWithUser | null> => {
+): Promise<PublicPersonaWithUser | null> => {
   return prisma.persona.findUnique({
     where: { id },
-    include: {
+    select: {
+      ...publicPersonaSelect,
       user: true,
       knowledgeBase: true,
     },
@@ -108,12 +151,22 @@ const findByIdWithUser = async (
 const findByIdWithKnowledgeBase = async (
   id: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<PersonaWithKnowledgeBase | null> => {
+): Promise<PublicPersonaWithKnowledgeBase | null> => {
   return prisma.persona.findUnique({
     where: { id },
-    include: {
+    select: {
+      ...publicPersonaSelect,
       knowledgeBase: {
-        include: {
+        select: {
+          id: true,
+          userId: true,
+          title: true,
+          description: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+          // Explicitly exclude vectorStoreId
           fileKnowledgeBases: {
             where: { file: { deletedAt: null } },
             include: {
@@ -127,17 +180,19 @@ const findByIdWithKnowledgeBase = async (
                   url: true,
                   createdAt: true,
                   updatedAt: true,
+                  // Explicitly exclude openaiFileId
                 },
               },
             },
           },
           personas: {
             where: { deletedAt: null },
+            select: publicPersonaSelect,
           },
         },
       },
     },
-  });
+  }) as any;
 };
 
 const updatePersona = async (
@@ -176,6 +231,22 @@ const findPersonaByUserAndId = async (
   userId: number,
   personaId: number,
   prisma: PrismaClient = defaultPrisma
+): Promise<PublicPersona | null> => {
+  return prisma.persona.findFirst({
+    where: {
+      id: personaId,
+      userId,
+      deletedAt: null,
+    },
+    select: publicPersonaSelect,
+  });
+};
+
+// Internal version that includes OpenAI fields
+const findPersonaByUserAndIdInternal = async (
+  userId: number,
+  personaId: number,
+  prisma: PrismaClient = defaultPrisma
 ): Promise<Persona | null> => {
   return prisma.persona.findFirst({
     where: {
@@ -204,9 +275,11 @@ export {
   findActiveByUserId,
   findActiveByUserIdWithFiles,
   findById,
+  findByIdInternal,
   findByIdWithKnowledgeBase,
   findByIdWithUser,
   findPersonaByUserAndId,
+  findPersonaByUserAndIdInternal,
   restorePersona,
   softDeletePersona,
   updatePersona,

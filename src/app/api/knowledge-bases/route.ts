@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import {
   createKnowledgeBaseService,
-  getUserKnowledgeBasesService,
+  getUserKnowledgeBasesPublicService,
 } from '@/services/internal/knowledge-base';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { z } from 'zod';
@@ -38,7 +38,7 @@ export async function GET() {
     }
 
     // Get user's knowledge bases
-    const result = await getUserKnowledgeBasesService(user.id);
+    const result = await getUserKnowledgeBasesPublicService(user.id);
 
     if (!result.success) {
       return NextResponse.json(

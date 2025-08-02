@@ -8,13 +8,15 @@ import {
   findActiveByUserIdWithFiles,
   findById,
   findPersonaByUserAndId,
+  findPersonaByUserAndIdInternal,
   softDeletePersona,
   updatePersona,
 } from '@/services/repositories/persona';
 import {
   CreateKnowledgeBaseData,
   CreatePersonaData,
-  PersonaWithKnowledgeBase,
+  PublicPersona,
+  PublicPersonaWithKnowledgeBase,
   UpdatePersonaData,
 } from '@/types/chat';
 
@@ -115,7 +117,7 @@ const createPersonaService = async (
 const getUserPersonasService = async (
   userId: number,
   prisma?: PrismaClient
-): Promise<PersonaServiceResult<PersonaWithKnowledgeBase[]>> => {
+): Promise<PersonaServiceResult<PublicPersonaWithKnowledgeBase[]>> => {
   try {
     const personas = await findActiveByUserIdWithFiles(userId, prisma);
     return {
@@ -133,7 +135,7 @@ const getUserPersonasService = async (
 const getPersonaByIdService = async (
   personaId: number,
   prisma?: PrismaClient
-): Promise<PersonaServiceResult<Persona>> => {
+): Promise<PersonaServiceResult<PublicPersona>> => {
   try {
     const persona = await findById(personaId, prisma);
 
@@ -161,10 +163,10 @@ const updatePersonaService = async (
   personaId: number,
   data: UpdatePersonaData,
   prisma?: PrismaClient
-): Promise<PersonaServiceResult<Persona>> => {
+): Promise<PersonaServiceResult<PublicPersona>> => {
   try {
-    // Check if persona exists and belongs to user
-    const existingPersona = await findPersonaByUserAndId(userId, personaId, prisma);
+    // Check if persona exists and belongs to user (using internal function to get OpenAI fields)
+    const existingPersona = await findPersonaByUserAndIdInternal(userId, personaId, prisma);
 
     if (!existingPersona) {
       return {
@@ -194,7 +196,7 @@ const updatePersonaService = async (
       }
     }
 
-    const updatedPersona = await updatePersona(
+    await updatePersona(
       personaId,
       {
         name: data.name?.trim(),
@@ -207,9 +209,12 @@ const updatePersonaService = async (
       prisma
     );
 
+    // Fetch the updated persona using public function (excludes OpenAI fields)
+    const updatedPersona = await findById(personaId, prisma);
+
     return {
       success: true,
-      data: updatedPersona,
+      data: updatedPersona!,
     };
   } catch (error) {
     console.error('Error in updatePersonaService:', error);

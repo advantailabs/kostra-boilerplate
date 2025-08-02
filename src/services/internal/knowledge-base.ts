@@ -4,7 +4,9 @@ import {
   createKnowledgeBase,
   deleteKnowledgeBase,
   findKnowledgeBaseById,
+  findKnowledgeBaseByIdPublic,
   findKnowledgeBasesByUserId,
+  findKnowledgeBasesByUserIdPublic,
   getKnowledgeBaseFiles,
   updateKnowledgeBase,
 } from '@/services/repositories/knowledge-base';
@@ -101,6 +103,33 @@ const getUserKnowledgeBasesService = async (
   }
 };
 
+// Public version that excludes vectorStoreId
+const getUserKnowledgeBasesPublicService = async (
+  userId: number
+): Promise<KnowledgeBaseServiceResult<any[]>> => {
+  try {
+    const result = await findKnowledgeBasesByUserIdPublic(userId);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
+    return {
+      success: true,
+      data: result.data,
+    };
+  } catch (error) {
+    console.error('Error in getUserKnowledgeBasesPublicService:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch knowledge bases',
+    };
+  }
+};
+
 const getKnowledgeBaseByIdService = async (
   id: number
 ): Promise<KnowledgeBaseServiceResult<KnowledgeBaseWithFiles | null>> => {
@@ -120,6 +149,33 @@ const getKnowledgeBaseByIdService = async (
     };
   } catch (error) {
     console.error('Error in getKnowledgeBaseByIdService:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch knowledge base',
+    };
+  }
+};
+
+// Public version that excludes vectorStoreId
+const getKnowledgeBaseByIdPublicService = async (
+  id: number
+): Promise<KnowledgeBaseServiceResult<KnowledgeBaseWithFiles | null>> => {
+  try {
+    const result = await findKnowledgeBaseByIdPublic(id);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
+    return {
+      success: true,
+      data: result.data,
+    };
+  } catch (error) {
+    console.error('Error in getKnowledgeBaseByIdPublicService:', error);
     return {
       success: false,
       error: 'Failed to fetch knowledge base',
@@ -298,8 +354,10 @@ export {
   addFileToKnowledgeBaseService,
   createKnowledgeBaseService,
   deleteKnowledgeBaseService,
+  getKnowledgeBaseByIdPublicService,
   getKnowledgeBaseByIdService,
   getKnowledgeBaseFilesService,
+  getUserKnowledgeBasesPublicService,
   getUserKnowledgeBasesService,
   removeFileFromKnowledgeBaseService,
   updateKnowledgeBaseService,

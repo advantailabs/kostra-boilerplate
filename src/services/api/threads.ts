@@ -1,8 +1,8 @@
 import axiosInstance from '@/lib/axios';
 import {
   AddMessageRequest,
-  CitationFile,
   CreateThreadRequest,
+  PublicCitationFile,
   ThreadWithMessages,
 } from '@/types/chat';
 import { Thread } from '@prisma/client';
@@ -15,7 +15,7 @@ export interface StreamMessageResponse {
   error?: string;
   runId?: string;
   threadId?: number;
-  citations?: CitationFile[];
+  citations?: PublicCitationFile[];
 }
 
 export interface ThreadsApiClient {

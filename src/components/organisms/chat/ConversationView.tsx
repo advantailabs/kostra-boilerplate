@@ -5,7 +5,7 @@ import { StreamingMessage } from '@/components/atom/StreamingMessage';
 import { ConversationHeader } from '@/components/molecules/chat/ConversationHeader';
 import { EnhancedMessageInput } from '@/components/molecules/chat/EnhancedMessageInput';
 import { PersonaSelectionModal } from '@/components/molecules/chat/PersonaSelectionModal';
-import { CitationFile } from '@/types/chat';
+import { PublicCitationFile } from '@/types/chat';
 import { Message, Persona, Thread } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -20,7 +20,7 @@ interface ConversationViewProps {
   onClosePersonaModal?: () => void;
   isStreaming?: boolean;
   streamingMessage?: string;
-  currentCitations?: CitationFile[];
+  currentCitations?: PublicCitationFile[];
 }
 
 export function ConversationView({

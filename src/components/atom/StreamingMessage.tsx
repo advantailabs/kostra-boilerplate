@@ -1,5 +1,5 @@
 import { processContentWithCitations } from '@/lib/utils';
-import { CitationFile } from '@/types/chat';
+import { PublicCitationFile } from '@/types/chat';
 import { Avatar } from './Avatar';
 import { CitationList } from './CitationList';
 import MarkdownRenderer from './SyntaxHighlighter';
@@ -8,7 +8,7 @@ interface StreamingMessageProps {
   message: string;
   personaLogo?: string | null;
   personaName?: string | null;
-  citations?: CitationFile[];
+  citations?: PublicCitationFile[];
 }
 
 export function StreamingMessage({
@@ -17,9 +17,9 @@ export function StreamingMessage({
   personaName = 'AI',
   citations = [],
 }: StreamingMessageProps) {
-  // Convert CitationFile to StoredCitation format for processing
+  // Convert PublicCitationFile to StoredCitation format for processing (add dummy openaiFileId for backwards compatibility)
   const storedCitations = citations.map(citation => ({
-    openaiFileId: citation.openaiFileId,
+    openaiFileId: '', // Not needed for display processing
     fileId: citation.fileId,
     originalName: citation.originalName,
     filename: citation.filename,

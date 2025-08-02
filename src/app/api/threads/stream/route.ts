@@ -5,7 +5,7 @@ import { streamAssistantRun } from '@/services/external/openai/messages';
 import { createThread as createOpenAIThread } from '@/services/external/openai/threads';
 import { generateThreadTitle as generateOpenAITitle } from '@/services/external/openai/title-generator';
 import { createMessageWithCitations } from '@/services/repositories/message';
-import { findPersonaByUserAndId } from '@/services/repositories/persona';
+import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { createThreadSchema } from '@/validations/chat';
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const { personaId, message: initialMessage } = validationResult.data;
 
     // Verify persona exists and belongs to user
-    const persona = await findPersonaByUserAndId(user.id, personaId);
+    const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
     if (!persona) {
       return NextResponse.json(
         { error: 'Persona not found', message: 'Persona not found' },
@@ -177,13 +177,26 @@ export async function POST(request: NextRequest) {
                   citations: storedCitations,
                 });
 
-                // Send completion signal with citations
+                // Convert citations to public format (exclude openaiFileId)
+                const publicCitations =
+                  chunk.citations?.map(citation => ({
+                    fileId: citation.fileId,
+                    originalName: citation.originalName,
+                    filename: citation.filename,
+                    mimeType: citation.mimeType,
+                    size: citation.size,
+                    citationText: citation.citationText,
+                    startIndex: citation.startIndex,
+                    endIndex: citation.endIndex,
+                  })) || [];
+
+                // Send completion signal with clean citations
                 const completionData = JSON.stringify({
                   type: 'completed',
                   threadId: thread.id,
                   messageId: assistantMessageId,
                   fullContent: fullResponse,
-                  citations: chunk.citations || [],
+                  citations: publicCitations,
                 });
                 controller.enqueue(encoder.encode(`data: ${completionData}\n\n`));
 

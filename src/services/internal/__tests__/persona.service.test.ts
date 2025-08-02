@@ -11,7 +11,9 @@ import {
 import {
   createPersona,
   findActiveByUserIdWithFiles,
+  findById,
   findPersonaByUserAndId,
+  findPersonaByUserAndIdInternal,
   softDeletePersona,
   updatePersona,
 } from '../../repositories/persona';
@@ -20,7 +22,9 @@ import {
 jest.mock('../../repositories/persona', () => ({
   createPersona: jest.fn(),
   findActiveByUserIdWithFiles: jest.fn(),
+  findById: jest.fn(),
   findPersonaByUserAndId: jest.fn(),
+  findPersonaByUserAndIdInternal: jest.fn(),
   updatePersona: jest.fn(),
   softDeletePersona: jest.fn(),
 }));
@@ -51,8 +55,12 @@ const mockCreatePersona = createPersona as jest.MockedFunction<typeof createPers
 const mockFindActiveByUserIdWithFiles = findActiveByUserIdWithFiles as jest.MockedFunction<
   typeof findActiveByUserIdWithFiles
 >;
+const mockFindById = findById as jest.MockedFunction<typeof findById>;
 const mockFindPersonaByUserAndId = findPersonaByUserAndId as jest.MockedFunction<
   typeof findPersonaByUserAndId
+>;
+const mockFindPersonaByUserAndIdInternal = findPersonaByUserAndIdInternal as jest.MockedFunction<
+  typeof findPersonaByUserAndIdInternal
 >;
 const mockUpdatePersona = updatePersona as jest.MockedFunction<typeof updatePersona>;
 const mockSoftDeletePersona = softDeletePersona as jest.MockedFunction<typeof softDeletePersona>;
@@ -239,12 +247,13 @@ describe('Persona Service', () => {
         description: 'Updated Description',
       };
 
-      mockFindPersonaByUserAndId.mockResolvedValue(mockExistingPersona as any);
+      mockFindPersonaByUserAndIdInternal.mockResolvedValue(mockExistingPersona as any);
       mockUpdatePersona.mockResolvedValue(mockUpdatedPersona as any);
+      mockFindById.mockResolvedValue(mockUpdatedPersona as any);
 
       const result = await updatePersonaService(1, 1, mockUpdateData);
 
-      expect(mockFindPersonaByUserAndId).toHaveBeenCalledWith(1, 1, undefined);
+      expect(mockFindPersonaByUserAndIdInternal).toHaveBeenCalledWith(1, 1, undefined);
       expect(mockUpdatePersona).toHaveBeenCalledWith(
         1,
         {
@@ -258,7 +267,7 @@ describe('Persona Service', () => {
     });
 
     it('should fail when user does not own persona', async () => {
-      mockFindPersonaByUserAndId.mockResolvedValue(null);
+      mockFindPersonaByUserAndIdInternal.mockResolvedValue(null);
 
       const result = await updatePersonaService(1, 999, { name: 'Updated' });
 

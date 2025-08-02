@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/atom/Avatar';
 import { cx, processContentWithCitations } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
-import { CitationFile, StoredCitation } from '@/types/chat';
+import { PublicCitationFile, StoredCitation } from '@/types/chat';
 import { Message, Persona } from '@prisma/client';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -11,7 +11,7 @@ import MarkdownRenderer from './SyntaxHighlighter';
 interface MessageBubbleProps {
   message: Message;
   persona?: Persona | null;
-  citations?: CitationFile[];
+  citations?: PublicCitationFile[];
   className?: string;
 }
 
@@ -28,9 +28,8 @@ export function MessageBubble({ message, persona, citations, className }: Messag
     return citations;
   })();
 
-  // Convert stored citations to CitationFile format for display
-  const displayCitations: CitationFile[] = storedCitations.map(citation => ({
-    openaiFileId: citation.openaiFileId,
+  // Convert stored citations to PublicCitationFile format for display
+  const displayCitations: PublicCitationFile[] = storedCitations.map(citation => ({
     fileId: citation.fileId,
     originalName: citation.originalName,
     filename: citation.filename,

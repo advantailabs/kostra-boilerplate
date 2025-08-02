@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import {
   deleteKnowledgeBaseService,
-  getKnowledgeBaseByIdService,
+  getKnowledgeBaseByIdPublicService,
   updateKnowledgeBaseService,
 } from '@/services/internal/knowledge-base';
 import { getUserByClerkId } from '@/services/repositories/user';
@@ -52,7 +52,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     }
 
     // Get knowledge base with files
-    const result = await getKnowledgeBaseByIdService(knowledgeBaseId);
+    const result = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
 
     if (!result.success) {
       return NextResponse.json(

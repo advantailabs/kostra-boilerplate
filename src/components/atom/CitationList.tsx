@@ -1,9 +1,9 @@
 import { useFileDownload } from '@/hooks/useFiles';
-import { CitationFile } from '@/types/chat';
+import { PublicCitationFile } from '@/types/chat';
 import { RiFileTextLine } from '@remixicon/react';
 
 interface CitationListProps {
-  citations: CitationFile[];
+  citations: PublicCitationFile[];
   className?: string;
 }
 
@@ -31,7 +31,7 @@ export function CitationList({ citations, className }: CitationListProps) {
       <div className="flex flex-wrap gap-1">
         {citations.map((citation, index) => (
           <button
-            key={`${citation.openaiFileId}-${index}`}
+            key={`${citation.fileId}-${index}`}
             onClick={() => handleDownload(citation.fileId, citation.originalName)}
             disabled={downloadFile.isPending}
             className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"

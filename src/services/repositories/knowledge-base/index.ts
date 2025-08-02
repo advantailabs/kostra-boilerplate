@@ -8,6 +8,19 @@ import {
 
 const prisma = new PrismaClient();
 
+// Select object to exclude OpenAI fields from public responses
+const publicKnowledgeBaseSelect = {
+  id: true,
+  userId: true,
+  title: true,
+  description: true,
+  metadata: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  // Explicitly exclude vectorStoreId
+};
+
 export async function createKnowledgeBase(
   data: CreateKnowledgeBaseData
 ): Promise<RepositoryResult<KnowledgeBase>> {
@@ -66,6 +79,59 @@ export async function findKnowledgeBaseById(
   }
 }
 
+// Public version that excludes vectorStoreId
+export async function findKnowledgeBaseByIdPublic(
+  id: number
+): Promise<RepositoryResult<KnowledgeBaseWithFiles | null>> {
+  try {
+    const knowledgeBase = await prisma.knowledgeBase.findFirst({
+      where: { id, deletedAt: null },
+      select: {
+        ...publicKnowledgeBaseSelect,
+        fileKnowledgeBases: {
+          where: { file: { deletedAt: null } },
+          include: {
+            file: {
+              select: {
+                id: true,
+                filename: true,
+                originalName: true,
+                mimeType: true,
+                size: true,
+                url: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
+        personas: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            userId: true,
+            name: true,
+            description: true,
+            instructions: true,
+            tags: true,
+            logo: true,
+            knowledgeBaseId: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true,
+            // Explicitly exclude openaiAssistantId
+          },
+        },
+      },
+    });
+
+    return { success: true, data: knowledgeBase as any };
+  } catch (error) {
+    console.error('Error finding knowledge base:', error);
+    return { success: false, error: 'Failed to find knowledge base' };
+  }
+}
+
 export async function findKnowledgeBasesByUserId(
   userId: number
 ): Promise<RepositoryResult<KnowledgeBaseWithFiles[]>> {
@@ -98,6 +164,60 @@ export async function findKnowledgeBasesByUserId(
     });
 
     return { success: true, data: knowledgeBases };
+  } catch (error) {
+    console.error('Error finding knowledge bases by user:', error);
+    return { success: false, error: 'Failed to find knowledge bases' };
+  }
+}
+
+// Public version that excludes vectorStoreId
+export async function findKnowledgeBasesByUserIdPublic(
+  userId: number
+): Promise<RepositoryResult<KnowledgeBaseWithFiles[]>> {
+  try {
+    const knowledgeBases = await prisma.knowledgeBase.findMany({
+      where: { userId, deletedAt: null },
+      select: {
+        ...publicKnowledgeBaseSelect,
+        fileKnowledgeBases: {
+          where: { file: { deletedAt: null } },
+          include: {
+            file: {
+              select: {
+                id: true,
+                filename: true,
+                originalName: true,
+                mimeType: true,
+                size: true,
+                url: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
+        personas: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            userId: true,
+            name: true,
+            description: true,
+            instructions: true,
+            tags: true,
+            logo: true,
+            knowledgeBaseId: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true,
+            // Explicitly exclude openaiAssistantId
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return { success: true, data: knowledgeBases as any };
   } catch (error) {
     console.error('Error finding knowledge bases by user:', error);
     return { success: false, error: 'Failed to find knowledge bases' };

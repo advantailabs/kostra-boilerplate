@@ -1,6 +1,6 @@
 import { ThreadSidebar } from '@/components/molecules/chat/ThreadSidebar';
 import { ConversationView } from '@/components/organisms/chat/ConversationView';
-import { CitationFile } from '@/types/chat';
+import { PublicCitationFile } from '@/types/chat';
 import { Message, Persona, Thread } from '@prisma/client';
 import { useState } from 'react';
 
@@ -15,7 +15,7 @@ interface ChatInterfaceProps {
   onNewThread: () => void;
   isStreaming?: boolean;
   streamingMessage?: string;
-  currentCitations?: CitationFile[];
+  currentCitations?: PublicCitationFile[];
 }
 
 export function ChatInterface({

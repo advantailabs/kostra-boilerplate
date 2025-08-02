@@ -1,7 +1,25 @@
 import { File, PrismaClient } from '@prisma/client';
 import { RepositoryResult } from '../../../types/chat';
 
+export type PublicFile = Omit<File, 'openaiFileId'>;
+
 const prisma = new PrismaClient();
+
+// Select object to exclude OpenAI fields from public responses
+const publicFileSelect = {
+  id: true,
+  userId: true,
+  filename: true,
+  originalName: true,
+  mimeType: true,
+  size: true,
+  url: true,
+  metadata: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  // Explicitly exclude openaiFileId
+};
 
 export interface CreateFileData {
   userId: number;
@@ -25,6 +43,22 @@ export interface UpdateFileData {
 }
 
 export interface FileWithKnowledgeBases extends File {
+  fileKnowledgeBases: {
+    knowledgeBase: {
+      id: number;
+      title: string;
+      description: string;
+      personas: {
+        id: number;
+        name: string;
+        description: string;
+        logo: string | null;
+      }[];
+    };
+  }[];
+}
+
+export interface PublicFileWithKnowledgeBases extends PublicFile {
   fileKnowledgeBases: {
     knowledgeBase: {
       id: number;
@@ -71,7 +105,8 @@ export async function createFile(data: CreateFileData): Promise<RepositoryResult
   }
 }
 
-export async function findFileById(
+// Internal function that includes OpenAI fields for backend operations
+export async function findFileByIdInternal(
   id: number
 ): Promise<RepositoryResult<FileWithKnowledgeBases | null>> {
   try {
@@ -104,12 +139,48 @@ export async function findFileById(
   }
 }
 
+// Public function that excludes OpenAI fields from responses
+export async function findFileById(
+  id: number
+): Promise<RepositoryResult<PublicFileWithKnowledgeBases | null>> {
+  try {
+    const file = await prisma.file.findFirst({
+      where: { id, deletedAt: null },
+      select: {
+        ...publicFileSelect,
+        fileKnowledgeBases: {
+          include: {
+            knowledgeBase: {
+              include: {
+                personas: {
+                  select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    logo: true,
+                    // Explicitly exclude openaiAssistantId
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { success: true, data: file };
+  } catch (error) {
+    console.error('Error finding file:', error);
+    return { success: false, error: 'Failed to find file' };
+  }
+}
+
 export async function findFilesByUserId(
   userId: number,
   page = 1,
   limit = 20,
   filters?: FileFilters
-): Promise<RepositoryResult<{ files: FileWithKnowledgeBases[]; total: number }>> {
+): Promise<RepositoryResult<{ files: PublicFileWithKnowledgeBases[]; total: number }>> {
   try {
     const skip = (page - 1) * limit;
 
@@ -162,7 +233,8 @@ export async function findFilesByUserId(
     const [files, total] = await Promise.all([
       prisma.file.findMany({
         where: whereClause,
-        include: {
+        select: {
+          ...publicFileSelect,
           fileKnowledgeBases: {
             include: {
               knowledgeBase: {
@@ -173,6 +245,7 @@ export async function findFilesByUserId(
                       name: true,
                       description: true,
                       logo: true,
+                      // Explicitly exclude openaiAssistantId
                     },
                   },
                 },

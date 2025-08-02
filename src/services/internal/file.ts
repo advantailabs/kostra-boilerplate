@@ -13,9 +13,10 @@ import {
   CreateFileData,
   deleteFile,
   FileFilters,
-  FileWithKnowledgeBases,
   findFileById,
+  findFileByIdInternal,
   findFilesByUserId,
+  PublicFileWithKnowledgeBases,
   removeFileFromKnowledgeBase,
   updateFile,
   UpdateFileData,
@@ -57,7 +58,7 @@ export interface UploadFileData {
 }
 
 export interface FileListResult {
-  files: FileWithKnowledgeBases[];
+  files: PublicFileWithKnowledgeBases[];
   total: number;
   page: number;
   limit: number;
@@ -71,7 +72,7 @@ const addFileToKnowledgeBaseService = async (
 ): Promise<FileServiceResult<void>> => {
   try {
     // Get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(fileId);
+    const fileResult = await findFileByIdInternal(fileId);
 
     if (!fileResult.success || !fileResult.data) {
       return {
@@ -140,7 +141,7 @@ const removeFileFromKnowledgeBaseService = async (
 ): Promise<FileServiceResult<void>> => {
   try {
     // Get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(fileId);
+    const fileResult = await findFileByIdInternal(fileId);
 
     if (!fileResult.success || !fileResult.data) {
       return {
@@ -335,7 +336,7 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
 
 const getFileByIdService = async (
   id: number
-): Promise<FileServiceResult<FileWithKnowledgeBases | null>> => {
+): Promise<FileServiceResult<PublicFileWithKnowledgeBases | null>> => {
   try {
     const result = await findFileById(id);
 
@@ -389,7 +390,7 @@ const updateFileService = async (
 const deleteFileService = async (id: number): Promise<FileServiceResult<void>> => {
   try {
     // First, get the file to check if it exists and get its OpenAI file ID
-    const fileResult = await findFileById(id);
+    const fileResult = await findFileByIdInternal(id);
 
     if (!fileResult.success || !fileResult.data) {
       return {
