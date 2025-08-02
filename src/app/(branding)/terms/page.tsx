@@ -1,0 +1,212 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
+export default function TermsOfServicePage() {
+  return (
+    <>
+      {/* Background Effects */}
+      <div className="absolute inset-0">
+        <div className="bg-gradient-radial absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 via-purple-500/5 to-transparent blur-3xl" />
+        <div className="bg-gradient-radial absolute right-0 top-1/3 h-96 w-96 translate-x-1/2 from-purple-500/10 via-pink-500/5 to-transparent blur-3xl" />
+      </div>
+
+      {/* Content */}
+      <div className="container relative mx-auto px-6 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mx-auto max-w-4xl"
+        >
+          {/* Header */}
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">Terms of Service</h1>
+            <p className="text-lg text-gray-400">
+              Last updated:{' '}
+              {new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          </div>
+
+          {/* Content */}
+          <div className="prose prose-invert mx-auto max-w-none">
+            <div className="space-y-8 text-gray-300">
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">1. Acceptance of Terms</h2>
+                <p>
+                  By accessing and using Peon ("the Service"), you accept and agree to be bound by
+                  the terms and provision of this agreement. If you do not agree to abide by the
+                  above, please do not use this service.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">
+                  2. Description of Service
+                </h2>
+                <p>
+                  Peon is an AI-powered knowledge management platform that helps organizations
+                  transform scattered information into actionable intelligence through AI
+                  assistants, document organization, and intelligent automation features.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">3. User Accounts</h2>
+                <div className="space-y-4">
+                  <p>
+                    To access certain features of the Service, you must register for an account. You
+                    are responsible for:
+                  </p>
+                  <ul className="list-disc space-y-2 pl-6">
+                    <li>Maintaining the confidentiality of your account credentials</li>
+                    <li>All activities that occur under your account</li>
+                    <li>Notifying us immediately of any unauthorized use of your account</li>
+                    <li>Providing accurate and complete information during registration</li>
+                  </ul>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">4. Acceptable Use</h2>
+                <div className="space-y-4">
+                  <p>You agree not to use the Service to:</p>
+                  <ul className="list-disc space-y-2 pl-6">
+                    <li>
+                      Upload, transmit, or distribute any content that is illegal, harmful, or
+                      violates third-party rights
+                    </li>
+                    <li>
+                      Attempt to gain unauthorized access to our systems or other users' accounts
+                    </li>
+                    <li>
+                      Use the Service for any commercial purpose without our explicit written
+                      consent
+                    </li>
+                    <li>
+                      Interfere with or disrupt the Service or servers connected to the Service
+                    </li>
+                    <li>Use automated scripts or bots to access the Service</li>
+                    <li>
+                      Reverse engineer, decompile, or attempt to extract source code from the
+                      Service
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">5. Content and Data</h2>
+                <div className="space-y-4">
+                  <p>
+                    <strong>Your Content:</strong> You retain ownership of all content and data you
+                    upload to the Service. By uploading content, you grant us a limited license to
+                    process, store, and analyze your content solely for the purpose of providing the
+                    Service.
+                  </p>
+                  <p>
+                    <strong>AI Processing:</strong> Your content may be processed by AI systems to
+                    provide knowledge management and assistance features. We implement appropriate
+                    safeguards to protect your data during processing.
+                  </p>
+                  <p>
+                    <strong>Data Security:</strong> We implement industry-standard security measures
+                    to protect your data, but no system is 100% secure. You use the Service at your
+                    own risk.
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">6. Intellectual Property</h2>
+                <p>
+                  The Service, including its design, functionality, and underlying technology, is
+                  owned by Peon and protected by copyright, trademark, and other intellectual
+                  property laws. You may not copy, modify, distribute, or create derivative works
+                  based on the Service without our explicit written permission.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">7. Privacy</h2>
+                <p>
+                  Your privacy is important to us. Our collection and use of personal information is
+                  governed by our Privacy Policy, which is incorporated into these Terms by
+                  reference.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">8. Service Availability</h2>
+                <p>
+                  We strive to maintain high availability of the Service but cannot guarantee
+                  uninterrupted access. We may temporarily suspend the Service for maintenance,
+                  updates, or other operational reasons with reasonable notice when possible.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">
+                  9. Limitation of Liability
+                </h2>
+                <p>
+                  To the maximum extent permitted by law, Peon shall not be liable for any indirect,
+                  incidental, special, consequential, or punitive damages, or any loss of profits or
+                  revenues, whether incurred directly or indirectly, or any loss of data, use,
+                  goodwill, or other intangible losses resulting from your use of the Service.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">10. Termination</h2>
+                <div className="space-y-4">
+                  <p>Either party may terminate this agreement at any time. Upon termination:</p>
+                  <ul className="list-disc space-y-2 pl-6">
+                    <li>Your access to the Service will be immediately suspended</li>
+                    <li>You may request deletion of your data within 30 days of termination</li>
+                    <li>
+                      We may delete your data after the retention period specified in our Privacy
+                      Policy
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">11. Governing Law</h2>
+                <p>
+                  These Terms shall be governed by and construed in accordance with the laws of
+                  [Your Jurisdiction], without regard to its conflict of law provisions. Any
+                  disputes arising from these Terms shall be resolved in the courts of [Your
+                  Jurisdiction].
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">12. Changes to Terms</h2>
+                <p>
+                  We reserve the right to modify these Terms at any time. We will notify users of
+                  significant changes via email or through the Service. Your continued use of the
+                  Service after such modifications constitutes acceptance of the updated Terms.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="mb-4 text-2xl font-semibold text-white">13. Contact Information</h2>
+                <p>If you have any questions about these Terms of Service, please contact us at:</p>
+                <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-6">
+                  <p>Email: legal@peon.ai</p>
+                </div>
+              </section>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </>
+  );
+}

@@ -36,7 +36,11 @@ const footerSections: FooterSection[] = [
   },
   {
     title: 'Resources',
-    links: [{ name: 'Security', href: '#security' }],
+    links: [
+      { name: 'Security', href: '#security' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' },
+    ],
   },
 ];
 
