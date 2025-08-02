@@ -231,25 +231,33 @@ const createHorizontalRule = (forceWhiteText: boolean) =>
     );
   });
 
+const createCodeBlock = (forceWhiteText: boolean) =>
+  forwardRef<HTMLElement, any>(function CodeBlockWrapper(props, ref) {
+    return <CodeBlock {...props} forceWhiteText={forceWhiteText} ref={ref} />;
+  });
+
 export default function MarkdownRenderer({
   content,
   forceWhiteText = false,
 }: MarkdownRendererProps) {
   // Create component instances with the forceWhiteText prop baked in
-  const components = useMemo(() => ({
-    code: (props: any) => <CodeBlock {...props} forceWhiteText={forceWhiteText} />,
-    p: createParagraph(forceWhiteText),
-    ul: createUnorderedList(forceWhiteText),
-    ol: createOrderedList(forceWhiteText),
-    li: createListItem(forceWhiteText),
-    strong: createStrong(forceWhiteText),
-    em: createEmphasis(forceWhiteText),
-    h1: createHeading1(forceWhiteText),
-    h2: createHeading2(forceWhiteText),
-    h3: createHeading3(forceWhiteText),
-    h4: createHeading4(forceWhiteText),
-    hr: createHorizontalRule(forceWhiteText),
-  }), [forceWhiteText]);
+  const components = useMemo(
+    () => ({
+      code: createCodeBlock(forceWhiteText),
+      p: createParagraph(forceWhiteText),
+      ul: createUnorderedList(forceWhiteText),
+      ol: createOrderedList(forceWhiteText),
+      li: createListItem(forceWhiteText),
+      strong: createStrong(forceWhiteText),
+      em: createEmphasis(forceWhiteText),
+      h1: createHeading1(forceWhiteText),
+      h2: createHeading2(forceWhiteText),
+      h3: createHeading3(forceWhiteText),
+      h4: createHeading4(forceWhiteText),
+      hr: createHorizontalRule(forceWhiteText),
+    }),
+    [forceWhiteText]
+  );
 
   return (
     <div
