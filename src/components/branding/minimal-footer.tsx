@@ -1,9 +1,23 @@
 'use client';
 
+import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 
-const footerSections = [
+type FooterLink = {
+  name: string;
+  href: string;
+  isSignIn?: boolean;
+  isDashboard?: boolean;
+};
+
+type FooterSection = {
+  title: string;
+  links: FooterLink[];
+};
+
+const footerSections: FooterSection[] = [
   {
     title: 'Product',
     links: [
@@ -14,7 +28,11 @@ const footerSections = [
   },
   {
     title: 'Company',
-    links: [{ name: 'Contact', href: '/contact' }],
+    links: [
+      { name: 'Contact', href: '/contact' },
+      { name: 'Sign In', href: '#', isSignIn: true },
+      { name: 'Dashboard', href: '/app', isDashboard: true },
+    ],
   },
   {
     title: 'Resources',
@@ -23,6 +41,7 @@ const footerSections = [
 ];
 
 export function MinimalFooter() {
+  const { isSignedIn, isLoaded } = useUser();
   return (
     <footer className="border-t border-white/5 bg-black">
       <div className="container mx-auto px-6">
@@ -111,16 +130,38 @@ export function MinimalFooter() {
                 >
                   <h3 className="mb-6 font-medium text-white">{section.title}</h3>
                   <ul className="space-y-4">
-                    {section.links.map(link => (
-                      <li key={link.name}>
-                        <a
-                          href={link.href}
-                          className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
-                        >
-                          {link.name}
-                        </a>
-                      </li>
-                    ))}
+                    {section.links.map(link => {
+                      // Skip sign-in link if user is already signed in
+                      if (link.isSignIn && isLoaded && isSignedIn) return null;
+                      // Skip dashboard link if user is not signed in
+                      if (link.isDashboard && (!isLoaded || !isSignedIn)) return null;
+
+                      return (
+                        <li key={link.name}>
+                          {link.isSignIn ? (
+                            <SignInButton mode="modal">
+                              <button className="text-sm text-gray-400 transition-colors duration-200 hover:text-white">
+                                {link.name}
+                              </button>
+                            </SignInButton>
+                          ) : link.isDashboard ? (
+                            <Link
+                              href={link.href}
+                              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                            >
+                              {link.name}
+                            </Link>
+                          ) : (
+                            <a
+                              href={link.href}
+                              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                            >
+                              {link.name}
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </motion.div>
               </div>

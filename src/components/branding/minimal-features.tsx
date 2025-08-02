@@ -1,5 +1,6 @@
 'use client';
 
+import { SignInButton, useUser } from '@clerk/nextjs';
 import {
   RiBarChartFill,
   RiFolder2Fill,
@@ -9,6 +10,7 @@ import {
   RiUser3Fill,
 } from '@remixicon/react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const features = [
   {
@@ -50,6 +52,7 @@ const features = [
 ];
 
 export function MinimalFeatures() {
+  const { isSignedIn, isLoaded } = useUser();
   return (
     <section className="relative bg-gray-950 py-32">
       <div className="container mx-auto px-6">
@@ -113,13 +116,31 @@ export function MinimalFeatures() {
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full rounded-lg bg-white px-8 py-4 font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto"
-              >
-                Sign In Now
-              </motion.button>
+              {isLoaded && isSignedIn ? (
+                <Link href="/app">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full rounded-lg bg-white px-8 py-4 font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto"
+                  >
+                    Go to App
+                  </motion.button>
+                </Link>
+              ) : (
+                <SignInButton mode="modal">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full rounded-lg bg-white px-8 py-4 font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto"
+                    onClick={() => {
+                      // We'll handle the redirect after sign-in manually
+                      localStorage.setItem('redirectAfterSignIn', '/app');
+                    }}
+                  >
+                    Sign In Now
+                  </motion.button>
+                </SignInButton>
+              )}
             </div>
 
             <p className="mt-6 text-sm text-gray-500">

@@ -1,10 +1,13 @@
 'use client';
 
+import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import UserProfile from './UserProfile';
 
 export function ModernNavigation() {
+  const { isSignedIn, isLoaded } = useUser();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -70,14 +73,19 @@ export function ModernNavigation() {
 
           {/* Desktop CTA */}
           <div className="hidden items-center gap-4 md:flex">
-            <motion.a
-              href="/app"
-              className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-all duration-200 hover:bg-gray-100"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Sign in
-            </motion.a>
+            {isLoaded && isSignedIn ? (
+              <UserProfile />
+            ) : (
+              <SignInButton mode="modal">
+                <motion.button
+                  className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-all duration-200 hover:bg-gray-100"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Sign in
+                </motion.button>
+              </SignInButton>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -127,13 +135,20 @@ export function ModernNavigation() {
                 </a>
               ))}
               <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
-                <a
-                  href="/app"
-                  className="rounded-lg bg-white px-4 py-3 text-center text-sm font-medium text-black transition-all duration-200 hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Sign In
-                </a>
+                {isLoaded && isSignedIn ? (
+                  <div className="px-2 py-2">
+                    <UserProfile />
+                  </div>
+                ) : (
+                  <SignInButton mode="modal">
+                    <button
+                      className="w-full rounded-lg bg-white px-4 py-3 text-center text-sm font-medium text-black transition-all duration-200 hover:bg-gray-100"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </button>
+                  </SignInButton>
+                )}
               </div>
             </div>
           </motion.div>

@@ -1,9 +1,12 @@
 'use client';
 
+import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 export function InnovativeHero() {
+  const { isSignedIn, isLoaded } = useUser();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -95,19 +98,73 @@ export function InnovativeHero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative overflow-hidden rounded-lg bg-white px-8 py-4 text-lg font-medium text-black transition-all duration-300"
-            >
-              <span className="relative z-10">Start Asking Now</span>
-              <motion.div
-                className="absolute inset-0 bg-gray-200"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.button>
+            {isLoaded && isSignedIn ? (
+              <Link href="/app/chat">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-8 py-4 text-lg font-medium text-white transition-all duration-300"
+                >
+                  <span className="relative z-10">Start a new chat</span>
+                  <motion.div
+                    className="absolute inset-0 bg-white/10"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              </Link>
+            ) : (
+              <SignInButton mode="modal">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-8 py-4 text-lg font-medium text-white transition-all duration-300"
+                >
+                  <span className="relative z-10">Ready to get started?</span>
+                  <motion.div
+                    className="absolute inset-0 bg-white/10"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              </SignInButton>
+            )}
+
+            {isLoaded && isSignedIn ? (
+              <Link href="/app">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative overflow-hidden rounded-lg bg-white px-8 py-4 text-lg font-medium text-black transition-all duration-300"
+                >
+                  <span className="relative z-10">Go to App</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gray-200"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.button>
+              </Link>
+            ) : (
+              <SignInButton mode="modal">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative overflow-hidden rounded-lg bg-white px-8 py-4 text-lg font-medium text-black transition-all duration-300"
+                >
+                  <span className="relative z-10">Start Asking Now</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gray-200"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.button>
+              </SignInButton>
+            )}
           </motion.div>
 
           {/* Metrics bar */}

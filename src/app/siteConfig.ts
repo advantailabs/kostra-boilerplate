@@ -3,7 +3,7 @@ export const siteConfig = {
   url: 'https://peon.sh',
   description: 'Your Personal AI Peon',
   baseLinks: {
-    home: '/app/search',
+    home: '/app',
     settings: {
       users: '/app/settings/users',
     },
