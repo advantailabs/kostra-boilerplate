@@ -14,17 +14,17 @@ const inter = Inter({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://tracko.advant.xyz'),
+  metadataBase: new URL('https://peon.sh'),
   title: siteConfig.name,
   description: siteConfig.description,
   keywords: [],
   authors: [
     {
-      name: 'Advant',
-      url: 'https://advant.xyz',
+      name: 'Peon',
+      url: 'https://peon.sh',
     },
   ],
-  creator: 'Advant',
+  creator: 'Peon',
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -34,7 +34,18 @@ export const metadata = {
     siteName: siteConfig.name,
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon/favicon.ico' },
+      { url: '/favicon/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: { url: '/favicon/apple-touch-icon.png' },
+    other: [
+      {
+        rel: 'manifest',
+        url: '/favicon/site.webmanifest',
+      },
+    ],
   },
 };
 

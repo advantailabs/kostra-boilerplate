@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: 'Dashboard',
-  url: 'https://tracko.advant.xyz',
-  description: 'Minimalist project management tool',
+  name: 'Peon',
+  url: 'https://peon.sh',
+  description: 'Your Personal AI Peon',
   baseLinks: {
     home: '/app/search',
     settings: {

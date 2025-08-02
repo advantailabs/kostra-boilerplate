@@ -7,14 +7,14 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Peon - Intelligent Knowledge Management Platform',
+  title: 'Peon - Your Personal AI Peon',
   description:
     'Transform scattered information into actionable intelligence with AI-powered knowledge assistants. Trusted by hundreds of organizations worldwide.',
   keywords:
     'knowledge management, AI assistants, document organization, enterprise search, intelligent automation',
   authors: [{ name: 'Peon Team' }],
   openGraph: {
-    title: 'Peon - Intelligent Knowledge Management Platform',
+    title: 'Peon - Your Personal AI Peon',
     description:
       'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
     type: 'website',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Peon - Intelligent Knowledge Management Platform',
+    title: 'Peon - Your Personal AI Peon',
     description:
       'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
   },
