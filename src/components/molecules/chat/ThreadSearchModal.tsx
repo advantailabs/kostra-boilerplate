@@ -132,7 +132,7 @@ export function ThreadSearchModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800">
+      <DialogContent className="max-h-[90vh] max-w-2xl border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800">
         {/* Search Header */}
         <div className="flex items-center border-b border-gray-200 px-4 py-3 dark:border-gray-700">
           <div className="flex-1">

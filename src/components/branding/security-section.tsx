@@ -24,7 +24,9 @@ const securityFeatures = [
 
 export function SecuritySection() {
   return (
-    <section className="relative bg-gray-900/50 py-20">
+    <section className="relative -mt-1 bg-black py-20">
+      <div className="absolute inset-x-0 top-0 h-px bg-gray-800/30" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-emerald-950/5 to-black/0" />
       <div className="container mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -56,7 +58,7 @@ export function SecuritySection() {
               whileHover={{ y: -5 }}
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-green-500/20 text-green-400">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 text-emerald-400">
                   <feature.icon className="h-6 w-6" />
                 </div>
                 <div>

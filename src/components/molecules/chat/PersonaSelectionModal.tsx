@@ -63,6 +63,7 @@ export function PersonaSelectionModal({
       description="Choose a persona to start your conversation"
       footer={personas.length > 0 ? customFooter : undefined}
       maxWidth="max-w-md"
+      contentClassName="max-h-[90vh] overflow-y-auto"
     >
       {personas.length === 0 ? (
         <div className="py-6 text-center">

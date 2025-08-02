@@ -75,6 +75,7 @@ export function DeleteKnowledgeBaseDialog({
       title="Delete Knowledge Base"
       description="Please confirm to delete this knowledge base"
       maxWidth="sm:max-w-md"
+      contentClassName="max-h-[90vh] overflow-y-auto"
       footer={customFooter}
     >
       {/* Warning Message */}

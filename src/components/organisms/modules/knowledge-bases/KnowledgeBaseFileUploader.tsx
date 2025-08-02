@@ -281,6 +281,7 @@ export function KnowledgeBaseFileUploader({
         title="Upload Files to Knowledge Base"
         description="Add documents to your knowledge base"
         maxWidth="max-w-2xl"
+        contentClassName="max-h-[90vh] overflow-y-auto"
         secondaryActionText="Cancel"
         primaryActionText={
           canSave

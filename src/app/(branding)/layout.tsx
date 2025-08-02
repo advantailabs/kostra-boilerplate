@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google';
 import React from 'react';
 
+import { MinimalFooter } from '@/components/branding/minimal-footer';
+import { ModernNavigation } from '@/components/branding/modern-navigation';
 import type { Metadata } from 'next';
 import '../globals.css';
 
@@ -35,7 +37,13 @@ export default function BrandingLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-black text-white antialiased`}>{children}</body>
+      <body className={`${inter.className} bg-black text-white antialiased`}>
+        <div className="relative min-h-screen bg-black">
+          <ModernNavigation />
+          <main className="relative pt-16">{children}</main>
+          <MinimalFooter />
+        </div>
+      </body>
     </html>
   );
 }

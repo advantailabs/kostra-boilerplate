@@ -81,6 +81,7 @@ export function KnowledgeBaseSelectionModal({
       title="Add to Knowledge Base"
       description="Choose a knowledge base to add this file to"
       maxWidth="max-w-md"
+      contentClassName="max-h-[90vh] overflow-y-auto"
       footer={actionFooter}
     >
       {knowledgeBases.length === 0 ? (

@@ -92,6 +92,7 @@ export function FileFilterModal({
       title="Filter Files"
       description="Set filters to find the files you need"
       maxWidth="max-w-2xl"
+      contentClassName="max-h-[90vh] overflow-y-auto"
       footer={customFooter}
     >
       {/* Search - Full Width */}
