@@ -28,6 +28,8 @@ export function InnovativeHero() {
       ref={containerRef}
       className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black"
     >
+      {/* Subtle fade to next section */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-950/20 via-gray-950/10 to-transparent" />
       {/* Animated grid background */}
       <div className="absolute inset-0">
         <div

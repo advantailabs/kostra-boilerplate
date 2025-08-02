@@ -5,7 +5,7 @@ import { Calendar, Database, HardDrive, Info, Users } from 'lucide-react';
 import { Avatar } from '@/components/atom/Avatar';
 import { Badge } from '@/components/atom/Badge';
 import { Modal } from '@/components/molecules/common/Modal';
-import { formatFileSize, getFileTypeIconWithColor } from '@/lib/file-utils';
+import { formatFileSize } from '@/lib/file-utils';
 
 interface FileDetailsModalProps {
   isOpen: boolean;
@@ -24,9 +24,6 @@ interface FileDetailsModalProps {
       logo: string | null;
     }>;
   };
-  onRemoveFromKnowledgeBase?: () => void;
-  onDeleteFile?: () => void;
-  showKnowledgeBaseOptions?: boolean;
 }
 
 export function FileDetailsModal({
@@ -71,26 +68,27 @@ export function FileDetailsModal({
     knowledgeBases = file.fileKnowledgeBases?.map((fkb: any) => fkb.knowledgeBase) || [];
   }
 
-  const {
-    icon: FileIcon,
-    textColor: iconColor,
-    bgColor: iconBgColor,
-  } = getFileTypeIconWithColor(file.mimeType);
+  // Icon destructuring removed as it was only used in commented customHeaderContent
+  // const {
+  //   icon: FileIcon,
+  //   textColor: iconColor,
+  //   bgColor: iconBgColor,
+  // } = getFileTypeIconWithColor(file.mimeType);
 
-  // Custom header content for the modal
-  const customHeaderContent = (
-    <div className="flex items-center gap-3">
-      <div className={`rounded-lg p-2 ${iconBgColor}`}>
-        <FileIcon className={`h-5 w-5 ${iconColor}`} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate text-lg font-medium text-gray-900 dark:text-gray-100">
-          {file.originalName}
-        </h3>
-        <p className="truncate text-xs text-gray-500 dark:text-gray-400">{file.mimeType}</p>
-      </div>
-    </div>
-  );
+  // Custom header content for the modal (currently unused but preserved for future use)
+  // const customHeaderContent = (
+  //   <div className="flex items-center gap-3">
+  //     <div className={`rounded-lg p-2 ${iconBgColor}`}>
+  //       <FileIcon className={`h-5 w-5 ${iconColor}`} />
+  //     </div>
+  //     <div className="min-w-0 flex-1">
+  //       <h3 className="truncate text-lg font-medium text-gray-900 dark:text-gray-100">
+  //         {file.originalName}
+  //       </h3>
+  //       <p className="truncate text-xs text-gray-500 dark:text-gray-400">{file.mimeType}</p>
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <Modal

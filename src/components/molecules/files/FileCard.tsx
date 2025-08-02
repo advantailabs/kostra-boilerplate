@@ -302,9 +302,6 @@ export function FileCard({
         onDownload={handleDownload}
         isDownloading={isDownloading}
         knowledgeBaseInfo={knowledgeBaseInfo}
-        onRemoveFromKnowledgeBase={onRemoveFromKnowledgeBase}
-        onDeleteFile={onDeleteFile}
-        showKnowledgeBaseOptions={showKnowledgeBaseOptions}
       />
 
       {/* Remove from Knowledge Base Confirmation Dialog */}

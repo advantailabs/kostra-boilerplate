@@ -65,23 +65,23 @@
     "react/no-unused-prop-types": "warn",
     "import/no-cycle": "off",
     "import/order": "off",
-    
+
     // Disable no-restricted-syntax rule
     "no-restricted-syntax": "off",
-    
+
     // Allow await in loops for streaming operations
     "no-await-in-loop": "off",
     "default-case": "off",
-    
+
     // Allow default parameters in any order (they work fine)
     "default-param-last": "off",
-    
+
     // Allow unnamed async generator functions for streaming
     "func-names": ["warn", "as-needed", { "generators": "never" }],
-    
+
     // Allow require in test files
     "global-require": "off",
-    
+
     // Disable overly strict label accessibility rule
     "jsx-a11y/label-has-associated-control": "off"
   },

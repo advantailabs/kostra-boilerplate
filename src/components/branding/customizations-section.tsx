@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import React from 'react';
 
 import AmazonWebServices from '@/components/icons/AmazonWebServices';
 import Dropbox from '@/components/icons/Dropbox';

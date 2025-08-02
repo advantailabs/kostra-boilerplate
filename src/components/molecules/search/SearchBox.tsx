@@ -182,22 +182,24 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                           ?.title
                       : undefined
                   }
-                  options={
-                    loadingKnowledgeBases
-                      ? [{ value: 'loading', label: 'Loading...', disabled: true }]
-                      : knowledgeBases.length === 0
-                        ? [
-                            {
-                              value: 'no-knowledge-bases',
-                              label: 'No knowledge bases',
-                              disabled: true,
-                            },
-                          ]
-                        : knowledgeBases.map(knowledgeBase => ({
-                            value: knowledgeBase.id.toString(),
-                            label: knowledgeBase.title,
-                          }))
-                  }
+                  options={(() => {
+                    if (loadingKnowledgeBases) {
+                      return [{ value: 'loading', label: 'Loading...', disabled: true }];
+                    }
+                    if (knowledgeBases.length === 0) {
+                      return [
+                        {
+                          value: 'no-knowledge-bases',
+                          label: 'No knowledge bases',
+                          disabled: true,
+                        },
+                      ];
+                    }
+                    return knowledgeBases.map(knowledgeBase => ({
+                      value: knowledgeBase.id.toString(),
+                      label: knowledgeBase.title,
+                    }));
+                  })()}
                   className="h-6 px-2 py-1"
                 />
 

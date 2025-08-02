@@ -19,7 +19,7 @@ import { RiAddLine, RiCloseLine, RiDeleteBinLine, RiImageAddLine } from '@remixi
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
-import { KnowledgeBaseFileUploader } from '../../modules/knowledge-bases/KnowledgeBaseFileUploader';
+import { KnowledgeBaseFileUploader } from '../knowledge-bases/KnowledgeBaseFileUploader';
 
 interface PersonaModalProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
 
   // Get selected knowledge base with files
   const selectedKnowledgeBase = knowledgeBasesData?.knowledgeBases?.find(
-    kb => kb.id === parseInt(formData.knowledgeBaseId)
+    kb => kb.id === parseInt(formData.knowledgeBaseId, 10)
   );
 
   useEffect(() => {
@@ -134,12 +134,12 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
 
     try {
       await removeFileMutation.mutateAsync({
-        knowledgeBaseId: parseInt(formData.knowledgeBaseId),
+        knowledgeBaseId: parseInt(formData.knowledgeBaseId, 10),
         fileId: deleteFileDialog.fileId,
       });
 
       // Manually invalidate queries to refresh the file list
-      const knowledgeBaseId = parseInt(formData.knowledgeBaseId);
+      const knowledgeBaseId = parseInt(formData.knowledgeBaseId, 10);
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
 
@@ -162,7 +162,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
   const handleFilesUploaded = () => {
     // Invalidate and refetch knowledge base data to update the file list
     if (formData.knowledgeBaseId) {
-      const knowledgeBaseId = parseInt(formData.knowledgeBaseId);
+      const knowledgeBaseId = parseInt(formData.knowledgeBaseId, 10);
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
     }
@@ -176,7 +176,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     try {
       await onSubmit({
         ...formData,
-        knowledgeBaseId: formData.knowledgeBaseId ? parseInt(formData.knowledgeBaseId) : null,
+        knowledgeBaseId: formData.knowledgeBaseId ? parseInt(formData.knowledgeBaseId, 10) : null,
       });
       onClose();
     } catch (error) {
@@ -228,7 +228,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description={description}
         maxWidth="max-w-full"
         contentClassName="h-screen max-h-screen w-screen rounded-none overflow-hidden"
-        removePadding={true}
+        removePadding
         footer={customFooter}
       >
         <div className="grid h-full grid-cols-[25%_35%_40%]">
@@ -385,51 +385,59 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                 )}
               </div>
 
-              {!formData.knowledgeBaseId ? (
-                <div className="mt-2 py-8 text-center text-sm text-gray-500">
-                  Select a knowledge base to view files
-                </div>
-              ) : !selectedKnowledgeBase?.fileKnowledgeBases?.length ? (
-                <div className="mt-2 py-8 text-center text-sm text-gray-500">
-                  No files in this knowledge base
-                </div>
-              ) : (
-                <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto">
-                  {selectedKnowledgeBase.fileKnowledgeBases.map(({ file }) => {
-                    const FileIcon = getFileIcon(file.mimeType);
-                    return (
-                      <div
-                        key={file.id}
-                        className="group flex items-center justify-between rounded border border-gray-200 p-1.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                      >
-                        <div className="flex min-w-0 flex-1 items-center space-x-1.5">
-                          <FileIcon className="h-2.5 w-2.5 flex-shrink-0 text-gray-400" />
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
-                              {file.originalName}
-                            </p>
-                            <div className="flex items-center space-x-1 text-[8px] text-gray-500">
-                              <span>{formatFileSize(file.size)}</span>
-                              <span>•</span>
-                              <span>
-                                {file.originalName.split('.').pop()?.toUpperCase() || 'FILE'}
-                              </span>
+              {(() => {
+                if (!formData.knowledgeBaseId) {
+                  return (
+                    <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                      Select a knowledge base to view files
+                    </div>
+                  );
+                }
+                if (!selectedKnowledgeBase?.fileKnowledgeBases?.length) {
+                  return (
+                    <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                      No files in this knowledge base
+                    </div>
+                  );
+                }
+                return (
+                  <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto">
+                    {selectedKnowledgeBase.fileKnowledgeBases.map(({ file }) => {
+                      const FileIcon = getFileIcon(file.mimeType);
+                      return (
+                        <div
+                          key={file.id}
+                          className="group flex items-center justify-between rounded border border-gray-200 p-1.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                        >
+                          <div className="flex min-w-0 flex-1 items-center space-x-1.5">
+                            <FileIcon className="h-2.5 w-2.5 flex-shrink-0 text-gray-400" />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
+                                {file.originalName}
+                              </p>
+                              <div className="flex items-center space-x-1 text-[8px] text-gray-500">
+                                <span>{formatFileSize(file.size)}</span>
+                                <span>•</span>
+                                <span>
+                                  {file.originalName.split('.').pop()?.toUpperCase() || 'FILE'}
+                                </span>
+                              </div>
                             </div>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteFile(file.id, file.originalName)}
+                            className="ml-1 flex-shrink-0 text-red-500 opacity-0 transition-all hover:text-red-700 group-hover:opacity-100"
+                            aria-label="Delete file"
+                          >
+                            <RiDeleteBinLine className="h-2.5 w-2.5" />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteFile(file.id, file.originalName)}
-                          className="ml-1 flex-shrink-0 text-red-500 opacity-0 transition-all hover:text-red-700 group-hover:opacity-100"
-                          aria-label="Delete file"
-                        >
-                          <RiDeleteBinLine className="h-2.5 w-2.5" />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -454,7 +462,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
           isOpen={fileUploaderOpen}
           onClose={handleFileUploaderClose}
           onUploaded={handleFilesUploaded}
-          knowledgeBaseId={parseInt(formData.knowledgeBaseId)}
+          knowledgeBaseId={parseInt(formData.knowledgeBaseId, 10)}
         />
       )}
     </>

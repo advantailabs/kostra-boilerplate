@@ -138,27 +138,35 @@ export function MinimalFooter() {
 
                       return (
                         <li key={link.name}>
-                          {link.isSignIn ? (
-                            <SignInButton mode="modal">
-                              <button className="text-sm text-gray-400 transition-colors duration-200 hover:text-white">
+                          {(() => {
+                            if (link.isSignIn) {
+                              return (
+                                <SignInButton mode="modal">
+                                  <button className="text-sm text-gray-400 transition-colors duration-200 hover:text-white">
+                                    {link.name}
+                                  </button>
+                                </SignInButton>
+                              );
+                            }
+                            if (link.isDashboard) {
+                              return (
+                                <Link
+                                  href={link.href}
+                                  className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                                >
+                                  {link.name}
+                                </Link>
+                              );
+                            }
+                            return (
+                              <a
+                                href={link.href}
+                                className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                              >
                                 {link.name}
-                              </button>
-                            </SignInButton>
-                          ) : link.isDashboard ? (
-                            <Link
-                              href={link.href}
-                              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
-                            >
-                              {link.name}
-                            </Link>
-                          ) : (
-                            <a
-                              href={link.href}
-                              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
-                            >
-                              {link.name}
-                            </a>
-                          )}
+                              </a>
+                            );
+                          })()}
                         </li>
                       );
                     })}

@@ -51,8 +51,8 @@ const features = [
 
 export function MinimalFeatures() {
   return (
-    <section className="relative -mt-1 bg-black py-32">
-      <div className="absolute inset-x-0 top-0 h-px bg-gray-800/30" />
+    <section className="relative bg-black py-32">
+      {/* Remove the top border line that creates a seam */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-indigo-950/5 to-black/0" />
       <div className="container mx-auto px-6">
         {/* Features grid */}

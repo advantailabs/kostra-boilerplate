@@ -107,13 +107,15 @@ export function KnowledgeBaseSelectionModal({
                     <button
                       onClick={() => setSelectedKnowledgeBaseId(knowledgeBase.id)}
                       disabled={isLoading || fileExists}
-                      className={`w-full px-4 py-3 text-left text-sm transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-gray-700 ${
-                        selectedKnowledgeBaseId === knowledgeBase.id && !fileExists
-                          ? 'bg-indigo-100 text-indigo-900 dark:bg-indigo-900/30 dark:text-indigo-100'
-                          : fileExists
-                            ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
-                            : ''
-                      } ${index === 0 ? 'rounded-t-lg' : ''} ${
+                      className={`w-full px-4 py-3 text-left text-sm transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-gray-700 ${(() => {
+                        if (selectedKnowledgeBaseId === knowledgeBase.id && !fileExists) {
+                          return 'bg-indigo-100 text-indigo-900 dark:bg-indigo-900/30 dark:text-indigo-100';
+                        }
+                        if (fileExists) {
+                          return 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300';
+                        }
+                        return '';
+                      })()} ${index === 0 ? 'rounded-t-lg' : ''} ${
                         index === knowledgeBases.length - 1 ? 'rounded-b-lg' : ''
                       }`}
                     >

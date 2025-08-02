@@ -40,7 +40,11 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
             alt={alt || 'Avatar'}
             fill
             className="object-cover"
-            sizes={`${size === 'sm' ? '32px' : size === 'md' ? '40px' : '48px'}`}
+            sizes={(() => {
+              if (size === 'sm') return '32px';
+              if (size === 'md') return '40px';
+              return '48px';
+            })()}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-sm">

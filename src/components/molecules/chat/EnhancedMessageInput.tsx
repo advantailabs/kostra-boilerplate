@@ -58,6 +58,7 @@ export function EnhancedMessageInput({
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [autoFocus, disabled]);
 
   // Re-focus textarea after sending a message (if it was focused before)
@@ -72,6 +73,7 @@ export function EnhancedMessageInput({
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [value, autoFocus, disabled]);
 
   // Auto-resize textarea based on content

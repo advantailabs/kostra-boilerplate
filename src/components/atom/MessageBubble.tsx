@@ -21,11 +21,12 @@ export function MessageBubble({ message, persona, citations, className }: Messag
   const [copied, setCopied] = useState(false);
 
   // Parse stored citations from message
-  const storedCitations: StoredCitation[] = (message as any).citations
-    ? typeof (message as any).citations === 'string'
-      ? JSON.parse((message as any).citations)
-      : (message as any).citations
-    : [];
+  const storedCitations: StoredCitation[] = (() => {
+    const { citations } = message as any;
+    if (!citations) return [];
+    if (typeof citations === 'string') return JSON.parse(citations);
+    return citations;
+  })();
 
   // Convert stored citations to CitationFile format for display
   const displayCitations: CitationFile[] = storedCitations.map(citation => ({

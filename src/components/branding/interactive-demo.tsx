@@ -170,15 +170,14 @@ export function InteractiveDemo() {
                       className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
-                          msg.type === 'user'
-                            ? 'bg-blue-600 text-white'
-                            : msg.type === 'assistant-thinking'
-                              ? 'bg-gray-700 italic text-gray-300'
-                              : msg.type === 'citation'
-                                ? 'border border-gray-600 bg-gray-800 text-gray-400'
-                                : 'bg-gray-700 text-gray-100'
-                        }`}
+                        className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${(() => {
+                          if (msg.type === 'user') return 'bg-blue-600 text-white';
+                          if (msg.type === 'assistant-thinking')
+                            return 'bg-gray-700 italic text-gray-300';
+                          if (msg.type === 'citation')
+                            return 'border border-gray-600 bg-gray-800 text-gray-400';
+                          return 'bg-gray-700 text-gray-100';
+                        })()}`}
                       >
                         {msg.message}
                       </div>

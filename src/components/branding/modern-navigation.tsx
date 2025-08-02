@@ -4,13 +4,14 @@ import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import UserProfile from './UserProfile';
 
 export function ModernNavigation() {
   const { isSignedIn, isLoaded } = useUser();
   const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
@@ -82,8 +83,21 @@ export function ModernNavigation() {
       <div className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <motion.a
-            href="/"
+          <motion.button
+            onClick={() => {
+              if (pathname === '/') {
+                // If already on homepage, scroll to home section and update URL
+                const homeElement = document.getElementById('home');
+                if (homeElement) {
+                  homeElement.scrollIntoView({ behavior: 'smooth' });
+                  // Update URL to reflect home section
+                  window.history.pushState(null, '', '/#home');
+                }
+              } else {
+                // If on different page, navigate to homepage then scroll to home
+                router.push('/#home');
+              }
+            }}
             className="flex items-center gap-3"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -97,7 +111,7 @@ export function ModernNavigation() {
                 className="object-contain"
               />
             </div>
-          </motion.a>
+          </motion.button>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-8 md:flex">
