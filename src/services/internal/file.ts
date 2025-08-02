@@ -228,6 +228,8 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
       data.file.name
     );
 
+    console.log('downloadUrlResult', downloadUrlResult);
+
     // Create a readable stream from the presigned URL
     const response = await fetch(downloadUrlResult.downloadUrl);
     if (!response.ok) {
