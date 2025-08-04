@@ -106,24 +106,24 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
   return (
     <div className="space-y-2">
       <div
-        className={`rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900 ${className}`}
+        className={`overflow-hidden rounded-xl border border-gray-200 bg-white p-2 shadow-sm sm:rounded-2xl sm:p-3 dark:border-gray-800 dark:bg-gray-900 ${className}`}
       >
         <form onSubmit={handleSearch} className="space-y-0">
           {/* Attached Files */}
           {attachedFiles.length > 0 && (
-            <div className="mb-3 border-b border-gray-200 pb-3 dark:border-gray-700">
+            <div className="mb-2 border-b border-gray-200 pb-2 sm:mb-3 sm:pb-3 dark:border-gray-700">
               <div className="space-y-2">
                 {attachedFiles.map(file => (
                   <div
                     key={file.id}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+                    className="flex items-center justify-between rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-gray-800"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/20">
-                        <RiFileLine className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <div className="flex min-w-0 flex-1 items-center space-x-2 sm:space-x-3">
+                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-blue-100 sm:h-8 sm:w-8 dark:bg-blue-900/20">
+                        <RiFileLine className="h-3 w-3 text-blue-600 sm:h-4 sm:w-4 dark:text-blue-400" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <div className="min-w-0 flex-1 overflow-hidden">
+                        <p className="truncate text-xs font-medium text-gray-900 sm:text-sm dark:text-gray-100">
                           {file.name}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -135,9 +135,9 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                       type="button"
                       variant="ghost"
                       onClick={() => removeFile(file.id)}
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                      className="h-5 w-5 flex-shrink-0 p-0 text-gray-400 hover:text-gray-600 sm:h-6 sm:w-6 dark:text-gray-500 dark:hover:text-gray-300"
                     >
-                      <RiCloseLine className="h-4 w-4" />
+                      <RiCloseLine className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </div>
                 ))}
@@ -146,15 +146,15 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
           )}
 
           {/* Input Container */}
-          <div className="relative">
+          <div className="relative overflow-hidden">
             {/* Search Input */}
             <Textarea
               ref={textareaRef}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search files or ask questions..."
-              className="min-h-[4rem]"
-              textareaClassName="min-h-[4rem] w-full resize-none border-0 bg-transparent px-0 py-3 text-sm shadow-none focus:ring-0 focus:border-0 dark:bg-transparent"
+              className="min-h-[3rem] sm:min-h-[4rem]"
+              textareaClassName="min-h-[3rem] sm:min-h-[4rem] w-full resize-none border-0 bg-transparent px-0 py-2 sm:py-3 text-xs sm:text-sm shadow-none focus:ring-0 focus:border-0 dark:bg-transparent overflow-hidden"
               style={{ outline: 'none' }}
               autoFocus
               rows={2}
@@ -167,14 +167,16 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
             />
 
             {/* Controls Row */}
-            <div className="flex items-center justify-between pt-0">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:pt-0">
               {/* Left side - Knowledge Base and Mode dropdowns */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 overflow-hidden sm:space-x-2">
                 {/* Knowledge Base Dropdown */}
                 <PillSelect
                   value={selectedKnowledgeBaseId}
                   onValueChange={setSelectedKnowledgeBaseId}
-                  icon={<RiUserLine className="h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />}
+                  icon={
+                    <RiUserLine className="h-2 w-2 text-gray-500 sm:h-2.5 sm:w-2.5 dark:text-gray-400" />
+                  }
                   placeholder="Select knowledge base"
                   displayValue={
                     selectedKnowledgeBaseId && !loadingKnowledgeBases && knowledgeBases.length > 0
@@ -200,7 +202,7 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                       label: knowledgeBase.title,
                     }));
                   })()}
-                  className="h-6 px-2 py-1"
+                  className="h-5 px-1.5 py-0.5 text-xs sm:h-6 sm:px-2 sm:py-1 sm:text-sm"
                 />
 
                 {/* Mode Dropdown */}
@@ -208,19 +210,19 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                   value={searchMode}
                   onValueChange={value => setSearchMode(value as SearchMode)}
                   icon={
-                    <RiSearchEyeLine className="text-gray-5 h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />
+                    <RiSearchEyeLine className="h-2 w-2 text-gray-500 sm:h-2.5 sm:w-2.5 dark:text-gray-400" />
                   }
                   displayValue={searchMode === 'web' ? 'Web search' : 'Deep research'}
                   options={[
                     { value: 'web', label: 'Web search' },
                     { value: 'deep', label: 'Deep research' },
                   ]}
-                  className="h-6 px-2 py-1"
+                  className="h-5 px-1.5 py-0.5 text-xs sm:h-6 sm:px-2 sm:py-1 sm:text-sm"
                 />
               </div>
 
               {/* Right side - Attachment, Audio, and Send buttons */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
                 {/* File Upload */}
                 <div className="relative">
                   <input
@@ -230,23 +232,23 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                     className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                     accept=".pdf,.doc,.docx,.txt,.md,.json,.csv,.xlsx,.xls,.png,.jpg,.jpeg,.gif,.webp"
                   />
-                  <Button type="button" variant="elevated" className="h-6 w-6 p-0">
-                    <RiAttachment2 className="h-3 w-3" />
+                  <Button type="button" variant="elevated" className="h-5 w-5 p-0 sm:h-6 sm:w-6">
+                    <RiAttachment2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Button>
                 </div>
 
                 {/* Audio Button */}
-                <Button type="button" variant="elevated" className="h-6 w-6 p-0">
-                  <RiMicLine className="h-3 w-3" />
+                <Button type="button" variant="elevated" className="h-5 w-5 p-0 sm:h-6 sm:w-6">
+                  <RiMicLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </Button>
 
                 {/* Send Button */}
                 <Button
                   type="button"
                   variant="elevated"
-                  className="h-6 w-6 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
+                  className="h-5 w-5 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 sm:h-6 sm:w-6 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
                 >
-                  <RiSendPlaneLine className="h-3 w-3" />
+                  <RiSendPlaneLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </Button>
               </div>
             </div>

@@ -13,12 +13,14 @@ export default function AppPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
-      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
-        <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-white p-2 sm:p-4 sm:px-6 sm:pb-6 sm:pt-10 lg:px-10 lg:pt-7 dark:bg-gray-950">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center sm:min-h-[calc(100vh-8rem)]">
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
           {/* Title */}
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Coming Soon</h1>
+          <div className="mb-4 text-center sm:mb-6 md:mb-8">
+            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl dark:text-gray-100">
+              Coming Soon
+            </h1>
           </div>
 
           {/* Search Container */}
