@@ -12,8 +12,56 @@ const nextConfig = {
       'private-storage.peon.sh',
     ],
   },
-  afterSignInUrl: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
-  afterSignUpUrl: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+
+  // Enable SSG/SSR optimizations
+  experimental: {
+    optimizePackageImports: ['@clerk/nextjs', 'framer-motion'],
+  },
+
+  // Custom headers for static content caching
+  async headers() {
+    return [
+      {
+        // Apply cache headers to static pages
+        source: '/(privacy|terms)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable', // 1 year cache
+          },
+        ],
+      },
+      {
+        // Apply cache headers to static assets
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Apply shorter cache for landing page (SSR)
+        source: '/',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=86400', // 1 hour browser, 24 hours CDN
+          },
+        ],
+      },
+    ];
+  },
+
+  // Optimize builds for static content
+  output: 'standalone',
+
+  // Enable compression
+  compress: true,
+
+  // PoweredBy header removal for security
+  poweredByHeader: false,
 };
 
 export default nextConfig;

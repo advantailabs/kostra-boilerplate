@@ -1,8 +1,34 @@
-'use client';
+import { Metadata } from 'next';
 
-import { motion } from 'framer-motion';
+export const metadata: Metadata = {
+  title: 'Privacy Policy - Peon',
+  description:
+    'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+  openGraph: {
+    title: 'Privacy Policy - Peon',
+    description:
+      'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+    type: 'article',
+  },
+};
+
+// Static generation - this page will be pre-rendered at build time
+export async function generateStaticParams() {
+  return [{}]; // Empty array means this page will be statically generated
+}
+
+// Get the current date at build time for consistent SSG
+function getLastUpdatedDate(): string {
+  return new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 
 export default function PrivacyPolicyPage() {
+  const lastUpdated = getLastUpdatedDate();
+
   return (
     <>
       {/* Background Effects */}
@@ -13,24 +39,11 @@ export default function PrivacyPolicyPage() {
 
       {/* Content */}
       <div className="container relative mx-auto px-6 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mx-auto max-w-4xl"
-        >
+        <div className="mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">Privacy Policy</h1>
-            <p className="text-lg text-gray-400">
-              Last updated:{' '}
-              {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
+            <p className="text-lg text-gray-400">Last updated: {lastUpdated}</p>
           </div>
 
           {/* Content */}
@@ -352,7 +365,7 @@ export default function PrivacyPolicyPage() {
               </section>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </>
   );

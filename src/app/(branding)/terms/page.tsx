@@ -1,8 +1,34 @@
-'use client';
+import { Metadata } from 'next';
 
-import { motion } from 'framer-motion';
+export const metadata: Metadata = {
+  title: 'Terms of Service - Peon',
+  description:
+    'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+  openGraph: {
+    title: 'Terms of Service - Peon',
+    description:
+      'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+    type: 'article',
+  },
+};
+
+// Static generation - this page will be pre-rendered at build time
+export async function generateStaticParams() {
+  return [{}]; // Empty array means this page will be statically generated
+}
+
+// Get the current date at build time for consistent SSG
+function getLastUpdatedDate(): string {
+  return new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 
 export default function TermsOfServicePage() {
+  const lastUpdated = getLastUpdatedDate();
+
   return (
     <>
       {/* Background Effects */}
@@ -13,24 +39,11 @@ export default function TermsOfServicePage() {
 
       {/* Content */}
       <div className="container relative mx-auto px-6 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mx-auto max-w-4xl"
-        >
+        <div className="mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-12 text-center">
             <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">Terms of Service</h1>
-            <p className="text-lg text-gray-400">
-              Last updated:{' '}
-              {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
+            <p className="text-lg text-gray-400">Last updated: {lastUpdated}</p>
           </div>
 
           {/* Content */}
@@ -205,7 +218,7 @@ export default function TermsOfServicePage() {
               </section>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </>
   );
