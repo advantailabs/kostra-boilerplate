@@ -5,6 +5,9 @@ import { createPersonaService, getUserPersonasService } from '@/services/interna
 import { getUserByClerkId } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const { userId: clerkUserId } = await auth();

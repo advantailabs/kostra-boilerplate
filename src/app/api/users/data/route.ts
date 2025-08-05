@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 
 import { getUserByClerkId } from '@/services/repositories/user';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const user = await currentUser();

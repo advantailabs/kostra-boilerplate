@@ -4,6 +4,9 @@ import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 // Polyfill for File in Node.js environment
 if (typeof global.File === 'undefined') {
   const { Blob } = require('buffer');

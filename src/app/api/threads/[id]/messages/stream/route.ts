@@ -11,6 +11,9 @@ import {
 import { getUserByClerkId } from '@/services/repositories/user';
 import { addMessageSchema } from '@/validations/chat';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId: clerkUserId } = await auth();

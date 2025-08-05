@@ -5,6 +5,9 @@ import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
 import { getAuth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const { userId: clerkUserId } = getAuth(request);

@@ -9,6 +9,9 @@ import {
 import { getUserByClerkId } from '@/services/repositories/user';
 import { z } from 'zod';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 const updateKnowledgeBaseSchema = z.object({
   title: z
     .string()

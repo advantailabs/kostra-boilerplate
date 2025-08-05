@@ -4,6 +4,9 @@ import { getUserByClerkId } from '@/services/repositories/user';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { userId } = await auth();

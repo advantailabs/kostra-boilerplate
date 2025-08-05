@@ -1,10 +1,11 @@
+import { getUserByClerkId } from '@/services/repositories/user';
 import { auth } from '@clerk/nextjs/server';
 import { SignJWT } from 'jose';
 import { NextResponse } from 'next/server';
 
-import { getUserByClerkId } from '@/services/repositories/user';
-
+// Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
+
 export const revalidate = 0;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';

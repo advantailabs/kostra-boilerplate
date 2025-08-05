@@ -8,6 +8,9 @@ import {
 import { getUserByClerkId } from '@/services/repositories/user';
 import { z } from 'zod';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 const createKnowledgeBaseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be 100 characters or less'),
   description: z

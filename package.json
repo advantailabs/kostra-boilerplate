@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run verify-sitemap",
+    "build:only": "next build",
     "start": "next start",
     "migrate": "prisma migrate dev",
     "seed": "prisma db seed",
@@ -17,7 +18,10 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "verify-sitemap": "echo '✅ Checking sitemap generation...' && ls -la .next/server/app/sitemap.xml* && echo '✅ Sitemap generated successfully!' || echo '❌ Sitemap generation failed!'",
+    "preview-sitemap": "cat .next/server/app/sitemap.xml.body 2>/dev/null || echo 'No sitemap found. Run npm run build first.'",
+    "preview-robots": "cat .next/server/app/robots.txt.body 2>/dev/null || echo 'No robots.txt found. Run npm run build first.'"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",

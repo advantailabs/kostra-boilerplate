@@ -9,6 +9,9 @@ import {
 import { getUserByClerkId } from '@/services/repositories/user';
 import { updatePersonaSchema } from '@/validations/persona';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 interface RouteParams {
   params: {
     id: string;

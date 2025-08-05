@@ -10,6 +10,9 @@ import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/rep
 import { getUserByClerkId } from '@/services/repositories/user';
 import { createThreadSchema } from '@/validations/chat';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const { userId: clerkUserId } = await auth();
