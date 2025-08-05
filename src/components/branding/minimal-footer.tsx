@@ -165,7 +165,11 @@ export function MinimalFooter() {
                             return (
                               <Link
                                 href={link.href}
-                                className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                                className={`text-sm transition-colors duration-200 ${
+                                  link.name === 'Privacy Policy' || link.name === 'Terms of Service'
+                                    ? 'font-medium text-gray-300 underline hover:text-white'
+                                    : 'text-gray-400 hover:text-white'
+                                }`}
                               >
                                 {link.name}
                               </Link>
@@ -189,12 +193,18 @@ export function MinimalFooter() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
             <span>© {new Date().getFullYear()} Peon. All rights reserved.</span>
-            <Link href="/privacy-policy" className="transition-colors hover:text-gray-400">
+            <Link
+              href="/privacy-policy"
+              className="font-medium text-gray-300 underline transition-colors hover:text-white"
+            >
               Privacy Policy
             </Link>
-            <Link href="/terms" className="transition-colors hover:text-gray-400">
+            <Link
+              href="/terms"
+              className="font-medium text-gray-300 underline transition-colors hover:text-white"
+            >
               Terms of Service
             </Link>
           </div>

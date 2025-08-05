@@ -220,6 +220,25 @@ export function ModernNavigation() {
                   </Link>
                 );
               })}
+
+              {/* Legal Links */}
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-4">
+                <Link
+                  href="/privacy-policy"
+                  className="py-1 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="py-1 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Terms of Service
+                </Link>
+              </div>
+
               <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
                 {isLoaded && isSignedIn ? (
                   <div className="px-2 py-2">

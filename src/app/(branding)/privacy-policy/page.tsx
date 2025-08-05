@@ -9,6 +9,14 @@ export const metadata: Metadata = {
     description:
       'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
     type: 'article',
+    url: 'https://peon.sh/privacy-policy',
+  },
+  alternates: {
+    canonical: 'https://peon.sh/privacy-policy',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -31,6 +39,37 @@ export default function PrivacyPolicyPage() {
 
   return (
     <>
+      {/* Structured Data for Google */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Privacy Policy',
+            description: 'Privacy Policy for Peon - Your Personal AI Assistant',
+            url: 'https://peon.sh/privacy-policy',
+            dateModified: lastUpdated,
+            isPartOf: {
+              '@type': 'WebSite',
+              name: 'Peon',
+              url: 'https://peon.sh',
+            },
+            mainEntity: {
+              '@type': 'Article',
+              headline: 'Privacy Policy',
+              description: 'Learn how we collect, use, and protect your personal information.',
+              dateModified: lastUpdated,
+              author: {
+                '@type': 'Organization',
+                name: 'Peon',
+                url: 'https://peon.sh',
+              },
+            },
+          }),
+        }}
+      />
+
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="bg-gradient-radial absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 via-purple-500/5 to-transparent blur-3xl" />
