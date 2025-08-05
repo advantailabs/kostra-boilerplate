@@ -77,6 +77,16 @@
       background-color: rgba(107, 114, 128, 0.7);
     }
   }
+
+  /* Hide scrollbar while maintaining scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
 }
 
 @layer components {
@@ -84,6 +94,30 @@
   .focus-visible:focus {
     outline: 2px solid white;
     outline-offset: 2px;
+  }
+
+  /* Mobile chat scrolling improvements */
+  .chat-messages-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
+
+  /* Ensure proper height constraints on mobile */
+  .mobile-chat-layout {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+
+  /* Mobile-specific chat improvements */
+  @media (max-width: 799px) {
+    .chat-messages-container {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .mobile-chat-layout {
+      padding-top: env(safe-area-inset-top);
+    }
   }
 
   /* Custom button animations */
@@ -97,5 +131,25 @@
 
   .btn-animate:active {
     transform: translateY(0);
+  }
+
+  /* Chat input button improvements */
+  .chat-input-textarea {
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Ensure proper button spacing and positioning */
+  .chat-input-textarea:focus-within {
+    border-color: rgb(99 102 241);
+    box-shadow: 0 0 0 1px rgb(99 102 241);
+  }
+
+  /* Animation delay utilities for loading indicators */
+  .animation-delay-75 {
+    animation-delay: 75ms;
+  }
+
+  .animation-delay-150 {
+    animation-delay: 150ms;
   }
 }

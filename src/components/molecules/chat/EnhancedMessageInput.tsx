@@ -176,7 +176,7 @@ export function EnhancedMessageInput({
     }
   };
 
-  const canSend = value.trim() && !disabled;
+  const canSend = value.trim() && !disabled && !loading;
   const visibleFiles = selectedFiles.slice(0, VISIBLE_FILES);
   const hiddenFiles = selectedFiles.slice(VISIBLE_FILES);
   const hasHiddenFiles = hiddenFiles.length > 0;
@@ -185,9 +185,9 @@ export function EnhancedMessageInput({
   const isAtLimit = charCount >= maxLength;
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={`space-y-2 sm:space-y-3 ${className}`}>
       {/* Input Area */}
-      <div className="flex items-end gap-2">
+      <div className="flex items-end gap-1 sm:gap-2">
         {/* File Input */}
         <input
           ref={fileInputRef}
@@ -198,13 +198,13 @@ export function EnhancedMessageInput({
           disabled={disabled || loading || selectedFiles.length >= MAX_FILES}
         />
 
-        {/* File Attachment Button */}
+        {/* File Attachment Button - Hidden on small screens */}
         <Button
           type="button"
           variant="ghost"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || loading || selectedFiles.length >= MAX_FILES}
-          className="flex-shrink-0 p-2"
+          className="hidden flex-shrink-0 p-1.5 min-[400px]:flex sm:p-2"
           title={
             selectedFiles.length >= MAX_FILES
               ? `Maximum ${MAX_FILES} files allowed`
@@ -226,7 +226,7 @@ export function EnhancedMessageInput({
             placeholder={placeholder}
             disabled={disabled || loading}
             maxLength={maxLength}
-            className={`chat-input-textarea w-full resize-none rounded-lg border px-3 py-2 text-sm placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 ${
+            className={`chat-input-textarea w-full resize-none rounded-lg border px-2 py-2 pr-24 text-sm placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 min-[400px]:pr-12 sm:px-3 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 ${
               isFocused || value.trim()
                 ? 'border-indigo-500 focus:ring-indigo-500 dark:border-indigo-400 dark:focus:ring-indigo-400'
                 : 'border-gray-300 dark:border-gray-600'
@@ -238,19 +238,52 @@ export function EnhancedMessageInput({
             }}
           />
 
+          {/* Attachment Button - Inside textarea on small screens */}
+          <div className="absolute bottom-2 right-11 min-[400px]:hidden">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={disabled || loading || selectedFiles.length >= MAX_FILES}
+              className="h-9 w-9 flex-shrink-0 rounded-full bg-gray-100 p-0 text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-200 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:disabled:hover:bg-gray-700"
+              title={
+                selectedFiles.length >= MAX_FILES
+                  ? `Maximum ${MAX_FILES} files allowed`
+                  : 'Attach files'
+              }
+            >
+              <RiAttachment2 className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Send Button - Inside textarea on small screens */}
+          <div className="absolute bottom-2 right-2 min-[400px]:hidden">
+            <Button
+              type="button"
+              onClick={onSend}
+              disabled={!canSend || loading || isAtLimit}
+              className="h-9 w-9 flex-shrink-0 rounded-full bg-indigo-600 p-0 text-white shadow-sm transition-all duration-200 hover:bg-indigo-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 disabled:hover:shadow-sm"
+              title="Send message (Enter or Ctrl+Enter)"
+            >
+              <RiSendPlaneFill className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
+            </Button>
+          </div>
+
           {/* Loading indicator inside textarea */}
           {loading && (
-            <div className="absolute bottom-2 right-2 flex items-center space-x-1">
-              <div className="h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
-              <div className="animation-delay-75 h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
-              <div className="animation-delay-150 h-1 w-1 animate-pulse rounded-full bg-indigo-500" />
+            <div className="absolute bottom-2 right-20 flex items-center space-x-1 min-[400px]:right-12">
+              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
+              <div className="animation-delay-75 h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
+              <div className="animation-delay-150 h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" />
             </div>
           )}
 
           {/* Character count indicator */}
           {showCharCount && (isFocused || isNearLimit) && (
             <div
-              className={`absolute bottom-1 right-8 text-xs transition-colors ${(() => {
+              className={`absolute bottom-1 text-xs transition-colors ${
+                isAtLimit ? 'right-20 min-[400px]:right-12' : 'right-20 min-[400px]:right-12'
+              } ${(() => {
                 if (isAtLimit) return 'text-red-500 dark:text-red-400';
                 if (isNearLimit) return 'text-amber-500 dark:text-amber-400';
                 return 'text-gray-400';
@@ -261,23 +294,25 @@ export function EnhancedMessageInput({
           )}
         </div>
 
-        {/* Send Button */}
-        <Button
-          type="button"
-          onClick={onSend}
-          disabled={!canSend || loading || isAtLimit}
-          className="flex-shrink-0 px-3 py-2 transition-all duration-200"
-          title="Send message (Enter or Ctrl+Enter)"
-        >
-          <RiSendPlaneFill className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
-        </Button>
+        {/* Send Button - Outside textarea on larger screens */}
+        <div className="hidden min-[400px]:block">
+          <Button
+            type="button"
+            onClick={onSend}
+            disabled={!canSend || loading || isAtLimit}
+            className="flex-shrink-0 px-3 py-2 transition-all duration-200 hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 sm:px-3"
+            title="Send message (Enter or Ctrl+Enter)"
+          >
+            <RiSendPlaneFill className={`h-4 w-4 ${loading ? 'animate-pulse' : ''}`} />
+          </Button>
+        </div>
       </div>
 
       {/* Selected Files - Aligned with input area */}
       {selectedFiles.length > 0 && (
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-1 sm:gap-2">
           {/* Spacer to align with input area (same width as attachment button + gap) */}
-          <div className="w-10 flex-shrink-0" />
+          <div className="w-8 flex-shrink-0 sm:w-10" />
 
           {/* Files container */}
           <div className="flex flex-1 flex-wrap items-center gap-1">
@@ -320,7 +355,7 @@ export function EnhancedMessageInput({
 
                 {/* Click-based popup showing all files */}
                 {showAllFiles && (
-                  <div className="animate-fadeIn absolute bottom-full left-0 z-10 mb-2 w-80 max-w-sm rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                  <div className="animate-fadeIn absolute bottom-full left-0 z-10 mb-2 w-80 max-w-sm rounded-lg border border-gray-200 p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
                     <div className="mb-2 text-xs font-medium text-gray-900 dark:text-gray-100">
                       All Files ({selectedFiles.length}/{MAX_FILES})
                     </div>

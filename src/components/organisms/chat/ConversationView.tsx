@@ -40,11 +40,18 @@ export function ConversationView({
   const [message, setMessage] = useState('');
   const [pendingUserMessage, setPendingUserMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when messages change or streaming
   useEffect(() => {
     const scrollToBottom = () => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest',
+        });
+      }
     };
 
     // Use setTimeout to ensure DOM has updated
@@ -104,18 +111,23 @@ export function ConversationView({
 
   return (
     <>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full min-h-0 flex-col">
         {/* Header */}
-        <ConversationHeader
-          thread={activeThread || undefined}
-          selectedPersona={!activeThread ? selectedPersona : undefined}
-          onDelete={activeThread ? handleDeleteThread : undefined}
-        />
+        <div className="sticky top-0 z-20 min-[800px]:static min-[800px]:top-0 dark:bg-gray-950">
+          <ConversationHeader
+            thread={activeThread || undefined}
+            selectedPersona={!activeThread ? selectedPersona : undefined}
+            onDelete={activeThread ? handleDeleteThread : undefined}
+          />
+        </div>
 
         {/* Messages or Empty State */}
-        <div className="scrollbar-thin flex-1 overflow-y-auto">
+        <div
+          ref={messagesContainerRef}
+          className="scrollbar-thin chat-messages-container relative min-h-0 flex-1 overflow-y-auto pb-2"
+        >
           {shouldShowMessages ? (
-            <div className="space-y-3 p-4">
+            <div className="space-y-3 p-2 pt-4 min-[800px]:p-4 min-[800px]:pt-4">
               {/* Show existing thread messages */}
               {activeThread?.messages.map(message => (
                 <MessageBubble key={message.id} message={message} persona={activeThread.persona} />
@@ -192,7 +204,7 @@ export function ConversationView({
         </div>
 
         {/* Message Input */}
-        <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+        <div className="border-t border-gray-200 p-2 pb-2 min-[800px]:p-4 min-[800px]:pb-4 dark:border-gray-600">
           <EnhancedMessageInput
             value={message}
             onChange={setMessage}

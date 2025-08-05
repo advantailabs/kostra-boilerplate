@@ -60,7 +60,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen">
+    <div className="mobile-chat-layout h-screen overflow-hidden">
       <ChatInterface
         personas={personas}
         threads={threads}

@@ -44,7 +44,7 @@ export function ConversationHeader({
 
   return (
     <div
-      className={`flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700 ${className}`}
+      className={`flex items-center justify-between border-b border-gray-200 px-3 py-3 dark:border-gray-700 ${className}`}
     >
       <div className="flex items-center gap-3">
         {thread.persona && (
