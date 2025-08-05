@@ -11,7 +11,7 @@ export const siteConfig = {
     },
     onboarding: '/onboarding',
     privacy: '/privacy-policy',
-    terms: '/terms',
+    terms: '/terms-of-services',
     customizations: '/customizations',
   },
   sitemap: {

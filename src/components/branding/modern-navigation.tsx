@@ -231,7 +231,7 @@ export function ModernNavigation() {
                   Privacy Policy
                 </Link>
                 <Link
-                  href="/terms"
+                  href="/terms-of-services"
                   className="py-1 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

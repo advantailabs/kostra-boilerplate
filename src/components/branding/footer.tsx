@@ -75,7 +75,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="/terms-of-services" className="text-sm text-gray-700 hover:text-gray-900">
                   Terms of Service
                 </a>
               </li>

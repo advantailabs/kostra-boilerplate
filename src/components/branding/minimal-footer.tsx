@@ -39,7 +39,7 @@ const footerSections: FooterSection[] = [
     links: [
       { name: 'Security', href: '#security' },
       { name: 'Privacy Policy', href: '/privacy-policy' },
-      { name: 'Terms of Service', href: '/terms' },
+      { name: 'Terms of Service', href: '/terms-of-services' },
     ],
   },
 ];
@@ -202,7 +202,7 @@ export function MinimalFooter() {
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href="/terms-of-services"
               className="font-medium text-gray-300 underline transition-colors hover:text-white"
             >
               Terms of Service

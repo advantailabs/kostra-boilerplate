@@ -28,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: MEDIUM_PRIORITY,
     },
     {
-      url: `${baseUrl}/terms`,
+      url: `${baseUrl}/terms-of-services`,
       lastModified: currentDate,
       changeFrequency: YEARLY,
       priority: MEDIUM_PRIORITY,

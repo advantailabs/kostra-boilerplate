@@ -63,7 +63,7 @@ export default function HomePage() {
             description:
               'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
             url: 'https://peon.sh',
-            sameAs: ['https://peon.sh/privacy-policy', 'https://peon.sh/terms'],
+            sameAs: ['https://peon.sh/privacy-policy', 'https://peon.sh/terms-of-services'],
             mainEntity: {
               '@type': 'SoftwareApplication',
               name: 'Peon',
@@ -119,7 +119,7 @@ export default function HomePage() {
                 '@type': 'ListItem',
                 position: 3,
                 name: 'Terms of Service',
-                item: 'https://peon.sh/terms',
+                item: 'https://peon.sh/terms-of-services',
               },
             ],
           }),

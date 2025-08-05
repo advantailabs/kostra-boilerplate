@@ -39,7 +39,7 @@ const PUBLIC_ROUTES: RouteConfig[] = [
   { path: '/', methods: [null], exact: true },
   { path: '/privacy-policy', methods: [null], exact: false },
   { path: '/sitemap.xml', methods: [null], exact: false },
-  { path: '/terms', methods: [null], exact: false },
+  { path: '/terms-of-services', methods: [null], exact: false },
   { path: '/customizations', methods: [null], exact: false },
   { path: '/api/webhooks/clerk', methods: [null], exact: false },
   { path: '/api/auth', methods: [null], exact: false },
