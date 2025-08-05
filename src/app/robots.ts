@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/privacy', '/terms', '/customizations', '/onboarding'],
+        allow: ['/', '/privacy-policy', '/terms', '/customizations', '/onboarding'],
         disallow: [
           // Block API routes from being crawled
           '/api/*',
@@ -22,12 +22,12 @@ export default function robots(): MetadataRoute.Robots {
       // Special rules for search engines
       {
         userAgent: 'Googlebot',
-        allow: ['/', '/privacy', '/terms', '/customizations'],
+        allow: ['/', '/privacy-policy', '/terms', '/customizations'],
         disallow: ['/api/*', '/app/*'], // More restrictive for Google
       },
       {
         userAgent: 'Bingbot',
-        allow: ['/', '/privacy', '/terms', '/customizations'],
+        allow: ['/', '/privacy-policy', '/terms', '/customizations'],
         disallow: ['/api/*', '/app/*'], // More restrictive for Bing
       },
     ],

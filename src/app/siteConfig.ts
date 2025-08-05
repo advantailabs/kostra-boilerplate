@@ -10,7 +10,7 @@ export const siteConfig = {
       billing: '/app/settings/billing',
     },
     onboarding: '/onboarding',
-    privacy: '/privacy',
+    privacy: '/privacy-policy',
     terms: '/terms',
     customizations: '/customizations',
   },

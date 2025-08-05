@@ -38,7 +38,7 @@ const footerSections: FooterSection[] = [
     title: 'Resources',
     links: [
       { name: 'Security', href: '#security' },
-      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Privacy Policy', href: '/privacy-policy' },
       { name: 'Terms of Service', href: '/terms' },
     ],
   },
@@ -191,7 +191,7 @@ export function MinimalFooter() {
         >
           <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
             <span>© {new Date().getFullYear()} Peon. All rights reserved.</span>
-            <Link href="/privacy" className="transition-colors hover:text-gray-400">
+            <Link href="/privacy-policy" className="transition-colors hover:text-gray-400">
               Privacy Policy
             </Link>
             <Link href="/terms" className="transition-colors hover:text-gray-400">

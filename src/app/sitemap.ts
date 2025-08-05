@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Public marketing/legal pages - static content
     {
-      url: `${baseUrl}/privacy`,
+      url: `${baseUrl}/privacy-policy`,
       lastModified: currentDate,
       changeFrequency: YEARLY,
       priority: MEDIUM_PRIORITY,
