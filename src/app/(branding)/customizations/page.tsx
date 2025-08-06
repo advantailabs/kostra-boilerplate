@@ -311,13 +311,13 @@ function IntegrationCard({ integration }: IntegrationCardProps) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-3">
-        <button className="flex-1 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/15">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <button className="w-full rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/15 sm:w-auto sm:flex-1">
           Request Access
         </button>
         {integration.docs && (
-          <button className="flex items-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-white/5">
-            <RiExternalLinkLine className="h-4 w-4" />
+          <button className="w-full items-center rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-white/5 sm:flex sm:w-auto sm:gap-2">
+            <RiExternalLinkLine className="hidden h-4 w-4 sm:block" />
             Docs
           </button>
         )}
@@ -336,7 +336,7 @@ export default function CustomizationsPage() {
       </div>
 
       {/* Content */}
-      <div className="container relative mx-auto px-6 py-16">
+      <div className="container relative mx-auto overflow-x-hidden px-6 py-16">
         {integrationCategories.map((category, categoryIndex) => (
           <motion.section
             key={category.title}

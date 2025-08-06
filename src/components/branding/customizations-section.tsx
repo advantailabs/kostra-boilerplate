@@ -48,10 +48,10 @@ function IntegrationIcon({
       whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
       className="group relative"
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08]">
-        <Icon className="h-8 w-8 text-white transition-transform duration-300 group-hover:scale-110" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] sm:h-16 sm:w-16">
+        <Icon className="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8" />
       </div>
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-gray-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-gray-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:-bottom-8">
         {integration.name}
       </div>
     </motion.div>
@@ -60,27 +60,27 @@ function IntegrationIcon({
 
 export function CustomizationsSection() {
   return (
-    <section className="relative bg-black py-20">
+    <section className="relative bg-black py-16 sm:py-20">
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <div className="bg-gradient-radial absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 via-purple-500/5 to-transparent blur-3xl" />
       </div>
 
-      <div className="container relative mx-auto px-6">
+      <div className="container relative mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mb-16 text-center"
+          className="mb-12 text-center sm:mb-16"
         >
-          <h2 className="mb-6 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-4xl font-light text-transparent md:text-5xl lg:text-6xl">
+          <h2 className="mb-4 bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-3xl font-light text-transparent sm:mb-6 sm:text-4xl md:text-5xl lg:text-6xl">
             Powerful Customizations
           </h2>
 
-          <p className="mx-auto max-w-3xl text-lg leading-relaxed text-gray-400">
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-gray-400 sm:text-lg">
             Connect Peon with your favorite tools and platforms. Explore our growing ecosystem of
             integrations.
           </p>
@@ -92,9 +92,9 @@ export function CustomizationsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-12 sm:mb-16"
         >
-          <div className="flex flex-wrap justify-center gap-8 pb-8">
+          <div className="flex flex-wrap justify-center gap-4 pb-6 sm:gap-6 sm:pb-8 md:gap-8">
             {featuredIntegrations.map((integration, index) => (
               <IntegrationIcon key={integration.name} integration={integration} index={index} />
             ))}
@@ -109,18 +109,20 @@ export function CustomizationsSection() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-8 backdrop-blur-sm">
-            <h3 className="mb-4 text-2xl font-semibold text-white">Explore All Integrations</h3>
-            <p className="mb-6 text-gray-400">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-6 backdrop-blur-sm sm:p-8">
+            <h3 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+              Explore All Integrations
+            </h3>
+            <p className="mb-4 text-sm text-gray-400 sm:mb-6 sm:text-base">
               Discover detailed integration guides, setup instructions, and developer tools in our
               comprehensive customizations hub.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
               <Link href="/customizations">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:shadow-blue-500/25 sm:w-auto"
+                  className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-sm font-medium text-white shadow-lg transition-all duration-200 hover:shadow-blue-500/25 sm:w-auto sm:px-8 sm:text-base"
                 >
                   View All Integrations
                 </motion.button>

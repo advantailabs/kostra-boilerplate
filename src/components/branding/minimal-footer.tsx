@@ -48,10 +48,10 @@ export function MinimalFooter() {
   const { isSignedIn, isLoaded } = useUser();
   return (
     <footer className="border-t border-white/5 bg-black">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Main footer content */}
-        <div className="py-16">
-          <div className="grid gap-12 lg:grid-cols-5">
+        <div className="py-12 sm:py-16">
+          <div className="grid gap-8 sm:gap-12 lg:grid-cols-5">
             {/* Brand section */}
             <div className="lg:col-span-2">
               <motion.div
@@ -61,19 +61,19 @@ export function MinimalFooter() {
                 viewport={{ once: true }}
               >
                 {/* Logo */}
-                <div className="mb-6 flex items-center">
-                  <div className="h-8">
+                <div className="mb-4 flex items-center sm:mb-6">
+                  <div className="h-6 w-6 sm:h-8 sm:w-8">
                     <Image
                       src="/logos/light-full-logo.svg"
                       alt="Peon Logo"
                       width={80}
                       height={20}
-                      className="object-contain"
+                      className="h-full w-full object-contain"
                     />
                   </div>
                 </div>
 
-                <p className="mb-8 max-w-md leading-relaxed text-gray-400">
+                <p className="mb-6 max-w-md leading-relaxed text-gray-400 sm:mb-8 sm:text-sm">
                   Transform scattered information into actionable intelligence with AI-powered
                   knowledge assistants.
                 </p>
@@ -132,8 +132,10 @@ export function MinimalFooter() {
                   transition={{ duration: 0.6, delay: sectionIndex * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <h3 className="mb-6 font-medium text-white">{section.title}</h3>
-                  <ul className="space-y-4">
+                  <h3 className="mb-4 font-medium text-white sm:mb-6 sm:text-sm">
+                    {section.title}
+                  </h3>
+                  <ul className="space-y-3 sm:space-y-4">
                     {section.links.map(link => {
                       // Skip sign-in link if user is already signed in
                       if (link.isSignIn && isLoaded && isSignedIn) return null;
@@ -146,7 +148,7 @@ export function MinimalFooter() {
                             if (link.isSignIn) {
                               return (
                                 <SignInButton mode="modal">
-                                  <button className="text-sm text-gray-400 transition-colors duration-200 hover:text-white">
+                                  <button className="text-xs text-gray-400 transition-colors duration-200 hover:text-white sm:text-sm">
                                     {link.name}
                                   </button>
                                 </SignInButton>
@@ -156,7 +158,7 @@ export function MinimalFooter() {
                               return (
                                 <Link
                                   href={link.href}
-                                  className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
+                                  className="text-xs text-gray-400 transition-colors duration-200 hover:text-white sm:text-sm"
                                 >
                                   {link.name}
                                 </Link>
@@ -165,7 +167,7 @@ export function MinimalFooter() {
                             return (
                               <Link
                                 href={link.href}
-                                className={`text-sm transition-colors duration-200 ${
+                                className={`text-xs transition-colors duration-200 sm:text-sm ${
                                   link.name === 'Privacy Policy' || link.name === 'Terms of Service'
                                     ? 'font-medium text-gray-300 underline hover:text-white'
                                     : 'text-gray-400 hover:text-white'
@@ -187,13 +189,13 @@ export function MinimalFooter() {
 
         {/* Bottom section */}
         <motion.div
-          className="flex flex-col items-center justify-between gap-4 border-t border-white/5 py-8 md:flex-row"
+          className="flex flex-col items-center justify-between gap-4 border-t border-white/5 py-6 sm:py-8 md:flex-row"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 sm:gap-6 sm:text-sm">
             <span>© {new Date().getFullYear()} Peon. All rights reserved.</span>
             <Link
               href="/privacy-policy"
@@ -209,7 +211,7 @@ export function MinimalFooter() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-xs text-gray-500 sm:text-sm">
             <div className="h-2 w-2 rounded-full bg-green-400" />
             <span>All systems operational</span>
           </div>

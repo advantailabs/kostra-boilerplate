@@ -102,8 +102,8 @@ export function ModernNavigation() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex h-16 items-center justify-between">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex h-12 items-center justify-between md:h-16">
           {/* Logo */}
           <motion.button
             onClick={() => {
@@ -117,23 +117,23 @@ export function ModernNavigation() {
                 router.push('/');
               }
             }}
-            className="flex items-center gap-3"
+            className="flex items-center gap-2 sm:gap-3"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="h-8">
+            <div className="h-6 w-6 sm:h-8 sm:w-8">
               <Image
                 src="/logos/light-logo.svg"
                 alt="Peon Logo"
                 width={32}
                 height={32}
-                className="object-contain"
+                className="h-full w-full object-contain"
               />
             </div>
           </motion.button>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-6 md:flex lg:gap-8">
             {navItems.map(item => {
               const active = isActive(item);
               return (
@@ -171,9 +171,10 @@ export function ModernNavigation() {
 
           {/* Mobile menu button */}
           <motion.button
-            className="p-2 text-gray-400 transition-colors hover:text-white md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
+            aria-label="Toggle mobile menu"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isMobileMenuOpen ? (
@@ -198,21 +199,23 @@ export function ModernNavigation() {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <motion.div
-            className="border-t border-white/10 py-4 md:hidden"
+            className="border-t border-white/10 bg-black/95 backdrop-blur-md md:hidden"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1 py-4">
               {navItems.map(item => {
                 const active = isActive(item);
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`py-2 text-sm font-medium transition-colors duration-200 ${
-                      active ? 'text-white' : 'text-gray-400 hover:text-white'
+                    className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${
+                      active
+                        ? 'bg-white/10 text-white'
+                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -222,26 +225,26 @@ export function ModernNavigation() {
               })}
 
               {/* Legal Links */}
-              <div className="flex flex-col gap-2 border-t border-white/10 pt-4">
+              <div className="flex flex-col gap-1 border-t border-white/10 px-4 pt-4">
                 <Link
                   href="/privacy-policy"
-                  className="py-1 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Privacy Policy
                 </Link>
                 <Link
                   href="/terms-of-services"
-                  className="py-1 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Terms of Service
                 </Link>
               </div>
 
-              <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
+              <div className="flex flex-col gap-3 border-t border-white/10 px-4 pt-4">
                 {isLoaded && isSignedIn ? (
-                  <div className="px-2 py-2">
+                  <div className="py-2">
                     <UserProfile />
                   </div>
                 ) : (

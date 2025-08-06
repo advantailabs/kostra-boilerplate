@@ -244,10 +244,10 @@ export function InteractiveDemo() {
 
                 {/* Code content */}
                 <div className="p-6">
-                  <pre className="overflow-x-auto text-sm leading-[1.6] text-gray-300">
+                  <pre className="scrollbar-hide overflow-x-auto text-sm leading-[1.6] text-gray-300">
                     <code
                       dangerouslySetInnerHTML={{ __html: highlightCode(sdkSnippet) }}
-                      className="font-mono"
+                      className="whitespace-pre-wrap break-words font-mono"
                     />
                   </pre>
                 </div>
@@ -265,12 +265,12 @@ export function InteractiveDemo() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="absolute -right-6 -top-6 h-12 w-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm"
+              className="pointer-events-none absolute -right-6 -top-6 h-12 w-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm"
             />
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-              className="absolute -bottom-4 -left-4 h-8 w-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm"
+              className="pointer-events-none absolute -bottom-4 -left-4 h-8 w-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm"
             />
           </motion.div>
         </div>

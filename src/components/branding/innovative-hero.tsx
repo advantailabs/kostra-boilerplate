@@ -26,7 +26,7 @@ export function InnovativeHero() {
   return (
     <section
       ref={containerRef}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black"
+      className="relative flex min-h-[calc(100vh-3rem)] items-center justify-center overflow-hidden bg-black md:min-h-screen"
     >
       {/* Subtle fade to next section */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-950/20 via-gray-950/10 to-transparent" />
@@ -56,16 +56,16 @@ export function InnovativeHero() {
         }}
       />
 
-      <motion.div className="container relative z-10 mx-auto px-6" style={{ y, opacity }}>
+      <motion.div className="container relative z-10 mx-auto px-4 sm:px-6" style={{ y, opacity }}>
         <div className="mx-auto max-w-5xl text-center">
           {/* Main headline with typing effect */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
-            <h1 className="text-6xl font-light leading-none tracking-tight text-white md:text-8xl">
+            <h1 className="text-4xl font-light leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
               Let your{' '}
               <span className="relative">
                 <span className="bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
@@ -87,7 +87,7 @@ export function InnovativeHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-gray-400 md:text-2xl"
+            className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-gray-400 sm:mb-12 sm:text-xl md:text-2xl"
           >
             <span className="text-white">Convert your knowledge into intelligence</span> with
             AI-powered research and analysis that goes beyond simple question answering
@@ -98,14 +98,14 @@ export function InnovativeHero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+            className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
           >
             {isLoaded && isSignedIn ? (
               <Link href="/app/chat">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-8 py-4 text-lg font-medium text-white transition-all duration-300"
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-6 py-3 text-base font-medium text-white transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
                 >
                   <span className="relative z-10">Start a new chat</span>
                   <motion.div
@@ -121,7 +121,7 @@ export function InnovativeHero() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-8 py-4 text-lg font-medium text-white transition-all duration-300"
+                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-6 py-3 text-base font-medium text-white transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
                 >
                   <span className="relative z-10">Ready to get started?</span>
                   <motion.div
@@ -139,7 +139,7 @@ export function InnovativeHero() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative overflow-hidden rounded-lg bg-white px-8 py-4 text-lg font-medium text-black transition-all duration-300"
+                  className="group relative overflow-hidden rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
                 >
                   <span className="relative z-10">Go to App</span>
                   <motion.div
@@ -155,7 +155,7 @@ export function InnovativeHero() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative overflow-hidden rounded-lg bg-white px-8 py-4 text-lg font-medium text-black transition-all duration-300"
+                  className="group relative overflow-hidden rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
                 >
                   <span className="relative z-10">Start Asking Now</span>
                   <motion.div
@@ -174,7 +174,7 @@ export function InnovativeHero() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="mx-auto mt-20 grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-3"
+            className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-6 sm:mt-20 sm:gap-8 md:grid-cols-3"
           >
             {[
               { value: '100k+', label: 'Documents processed' },
@@ -182,10 +182,12 @@ export function InnovativeHero() {
               { value: '70%', label: 'Time saved' },
             ].map((metric, index) => (
               <div key={index} className="text-center">
-                <div className="mb-2 text-3xl font-light text-white md:text-4xl">
+                <div className="mb-2 text-2xl font-light text-white sm:text-3xl md:text-4xl">
                   {metric.value}
                 </div>
-                <div className="text-sm uppercase tracking-wide text-gray-500">{metric.label}</div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 sm:text-sm">
+                  {metric.label}
+                </div>
               </div>
             ))}
           </motion.div>
