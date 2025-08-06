@@ -44,7 +44,7 @@ export function DummySearchBox() {
 
   return (
     <div className="space-y-2">
-      <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm sm:p-3 dark:border-gray-800 dark:bg-gray-900">
         <form onSubmit={handleSearch} className="space-y-0">
           {/* Input Container */}
           <div className="relative">
@@ -54,8 +54,8 @@ export function DummySearchBox() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search files or ask questions..."
-              className="min-h-[4rem]"
-              textareaClassName="min-h-[4rem] w-full resize-none border-0 bg-transparent px-0 py-3 text-sm shadow-none focus:ring-0 focus:border-0 dark:bg-transparent"
+              className="min-h-[3rem]"
+              textareaClassName="min-h-[3rem] w-full resize-none border-0 bg-transparent px-0 py-3 text-xs shadow-none focus:ring-0 focus:border-0 dark:bg-transparent sm:text-sm"
               style={{ outline: 'none' }}
               autoFocus
               rows={2}
@@ -68,9 +68,9 @@ export function DummySearchBox() {
             />
 
             {/* Controls Row */}
-            <div className="flex items-center justify-between pt-0">
+            <div className="flex flex-col gap-3 pt-0 sm:flex-row sm:items-center sm:justify-between">
               {/* Left side - Knowledge Base and Mode dropdowns */}
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {/* Knowledge Base Dropdown */}
                 <PillSelect
                   value="demo-kb"
@@ -83,7 +83,7 @@ export function DummySearchBox() {
                     { value: 'demo-kb-2', label: 'Stock Trading Expert' },
                     { value: 'demo-kb-3', label: 'Crypto Analyst' },
                   ]}
-                  className="h-6 px-2 py-1"
+                  className="h-6 px-2 py-1 text-xs sm:text-sm"
                 />
 
                 {/* Mode Dropdown */}
@@ -98,29 +98,29 @@ export function DummySearchBox() {
                     { value: 'web', label: 'Web search' },
                     { value: 'deep', label: 'Deep research' },
                   ]}
-                  className="h-6 px-2 py-1"
+                  className="h-6 px-2 py-1 text-xs sm:text-sm"
                 />
               </div>
 
               {/* Right side - Attachment, Audio, and Send buttons */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                 {/* File Upload */}
-                <Button type="button" variant="elevated" className="h-6 w-6 p-0">
-                  <RiAttachment2 className="h-3 w-3" />
+                <Button type="button" variant="elevated" className="h-5 w-5 p-0 sm:h-6 sm:w-6">
+                  <RiAttachment2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </Button>
 
                 {/* Audio Button */}
-                <Button type="button" variant="elevated" className="h-6 w-6 p-0">
-                  <RiMicLine className="h-3 w-3" />
+                <Button type="button" variant="elevated" className="h-5 w-5 p-0 sm:h-6 sm:w-6">
+                  <RiMicLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </Button>
 
                 {/* Send Button */}
                 <Button
                   type="button"
                   variant="elevated"
-                  className="h-6 w-6 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
+                  className="h-5 w-5 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 sm:h-6 sm:w-6 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
                 >
-                  <RiSendPlaneLine className="h-3 w-3" />
+                  <RiSendPlaneLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </Button>
               </div>
             </div>
