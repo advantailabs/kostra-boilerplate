@@ -119,39 +119,41 @@ export function MessageBubble({ message, persona, citations, className }: Messag
               : 'relative max-w-[85%] bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
           )}
         >
-          {/* Copy button for assistant messages only - positioned at top right */}
-          {!isUser && (
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(displayContent);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-              className="absolute right-1 top-1 z-10 rounded bg-gray-200 p-1 text-gray-600 hover:bg-gray-300 hover:text-gray-800 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-              title="Copy full message"
-            >
-              {copied ? (
-                <div className="flex h-3 w-3 items-center justify-center text-[10px]">✓</div>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3 w-3 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 
-      1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 
-      18H8V7h11v16z"
-                  />
-                </svg>
-              )}
-            </button>
-          )}
+          <div className={cx('relative break-words text-sm')}>
+            {/* Copy button for assistant messages only - positioned at top right */}
+            {!isUser && (
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(displayContent);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="absolute -right-1 -top-1 z-10 rounded bg-gray-200 p-1 text-gray-600 hover:bg-gray-300 hover:text-gray-800 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                title="Copy full message"
+              >
+                {copied ? (
+                  <div className="flex h-3 w-3 items-center justify-center text-[10px]">✓</div>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3 fill-current"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 
+          1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 
+          18H8V7h11v16z"
+                    />
+                  </svg>
+                )}
+              </button>
+            )}
 
-          {/* 📝 Message content */}
-          <p className="break-words text-sm">
-            <MarkdownRenderer content={displayContent} forceWhiteText={isUser} />
-          </p>
+            {/* 📝 Message content with padding to avoid copy button overlap */}
+            <div className={!isUser ? 'pr-7' : ''}>
+              <MarkdownRenderer content={displayContent} forceWhiteText={isUser} />
+            </div>
+          </div>
 
           {/* ⏰ Timestamp */}
           <div className="mt-2 text-xs">
