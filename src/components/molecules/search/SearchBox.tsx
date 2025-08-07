@@ -97,7 +97,7 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
           value={selectedKnowledgeBaseId}
           onValueChange={setSelectedKnowledgeBaseId}
           icon={
-            <RiUserLine className="h-3.5 w-3.5 text-gray-600 sm:h-4 sm:w-4 dark:text-gray-300" />
+            <RiUserLine className="h-2 w-2 text-gray-500 sm:h-2.5 sm:w-2.5 dark:text-gray-400" />
           }
           placeholder="Select knowledge base"
           displayValue={
@@ -117,7 +117,7 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
               label: knowledgeBase.title,
             }));
           })()}
-          className="h-8 rounded-md border-gray-200/50 bg-white/95 px-4 py-2 text-sm font-medium shadow-xl backdrop-blur-md transition-all duration-200 hover:bg-white sm:h-9 sm:px-5 sm:text-base dark:border-gray-700/50 dark:bg-gray-900/95 dark:hover:bg-gray-900"
+          className="h-5 rounded-full border-gray-200/50 px-1.5 py-0.5 text-xs shadow-xl backdrop-blur-md transition-all duration-200 hover:bg-white sm:h-6 sm:px-2 sm:py-1 sm:text-sm"
         />
       </div>
 
@@ -134,7 +134,8 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search files or ask questions..."
               className="min-h-[3rem] sm:min-h-[4rem]"
-              textareaClassName="min-h-[3rem] sm:min-h-[4rem] w-full resize-none border-0 bg-transparent px-0 pt-2 pb-8 pl-1 sm:pt-3 sm:pb-10 sm:pl-2 text-xs sm:text-sm shadow-none focus:ring-0 focus:border-0 dark:bg-transparent overflow-hidden pr-20"
+              textareaClassName="min-h-[3rem] sm:min-h-[4rem] w-full resize-none border-0 bg-transparent px-0 py-2 sm:py-3 text-xs sm:text-sm shadow-none focus:ring-0 focus:border-0 dark:bg-transparent overflow-hidden pr-20
+"
               style={{ outline: 'none' }}
               autoFocus
               rows={2}
@@ -147,22 +148,25 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
             />
 
             {/* Mode Dropdown - bottom-left inside textarea */}
-            <div className="absolute bottom-1 left-0 z-10 sm:bottom-1 sm:left-0">
+            <div className="absolute left-0 z-10 pt-0 sm:left-0">
               <PillSelect
                 value={searchMode}
                 onValueChange={value => setSearchMode(value as SearchMode)}
-                icon={<RiSearchEyeLine className="h-3 w-3 text-gray-600 dark:text-gray-300" />}
+                icon={
+                  <RiSearchEyeLine className="h-2 w-2 text-gray-500 sm:h-2.5 sm:w-2.5 dark:text-gray-400" />
+                }
                 displayValue={searchMode === 'web' ? 'Web search' : 'Deep research'}
                 options={[
                   { value: 'web', label: 'Web search' },
                   { value: 'deep', label: 'Deep research' },
                 ]}
-                className="h-5 rounded-full border border-gray-200/50 bg-white/90 px-2 py-0.5 text-xs font-medium shadow backdrop-blur sm:h-6 sm:px-2.5 sm:text-sm dark:border-gray-700/50 dark:bg-gray-900/90"
+                className="h-5 px-1.5 py-0.5 text-xs sm:h-6 sm:px-2 sm:py-0.5 sm:text-sm"
               />
             </div>
 
             {/* Controls - bottom-right */}
-            <div className="absolute bottom-1 right-1 z-10 flex items-center space-x-1 sm:bottom-1 sm:right-2 sm:space-x-2">
+            <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
+              {/* File Upload */}
               <div className="relative">
                 <input
                   type="file"
@@ -176,12 +180,14 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                 </Button>
               </div>
 
+              {/* Audio Button */}
               <Button type="button" variant="elevated" className="h-5 w-5 p-0 sm:h-6 sm:w-6">
                 <RiMicLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               </Button>
 
+              {/* Send Button */}
               <Button
-                type="submit"
+                type="button"
                 variant="elevated"
                 className="h-5 w-5 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 sm:h-6 sm:w-6 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
               >
