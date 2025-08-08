@@ -126,16 +126,20 @@ export function Modal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}>
-        <DialogHeader className="relative border-b border-gray-200 p-4 dark:border-gray-700">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h1>
-          {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
+        <DialogHeader className="relative border-b border-gray-200 p-4 max-sm:p-3 dark:border-gray-700">
+          <h1 className="text-lg font-medium text-gray-900 max-sm:pr-12 dark:text-gray-100">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-xs text-gray-500 max-sm:pr-12 dark:text-gray-400">{description}</p>
+          )}
           <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
             <RiCloseLine className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </DialogClose>
         </DialogHeader>
 
-        <div className={removePadding ? 'p-0' : 'px-4 pt-4'}>
+        <div className={removePadding ? 'p-0' : 'px-4 pt-4 max-sm:px-3 max-sm:pt-3'}>
           {/* Main content */}
           {children}
 
@@ -143,7 +147,7 @@ export function Modal({
           {(footer || defaultFooter) && (
             <>
               <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
-              <div className="py-4">{footer || defaultFooter}</div>
+              <div className="py-4 max-sm:py-3">{footer || defaultFooter}</div>
             </>
           )}
         </div>

@@ -197,19 +197,19 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
 
   // Custom footer for our modal
   const customFooter = (
-    <div className="flex flex-shrink-0 flex-col-reverse items-center justify-end gap-3 p-4 sm:flex-row">
+    <div className="flex flex-shrink-0 flex-col-reverse items-center justify-end gap-3 p-4 max-sm:flex-row max-sm:gap-2 max-sm:p-3 sm:flex-row">
       <Button
         type="button"
         variant="secondary"
         onClick={onClose}
-        className="w-full sm:w-auto"
+        className="w-full max-sm:w-auto sm:w-auto"
         disabled={loading}
       >
         Cancel
       </Button>
       <Button
         type="submit"
-        className="w-full sm:w-auto"
+        className="w-full max-sm:w-auto sm:w-auto"
         onClick={handleSubmit}
         disabled={loading || isUploading || !formData.name || !formData.instructions}
         isLoading={loading}
@@ -227,14 +227,14 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         title={title}
         description={description}
         maxWidth="max-w-full"
-        contentClassName="h-screen max-h-screen w-screen rounded-none overflow-hidden"
+        contentClassName="h-screen max-h-screen w-screen rounded-none max-sm:h-[calc(100vh-40px)] max-sm:overflow-y-auto overflow-hidden"
         removePadding
         footer={customFooter}
       >
-        <div className="grid h-full grid-cols-[25%_35%_40%]">
+        <div className="grid h-full grid-cols-1 sm:grid-cols-[25%_35%_40%]">
           {/* Column 1: Logo, Title, Description, Knowledge Base */}
-          <div className="overflow-y-auto border-r border-gray-200 dark:border-gray-800">
-            <div className="space-y-4 p-4">
+          <div className="overflow-y-auto border-r border-gray-200 max-sm:border-b max-sm:border-r-0 max-sm:border-gray-200 dark:border-gray-800 max-sm:dark:border-gray-800">
+            <div className="space-y-4 p-4 max-sm:space-y-3 max-sm:p-3">
               {/* Logo Section */}
               <div>
                 <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
@@ -351,8 +351,8 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
           </div>
 
           {/* Column 2: Instructions */}
-          <div className="overflow-y-auto border-r border-gray-200 dark:border-gray-800">
-            <div className="h-full p-4">
+          <div className="overflow-y-auto border-r border-gray-200 max-sm:border-b max-sm:border-r-0 max-sm:border-gray-200 dark:border-gray-800 max-sm:dark:border-gray-800">
+            <div className="h-full p-4 max-sm:p-3">
               <Label htmlFor="instructions" className="mb-2 text-sm font-medium">
                 Instructions *
               </Label>
@@ -362,14 +362,14 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                 onChange={e => setFormData({ ...formData, instructions: e.target.value })}
                 placeholder="Detailed instructions for the AI assistant"
                 required
-                className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+                className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-sm:h-32 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
               />
             </div>
           </div>
 
           {/* Column 3: Files */}
           <div className="overflow-y-auto">
-            <div className="p-4">
+            <div className="p-4 max-sm:p-3">
               <div className="flex items-center justify-between">
                 <Label className="mb-2 text-sm font-medium">Knowledge Base Files</Label>
                 {formData.knowledgeBaseId && (
