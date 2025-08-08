@@ -71,13 +71,16 @@ export default function PersonasPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between border-b border-gray-200 max-sm:flex-col max-sm:items-start max-sm:gap-3 dark:border-gray-700">
         <PageHeader
           title="Personas"
           description="Manage your AI assistant personas and their instructions"
         />
-        <div className="px-4 py-3">
-          <Button onClick={() => setShowAddModal(true)}>
+        <div className="px-4 py-3 max-sm:hidden">
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="max-sm:w-auto max-sm:justify-center max-sm:px-2 max-sm:py-2"
+          >
             <RiAddLine className="mr-2 h-4 w-4" />
             Create Persona
           </Button>
@@ -85,15 +88,28 @@ export default function PersonasPage() {
       </div>
 
       {/* Content */}
-      <div className="h-full p-4">
+      <div className="h-full p-4 max-sm:p-3">
+        {/* Mobile Create Button - Only visible on mobile */}
+        <div className="hidden max-sm:mb-4 max-sm:block">
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="max-sm:w-auto max-sm:justify-center max-sm:px-4 max-sm:py-1.5"
+          >
+            <RiAddLine className="mr-2 h-4 w-4" />
+            Create Persona
+          </Button>
+        </div>
         {personas.length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-            <div className="text-center">
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8 dark:border-gray-600">
+            <div className="text-center max-sm:px-2">
               <p className="text-sm text-gray-500 dark:text-gray-400">No personas yet</p>
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              <p className="mt-1 text-xs text-gray-400 max-sm:text-center dark:text-gray-500">
                 Create your first persona to start chatting
               </p>
-              <Button onClick={() => setShowAddModal(true)} className="mt-3">
+              <Button
+                onClick={() => setShowAddModal(true)}
+                className="mt-3 max-sm:mt-2 max-sm:w-full max-sm:justify-center max-sm:px-4 max-sm:py-1.5"
+              >
                 <RiAddLine className="mr-2 h-4 w-4" />
                 Create Persona
               </Button>
@@ -101,12 +117,12 @@ export default function PersonasPage() {
           </div>
         ) : (
           <>
-            <div className="mb-4">
+            <div className="mb-4 max-sm:mb-3">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {personas.length} persona{personas.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid gap-4 max-sm:grid-cols-1 max-sm:gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {personas.map(persona => (
                 <PersonaCard
                   key={persona.id}
