@@ -227,7 +227,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         title={title}
         description={description}
         maxWidth="max-w-full"
-        contentClassName="h-screen max-h-screen w-screen rounded-none max-sm:h-[calc(100vh-40px)] max-sm:overflow-y-auto overflow-hidden"
+        contentClassName="h-screen max-h-screen w-screen rounded-none max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:overflow-y-auto overflow-hidden"
         removePadding
         footer={customFooter}
       >
@@ -362,14 +362,14 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                 onChange={e => setFormData({ ...formData, instructions: e.target.value })}
                 placeholder="Detailed instructions for the AI assistant"
                 required
-                className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-sm:h-32 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+                className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-sm:h-[calc(100dvh-250px)] dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
               />
             </div>
           </div>
 
           {/* Column 3: Files */}
           <div className="overflow-y-auto">
-            <div className="p-4 max-sm:p-3">
+            <div className="p-4 pb-2 max-sm:p-3 max-sm:pb-2">
               <div className="flex items-center justify-between">
                 <Label className="mb-2 text-sm font-medium">Knowledge Base Files</Label>
                 {formData.knowledgeBaseId && (
@@ -388,20 +388,20 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
               {(() => {
                 if (!formData.knowledgeBaseId) {
                   return (
-                    <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                    <div className="mt-2 py-4 text-center text-sm text-gray-500 sm:py-8">
                       Select a knowledge base to view files
                     </div>
                   );
                 }
                 if (!selectedKnowledgeBase?.fileKnowledgeBases?.length) {
                   return (
-                    <div className="mt-2 py-8 text-center text-sm text-gray-500">
+                    <div className="mt-2 py-4 text-center text-sm text-gray-500 sm:py-8">
                       No files in this knowledge base
                     </div>
                   );
                 }
                 return (
-                  <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto">
+                  <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto max-sm:max-h-[calc(100dvh-250px)]">
                     {selectedKnowledgeBase.fileKnowledgeBases.map(({ file }) => {
                       const FileIcon = getFileIcon(file.mimeType);
                       return (
