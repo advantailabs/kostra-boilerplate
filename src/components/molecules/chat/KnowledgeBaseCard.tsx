@@ -51,9 +51,9 @@ export function KnowledgeBaseCard({
   };
 
   return (
-    <Link href={`/app/knowledge-bases/${knowledgeBase.id}`}>
+    <Link href={`/app/knowledge-bases/${knowledgeBase.id}`} className="block min-w-0">
       <Card
-        className={`group flex h-[180px] cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${
+        className={`group flex h-[180px] min-w-0 cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${
           isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
         }`}
         onClick={handleCardClick}

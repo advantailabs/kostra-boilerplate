@@ -90,17 +90,25 @@ export default function KnowledgeBasesPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col items-start gap-2 border-b border-gray-200 md:flex-row md:items-center md:justify-between dark:border-gray-700">
         <PageHeader
           title="Knowledge Bases"
           description="Manage your knowledge bases and organize your files"
         />
-        <div className="px-4 py-3">
+        <div className="hidden px-4 py-3 md:ml-auto md:block">
           <Button onClick={openCreateModal}>
             <Plus className="mr-2 h-4 w-4" />
             Create Knowledge Base
           </Button>
         </div>
+      </div>
+
+      {/* Mobile button below the border */}
+      <div className="px-4 py-3 md:hidden">
+        <Button onClick={openCreateModal}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Knowledge Base
+        </Button>
       </div>
 
       {/* Content */}
@@ -125,7 +133,7 @@ export default function KnowledgeBasesPage() {
                 {knowledgeBases.length} knowledge base{knowledgeBases.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {knowledgeBases.map(knowledgeBase => (
                 <KnowledgeBaseCard
                   key={knowledgeBase.id}

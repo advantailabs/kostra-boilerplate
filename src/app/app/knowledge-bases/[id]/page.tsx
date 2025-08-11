@@ -62,18 +62,21 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col gap-2 border-b border-gray-200 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700">
         <PageHeader title="Knowledge Base Files" description={knowledgeBase.title} />
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-3">
+        <div className="hidden px-4 pb-3 sm:block sm:py-3">
+          <div className="flex w-full items-center gap-3 sm:w-auto">
             <Link
               href="/app/knowledge-bases"
-              className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Link>
-            <Button onClick={() => setShowFileUploader(true)} className="flex items-center gap-2">
+            <Button
+              onClick={() => setShowFileUploader(true)}
+              className="flex w-full items-center justify-center gap-2 sm:w-auto"
+            >
               <Plus className="h-4 w-4" />
               Add Files
             </Button>
@@ -83,6 +86,23 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
 
       {/* Files Content */}
       <div className="h-full p-4">
+        {/* Mobile actions placed just below the header border */}
+        <div className="mb-4 flex items-center gap-3 sm:hidden">
+          <Link
+            href="/app/knowledge-bases"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Link>
+          <Button
+            onClick={() => setShowFileUploader(true)}
+            className="inline-flex items-center justify-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Files
+          </Button>
+        </div>
         {files.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
             <div className="text-center">
@@ -115,7 +135,7 @@ export default function KnowledgeBaseDetailPage({ params }: KnowledgeBaseDetailP
                 {files.length} file{files.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {files.map((fileKb: any) => (
                 <FileCard
                   key={fileKb.file.id}
