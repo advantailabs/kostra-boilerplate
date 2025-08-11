@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  RiAttachment2,
-  RiMicLine,
-  RiSearchEyeLine,
-  RiSendPlaneLine,
-  RiUserLine,
-} from '@remixicon/react';
+import { RiAttachment2, RiMicLine, RiSendPlaneLine, RiUserLine } from '@remixicon/react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
@@ -15,7 +9,6 @@ import { Textarea } from '@/components/atom/Textarea';
 
 export function DummySearchBox() {
   const [searchQuery, setSearchQuery] = useState('What are invoices due in the next 30 days?');
-  const [searchMode, setSearchMode] = useState<'web' | 'deep'>('deep');
 
   // Auto-resize textarea
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -68,10 +61,9 @@ export function DummySearchBox() {
             />
 
             {/* Controls Row */}
-            <div className="flex flex-col gap-3 pt-0 sm:flex-row sm:items-center sm:justify-between">
-              {/* Left side - Knowledge Base and Mode dropdowns */}
+            <div className="flex flex-nowrap items-center justify-between gap-1.5 pt-0">
+              {/* Left side - Knowledge Base dropdown */}
               <div className="flex flex-wrap items-center gap-2">
-                {/* Knowledge Base Dropdown */}
                 <PillSelect
                   value="demo-kb"
                   onValueChange={() => {}}
@@ -82,21 +74,6 @@ export function DummySearchBox() {
                     { value: 'demo-kb', label: 'File Analyzer' },
                     { value: 'demo-kb-2', label: 'Stock Trading Expert' },
                     { value: 'demo-kb-3', label: 'Crypto Analyst' },
-                  ]}
-                  className="h-6 px-2 py-1 text-xs sm:text-sm"
-                />
-
-                {/* Mode Dropdown */}
-                <PillSelect
-                  value={searchMode}
-                  onValueChange={value => setSearchMode(value as 'web' | 'deep')}
-                  icon={
-                    <RiSearchEyeLine className="text-gray-5 h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />
-                  }
-                  displayValue={searchMode === 'web' ? 'Web search' : 'Deep research'}
-                  options={[
-                    { value: 'web', label: 'Web search' },
-                    { value: 'deep', label: 'Deep research' },
                   ]}
                   className="h-6 px-2 py-1 text-xs sm:text-sm"
                 />
