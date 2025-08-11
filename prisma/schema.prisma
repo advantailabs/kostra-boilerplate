@@ -79,15 +79,16 @@ model KnowledgeBase {
 }
 
 model Message {
-  id              Int       @id @default(autoincrement())
+  id              Int           @id @default(autoincrement())
   threadId        Int
   openaiMessageId String?
   role            String
   content         String
   citations       Json? // Store citation data as JSON
-  timestamp       DateTime  @default(now())
+  timestamp       DateTime      @default(now())
   deletedAt       DateTime? // Soft delete
-  thread          Thread    @relation(fields: [threadId], references: [id])
+  thread          Thread        @relation(fields: [threadId], references: [id])
+  messageFiles    MessageFile[]
 }
 
 model File {
@@ -105,6 +106,7 @@ model File {
   deletedAt          DateTime? // Soft delete
   user               User?               @relation(fields: [userId], references: [id])
   fileKnowledgeBases FileKnowledgeBase[]
+  messageFiles       MessageFile[]
 }
 
 model FileKnowledgeBase {
@@ -116,4 +118,16 @@ model FileKnowledgeBase {
   knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id])
 
   @@unique([fileId, knowledgeBaseId])
+}
+
+model MessageFile {
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  fileId    Int
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  file    File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, fileId])
 }
