@@ -83,7 +83,7 @@ function ThreadListItem({
       <button
         type="button"
         onClick={handleDelete}
-        className="hidden shrink-0 opacity-0 transition-opacity group-hover:opacity-100 min-[800px]:ml-1 min-[800px]:inline-flex"
+        className="inline-flex shrink-0 opacity-0 transition-opacity group-hover:opacity-100 min-[800px]:ml-1"
         title="Delete thread"
       >
         <RiDeleteBinLine className="h-3 w-3 text-gray-400 hover:text-red-500" />
