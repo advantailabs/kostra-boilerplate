@@ -1,18 +1,17 @@
 import { Avatar } from '@/components/atom/Avatar';
 import { Persona, Thread } from '@prisma/client';
-import { RiMore2Fill } from '@remixicon/react';
 
 interface ConversationHeaderProps {
   thread?: Thread & { persona: Persona | null };
   selectedPersona?: Persona;
-  onDelete?: () => void;
+  // onDelete?: () => void;
   className?: string;
 }
 
 export function ConversationHeader({
   thread,
   selectedPersona,
-  onDelete,
+  // onDelete,
   className,
 }: ConversationHeaderProps) {
   if (!thread) {
@@ -64,7 +63,7 @@ export function ConversationHeader({
           )}
         </div>
       </div>
-      {onDelete && (
+      {/* {onDelete && (
         <button
           type="button"
           onClick={onDelete}
@@ -73,7 +72,7 @@ export function ConversationHeader({
         >
           <RiMore2Fill className="h-4 w-4" />
         </button>
-      )}
+      )} */}
     </div>
   );
 }
