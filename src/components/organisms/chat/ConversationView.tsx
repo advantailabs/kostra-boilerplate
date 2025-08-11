@@ -28,7 +28,6 @@ export function ConversationView({
   activeThread,
   onCreateThread,
   onSendMessage,
-  onDeleteThread,
   showPersonaModal = false,
   onClosePersonaModal,
   isStreaming = false,
@@ -98,12 +97,6 @@ export function ConversationView({
     router.push('/app/personas');
   };
 
-  const handleDeleteThread = () => {
-    if (activeThread) {
-      onDeleteThread(activeThread.id);
-    }
-  };
-
   const selectedPersona = personas.find(p => p.id === selectedPersonaId);
 
   // Determine if we should show messages or empty state
@@ -117,7 +110,6 @@ export function ConversationView({
           <ConversationHeader
             thread={activeThread || undefined}
             selectedPersona={!activeThread ? selectedPersona : undefined}
-            onDelete={activeThread ? handleDeleteThread : undefined}
           />
         </div>
 
