@@ -108,7 +108,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     // If client sent files, upload them to OpenAI and create DB file records
     let openaiAttachments: Array<{ file_id: string; tools?: Array<{ type: 'file_search' }> }> = [];
-    let uploadedFileIds: number[] = [];
+    const uploadedFileIds: number[] = [];
 
     if (files && files.length > 0) {
       const uploadPromises = files.map(async f => {
