@@ -13,6 +13,7 @@ import { Button } from '@/components/atom/Button';
 import { PillSelect } from '@/components/atom/PillSelect';
 import { Textarea } from '@/components/atom/Textarea';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
+import { SEARCH_MODE_OPTIONS, type SearchMode } from '@/lib/constants/search';
 
 interface AttachedFile {
   id: string;
@@ -20,7 +21,7 @@ interface AttachedFile {
   size: number;
 }
 
-type SearchMode = 'web' | 'deep';
+// Using centralized SearchMode from constants
 
 interface SearchBoxProps {
   onSearch: (_data: {
@@ -36,7 +37,7 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [selectedKnowledgeBaseId, setSelectedKnowledgeBaseId] = useState<string>('');
-  const [searchMode, setSearchMode] = useState<SearchMode>('deep');
+  const [searchMode, setSearchMode] = useState<SearchMode>('smart-search');
 
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
   const knowledgeBases = React.useMemo(
@@ -155,11 +156,10 @@ export function SearchBox({ onSearch, className = '' }: SearchBoxProps) {
                 icon={
                   <RiSearchEyeLine className="h-2 w-2 text-gray-500 sm:h-2.5 sm:w-2.5 dark:text-gray-400" />
                 }
-                displayValue={searchMode === 'web' ? 'Web search' : 'Deep research'}
-                options={[
-                  { value: 'web', label: 'Web search' },
-                  { value: 'deep', label: 'Deep research' },
-                ]}
+                displayValue={
+                  SEARCH_MODE_OPTIONS.find(option => option.value === searchMode)?.label
+                }
+                options={SEARCH_MODE_OPTIONS}
                 className="h-5 px-1.5 py-0.5 text-xs sm:h-6 sm:px-2 sm:py-0.5 sm:text-sm"
               />
             </div>
