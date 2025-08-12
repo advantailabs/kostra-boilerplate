@@ -44,6 +44,16 @@ export const uploadFilesSchema = z
         mimeType: z.string(),
         size: z.number(),
         s3Key: z.string(),
+        uploadPurpose: z
+          .enum([
+            'PersonaLogo',
+            'UserAvatar',
+            'UserFile',
+            'ThreadAttachment',
+            'MessageAttachment',
+            'UserDocument',
+          ])
+          .optional(),
       })
     ),
     knowledgeBaseIds: z.array(z.number()).optional(),

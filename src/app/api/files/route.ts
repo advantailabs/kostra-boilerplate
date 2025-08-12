@@ -169,6 +169,7 @@ export async function POST(request: NextRequest) {
         file: mockFile,
         s3Key: fileData.s3Key,
         knowledgeBaseIds,
+        uploadPurpose: fileData.uploadPurpose || 'UserDocument',
       });
 
       if (!result.success) {

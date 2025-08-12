@@ -188,6 +188,10 @@ export async function findFilesByUserId(
     const whereClause: any = {
       userId,
       deletedAt: null,
+      // Exclude files that are attached to any message
+      messageFiles: {
+        none: {},
+      },
     };
 
     if (filters?.search) {

@@ -11,6 +11,7 @@ export interface UploadPurposeConfig {
   allowedMimeTypes: string[];
   maxFileSize: number; // in bytes
   keyPrefix: string;
+  allowedExtensions?: string[]; // e.g., ['.pdf', '.txt'] for client-side file picker
 }
 
 export interface FileUploadRequest {

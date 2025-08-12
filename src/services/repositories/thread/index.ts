@@ -122,6 +122,21 @@ const findByIdWithMessagesInternal = async (
         where: {
           deletedAt: null, // Only fetch non-deleted messages
         },
+        include: {
+          messageFiles: {
+            select: {
+              file: {
+                select: {
+                  id: true,
+                  originalName: true,
+                  filename: true,
+                  mimeType: true,
+                  size: true,
+                },
+              },
+            },
+          },
+        },
         orderBy: {
           timestamp: 'asc',
         },
@@ -136,48 +151,71 @@ const findByIdWithMessages = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
 ): Promise<PublicThreadWithMessages | null> => {
-  return prisma.thread.findUnique({
-    where: {
-      id: threadId,
-    },
-    select: {
-      ...publicThreadSelect,
+  const thread = await prisma.thread.findUnique({
+    where: { id: threadId },
+    include: {
       messages: {
-        where: {
-          deletedAt: null, // Only fetch non-deleted messages
-        },
-        select: {
-          id: true,
-          threadId: true,
-          role: true,
-          content: true,
-          timestamp: true,
-          citations: true,
-          deletedAt: true,
-          // Explicitly exclude openaiMessageId
-        },
-        orderBy: {
-          timestamp: 'asc',
-        },
-      },
-      persona: {
-        select: {
-          id: true,
-          userId: true,
-          name: true,
-          description: true,
-          instructions: true,
-          tags: true,
-          logo: true,
-          knowledgeBaseId: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-          // Explicitly exclude openaiAssistantId
+        where: { deletedAt: null },
+        orderBy: { timestamp: 'asc' },
+        include: {
+          messageFiles: {
+            select: {
+              file: {
+                select: {
+                  id: true,
+                  originalName: true,
+                  filename: true,
+                  mimeType: true,
+                  size: true,
+                },
+              },
+            },
+          },
         },
       },
+      persona: true,
     },
-  }) as any;
+  });
+
+  if (!thread) return null;
+
+  // Map to public shape (exclude OpenAI IDs)
+  const publicThread: PublicThreadWithMessages = {
+    id: thread.id,
+    userId: thread.userId,
+    personaId: thread.personaId ?? null,
+    title: thread.title,
+    createdAt: thread.createdAt,
+    updatedAt: thread.updatedAt,
+    deletedAt: thread.deletedAt ?? null,
+    messages: thread.messages.map((m: any) => ({
+      id: m.id,
+      threadId: m.threadId,
+      role: m.role,
+      content: m.content,
+      timestamp: m.timestamp,
+      citations: m.citations,
+      deletedAt: m.deletedAt,
+      messageFiles: m.messageFiles,
+    })),
+    persona: thread.persona
+      ? {
+          id: thread.persona.id,
+          userId: thread.persona.userId,
+          name: thread.persona.name,
+          description: thread.persona.description,
+          instructions: thread.persona.instructions,
+          tags: thread.persona.tags,
+          logo: thread.persona.logo,
+          knowledgeBaseId: thread.persona.knowledgeBaseId,
+          createdAt: thread.persona.createdAt,
+          updatedAt: thread.persona.updatedAt,
+          deletedAt: thread.persona.deletedAt,
+        }
+      : null,
+  } as any;
+
+  return publicThread;
 };
 
 const findById = async (

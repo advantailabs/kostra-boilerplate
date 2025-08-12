@@ -3,6 +3,8 @@ import { forwardRef, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import remarkGfm from 'remark-gfm';
 
 interface MarkdownRendererProps {
   content: string;
@@ -236,6 +238,95 @@ const createCodeBlock = (forceWhiteText: boolean) =>
     return <CodeBlock {...props} forceWhiteText={forceWhiteText} ref={ref} />;
   });
 
+// Table components (GFM tables)
+const createTable = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableElement, any>(function Table({ children, ...props }, ref) {
+    return (
+      <div className="my-3 w-full overflow-x-auto">
+        <table
+          ref={ref}
+          className={`w-full border-collapse ${
+            forceWhiteText ? 'text-white' : 'text-gray-800 dark:text-gray-200'
+          }`}
+          {...props}
+        >
+          {children}
+        </table>
+      </div>
+    );
+  });
+
+const createTableHead = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableSectionElement, any>(function Thead({ children, ...props }, ref) {
+    return (
+      <thead
+        ref={ref}
+        className={`${forceWhiteText ? 'text-white' : 'text-gray-900 dark:text-gray-100'}`}
+        {...props}
+      >
+        {children}
+      </thead>
+    );
+  });
+
+const createTableBody = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableSectionElement, any>(function Tbody({ children, ...props }, ref) {
+    return (
+      <tbody
+        ref={ref}
+        className={`${forceWhiteText ? 'text-white' : 'text-gray-800 dark:text-gray-200'}`}
+        {...props}
+      >
+        {children}
+      </tbody>
+    );
+  });
+
+const createTableRow = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableRowElement, any>(function Tr({ children, ...props }, ref) {
+    return (
+      <tr
+        ref={ref}
+        className={`border-b ${
+          forceWhiteText ? 'border-indigo-300/40' : 'border-gray-200 dark:border-gray-700'
+        }`}
+        {...props}
+      >
+        {children}
+      </tr>
+    );
+  });
+
+const createTableHeaderCell = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableCellElement, any>(function Th({ children, ...props }, ref) {
+    return (
+      <th
+        ref={ref}
+        className={`bg-gray-100 px-3 py-2 text-left text-sm font-medium dark:bg-gray-800 ${
+          forceWhiteText ? 'text-white' : 'text-gray-900 dark:text-gray-100'
+        }`}
+        {...props}
+      >
+        {children}
+      </th>
+    );
+  });
+
+const createTableCell = (forceWhiteText: boolean) =>
+  forwardRef<HTMLTableCellElement, any>(function Td({ children, ...props }, ref) {
+    return (
+      <td
+        ref={ref}
+        className={`px-3 py-2 align-top text-sm ${
+          forceWhiteText ? 'text-white' : 'text-gray-800 dark:text-gray-200'
+        }`}
+        {...props}
+      >
+        {children}
+      </td>
+    );
+  });
+
 export default function MarkdownRenderer({
   content,
   forceWhiteText = false,
@@ -255,6 +346,12 @@ export default function MarkdownRenderer({
       h3: createHeading3(forceWhiteText),
       h4: createHeading4(forceWhiteText),
       hr: createHorizontalRule(forceWhiteText),
+      table: createTable(forceWhiteText),
+      thead: createTableHead(forceWhiteText),
+      tbody: createTableBody(forceWhiteText),
+      tr: createTableRow(forceWhiteText),
+      th: createTableHeaderCell(forceWhiteText),
+      td: createTableCell(forceWhiteText),
     }),
     [forceWhiteText]
   );
@@ -263,7 +360,9 @@ export default function MarkdownRenderer({
     <div
       className={`text-sm ${forceWhiteText ? 'text-white' : 'text-gray-800 dark:text-gray-200'}`}
     >
-      <ReactMarkdown components={components}>{content}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }

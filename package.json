@@ -69,6 +69,7 @@
     "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^15.6.1",
     "recharts": "^2.15.0",
+    "remark-gfm": "^4.0.1",
     "sass": "^1.85.1",
     "svix": "^1.61.4",
     "tailwind-merge": "^2.6.0",

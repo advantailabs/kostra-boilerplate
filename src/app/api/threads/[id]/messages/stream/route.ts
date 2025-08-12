@@ -2,7 +2,8 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { streamAssistantRun } from '@/services/external/openai/messages';
-import { createMessageWithCitations } from '@/services/repositories/message';
+import { uploadFileService } from '@/services/internal/file';
+import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import {
   findByIdWithMessagesInternal,
   findByUserAndId,
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
-    const { content: messageContent } = validationResult.data;
+    const { content: messageContent, files } = validationResult.data;
 
     // Get thread with messages for OpenAI thread ID
     const threadWithMessages = await findByIdWithMessagesInternal(threadId);
@@ -102,14 +103,43 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
+    // If client sent files, upload them to OpenAI and create DB file records
+    let openaiAttachments: Array<{ file_id: string; tools?: Array<{ type: 'file_search' }> }> = [];
+    const uploadedFileIds: number[] = [];
+
+    if (files && files.length > 0) {
+      const uploadPromises = files.map(async f => {
+        const mockFile = new File([], f.originalName, { type: f.mimeType });
+        Object.defineProperty(mockFile, 'size', { value: f.size });
+        const result = await uploadFileService({
+          userId: user.id,
+          file: mockFile,
+          s3Key: f.s3Key,
+          uploadPurpose: f.uploadPurpose || 'MessageAttachment',
+        });
+        if (!result.success) throw new Error(`Failed to prepare attachment ${f.originalName}`);
+        uploadedFileIds.push(result.data!.id);
+        return { file_id: result.data!.openaiFileId as string };
+      });
+      const uploaded = await Promise.all(uploadPromises);
+      openaiAttachments = uploaded.map(u => ({
+        file_id: u.file_id,
+        tools: [{ type: 'file_search' }],
+      }));
+    }
+
     // Create user message in database first
-    await createMessageWithCitations({
+    const userMessage = await createMessageWithCitations({
       threadId,
       role: 'user',
       content: messageContent,
       openaiMessageId: undefined, // OpenAI will create the message
       citations: [], // No citations for user messages
     });
+
+    if (uploadedFileIds.length > 0) {
+      await addFilesToMessage(userMessage.id, uploadedFileIds);
+    }
 
     // Create a streaming response
     const encoder = new TextEncoder();
@@ -124,7 +154,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           const responseGenerator = streamAssistantRun(
             threadWithMessages.openaiThreadId!,
             threadWithMessages.persona!.openaiAssistantId!,
-            messageContent
+            messageContent,
+            openaiAttachments
           );
 
           // Stream the response chunks

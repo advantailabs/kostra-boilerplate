@@ -1,12 +1,17 @@
 import { Button } from '@/components/atom/Button';
+import { getUploadPurposeConfig } from '@/lib/file-upload-config';
 import { formatFileSize } from '@/lib/file-utils';
+import { uploadFileViaPresignedUrl } from '@/lib/presigned-upload';
+import { useAuthStore } from '@/store/auth';
 import { RiAttachment2, RiCloseLine, RiMoreLine, RiSendPlaneFill } from '@remixicon/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface EnhancedMessageInputProps {
   value: string;
   onChange: (_value: string) => void;
-  onSend: () => void;
+  onSend: (
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
   disabled?: boolean;
   loading?: boolean;
   placeholder?: string;
@@ -21,6 +26,10 @@ interface SelectedFile {
   name: string;
   size: number;
   type: string;
+  status?: 'uploading' | 'ready' | 'error';
+  progress?: number;
+  s3Key?: string;
+  error?: string;
 }
 
 const MAX_FILES = 10;
@@ -41,12 +50,35 @@ export function EnhancedMessageInput({
   showCharCount = true,
   autoFocus = true,
 }: EnhancedMessageInputProps) {
+  const { user } = useAuthStore();
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [showAllFiles, setShowAllFiles] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Track uploading state derived from selectedFiles
+  const isUploadingRef = useRef(false);
+  isUploadingRef.current = selectedFiles.some(f => f.status === 'uploading');
+
+  // Send handler uses latest derived state
+  const handleSend = () => {
+    const canSendNow = value.trim() && !disabled && !loading && !isUploadingRef.current;
+    if (!canSendNow) return;
+    const readyFiles = selectedFiles.filter(f => f.status === 'ready' && f.s3Key);
+    const attachments = readyFiles.map(f => ({
+      originalName: f.name,
+      mimeType: f.type,
+      size: f.size,
+      s3Key: f.s3Key!,
+      uploadPurpose: 'MessageAttachment' as const,
+    }));
+    onSend(attachments);
+    // Clear attachments after sending
+    setSelectedFiles([]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   // Auto-focus the textarea when component mounts
   useEffect(() => {
@@ -119,18 +151,14 @@ export function EnhancedMessageInput({
     // Send message on Enter (but not Shift+Enter)
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (value.trim() && !disabled && !loading) {
-        onSend();
-      }
+      if (value.trim() && !disabled && !loading && !isUploadingRef.current) handleSend();
       return;
     }
 
     // Handle Ctrl/Cmd + Enter as alternative send shortcut
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      if (value.trim() && !disabled && !loading) {
-        onSend();
-      }
+      if (value.trim() && !disabled && !loading && !isUploadingRef.current) handleSend();
     }
   };
 
@@ -144,18 +172,49 @@ export function EnhancedMessageInput({
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
 
+  const isUploading = selectedFiles.some(f => f.status === 'uploading');
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const availableSlots = MAX_FILES - selectedFiles.length;
     const filesToAdd = files.slice(0, availableSlots);
 
-    const newFiles = filesToAdd.map(file => ({
+    const newFiles: SelectedFile[] = filesToAdd.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       name: file.name,
       size: file.size,
       type: file.type,
+      status: 'uploading',
+      progress: 0,
     }));
     setSelectedFiles(prev => [...prev, ...newFiles]);
+
+    // Start uploads to S3 using presigned URLs (shared util)
+    filesToAdd.forEach(async (file, idx) => {
+      const tempId = newFiles[idx].id;
+      try {
+        const { key } = await uploadFileViaPresignedUrl({
+          file,
+          uploadPurpose: 'MessageAttachment',
+          objectName: 'user',
+          objectId: user?.id?.toString() || 'new',
+          onProgress: progress =>
+            setSelectedFiles(prev => prev.map(f => (f.id === tempId ? { ...f, progress } : f))),
+        });
+
+        setSelectedFiles(prev =>
+          prev.map(f =>
+            f.id === tempId ? { ...f, status: 'ready', progress: 100, s3Key: key } : f
+          )
+        );
+      } catch (error) {
+        console.error(`Failed to upload file ${file.name}:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+        setSelectedFiles(prev =>
+          prev.map(f => (f.id === tempId ? { ...f, status: 'error', error: errorMessage } : f))
+        );
+      }
+    });
 
     // Clear the input so the same file can be selected again
     if (fileInputRef.current) {
@@ -176,7 +235,7 @@ export function EnhancedMessageInput({
     }
   };
 
-  const canSend = value.trim() && !disabled && !loading;
+  const canSend = value.trim() && !disabled && !loading && !isUploading;
   const visibleFiles = selectedFiles.slice(0, VISIBLE_FILES);
   const hiddenFiles = selectedFiles.slice(VISIBLE_FILES);
   const hasHiddenFiles = hiddenFiles.length > 0;
@@ -192,6 +251,8 @@ export function EnhancedMessageInput({
         <input
           ref={fileInputRef}
           type="file"
+          // Pull allowed extensions dynamically from config by purpose
+          accept={getUploadPurposeConfig('MessageAttachment').allowedExtensions?.join(',')}
           multiple
           onChange={handleFileSelect}
           className="hidden"
@@ -260,7 +321,7 @@ export function EnhancedMessageInput({
           <div className="absolute bottom-2 right-2 min-[400px]:hidden">
             <Button
               type="button"
-              onClick={onSend}
+              onClick={handleSend}
               disabled={!canSend || loading || isAtLimit}
               className="h-9 w-9 flex-shrink-0 rounded-full bg-indigo-600 p-0 text-white shadow-sm transition-all duration-200 hover:bg-indigo-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 disabled:hover:shadow-sm"
               title="Send message (Enter or Ctrl+Enter)"
@@ -298,7 +359,7 @@ export function EnhancedMessageInput({
         <div className="hidden min-[400px]:block">
           <Button
             type="button"
-            onClick={onSend}
+            onClick={handleSend}
             disabled={!canSend || loading || isAtLimit}
             className="flex-shrink-0 px-3 py-2 transition-all duration-200 hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 sm:px-3"
             title="Send message (Enter or Ctrl+Enter)"
@@ -320,38 +381,54 @@ export function EnhancedMessageInput({
             {visibleFiles.map(file => (
               <div
                 key={file.id}
-                className="animate-fadeIn flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 dark:bg-gray-800"
+                className={`animate-fadeIn relative flex items-center gap-1 overflow-hidden rounded-md px-1.5 py-0.5 ${
+                  file.status === 'uploading'
+                    ? 'bg-indigo-50 ring-1 ring-indigo-300/50 dark:bg-indigo-900/30'
+                    : 'bg-gray-100 dark:bg-gray-800'
+                }`}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
+                  <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
                     {file.name} ({formatFileSize(file.size)})
                   </p>
+                  {file.status === 'uploading' && (
+                    <div className="pointer-events-none absolute inset-0">
+                      <div className="shimmer absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/10" />
+                    </div>
+                  )}
+                  {file.status === 'error' && (
+                    <div className="mt-1 text-[10px] text-red-500">
+                      {file.error || 'Upload failed'}
+                    </div>
+                  )}
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => removeFile(file.id)}
-                  className="flex-shrink-0 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  className="flex-shrink-0 p-0.5"
                   title="Remove file"
                 >
                   <RiCloseLine className="h-2.5 w-2.5" />
-                </button>
+                </Button>
               </div>
             ))}
 
             {/* View more button with click-based popup */}
             {hasHiddenFiles && (
               <div className="relative" ref={popupRef}>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setShowAllFiles(!showAllFiles)}
-                  className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium ${
                     showAllFiles
                       ? 'bg-gray-300 text-gray-800 dark:bg-gray-600 dark:text-gray-200'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
                   <RiMoreLine className="h-3 w-3" />+{hiddenFiles.length} more
-                </button>
+                </Button>
 
                 {/* Click-based popup showing all files */}
                 {showAllFiles && (
@@ -363,21 +440,36 @@ export function EnhancedMessageInput({
                       {selectedFiles.map(file => (
                         <div
                           key={file.id}
-                          className="flex items-center justify-between rounded-md bg-gray-50 px-2 py-1 dark:bg-gray-700"
+                          className={`relative flex items-center justify-between overflow-hidden rounded-md px-1.5 py-0.5 ${
+                            file.status === 'uploading'
+                              ? 'bg-indigo-50 ring-1 ring-indigo-300/50 dark:bg-indigo-900/30'
+                              : 'bg-gray-50 dark:bg-gray-700'
+                          }`}
                         >
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
+                            <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
                               {file.name} ({formatFileSize(file.size)})
                             </p>
+                            {file.status === 'uploading' && (
+                              <div className="pointer-events-none absolute inset-0">
+                                <div className="shimmer absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/10" />
+                              </div>
+                            )}
+                            {file.status === 'error' && (
+                              <div className="mt-1 text-[10px] text-red-500">
+                                {file.error || 'Upload failed'}
+                              </div>
+                            )}
                           </div>
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
                             onClick={() => removeFile(file.id)}
-                            className="ml-2 flex-shrink-0 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-300"
+                            className="ml-2 flex-shrink-0 p-0.5"
                             title="Remove file"
                           >
                             <RiCloseLine className="h-2.5 w-2.5" />
-                          </button>
+                          </Button>
                         </div>
                       ))}
                     </div>
@@ -406,6 +498,21 @@ export function EnhancedMessageInput({
           )}
         </div>
       </div>
+
+      {/* Local shimmer animation for uploading attachment pills */}
+      <style>{`
+        @keyframes shimmerMove {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+        .shimmer {
+          animation: shimmerMove 1.2s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

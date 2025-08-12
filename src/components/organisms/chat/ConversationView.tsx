@@ -13,8 +13,15 @@ import { useEffect, useRef, useState } from 'react';
 interface ConversationViewProps {
   personas: Persona[];
   activeThread: (Thread & { persona: Persona | null; messages: Message[] }) | null;
-  onCreateThread: (_personaId: number, _message: string) => void;
-  onSendMessage: (_message: string) => void;
+  onCreateThread: (
+    _personaId: number,
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
+  onSendMessage: (
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
   onDeleteThread: (_threadId: number) => void;
   showPersonaModal?: boolean;
   onClosePersonaModal?: () => void;
@@ -38,6 +45,9 @@ export function ConversationView({
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | undefined>(personas[0]?.id);
   const [message, setMessage] = useState('');
   const [pendingUserMessage, setPendingUserMessage] = useState<string>('');
+  const [pendingUserFiles, setPendingUserFiles] = useState<
+    Array<{ originalName: string; mimeType: string; size: number }>
+  >([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -59,28 +69,39 @@ export function ConversationView({
     return () => clearTimeout(timeoutId);
   }, [activeThread?.messages, isStreaming, streamingMessage, pendingUserMessage]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (
+    files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     if (!activeThread) {
       // Create new thread
       if (!selectedPersonaId || !message.trim()) return;
 
       // Set pending user message immediately for optimistic UI
       setPendingUserMessage(message.trim());
+      setPendingUserFiles(
+        (files || []).map(f => ({
+          originalName: f.originalName,
+          mimeType: f.mimeType,
+          size: f.size,
+        }))
+      );
 
       try {
-        await onCreateThread(selectedPersonaId, message.trim());
+        await onCreateThread(selectedPersonaId, message.trim(), files);
         setMessage('');
         setPendingUserMessage(''); // Clear pending message after thread is created
+        setPendingUserFiles([]);
       } catch (error) {
         console.error('Failed to create thread:', error);
         setPendingUserMessage(''); // Clear pending message on error
+        setPendingUserFiles([]);
       }
     } else {
       // Send message to existing thread
       if (!message.trim()) return;
 
       try {
-        await onSendMessage(message.trim());
+        await onSendMessage(message.trim(), files);
         setMessage('');
       } catch (error) {
         console.error('Failed to send message:', error);
@@ -138,6 +159,7 @@ export function ConversationView({
                       openaiMessageId: null,
                       deletedAt: null,
                       citations: null,
+                      pendingFiles: pendingUserFiles,
                     } as any
                   }
                   persona={selectedPersona || undefined}

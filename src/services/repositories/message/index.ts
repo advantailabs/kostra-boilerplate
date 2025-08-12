@@ -1,4 +1,4 @@
-import { Message, PrismaClient } from '@prisma/client';
+import { Message, Prisma, PrismaClient } from '@prisma/client';
 
 import { CreateMessageData, PublicMessage, StoredCitation } from '@/types/chat';
 
@@ -43,6 +43,37 @@ const createMessageWithCitations = async (
       citations: data.citations ? JSON.stringify(data.citations) : undefined,
     },
   });
+};
+
+// Link files to a message via MessageFile join table
+const addFilesToMessage = async (
+  messageId: number,
+  fileIds: number[],
+  prisma: PrismaClient = defaultPrisma
+): Promise<void> => {
+  if (!fileIds || fileIds.length === 0) return;
+
+  const anyPrisma: any = prisma as any;
+  const hasDelegate =
+    anyPrisma.messageFile && typeof anyPrisma.messageFile.createMany === 'function';
+
+  if (hasDelegate) {
+    await anyPrisma.messageFile.createMany({
+      data: fileIds.map(fileId => ({ messageId, fileId })),
+      skipDuplicates: true,
+    });
+    return;
+  }
+
+  // Fallback for environments where the delegate is not present
+  const tuples = fileIds.map(fileId => Prisma.sql`(${Number(messageId)}, ${Number(fileId)})`);
+  if (tuples.length > 0) {
+    await prisma.$executeRaw`
+      INSERT INTO "MessageFile" ("messageId", "fileId")
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT ("messageId", "fileId") DO NOTHING;
+    `;
+  }
 };
 
 const findByThreadId = async (
@@ -179,6 +210,7 @@ const restoreMessagesByThreadId = async (
 };
 
 export {
+  addFilesToMessage,
   createMessage,
   createMessageWithCitations,
   deleteMessage,

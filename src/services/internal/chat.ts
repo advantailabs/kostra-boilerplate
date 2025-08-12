@@ -94,7 +94,7 @@ const getThreadWithMessages = async (
       success: true,
       data: threadWithMessages!,
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       error: 'Failed to fetch thread',

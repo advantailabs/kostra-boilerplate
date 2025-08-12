@@ -123,6 +123,12 @@ export function useChat(threadId?: number) {
       openaiMessageId: null,
       deletedAt: null,
       citations: null,
+      // Optimistic attachments to render until server links files
+      pendingFiles: (data.files || []).map(f => ({
+        originalName: f.originalName,
+        mimeType: f.mimeType,
+        size: f.size,
+      })),
     } as any;
 
     // Add optimistic message to pending messages
