@@ -18,6 +18,9 @@ interface ChatInterfaceProps {
   isStreaming?: boolean;
   streamingMessage?: string;
   currentCitations?: PublicCitationFile[];
+  onLoadMoreThreads?: () => void;
+  hasMoreThreads?: boolean;
+  isLoadingMoreThreads?: boolean;
 }
 
 export function ChatInterface({
@@ -32,6 +35,9 @@ export function ChatInterface({
   isStreaming = false,
   streamingMessage = '',
   currentCitations = [],
+  onLoadMoreThreads,
+  hasMoreThreads = false,
+  isLoadingMoreThreads = false,
 }: ChatInterfaceProps) {
   const [showPersonaModal, setShowPersonaModal] = useState(false);
   const [isThreadSidebarOpen, setIsThreadSidebarOpen] = useState(false);
@@ -101,6 +107,9 @@ export function ChatInterface({
             onNewThread={handleNewThread}
             className="h-full border-none"
             onClose={() => setIsThreadSidebarOpen(false)}
+            onLoadMore={onLoadMoreThreads}
+            hasMore={hasMoreThreads}
+            isLoadingMore={isLoadingMoreThreads}
           />
         </div>
       )}
@@ -114,6 +123,9 @@ export function ChatInterface({
           onThreadDelete={onDeleteThread}
           onNewThread={handleNewThread}
           className="w-80 border-l border-gray-200 dark:border-gray-700"
+          onLoadMore={onLoadMoreThreads}
+          hasMore={hasMoreThreads}
+          isLoadingMore={isLoadingMoreThreads}
         />
       </div>
     </div>

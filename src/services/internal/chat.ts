@@ -10,6 +10,7 @@ import {
   findByUserAndId,
   findByUserAndIdIncludingDeleted,
   findByUserId,
+  findByUserIdPaginated,
   restoreThread,
 } from '@/services/repositories/thread';
 import { PublicThreadWithMessages, PublicThreadWithPersona } from '@/types/chat';
@@ -39,6 +40,26 @@ const getUserThreads = async (
 ): Promise<ChatServiceResult<PublicThreadWithPersona[]>> => {
   try {
     const threads = await findByUserId(userId, prisma);
+    return {
+      success: true,
+      data: threads,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Failed to fetch user threads',
+    };
+  }
+};
+
+const getUserThreadsPaginated = async (
+  userId: number,
+  limit: number,
+  offset: number,
+  prisma?: PrismaClient
+): Promise<ChatServiceResult<PublicThreadWithPersona[]>> => {
+  try {
+    const threads = await findByUserIdPaginated(userId, limit, offset, prisma);
     return {
       success: true,
       data: threads,
@@ -154,5 +175,6 @@ export {
   generateThreadTitle,
   getThreadWithMessages,
   getUserThreads,
+  getUserThreadsPaginated,
   restoreThreadService,
 };
