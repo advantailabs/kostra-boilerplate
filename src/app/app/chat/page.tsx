@@ -12,10 +12,9 @@ export default function ChatPage() {
   const router = useRouter();
   const { personas, isLoading: personasLoading } = usePersonas();
   const {
-    threads: _threads,
+    threads,
     isLoading: threadsLoading,
     deleteThread,
-    infiniteThreads,
     loadMore,
     hasMore,
     isLoadingMore,
@@ -78,7 +77,7 @@ export default function ChatPage() {
     <div className="mobile-chat-layout h-screen overflow-hidden">
       <ChatInterface
         personas={personas}
-        threads={infiniteThreads.length ? infiniteThreads : _threads}
+        threads={threads}
         activeThread={null} // No active thread on main chat page
         onCreateThread={handleCreateThread}
         onSelectThread={handleSelectThread}

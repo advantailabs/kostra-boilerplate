@@ -19,7 +19,6 @@ export interface StreamMessageResponse {
 }
 
 export interface ThreadsApiClient {
-  getThreads(): Promise<Thread[]>;
   getThreadsPaginated(_params: { limit: number; offset: number }): Promise<{
     threads: Thread[];
     pagination: { limit: number; offset: number; hasMore: boolean };
@@ -34,12 +33,6 @@ export interface ThreadsApiClient {
 }
 
 export const threadsApi: ThreadsApiClient = {
-  async getThreads(): Promise<Thread[]> {
-    const response = await axiosInstance.get('/threads');
-    const { threads } = response.data;
-    return threads || [];
-  },
-
   async getThreadsPaginated(params: { limit: number; offset: number }) {
     const response = await axiosInstance.get('/threads', { params });
     const { threads, pagination } = response.data;
