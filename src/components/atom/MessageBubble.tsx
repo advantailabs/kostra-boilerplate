@@ -19,6 +19,7 @@ export function MessageBubble({ message, persona, citations, className }: Messag
   const isUser = message.role === 'user';
   const { user } = useAuthStore();
   const [copied, setCopied] = useState(false);
+  // keep hook import for potential future behaviors in MessageBubble; attachments use CitationList's download
 
   // Parse stored citations from message
   const storedCitations: StoredCitation[] = (() => {
@@ -42,6 +43,40 @@ export function MessageBubble({ message, persona, citations, className }: Messag
 
   // Use passed citations (for streaming) or parsed citations (for stored messages)
   const finalCitations = citations || displayCitations;
+
+  // Extract unique file attachments for user messages from messageFiles (preferred)
+  const uniqueUserAttachments: PublicCitationFile[] = (() => {
+    if (!isUser) return [];
+    const anyMessage: any = message as any;
+    const mf = (anyMessage.messageFiles || []) as {
+      file: {
+        id: number;
+        originalName: string;
+        filename: string;
+        mimeType: string;
+        size: number;
+      };
+    }[];
+    if (mf.length > 0) {
+      // Map to PublicCitationFile shape for reuse of UI chip
+      return mf.map(({ file }) => ({
+        fileId: file.id,
+        originalName: file.originalName,
+        filename: file.filename,
+        mimeType: file.mimeType,
+        size: file.size,
+        citationText: '',
+        startIndex: 0,
+        endIndex: 0,
+      }));
+    }
+    // Fallback to deduped citations if messageFiles not present
+    const map = new Map<number, PublicCitationFile>();
+    for (const c of finalCitations || []) {
+      if (!map.has(c.fileId)) map.set(c.fileId, c);
+    }
+    return Array.from(map.values());
+  })();
 
   // Process content to remove citation text for display
   const displayContent = processContentWithCitations(message.content, storedCitations, false);
@@ -173,6 +208,13 @@ export function MessageBubble({ message, persona, citations, className }: Messag
         {/* 📎 Citations (Assistant only) */}
         {!isUser && finalCitations && finalCitations.length > 0 && (
           <CitationList citations={finalCitations} />
+        )}
+
+        {/* 📎 User attachments (downloadable) */}
+        {isUser && uniqueUserAttachments.length > 0 && (
+          <div className="mb-4 ml-auto flex max-w-[85%] flex-wrap gap-0.5">
+            <CitationList citations={uniqueUserAttachments} hideLabel variant="attachments" />
+          </div>
         )}
       </div>
       {isUser && renderUserAvatar()}

@@ -16,9 +16,13 @@ export default function ChatPage() {
   const { createThreadStreaming, isStreaming, streamingMessage, currentCitations } =
     useChat(undefined); // No active thread on main chat page
 
-  const handleCreateThread = async (personaId: number, message: string) => {
+  const handleCreateThread = async (
+    personaId: number,
+    message: string,
+    files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     try {
-      const threadData: CreateThreadRequest = { personaId, message };
+      const threadData: CreateThreadRequest = { personaId, message, files };
       const newThreadId = await createThreadStreaming(threadData);
       if (newThreadId) {
         router.replace(`/app/chat/${newThreadId}`);
@@ -34,7 +38,10 @@ export default function ChatPage() {
     router.push(`/app/chat/${threadId}`);
   };
 
-  const handleSendMessage = async (_message: string) => {
+  const handleSendMessage = async (
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     // This shouldn't be called on the main chat page
     console.warn('handleSendMessage called on main chat page');
   };

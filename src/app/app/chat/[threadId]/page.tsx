@@ -40,9 +40,13 @@ export default function ThreadPage() {
     }
   }, [threadId, threads, threadsLoading, router]);
 
-  const handleCreateThread = async (personaId: number, message: string) => {
+  const handleCreateThread = async (
+    personaId: number,
+    message: string,
+    files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     try {
-      const threadData: CreateThreadRequest = { personaId, message };
+      const threadData: CreateThreadRequest = { personaId, message, files };
       const newThreadId = await createThreadStreaming(threadData);
       if (newThreadId) {
         router.replace(`/app/chat/${newThreadId}`);
@@ -56,11 +60,14 @@ export default function ThreadPage() {
     router.push(`/app/chat/${threadId}`);
   };
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (
+    message: string,
+    files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     if (!threadId) return;
 
     try {
-      await addMessageStreaming({ content: message });
+      await addMessageStreaming({ content: message, files });
     } catch (error) {
       console.error('Failed to send message:', error);
     }

@@ -5,7 +5,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { formatFileSize } from '@/lib/file-utils';
-import { fileUploadApi } from '@/services/api/file-upload';
 import { useAuthStore } from '@/store/auth';
 import { RiCloseLine, RiFileUploadLine, RiUpload2Line } from '@remixicon/react';
 
@@ -96,60 +95,26 @@ export function KnowledgeBaseFileUploader({
       // Upload each file to S3 only
       newFiles.forEach(async uploadingFile => {
         try {
-          // Get presigned URL using the existing fileUploadApi
-          const { presignedUrl, key } = await fileUploadApi.getPresignedUrl({
+          const { uploadFileViaPresignedUrl } = await import('@/lib/presigned-upload');
+          const { key } = await uploadFileViaPresignedUrl({
+            file: uploadingFile.file,
             uploadPurpose: 'UserDocument',
-            fileType: uploadingFile.file.type,
             objectName: 'user',
             objectId: user?.id?.toString() || 'new',
-          });
-
-          // Upload to S3 with progress tracking
-          const xhr = new XMLHttpRequest();
-
-          xhr.upload.addEventListener('progress', e => {
-            if (e.lengthComputable) {
-              const progress = (e.loaded / e.total) * 100;
+            onProgress: progress =>
               setUploadingFiles(prev =>
                 prev.map(f => (f.id === uploadingFile.id ? { ...f, progress } : f))
-              );
-            }
+              ),
           });
 
-          xhr.addEventListener('load', async () => {
-            if (xhr.status === 200) {
-              // Mark file as ready for database save
-              setUploadingFiles(prev =>
-                prev.map(f =>
-                  f.id === uploadingFile.id
-                    ? { ...f, status: 'ready' as const, progress: 100, s3Key: key }
-                    : f
-                )
-              );
-            } else {
-              setUploadingFiles(prev =>
-                prev.map(f =>
-                  f.id === uploadingFile.id
-                    ? { ...f, status: 'error' as const, error: 'Upload failed' }
-                    : f
-                )
-              );
-            }
-          });
-
-          xhr.addEventListener('error', () => {
-            setUploadingFiles(prev =>
-              prev.map(f =>
-                f.id === uploadingFile.id
-                  ? { ...f, status: 'error' as const, error: 'Upload failed' }
-                  : f
-              )
-            );
-          });
-
-          xhr.open('PUT', presignedUrl);
-          xhr.setRequestHeader('Content-Type', uploadingFile.file.type);
-          xhr.send(uploadingFile.file);
+          // Mark file as ready for database save
+          setUploadingFiles(prev =>
+            prev.map(f =>
+              f.id === uploadingFile.id
+                ? { ...f, status: 'ready' as const, progress: 100, s3Key: key }
+                : f
+            )
+          );
         } catch (error) {
           setUploadingFiles(prev =>
             prev.map(f =>

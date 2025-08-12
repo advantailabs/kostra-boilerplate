@@ -10,9 +10,16 @@ interface ChatInterfaceProps {
   personas: Persona[];
   threads: (Thread & { persona: Persona | null })[];
   activeThread: (Thread & { persona: Persona | null; messages: Message[] }) | null;
-  onCreateThread: (_personaId: number, _message: string) => void;
+  onCreateThread: (
+    _personaId: number,
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
   onSelectThread: (_threadId: number) => void;
-  onSendMessage: (_message: string) => void;
+  onSendMessage: (
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
   onDeleteThread: (_threadId: number) => void;
   onNewThread: () => void;
   isStreaming?: boolean;

@@ -46,7 +46,11 @@ export interface CitationFile {
 export const streamAssistantRun = async function* (
   threadId: string,
   assistantId: string,
-  messageContent: string
+  messageContent: string,
+  attachments?: Array<{
+    file_id: string;
+    tools?: Array<{ type: 'file_search' | 'code_interpreter' }>;
+  }>
 ): AsyncGenerator<
   {
     type: 'chunk' | 'completed' | 'error';
@@ -60,10 +64,11 @@ export const streamAssistantRun = async function* (
   unknown
 > {
   try {
-    // Add message to thread
+    // Add message to thread with optional attachments
     await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: messageContent,
+      attachments: attachments && attachments.length > 0 ? (attachments as any) : undefined,
     });
 
     // Create and stream the run

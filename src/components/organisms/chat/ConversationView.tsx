@@ -13,8 +13,15 @@ import { useEffect, useRef, useState } from 'react';
 interface ConversationViewProps {
   personas: Persona[];
   activeThread: (Thread & { persona: Persona | null; messages: Message[] }) | null;
-  onCreateThread: (_personaId: number, _message: string) => void;
-  onSendMessage: (_message: string) => void;
+  onCreateThread: (
+    _personaId: number,
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
+  onSendMessage: (
+    _message: string,
+    _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => void;
   onDeleteThread: (_threadId: number) => void;
   showPersonaModal?: boolean;
   onClosePersonaModal?: () => void;
@@ -59,7 +66,9 @@ export function ConversationView({
     return () => clearTimeout(timeoutId);
   }, [activeThread?.messages, isStreaming, streamingMessage, pendingUserMessage]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (
+    files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
+  ) => {
     if (!activeThread) {
       // Create new thread
       if (!selectedPersonaId || !message.trim()) return;
@@ -68,7 +77,7 @@ export function ConversationView({
       setPendingUserMessage(message.trim());
 
       try {
-        await onCreateThread(selectedPersonaId, message.trim());
+        await onCreateThread(selectedPersonaId, message.trim(), files);
         setMessage('');
         setPendingUserMessage(''); // Clear pending message after thread is created
       } catch (error) {
@@ -80,7 +89,7 @@ export function ConversationView({
       if (!message.trim()) return;
 
       try {
-        await onSendMessage(message.trim());
+        await onSendMessage(message.trim(), files);
         setMessage('');
       } catch (error) {
         console.error('Failed to send message:', error);

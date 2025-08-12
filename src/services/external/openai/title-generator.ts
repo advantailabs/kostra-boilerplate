@@ -145,35 +145,30 @@ const generateFallbackTitle = (message: string): string => {
  */
 export const generateThreadTitle = async (userMessage: string): Promise<TitleGeneratorResult> => {
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Use more cost-effective model for title generation
-      messages: [
-        {
-          role: 'system',
-          content: `Generate a concise, descriptive title for a conversation thread based on the user's first message. 
-          
-          Requirements:
-          - Maximum 30 characters (STRICT LIMIT)
-          - Capture the main topic/intent
-          - Use title case
-          - No quotation marks
-          - Be specific and clear
-          
-          Examples:
-          "How to cook pasta" → "Cooking Pasta Guide"
-          "I need help with my JavaScript code that handles user authentication" → "JS Auth Code Help"
-          "Can you explain quantum physics?" → "Quantum Physics Basics"`,
-        },
-        {
-          role: 'user',
-          content: userMessage,
-        },
-      ],
-      max_tokens: 20, // Keep token count low for title generation
-      temperature: 0.3, // Lower temperature for more consistent titles
+    // Use Responses API for simple one-shot generation
+    const response = await openai.responses.create({
+      model: 'gpt-4o-mini',
+      input: `Generate a concise, descriptive title for a conversation thread based on the user's first message.
+
+Requirements:
+- Maximum 30 characters (STRICT LIMIT)
+- Capture the main topic/intent
+- Use title case
+- No quotation marks
+- Be specific and clear
+
+Examples:
+"How to cook pasta" → "Cooking Pasta Guide"
+"I need help with my JavaScript code that handles user authentication" → "JS Auth Code Help"
+"Can you explain quantum physics?" → "Quantum Physics Basics"
+
+User message:
+${userMessage}`,
+      temperature: 0.3,
+      max_output_tokens: 20,
     });
 
-    const title = response.choices[0]?.message?.content?.trim();
+    const title = response.output_text?.trim();
 
     if (!title) {
       return {

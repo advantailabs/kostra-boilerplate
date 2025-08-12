@@ -45,6 +45,35 @@ const createMessageWithCitations = async (
   });
 };
 
+// Link files to a message via MessageFile join table
+const addFilesToMessage = async (
+  messageId: number,
+  fileIds: number[],
+  prisma: PrismaClient = defaultPrisma
+): Promise<void> => {
+  if (!fileIds || fileIds.length === 0) return;
+
+  const anyPrisma: any = prisma as any;
+  const hasDelegate =
+    anyPrisma.messageFile && typeof anyPrisma.messageFile.createMany === 'function';
+
+  if (hasDelegate) {
+    await anyPrisma.messageFile.createMany({
+      data: fileIds.map(fileId => ({ messageId, fileId })),
+      skipDuplicates: true,
+    });
+    return;
+  }
+
+  // Fallback for environments where the delegate is not present
+  const values = fileIds.map(fileId => `(${Number(messageId)}, ${Number(fileId)})`).join(',');
+  if (values.length > 0) {
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO "MessageFile" ("messageId", "fileId") VALUES ${values} ON CONFLICT ("messageId", "fileId") DO NOTHING;`
+    );
+  }
+};
+
 const findByThreadId = async (
   threadId: number,
   prisma: PrismaClient = defaultPrisma
@@ -179,6 +208,7 @@ const restoreMessagesByThreadId = async (
 };
 
 export {
+  addFilesToMessage,
   createMessage,
   createMessageWithCitations,
   deleteMessage,

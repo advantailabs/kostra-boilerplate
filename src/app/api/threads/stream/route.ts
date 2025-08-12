@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamAssistantRun } from '@/services/external/openai/messages';
 import { createThread as createOpenAIThread } from '@/services/external/openai/threads';
 import { generateThreadTitle as generateOpenAITitle } from '@/services/external/openai/title-generator';
-import { createMessageWithCitations } from '@/services/repositories/message';
+import { uploadFileService } from '@/services/internal/file';
+import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
 import { getUserByClerkId } from '@/services/repositories/user';
@@ -51,7 +52,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { personaId, message: initialMessage } = validationResult.data;
+    const {
+      personaId,
+      message: initialMessage,
+      files,
+    } = validationResult.data as {
+      personaId: number;
+      message: string;
+      files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>;
+    };
 
     // Verify persona exists and belongs to user
     const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
@@ -84,10 +93,42 @@ export async function POST(request: NextRequest) {
       title,
     });
 
-    // Create OpenAI thread with initial message
+    // If client sent files, upload them to OpenAI and create DB file records
+    let openaiAttachments: Array<{ file_id: string; tools?: Array<{ type: 'file_search' }> }> = [];
+    let uploadedFileIds: number[] = [];
+
+    if (files && files.length > 0) {
+      const uploadPromises = files.map(async f => {
+        // Create a mock File for metadata
+        const mockFile = new File([], f.originalName, { type: f.mimeType });
+        Object.defineProperty(mockFile, 'size', { value: f.size });
+
+        const result = await uploadFileService({
+          userId: user.id,
+          file: mockFile,
+          s3Key: f.s3Key,
+        });
+
+        if (!result.success) {
+          throw new Error(`Failed to prepare attachment ${f.originalName}: ${result.error}`);
+        }
+
+        uploadedFileIds.push(result.data!.id);
+        return { file_id: result.data!.openaiFileId as string };
+      });
+
+      const uploaded = await Promise.all(uploadPromises);
+      openaiAttachments = uploaded.map(u => ({
+        file_id: u.file_id,
+        tools: [{ type: 'file_search' }],
+      }));
+    }
+
+    // Create OpenAI thread with initial message and attachments
     const openaiThreadResult = await createOpenAIThread({
       assistantId: persona.openaiAssistantId,
       initialMessage,
+      initialMessageAttachments: openaiAttachments,
       metadata: {
         dbThreadId: thread.id.toString(),
         userId: user.id.toString(),
@@ -108,12 +149,17 @@ export async function POST(request: NextRequest) {
     await updateThreadOpenAIId(thread.id, openaiThreadResult.data!.id);
 
     // Create user message in database
-    await createMessageWithCitations({
+    const userMessage = await createMessageWithCitations({
       threadId: thread.id,
       role: 'user',
       content: initialMessage,
       openaiMessageId: undefined, // OpenAI will create the message
     });
+
+    // Link uploaded files to the message
+    if (uploadedFileIds.length > 0) {
+      await addFilesToMessage(userMessage.id, uploadedFileIds);
+    }
 
     // Create a streaming response
     const encoder = new TextEncoder();
@@ -128,7 +174,8 @@ export async function POST(request: NextRequest) {
           const responseGenerator = streamAssistantRun(
             openaiThreadResult.data!.id,
             persona.openaiAssistantId!,
-            initialMessage
+            initialMessage,
+            openaiAttachments
           );
 
           // Send thread creation info first

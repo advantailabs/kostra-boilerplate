@@ -16,6 +16,10 @@ export interface CreateThreadParams {
   assistantId: string;
   initialMessage?: string;
   metadata?: Record<string, string>;
+  initialMessageAttachments?: Array<{
+    file_id: string;
+    tools?: Array<{ type: 'file_search' | 'code_interpreter' }>;
+  }>;
 }
 
 export interface AddMessageParams {
@@ -23,6 +27,10 @@ export interface AddMessageParams {
   content: string;
   role?: 'user' | 'assistant';
   metadata?: Record<string, string>;
+  attachments?: Array<{
+    file_id: string;
+    tools?: Array<{ type: 'file_search' | 'code_interpreter' }>;
+  }>;
 }
 
 export interface RunAssistantParams {
@@ -49,6 +57,10 @@ export const createThread = async (
         {
           role: 'user',
           content: params.initialMessage,
+          attachments:
+            params.initialMessageAttachments && params.initialMessageAttachments.length > 0
+              ? (params.initialMessageAttachments as any)
+              : undefined,
         },
       ];
     }
@@ -79,6 +91,10 @@ export const addMessageToThread = async (
       role: params.role || 'user',
       content: params.content,
       metadata: params.metadata,
+      attachments:
+        params.attachments && params.attachments.length > 0
+          ? (params.attachments as any)
+          : undefined,
     });
 
     return {

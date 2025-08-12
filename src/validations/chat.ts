@@ -6,6 +6,16 @@ export const createThreadSchema = z.object({
     .string()
     .min(1, 'Message is required')
     .max(5000, 'Message must be 5000 characters or less'),
+  files: z
+    .array(
+      z.object({
+        originalName: z.string().min(1),
+        mimeType: z.string().min(1),
+        size: z.number().int().nonnegative(),
+        s3Key: z.string().min(1),
+      })
+    )
+    .optional(),
 });
 
 export const addMessageSchema = z.object({
@@ -13,6 +23,16 @@ export const addMessageSchema = z.object({
     .string()
     .min(1, 'Message content is required')
     .max(5000, 'Message must be 5000 characters or less'),
+  files: z
+    .array(
+      z.object({
+        originalName: z.string().min(1),
+        mimeType: z.string().min(1),
+        size: z.number().int().nonnegative(),
+        s3Key: z.string().min(1),
+      })
+    )
+    .optional(),
 });
 
 export type CreateThreadRequest = z.infer<typeof createThreadSchema>;
