@@ -32,20 +32,13 @@ export default function ThreadPage() {
     currentCitations,
   } = useChat(threadId || undefined);
 
-  // Redirect to main chat page if no threadId or thread not found
+  // Redirect to main chat page if no threadId
+  // Do not rely on the sidebar list to decide existence; the page fetches the thread directly
   useEffect(() => {
     if (!threadId) {
-      router.push('/app/chat');
-      return;
+      router.replace('/app/chat');
     }
-
-    if (!threadsLoading && threads.length > 0) {
-      const threadExists = threads.some(t => t.id === threadId);
-      if (!threadExists) {
-        router.push('/app/chat');
-      }
-    }
-  }, [threadId, threads, threadsLoading, router]);
+  }, [threadId, router]);
 
   const handleCreateThread = async (
     personaId: number,

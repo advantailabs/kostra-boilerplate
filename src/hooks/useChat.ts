@@ -84,7 +84,8 @@ export function useChat(threadId?: number) {
             setPendingMessages([]); // Clear pending messages
 
             // Refresh the threads list and set active thread
-            queryClient.invalidateQueries({ queryKey: ['threads'] });
+            // Align with infinite threads query key used in useThreads
+            queryClient.invalidateQueries({ queryKey: ['threads', 'infinite'] });
             if (newThreadId) {
               queryClient.invalidateQueries({ queryKey: ['thread', newThreadId] });
             }
@@ -194,7 +195,8 @@ export function useChat(threadId?: number) {
             setCurrentCitations([]);
 
             // Invalidate threads list to update thread list
-            queryClient.invalidateQueries({ queryKey: ['threads'] });
+            // Align with infinite threads query key used in useThreads
+            queryClient.invalidateQueries({ queryKey: ['threads', 'infinite'] });
             break;
 
           case 'error':
