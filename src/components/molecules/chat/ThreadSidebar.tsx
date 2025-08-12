@@ -9,7 +9,7 @@ import {
   RiMessage2Line,
   RiSearchLine,
 } from '@remixicon/react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ThreadSearchModal } from './ThreadSearchModal';
 
 interface ThreadSidebarProps {
@@ -20,6 +20,9 @@ interface ThreadSidebarProps {
   onNewThread: () => void;
   onClose?: () => void;
   className?: string;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 // ✅ Updated ThreadListItem
@@ -100,6 +103,9 @@ export function ThreadSidebar({
   onNewThread,
   onClose,
   className,
+  onLoadMore,
+  hasMore = false,
+  isLoadingMore = false,
 }: ThreadSidebarProps) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -107,6 +113,7 @@ export function ThreadSidebar({
     (Thread & { persona: Persona | null }) | null
   >(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const handleDeleteThread = (threadId: number) => {
     const thread = threads.find(t => t.id === threadId);
@@ -135,6 +142,26 @@ export function ThreadSidebar({
     setIsDeleteModalOpen(false);
     setThreadToDelete(null);
   };
+
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!hasMore || !onLoadMore) return undefined;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return undefined;
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoadingMore) {
+          onLoadMore();
+        }
+      });
+    });
+
+    observer.observe(sentinel);
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, onLoadMore, isLoadingMore]);
 
   return (
     <>
@@ -203,6 +230,12 @@ export function ThreadSidebar({
                   onDelete={handleDeleteThread}
                 />
               ))}
+              {/* Sentinel for infinite scroll */}
+              {hasMore && (
+                <div ref={sentinelRef} className="py-2 text-center text-xs text-gray-500">
+                  {isLoadingMore ? 'Loading more…' : 'Loading…'}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -14,7 +14,15 @@ export default function ThreadPage() {
   const threadId = params.threadId ? parseInt(params.threadId as string, 10) : null;
 
   const { personas, isLoading: personasLoading } = usePersonas();
-  const { threads, isLoading: threadsLoading, deleteThread } = useThreads();
+  const {
+    threads,
+    isLoading: threadsLoading,
+    deleteThread,
+    infiniteThreads,
+    loadMore,
+    hasMore,
+    isLoadingMore,
+  } = useThreads();
 
   const {
     thread: activeThread,
@@ -96,13 +104,16 @@ export default function ThreadPage() {
     <div className="mobile-chat-layout h-screen overflow-hidden">
       <ChatInterface
         personas={personas}
-        threads={threads}
+        threads={infiniteThreads.length ? infiniteThreads : threads}
         activeThread={activeThread || null}
         onCreateThread={handleCreateThread}
         onSelectThread={handleSelectThread}
         onSendMessage={handleSendMessage}
         onDeleteThread={handleDeleteThread}
         onNewThread={handleNewThread}
+        onLoadMoreThreads={loadMore}
+        hasMoreThreads={hasMore}
+        isLoadingMoreThreads={isLoadingMore}
         isStreaming={isStreaming}
         streamingMessage={streamingMessage}
         currentCitations={currentCitations}

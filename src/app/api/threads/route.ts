@@ -1,14 +1,20 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-import { getUserThreads } from '@/services/internal/chat';
+import { getUserThreadsPaginated } from '@/services/internal/chat';
 import { getUserByClerkId } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const limitParam = searchParams.get('limit');
+    const offsetParam = searchParams.get('offset');
+    const limit = Math.max(1, Math.min(100, limitParam ? parseInt(limitParam, 10) : 15));
+    const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
+
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
@@ -27,8 +33,8 @@ export async function GET() {
       );
     }
 
-    // Get user's threads
-    const result = await getUserThreads(user.id);
+    // Get user's threads (paginated by default; default limit 15)
+    const result = await getUserThreadsPaginated(user.id, limit, offset);
 
     if (!result.success) {
       return NextResponse.json(
@@ -39,6 +45,11 @@ export async function GET() {
 
     return NextResponse.json({
       threads: result.data,
+      pagination: {
+        limit,
+        offset,
+        hasMore: (result.data?.length || 0) === limit,
+      },
       message: 'Threads retrieved successfully',
     });
   } catch (error) {

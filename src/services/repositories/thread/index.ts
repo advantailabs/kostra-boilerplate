@@ -70,6 +70,44 @@ const findByUserId = async (
   }) as any;
 };
 
+// Paginated fetch for user threads
+const findByUserIdPaginated = async (
+  userId: number,
+  limit: number,
+  offset: number,
+  prisma: PrismaClient = defaultPrisma
+): Promise<PublicThreadWithPersona[]> => {
+  return prisma.thread.findMany({
+    where: {
+      userId,
+      deletedAt: null,
+    },
+    select: {
+      ...publicThreadSelect,
+      persona: {
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          description: true,
+          instructions: true,
+          tags: true,
+          logo: true,
+          knowledgeBaseId: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+      },
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+    take: limit,
+    skip: offset,
+  }) as any;
+};
+
 // Internal function that includes OpenAI fields for backend operations
 const findByIdWithMessagesInternal = async (
   threadId: number,
@@ -266,6 +304,7 @@ export {
   findByUserAndId,
   findByUserAndIdIncludingDeleted,
   findByUserId,
+  findByUserIdPaginated,
   hardDeleteThread,
   restoreThread,
   updateThread,

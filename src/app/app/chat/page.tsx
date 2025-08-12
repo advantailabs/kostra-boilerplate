@@ -11,7 +11,15 @@ import { useRouter } from 'next/navigation';
 export default function ChatPage() {
   const router = useRouter();
   const { personas, isLoading: personasLoading } = usePersonas();
-  const { threads, isLoading: threadsLoading, deleteThread } = useThreads();
+  const {
+    threads: _threads,
+    isLoading: threadsLoading,
+    deleteThread,
+    infiniteThreads,
+    loadMore,
+    hasMore,
+    isLoadingMore,
+  } = useThreads();
 
   const { createThreadStreaming, isStreaming, streamingMessage, currentCitations } =
     useChat(undefined); // No active thread on main chat page
@@ -63,13 +71,17 @@ export default function ChatPage() {
     <div className="mobile-chat-layout h-screen overflow-hidden">
       <ChatInterface
         personas={personas}
-        threads={threads}
+        threads={infiniteThreads.length ? infiniteThreads : _threads}
         activeThread={null} // No active thread on main chat page
         onCreateThread={handleCreateThread}
         onSelectThread={handleSelectThread}
         onSendMessage={handleSendMessage}
         onDeleteThread={handleDeleteThread}
         onNewThread={handleNewThread}
+        // Infinite props
+        onLoadMoreThreads={loadMore}
+        hasMoreThreads={hasMore}
+        isLoadingMoreThreads={isLoadingMore}
         isStreaming={isStreaming}
         streamingMessage={streamingMessage}
         currentCitations={currentCitations}
