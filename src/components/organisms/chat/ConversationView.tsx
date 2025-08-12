@@ -45,6 +45,9 @@ export function ConversationView({
   const [selectedPersonaId, setSelectedPersonaId] = useState<number | undefined>(personas[0]?.id);
   const [message, setMessage] = useState('');
   const [pendingUserMessage, setPendingUserMessage] = useState<string>('');
+  const [pendingUserFiles, setPendingUserFiles] = useState<
+    Array<{ originalName: string; mimeType: string; size: number }>
+  >([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -75,14 +78,23 @@ export function ConversationView({
 
       // Set pending user message immediately for optimistic UI
       setPendingUserMessage(message.trim());
+      setPendingUserFiles(
+        (files || []).map(f => ({
+          originalName: f.originalName,
+          mimeType: f.mimeType,
+          size: f.size,
+        }))
+      );
 
       try {
         await onCreateThread(selectedPersonaId, message.trim(), files);
         setMessage('');
         setPendingUserMessage(''); // Clear pending message after thread is created
+        setPendingUserFiles([]);
       } catch (error) {
         console.error('Failed to create thread:', error);
         setPendingUserMessage(''); // Clear pending message on error
+        setPendingUserFiles([]);
       }
     } else {
       // Send message to existing thread
@@ -147,6 +159,7 @@ export function ConversationView({
                       openaiMessageId: null,
                       deletedAt: null,
                       citations: null,
+                      pendingFiles: pendingUserFiles,
                     } as any
                   }
                   persona={selectedPersona || undefined}

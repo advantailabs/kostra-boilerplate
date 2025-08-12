@@ -90,28 +90,53 @@ export async function POST(request: NextRequest) {
     const uploadedFileIds: number[] = [];
 
     if (files && files.length > 0) {
+      const perFileErrors: Array<{ name: string; reason: string }> = [];
+
       const uploadPromises = files.map(async f => {
-        // Create a mock File for metadata
-        const mockFile = new File([], f.originalName, { type: f.mimeType });
-        Object.defineProperty(mockFile, 'size', { value: f.size });
+        try {
+          // Create a mock File for metadata
+          const mockFile = new File([], f.originalName, { type: f.mimeType });
+          Object.defineProperty(mockFile, 'size', { value: f.size });
 
-        const result = await uploadFileService({
-          userId: user.id,
-          file: mockFile,
-          s3Key: f.s3Key,
-          uploadPurpose: f.uploadPurpose || 'MessageAttachment',
-        });
+          const result = await uploadFileService({
+            userId: user.id,
+            file: mockFile,
+            s3Key: f.s3Key,
+            uploadPurpose: f.uploadPurpose || 'MessageAttachment',
+          });
 
-        if (!result.success) {
-          throw new Error(`Failed to prepare attachment ${f.originalName}: ${result.error}`);
+          if (!result.success) {
+            throw new Error(`Failed to prepare attachment ${f.originalName}: ${result.error}`);
+          }
+
+          uploadedFileIds.push(result.data!.id);
+          return { file_id: result.data!.openaiFileId as string };
+        } catch (err) {
+          const reason = err instanceof Error ? err.message : 'Unknown error';
+          perFileErrors.push({ name: f.originalName, reason });
+          console.warn('File upload failed:', { file: f.originalName, reason });
+          return null;
         }
-
-        uploadedFileIds.push(result.data!.id);
-        return { file_id: result.data!.openaiFileId as string };
       });
 
       const uploaded = await Promise.all(uploadPromises);
-      openaiAttachments = uploaded.map(u => ({
+      const successfulUploads = uploaded.filter((u): u is { file_id: string } => u !== null);
+
+      if (successfulUploads.length === 0) {
+        // All uploads failed — clean up the created thread and return an aggregated error
+        await deleteThread(thread.id);
+        return NextResponse.json(
+          {
+            error: 'All file uploads failed',
+            message:
+              'Unable to upload any of the provided attachments. Please try again or remove the files.',
+            details: perFileErrors,
+          },
+          { status: 400 }
+        );
+      }
+
+      openaiAttachments = successfulUploads.map(u => ({
         file_id: u.file_id,
         tools: [{ type: 'file_search' }],
       }));

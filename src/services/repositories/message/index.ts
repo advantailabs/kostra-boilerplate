@@ -1,4 +1,4 @@
-import { Message, PrismaClient } from '@prisma/client';
+import { Message, Prisma, PrismaClient } from '@prisma/client';
 
 import { CreateMessageData, PublicMessage, StoredCitation } from '@/types/chat';
 
@@ -66,11 +66,13 @@ const addFilesToMessage = async (
   }
 
   // Fallback for environments where the delegate is not present
-  const values = fileIds.map(fileId => `(${Number(messageId)}, ${Number(fileId)})`).join(',');
-  if (values.length > 0) {
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO "MessageFile" ("messageId", "fileId") VALUES ${values} ON CONFLICT ("messageId", "fileId") DO NOTHING;`
-    );
+  const tuples = fileIds.map(fileId => Prisma.sql`(${Number(messageId)}, ${Number(fileId)})`);
+  if (tuples.length > 0) {
+    await prisma.$executeRaw`
+      INSERT INTO "MessageFile" ("messageId", "fileId")
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT ("messageId", "fileId") DO NOTHING;
+    `;
   }
 };
 

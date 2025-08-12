@@ -169,6 +169,22 @@ export const getFileTypeCategoryIcon = (type: string) => {
 };
 
 /**
+ * Mapping of S3 key prefixes to their corresponding upload purposes.
+ * This configuration is exported to allow reuse and easier testing/mocking.
+ */
+export const PREFIX_TO_PURPOSE: ReadonlyArray<{
+  prefix: string;
+  purpose: UploadPurpose;
+}> = [
+  { prefix: 'messages/attachments/', purpose: 'MessageAttachment' },
+  { prefix: 'threads/attachments/', purpose: 'ThreadAttachment' },
+  { prefix: 'users/documents/', purpose: 'UserDocument' },
+  { prefix: 'users/files/', purpose: 'UserFile' },
+  { prefix: 'personas/logos/', purpose: 'PersonaLogo' },
+  { prefix: 'users/avatars/', purpose: 'UserAvatar' },
+] as const;
+
+/**
  * Infers upload purpose from an S3 key prefix.
  * Example prefixes:
  * - messages/attachments/ → MessageAttachment
@@ -179,11 +195,10 @@ export const getFileTypeCategoryIcon = (type: string) => {
  * - users/avatars/ → UserAvatar
  */
 export function inferUploadPurposeFromKey(key: string): UploadPurpose | undefined {
-  if (key.startsWith('messages/attachments/')) return 'MessageAttachment';
-  if (key.startsWith('threads/attachments/')) return 'ThreadAttachment';
-  if (key.startsWith('users/documents/')) return 'UserDocument';
-  if (key.startsWith('users/files/')) return 'UserFile';
-  if (key.startsWith('personas/logos/')) return 'PersonaLogo';
-  if (key.startsWith('users/avatars/')) return 'UserAvatar';
+  for (const mapping of PREFIX_TO_PURPOSE) {
+    if (key.startsWith(mapping.prefix)) {
+      return mapping.purpose;
+    }
+  }
   return undefined;
 }

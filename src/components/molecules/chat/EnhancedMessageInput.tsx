@@ -29,6 +29,7 @@ interface SelectedFile {
   status?: 'uploading' | 'ready' | 'error';
   progress?: number;
   s3Key?: string;
+  error?: string;
 }
 
 const MAX_FILES = 10;
@@ -206,8 +207,12 @@ export function EnhancedMessageInput({
             f.id === tempId ? { ...f, status: 'ready', progress: 100, s3Key: key } : f
           )
         );
-      } catch {
-        setSelectedFiles(prev => prev.map(f => (f.id === tempId ? { ...f, status: 'error' } : f)));
+      } catch (error) {
+        console.error(`Failed to upload file ${file.name}:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+        setSelectedFiles(prev =>
+          prev.map(f => (f.id === tempId ? { ...f, status: 'error', error: errorMessage } : f))
+        );
       }
     });
 
@@ -376,12 +381,26 @@ export function EnhancedMessageInput({
             {visibleFiles.map(file => (
               <div
                 key={file.id}
-                className="animate-fadeIn flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 dark:bg-gray-800"
+                className={`animate-fadeIn relative flex items-center gap-1 overflow-hidden rounded-md px-1.5 py-0.5 ${
+                  file.status === 'uploading'
+                    ? 'bg-indigo-50 ring-1 ring-indigo-300/50 dark:bg-indigo-900/30'
+                    : 'bg-gray-100 dark:bg-gray-800'
+                }`}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
+                  <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
                     {file.name} ({formatFileSize(file.size)})
                   </p>
+                  {file.status === 'uploading' && (
+                    <div className="pointer-events-none absolute inset-0">
+                      <div className="shimmer absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/10" />
+                    </div>
+                  )}
+                  {file.status === 'error' && (
+                    <div className="mt-1 text-[10px] text-red-500">
+                      {file.error || 'Upload failed'}
+                    </div>
+                  )}
                 </div>
                 <Button
                   type="button"
@@ -421,12 +440,26 @@ export function EnhancedMessageInput({
                       {selectedFiles.map(file => (
                         <div
                           key={file.id}
-                          className="flex items-center justify-between rounded-md bg-gray-50 px-2 py-1 dark:bg-gray-700"
+                          className={`relative flex items-center justify-between overflow-hidden rounded-md px-1.5 py-0.5 ${
+                            file.status === 'uploading'
+                              ? 'bg-indigo-50 ring-1 ring-indigo-300/50 dark:bg-indigo-900/30'
+                              : 'bg-gray-50 dark:bg-gray-700'
+                          }`}
                         >
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
+                            <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
                               {file.name} ({formatFileSize(file.size)})
                             </p>
+                            {file.status === 'uploading' && (
+                              <div className="pointer-events-none absolute inset-0">
+                                <div className="shimmer absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/10" />
+                              </div>
+                            )}
+                            {file.status === 'error' && (
+                              <div className="mt-1 text-[10px] text-red-500">
+                                {file.error || 'Upload failed'}
+                              </div>
+                            )}
                           </div>
                           <Button
                             type="button"
@@ -465,6 +498,21 @@ export function EnhancedMessageInput({
           )}
         </div>
       </div>
+
+      {/* Local shimmer animation for uploading attachment pills */}
+      <style>{`
+        @keyframes shimmerMove {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+        .shimmer {
+          animation: shimmerMove 1.2s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

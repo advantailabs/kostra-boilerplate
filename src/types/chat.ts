@@ -1,9 +1,19 @@
 import { FileKnowledgeBase, KnowledgeBase, Message, Persona, Thread, User } from '@prisma/client';
+import { UploadPurpose } from './file-upload';
 
 // Public types that exclude OpenAI fields
 export type PublicPersona = Omit<Persona, 'openaiAssistantId'>;
 export type PublicThread = Omit<Thread, 'openaiThreadId'>;
 export type PublicMessage = Omit<Message, 'openaiMessageId'>;
+
+// Unified file attachment type used in requests
+export interface UploadedFile {
+  originalName: string;
+  mimeType: string;
+  size: number;
+  s3Key: string;
+  uploadPurpose?: UploadPurpose;
+}
 
 // Extended types for complex queries
 export interface ThreadWithMessages extends Thread {
@@ -150,19 +160,7 @@ export interface UpdatePersonaData {
 export interface CreateThreadRequest {
   personaId: number;
   message: string;
-  files?: Array<{
-    originalName: string;
-    mimeType: string;
-    size: number;
-    s3Key: string;
-    uploadPurpose?:
-      | 'PersonaLogo'
-      | 'UserAvatar'
-      | 'UserFile'
-      | 'ThreadAttachment'
-      | 'MessageAttachment'
-      | 'UserDocument';
-  }>;
+  files?: Array<UploadedFile>;
 }
 
 export interface CreatePersonaRequest {
@@ -195,19 +193,7 @@ export interface UpdateKnowledgeBaseRequest {
 
 export interface AddMessageRequest {
   content: string;
-  files?: Array<{
-    originalName: string;
-    mimeType: string;
-    size: number;
-    s3Key: string;
-    uploadPurpose?:
-      | 'PersonaLogo'
-      | 'UserAvatar'
-      | 'UserFile'
-      | 'ThreadAttachment'
-      | 'MessageAttachment'
-      | 'UserDocument';
-  }>;
+  files?: Array<UploadedFile>;
 }
 
 // API Response types

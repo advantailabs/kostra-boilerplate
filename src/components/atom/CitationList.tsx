@@ -31,6 +31,7 @@ export function CitationList({
   );
 
   const handleDownload = (fileId: number, filename: string) => {
+    if (fileId <= 0) return; // Optimistic attachments are not yet downloadable
     downloadFile.mutate(fileId, {
       onSuccess: _data => {
         console.log(`Downloading ${filename}...`);
@@ -57,18 +58,28 @@ export function CitationList({
         </span>
       )}
       <div className="flex flex-wrap gap-1">
-        {uniqueCitations.map(citation => (
-          <button
-            key={citation.fileId}
-            onClick={() => handleDownload(citation.fileId, citation.originalName)}
-            disabled={downloadFile.isPending}
-            className={`inline-flex items-center gap-0.5 rounded-full px-1 py-0 text-[8px] font-medium transition-colors ${chipBase}`}
-            title={`Download ${citation.originalName}`}
-          >
-            <Icon className="h-2 w-2" />
-            <span>{citation.originalName}</span>
-          </button>
-        ))}
+        {uniqueCitations.map(citation => {
+          const isDownloadable = citation.fileId > 0;
+          const title = isAttachments
+            ? isDownloadable
+              ? `Download ${citation.originalName}`
+              : `Uploading ${citation.originalName}...`
+            : citation.originalName;
+          return (
+            <button
+              key={citation.fileId}
+              onClick={() => handleDownload(citation.fileId, citation.originalName)}
+              disabled={downloadFile.isPending || !isDownloadable}
+              className={`inline-flex items-center gap-0.5 rounded-full px-1 py-0 text-[8px] font-medium transition-colors ${chipBase} ${
+                !isDownloadable ? 'cursor-not-allowed opacity-70' : ''
+              }`}
+              title={title}
+            >
+              <Icon className="h-2 w-2" />
+              <span>{citation.originalName}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

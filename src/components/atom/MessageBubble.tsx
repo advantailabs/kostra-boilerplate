@@ -44,7 +44,7 @@ export function MessageBubble({ message, persona, citations, className }: Messag
   // Use passed citations (for streaming) or parsed citations (for stored messages)
   const finalCitations = citations || displayCitations;
 
-  // Extract unique file attachments for user messages from messageFiles (preferred)
+  // Extract unique file attachments for user messages
   const uniqueUserAttachments: PublicCitationFile[] = (() => {
     if (!isUser) return [];
     const anyMessage: any = message as any;
@@ -65,6 +65,24 @@ export function MessageBubble({ message, persona, citations, className }: Messag
         filename: file.filename,
         mimeType: file.mimeType,
         size: file.size,
+        citationText: '',
+        startIndex: 0,
+        endIndex: 0,
+      }));
+    }
+    // Optimistic: pendingFiles from client before server attaches files
+    const pending = (anyMessage.pendingFiles || []) as Array<{
+      originalName: string;
+      mimeType: string;
+      size: number;
+    }>;
+    if (pending.length > 0) {
+      return pending.map((p, index) => ({
+        fileId: -(index + 1), // temporary negative id to keep keys stable
+        originalName: p.originalName,
+        filename: p.originalName,
+        mimeType: p.mimeType,
+        size: p.size,
         citationText: '',
         startIndex: 0,
         endIndex: 0,
