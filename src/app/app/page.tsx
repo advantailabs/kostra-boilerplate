@@ -1,13 +1,20 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+
 import { SearchBox } from '@/components/molecules/search/SearchBox';
+import type { SearchMode } from '@/lib/constants/search';
 
 export default function AppPage() {
+  const params = useSearchParams();
+  const kb = params.get('kb') || undefined;
+  const mode = (params.get('mode') as SearchMode) || 'smart-search';
+
   const handleSearch = (data: {
     query: string;
     files: Array<{ id: string; name: string; size: number }>;
     knowledgeBaseId: string;
-    mode: 'web' | 'deep';
+    mode: SearchMode;
   }) => {
     console.log('Search:', data);
   };
@@ -19,12 +26,12 @@ export default function AppPage() {
           {/* Title */}
           <div className="mb-4 text-center sm:mb-6 md:mb-8">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl dark:text-gray-100">
-              Coming Soon
+              Smart Search
             </h1>
           </div>
 
           {/* Search Container */}
-          <SearchBox onSearch={handleSearch} />
+          <SearchBox onSearch={handleSearch} initialKnowledgeBaseId={kb} initialMode={mode} />
         </div>
       </div>
     </div>

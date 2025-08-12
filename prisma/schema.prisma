@@ -29,6 +29,7 @@ model User {
   personas       Persona[]
   files          File[]
   knowledgeBases KnowledgeBase[]
+  searchQueries  SearchQuery[]
 }
 
 model Thread {
@@ -76,6 +77,7 @@ model KnowledgeBase {
   user               User                @relation(fields: [userId], references: [id])
   personas           Persona[]
   fileKnowledgeBases FileKnowledgeBase[]
+  searchQueries      SearchQuery[]
 }
 
 model Message {
@@ -107,6 +109,7 @@ model File {
   user               User?               @relation(fields: [userId], references: [id])
   fileKnowledgeBases FileKnowledgeBase[]
   messageFiles       MessageFile[]
+  searchResults      SearchResult[]
 }
 
 model FileKnowledgeBase {
@@ -130,4 +133,47 @@ model MessageFile {
   file    File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   @@unique([messageId, fileId])
+}
+
+enum SearchMode {
+  SMART_SEARCH
+  QA
+}
+
+model SearchQuery {
+  id              Int            @id @default(autoincrement())
+  userId          Int
+  knowledgeBaseId Int?
+  query           String
+  mode            SearchMode
+  resultsCount    Int            @default(0)
+  createdAt       DateTime       @default(now())
+
+  user            User           @relation(fields: [userId], references: [id])
+  knowledgeBase   KnowledgeBase? @relation(fields: [knowledgeBaseId], references: [id])
+  results         SearchResult[]
+
+  @@index([userId])
+  @@index([knowledgeBaseId])
+  @@index([mode, createdAt])
+}
+
+model SearchResult {
+  id            String      @id @default(uuid())
+  searchQueryId Int
+  rank          Int
+  openaiFileId  String?
+  fileId        Int?
+  filename      String
+  score         Float
+  attributes    Json?
+  content       Json?
+  createdAt     DateTime    @default(now())
+
+  searchQuery   SearchQuery @relation(fields: [searchQueryId], references: [id], onDelete: Cascade)
+  file          File?       @relation(fields: [fileId], references: [id])
+
+  @@unique([searchQueryId, rank])
+  @@index([openaiFileId])
+  @@index([fileId])
 }
