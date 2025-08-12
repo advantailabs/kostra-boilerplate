@@ -18,7 +18,6 @@ export default function ThreadPage() {
     threads,
     isLoading: threadsLoading,
     deleteThread,
-    infiniteThreads,
     loadMore,
     hasMore,
     isLoadingMore,
@@ -104,7 +103,7 @@ export default function ThreadPage() {
     <div className="mobile-chat-layout h-screen overflow-hidden">
       <ChatInterface
         personas={personas}
-        threads={infiniteThreads.length ? infiniteThreads : threads}
+        threads={threads}
         activeThread={activeThread || null}
         onCreateThread={handleCreateThread}
         onSelectThread={handleSelectThread}
