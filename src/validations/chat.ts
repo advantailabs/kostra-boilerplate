@@ -13,6 +13,16 @@ export const createThreadSchema = z.object({
         mimeType: z.string().min(1),
         size: z.number().int().nonnegative(),
         s3Key: z.string().min(1),
+        uploadPurpose: z
+          .enum([
+            'PersonaLogo',
+            'UserAvatar',
+            'UserFile',
+            'ThreadAttachment',
+            'MessageAttachment',
+            'UserDocument',
+          ])
+          .optional(),
       })
     )
     .optional(),
@@ -30,6 +40,16 @@ export const addMessageSchema = z.object({
         mimeType: z.string().min(1),
         size: z.number().int().nonnegative(),
         s3Key: z.string().min(1),
+        uploadPurpose: z
+          .enum([
+            'PersonaLogo',
+            'UserAvatar',
+            'UserFile',
+            'ThreadAttachment',
+            'MessageAttachment',
+            'UserDocument',
+          ])
+          .optional(),
       })
     )
     .optional(),

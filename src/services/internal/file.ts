@@ -1,3 +1,4 @@
+import { inferUploadPurposeFromKey } from '@/lib/file-utils';
 import { generateDownloadUrl } from '@/lib/s3';
 import {
   createFile as createOpenAIFile,
@@ -22,6 +23,7 @@ import {
   UpdateFileData,
 } from '@/services/repositories/file';
 import { findKnowledgeBaseById } from '@/services/repositories/knowledge-base';
+import { UploadPurpose } from '@/types/file-upload';
 
 // Polyfill for File in Node.js environment
 if (typeof global.File === 'undefined') {
@@ -55,6 +57,7 @@ export interface UploadFileData {
   file: File;
   s3Key: string;
   knowledgeBaseIds?: number[];
+  uploadPurpose?: UploadPurpose;
 }
 
 export interface FileListResult {
@@ -290,6 +293,7 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
       metadata: {
         uploadedAt: new Date().toISOString(),
         originalFile: data.file.name,
+        uploadPurpose: data.uploadPurpose || inferUploadPurposeFromKey(data.s3Key),
       },
     };
 

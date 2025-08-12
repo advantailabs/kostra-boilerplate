@@ -154,6 +154,7 @@ export function KnowledgeBaseFileUploader({
         mimeType: file.file.type,
         size: file.file.size,
         s3Key: file.s3Key!,
+        uploadPurpose: 'UserDocument' as const,
       }));
 
       // Save all files to database with knowledge base association

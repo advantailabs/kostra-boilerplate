@@ -150,7 +150,19 @@ export interface UpdatePersonaData {
 export interface CreateThreadRequest {
   personaId: number;
   message: string;
-  files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>;
+  files?: Array<{
+    originalName: string;
+    mimeType: string;
+    size: number;
+    s3Key: string;
+    uploadPurpose?:
+      | 'PersonaLogo'
+      | 'UserAvatar'
+      | 'UserFile'
+      | 'ThreadAttachment'
+      | 'MessageAttachment'
+      | 'UserDocument';
+  }>;
 }
 
 export interface CreatePersonaRequest {
@@ -183,7 +195,19 @@ export interface UpdateKnowledgeBaseRequest {
 
 export interface AddMessageRequest {
   content: string;
-  files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>;
+  files?: Array<{
+    originalName: string;
+    mimeType: string;
+    size: number;
+    s3Key: string;
+    uploadPurpose?:
+      | 'PersonaLogo'
+      | 'UserAvatar'
+      | 'UserFile'
+      | 'ThreadAttachment'
+      | 'MessageAttachment'
+      | 'UserDocument';
+  }>;
 }
 
 // API Response types

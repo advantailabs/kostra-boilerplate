@@ -52,15 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const {
-      personaId,
-      message: initialMessage,
-      files,
-    } = validationResult.data as {
-      personaId: number;
-      message: string;
-      files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>;
-    };
+    const { personaId, message: initialMessage, files } = validationResult.data;
 
     // Verify persona exists and belongs to user
     const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
@@ -107,6 +99,7 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           file: mockFile,
           s3Key: f.s3Key,
+          uploadPurpose: f.uploadPurpose || 'MessageAttachment',
         });
 
         if (!result.success) {

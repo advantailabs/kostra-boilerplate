@@ -70,10 +70,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
-    const { content: messageContent, files } = validationResult.data as {
-      content: string;
-      files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>;
-    };
+    const { content: messageContent, files } = validationResult.data;
 
     // Get thread with messages for OpenAI thread ID
     const threadWithMessages = await findByIdWithMessagesInternal(threadId);
@@ -114,7 +111,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       const uploadPromises = files.map(async f => {
         const mockFile = new File([], f.originalName, { type: f.mimeType });
         Object.defineProperty(mockFile, 'size', { value: f.size });
-        const result = await uploadFileService({ userId: user.id, file: mockFile, s3Key: f.s3Key });
+        const result = await uploadFileService({
+          userId: user.id,
+          file: mockFile,
+          s3Key: f.s3Key,
+          uploadPurpose: f.uploadPurpose || 'MessageAttachment',
+        });
         if (!result.success) throw new Error(`Failed to prepare attachment ${f.originalName}`);
         uploadedFileIds.push(result.data!.id);
         return { file_id: result.data!.openaiFileId as string };

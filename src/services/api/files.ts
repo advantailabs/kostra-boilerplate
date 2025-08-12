@@ -24,6 +24,13 @@ export interface UploadFilesRequest {
     mimeType: string;
     size: number;
     s3Key: string;
+    uploadPurpose?:
+      | 'PersonaLogo'
+      | 'UserAvatar'
+      | 'UserFile'
+      | 'ThreadAttachment'
+      | 'MessageAttachment'
+      | 'UserDocument';
   }>;
   knowledgeBaseIds?: number[];
 }

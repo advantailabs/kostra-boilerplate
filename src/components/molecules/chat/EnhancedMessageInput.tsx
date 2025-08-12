@@ -71,6 +71,7 @@ export function EnhancedMessageInput({
       mimeType: f.type,
       size: f.size,
       s3Key: f.s3Key!,
+      uploadPurpose: 'MessageAttachment' as const,
     }));
     onSend(attachments);
     // Clear attachments after sending

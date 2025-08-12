@@ -1,3 +1,4 @@
+import { UploadPurpose } from '@/types/file-upload';
 import {
   RiFile3Line,
   RiFileCodeLine,
@@ -166,3 +167,23 @@ export const getFileTypeCategoryIcon = (type: string) => {
   }
   return config;
 };
+
+/**
+ * Infers upload purpose from an S3 key prefix.
+ * Example prefixes:
+ * - messages/attachments/ → MessageAttachment
+ * - threads/attachments/ → ThreadAttachment
+ * - users/documents/ → UserDocument
+ * - users/files/ → UserFile
+ * - personas/logos/ → PersonaLogo
+ * - users/avatars/ → UserAvatar
+ */
+export function inferUploadPurposeFromKey(key: string): UploadPurpose | undefined {
+  if (key.startsWith('messages/attachments/')) return 'MessageAttachment';
+  if (key.startsWith('threads/attachments/')) return 'ThreadAttachment';
+  if (key.startsWith('users/documents/')) return 'UserDocument';
+  if (key.startsWith('users/files/')) return 'UserFile';
+  if (key.startsWith('personas/logos/')) return 'PersonaLogo';
+  if (key.startsWith('users/avatars/')) return 'UserAvatar';
+  return undefined;
+}
