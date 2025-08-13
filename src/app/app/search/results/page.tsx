@@ -1,14 +1,14 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+// import Image from 'next/image';
+// import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 import { Button } from '../../../../components/atom/Button';
 // Spinner kept for potential future use
 import { SearchResultSkeleton } from '../../../../components/atom/Skeleton';
-import { SearchBox } from '../../../../components/molecules/search/SearchBox';
+import { CompactSearchBox } from '../../../../components/molecules/search/CompactSearchBox';
 import { useSmartSearch } from '../../../../hooks/useSearch';
 import type { SearchMode } from '../../../../lib/constants/search';
 import { generateFileDownloadUrl } from '../../../../services/api/files';
@@ -30,6 +30,7 @@ export default function SearchResultsPage() {
   const query = params.get('q') || '';
   const knowledgeBaseId = params.get('kb') || '';
   const [results, setResults] = React.useState<ResultItem[]>([]);
+  const [answer, setAnswer] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const mode = (params.get('mode') as SearchMode) || 'smart-search';
   const { search, isPending } = useSmartSearch();
@@ -61,6 +62,7 @@ export default function SearchResultsPage() {
         });
         const ordered = (data.results || []).slice().sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
         setResults(ordered);
+        setAnswer((data as any).answer ?? null);
       } catch (e: any) {
         setError(e?.message || 'Search failed');
       }
@@ -81,51 +83,12 @@ export default function SearchResultsPage() {
   return (
     <div className="min-h-screen bg-white p-4 sm:px-8 sm:py-6 dark:bg-gray-950">
       <div className="mx-auto w-full max-w-5xl">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Link href="/app" className="flex items-center">
-              {/* Inverted light/dark: show dark symbol on light mode, light symbol on dark mode */}
-              <Image
-                src="/logos/dark-symbol.png"
-                alt="Peon"
-                width={36}
-                height={36}
-                className="block dark:hidden"
-                priority
-              />
-              <Image
-                src="/logos/light-symbol.png"
-                alt="Peon"
-                width={36}
-                height={36}
-                className="hidden dark:block"
-                priority
-              />
-            </Link>
-            <div className="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100">
-              {query}
-            </div>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            className="cursor-default rounded-full px-3 py-1"
-            onClick={() => {
-              const paramsNext = new URLSearchParams();
-              if (knowledgeBaseId) paramsNext.set('kb', knowledgeBaseId);
-              if (mode) paramsNext.set('mode', mode);
-              router.push(`/app?${paramsNext.toString()}`);
-            }}
-          >
-            ← Back
-          </Button>
-        </div>
+        {/* Header removed (logo will be shown above search box) */}
         {/* Single column: compact search box + centered results */}
         <div className="space-y-6">
           <div>
-            <SearchBox
-              variant="compact"
+            {/* Page-level logo removed */}
+            <CompactSearchBox
               initialQuery={query}
               initialKnowledgeBaseId={knowledgeBaseId || undefined}
               initialMode={mode}
@@ -158,6 +121,14 @@ export default function SearchResultsPage() {
 
             {!isPending && !error && (
               <div className="mx-auto max-w-5xl space-y-6">
+                {mode === 'smart-qa' && !!answer && (
+                  <>
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+                      {answer}
+                    </div>
+                    <div className="my-4 h-px w-full bg-gray-200 dark:bg-gray-800" />
+                  </>
+                )}
                 {results.map(item => (
                   <div key={item.id} className="space-y-1">
                     <div className="flex items-center space-x-2">
@@ -171,7 +142,7 @@ export default function SearchResultsPage() {
                         {item.filename}
                       </Button>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Confidence: {item.score.toFixed(2)}
+                        Confidence: {(item.score * 100).toFixed(2)}%
                       </span>
                     </div>
                     <div className="text-sm text-gray-700 dark:text-gray-300">

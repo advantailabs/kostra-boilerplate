@@ -1,10 +1,14 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '@/lib/utils/search';
-import { searchVectorStore } from '@/services/external/openai/vector-store';
-import { getKnowledgeBaseWithVectorStore, persistSearch } from '@/services/repositories/search';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '../../../../lib/utils/search';
+import { runSmartQA } from '../../../../services/external/openai/agent';
+import { searchVectorStore } from '../../../../services/external/openai/vector-store';
+import {
+  getKnowledgeBaseWithVectorStore,
+  persistSearch,
+} from '../../../../services/repositories/search';
+import { getUserByClerkId } from '../../../../services/repositories/user';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,33 +69,59 @@ export async function POST(request: Request) {
       );
     }
 
-    const search = await searchVectorStore({
-      vectorStoreId: kb.vectorStoreId,
-      query,
-      limit,
-    });
+    const isQA = modeRaw === 'smart-qa';
 
-    if (!search.success || !search.data) {
-      return NextResponse.json(
-        { error: 'Search failed', message: search.error || 'Unknown error' },
-        { status: 502 }
-      );
+    let answer: string | undefined;
+    let normalized: any[] = [];
+    if (isQA) {
+      const qa = await runSmartQA({ vectorStoreId: kb.vectorStoreId as string, query });
+
+      answer = qa.answer ?? undefined;
+      // Use citations from agent tool output when available
+      if (Array.isArray(qa.citations) && qa.citations.length > 0) {
+        normalized = qa.citations.map(c => ({
+          filename: c?.filename || 'Unknown',
+          score: typeof c?.score === 'number' ? c.score : 0,
+          attributes: c?.attributes ?? null,
+          // Normalize to same shape as smart-search so UI excerpt renders
+          content: c?.content ? [{ type: 'text', text: String(c.content) }] : null,
+          openaiFileId: c?.file_id ?? null,
+        }));
+        console.log('smart-qa using citations', normalized.length);
+      }
     }
 
-    // Normalize results from OpenAI response
-    const dataArray: any[] = Array.isArray(search.data?.data) ? (search.data.data as any[]) : [];
-    const normalized = transformOpenAiResults(dataArray).slice(0, 10);
+    // Fallback: perform a direct vector search only if no citations were returned
+    if (normalized.length === 0) {
+      const search = await searchVectorStore({
+        vectorStoreId: kb.vectorStoreId,
+        query,
+        limit,
+      });
+
+      if (!search.success || !search.data) {
+        return NextResponse.json(
+          { error: 'Search failed', message: search.error || 'Unknown error' },
+          { status: 502 }
+        );
+      }
+
+      const dataArray: any[] = Array.isArray(search.data?.data) ? (search.data.data as any[]) : [];
+      normalized = transformOpenAiResults(dataArray).slice(0, 10);
+    }
 
     const persisted = await persistSearch({
       userId: user.id,
       knowledgeBaseId,
       query,
-      mode: mapFrontendModeToPrismaMode(modeRaw === 'smart-qa' ? 'smart-qa' : 'smart-search'),
+      mode: mapFrontendModeToPrismaMode(isQA ? 'smart-qa' : 'smart-search'),
+      answer,
       results: normalized,
     });
 
     return NextResponse.json({
       searchQueryId: persisted.searchQueryId,
+      answer: answer ?? null,
       results: persisted.results.map(r => ({
         id: r.id,
         filename: r.filename,

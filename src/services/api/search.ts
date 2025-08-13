@@ -18,7 +18,8 @@ export interface SmartSearchResultItem {
 }
 
 export interface SmartSearchResponse {
-  searchQueryId: number;
+  searchQueryId: string;
+  answer?: string | null;
   results: SmartSearchResultItem[];
 }
 

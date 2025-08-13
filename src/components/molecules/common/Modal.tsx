@@ -141,7 +141,7 @@ export function Modal({
 
         <div className={removePadding ? 'p-0' : 'px-4 pt-4 max-sm:px-3 max-sm:pt-3'}>
           {/* Main content */}
-          {children}
+          <div className="mb-4 max-sm:mb-3">{children}</div>
 
           {/* Footer with action buttons */}
           {(footer || defaultFooter) && (

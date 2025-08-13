@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const upsertUser = async (user: ClerkUserUpdate) => {
   return prisma.user.upsert({
     where: { clerkUserId: user.clerkUserId },
-    update: { ...user, clerkUserId: undefined },
+    update: { ...user },
     create: user,
   });
 };

@@ -18,6 +18,7 @@ export interface PersistSearchInput {
   knowledgeBaseId?: number | null;
   query: string;
   mode: SearchMode;
+  answer?: string;
   results: Array<{
     filename: string;
     score: number;
@@ -32,8 +33,9 @@ export async function persistSearch({
   knowledgeBaseId,
   query,
   mode,
+  answer,
   results,
-}: PersistSearchInput): Promise<{ searchQueryId: number; results: PersistedSearchResult[] }> {
+}: PersistSearchInput): Promise<{ searchQueryId: string; results: PersistedSearchResult[] }> {
   // Ensure ranking is based on score (highest score = rank 1)
   const resultsSortedByScoreDesc = [...results].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
@@ -62,9 +64,20 @@ export async function persistSearch({
           })
         ),
       },
-    },
+    } as any,
     include: { results: true },
   });
+
+  // If Prisma Client is behind and does not recognize `answer` yet, update via raw SQL
+  if (answer && typeof (created as any)?.id === 'number') {
+    try {
+      await prisma.$executeRaw`UPDATE "SearchQuery" SET "answer" = ${answer} WHERE "id" = ${
+        (created as any).id
+      }`;
+    } catch (e) {
+      // best-effort; ignore if column does not exist
+    }
+  }
 
   // Order results by ascending rank for consistent API/UI consumption
   const orderedByRankAsc = ((created as any).results as any[])
@@ -82,7 +95,7 @@ export async function persistSearch({
   });
 
   return {
-    searchQueryId: created.id,
+    searchQueryId: (created as any).publicId,
     results: uniqueByFileId.map((r: any) => ({
       id: r.id,
       filename: r.filename,
