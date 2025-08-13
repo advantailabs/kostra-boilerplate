@@ -227,3 +227,31 @@ export const listVectorStoreFiles = async (
     };
   }
 };
+
+/**
+ * Searches a vector store for relevant files/content.
+ * Note: Uses an untyped SDK call as the official method may be subject to change.
+ */
+export interface VectorStoreSearchParams {
+  vectorStoreId: string;
+  query: string;
+  limit?: number;
+}
+
+export const searchVectorStore = async (
+  params: VectorStoreSearchParams
+): Promise<VectorStoreServiceResult<any>> => {
+  try {
+    const result = await openai.vectorStores.search(params.vectorStoreId, {
+      query: params.query,
+    });
+
+    return { success: true, data: result };
+  } catch (error) {
+    console.error('Error searching OpenAI vector store:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to search vector store',
+    };
+  }
+};
