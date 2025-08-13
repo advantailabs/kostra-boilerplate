@@ -34,15 +34,18 @@ export async function persistSearch({
   mode,
   results,
 }: PersistSearchInput): Promise<{ searchQueryId: number; results: PersistedSearchResult[] }> {
+  // Ensure ranking is based on score (highest score = rank 1)
+  const resultsSortedByScoreDesc = [...results].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+
   const created = await prisma.searchQuery.create({
     data: {
       userId,
       knowledgeBaseId: knowledgeBaseId ?? undefined,
       query,
       mode,
-      resultsCount: results.length,
+      resultsCount: resultsSortedByScoreDesc.length,
       results: {
-        create: results.map(
+        create: resultsSortedByScoreDesc.map(
           (r, index): Prisma.SearchResultCreateWithoutSearchQueryInput => ({
             rank: index + 1,
             filename: r.filename,
@@ -63,9 +66,24 @@ export async function persistSearch({
     include: { results: true },
   });
 
+  // Order results by ascending rank for consistent API/UI consumption
+  const orderedByRankAsc = ((created as any).results as any[])
+    .slice()
+    .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
+
+  // Final dedupe on response: unique by DB fileId, keep the highest-ranked (lowest rank number)
+  const seenFileIds = new Set<number>();
+  const uniqueByFileId = orderedByRankAsc.filter(r => {
+    const id: number | null | undefined = r.fileId ?? null;
+    if (!id) return true; // If no DB file id, we cannot dedupe by it; include
+    if (seenFileIds.has(id)) return false;
+    seenFileIds.add(id);
+    return true;
+  });
+
   return {
     searchQueryId: created.id,
-    results: (created as any).results.map((r: any) => ({
+    results: uniqueByFileId.map((r: any) => ({
       id: r.id,
       filename: r.filename,
       score: r.score,

@@ -59,7 +59,8 @@ export default function SearchResultsPage() {
           knowledgeBaseId: Number(knowledgeBaseId),
           mode,
         });
-        setResults(data.results || []);
+        const ordered = (data.results || []).slice().sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
+        setResults(ordered);
       } catch (e: any) {
         setError(e?.message || 'Search failed');
       }
