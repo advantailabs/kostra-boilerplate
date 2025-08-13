@@ -9,7 +9,7 @@ export const createPersonaSchema = z.object({
   instructions: z
     .string()
     .min(1, 'Instructions are required')
-    .max(2000, 'Instructions must be 2000 characters or less'),
+    .max(10000, 'Instructions must be 10000 characters or less'),
   tags: z
     .array(
       z.string().min(1, 'Tags cannot be empty').max(50, 'Each tag must be 50 characters or less')
@@ -34,7 +34,7 @@ export const updatePersonaSchema = z.object({
   instructions: z
     .string()
     .min(1, 'Instructions are required')
-    .max(2000, 'Instructions must be 2000 characters or less')
+    .max(10000, 'Instructions must be 10000 characters or less')
     .optional(),
   tags: z
     .array(

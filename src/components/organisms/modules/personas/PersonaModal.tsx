@@ -38,6 +38,9 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     knowledgeBaseId: '',
   });
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [deleteFileDialog, setDeleteFileDialog] = useState<{
     isOpen: boolean;
@@ -92,6 +95,9 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
       });
       setLogoPreview(null);
     }
+    setFormErrors({});
+    setServerError(null);
+    setServerFieldErrors({});
     clearError();
   }, [persona, mode, isOpen, clearError]);
 
@@ -172,6 +178,22 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setServerError(null);
+    setServerFieldErrors({});
+
+    // Client-side validation
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.instructions.trim()) newErrors.instructions = 'Instructions are required';
+    if (formData.instructions && formData.instructions.length > 10000)
+      newErrors.instructions = 'Instructions must be 10000 characters or less';
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setLoading(false);
+      return;
+    }
 
     try {
       await onSubmit({
@@ -179,7 +201,21 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         knowledgeBaseId: formData.knowledgeBaseId ? parseInt(formData.knowledgeBaseId, 10) : null,
       });
       onClose();
-    } catch (error) {
+    } catch (error: any) {
+      // Try to parse server-side validation error
+      const responseData = error?.response?.data;
+      if (responseData) {
+        if (Array.isArray(responseData.details)) {
+          const fieldErrs: Record<string, string> = {};
+          responseData.details.forEach((d: any) => {
+            if (d?.field && d?.message) fieldErrs[d.field] = d.message;
+          });
+          setServerFieldErrors(fieldErrs);
+        }
+        setServerError(responseData.message || responseData.error || 'Failed to save persona');
+      } else {
+        setServerError('Failed to save persona');
+      }
       console.error(`Failed to ${mode} persona:`, error);
     } finally {
       setLoading(false);
@@ -211,7 +247,14 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         type="submit"
         className="w-full max-sm:w-auto sm:w-auto"
         onClick={handleSubmit}
-        disabled={loading || isUploading || !formData.name || !formData.instructions}
+        disabled={
+          loading ||
+          isUploading ||
+          !formData.name.trim() ||
+          !formData.description.trim() ||
+          !formData.instructions.trim() ||
+          formData.instructions.length > 10000
+        }
         isLoading={loading}
       >
         {submitText}
@@ -232,6 +275,19 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         footer={customFooter}
       >
         <div className="grid h-full grid-cols-1 sm:grid-cols-[25%_35%_40%]">
+          {/* Global/server error */}
+          {(serverError || Object.keys(serverFieldErrors).length > 0) && (
+            <div className="col-span-full border-b border-red-200 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/50 dark:text-red-400">
+              <p className="font-medium">{serverError || 'There were validation errors'}</p>
+              {Object.keys(serverFieldErrors).length > 0 && (
+                <ul className="mt-1 list-disc pl-5">
+                  {Object.entries(serverFieldErrors).map(([field, msg]) => (
+                    <li key={field}>{`${field}: ${msg}`}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
           {/* Column 1: Logo, Title, Description, Knowledge Base */}
           <div className="overflow-y-auto border-r border-gray-200 max-sm:border-b max-sm:border-r-0 max-sm:border-gray-200 dark:border-gray-800 max-sm:dark:border-gray-800">
             <div className="space-y-4 p-4 max-sm:space-y-3 max-sm:p-3">
@@ -307,12 +363,17 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                   className="mt-2"
                   required
                 />
+                {(serverFieldErrors.name || formErrors.name) && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {serverFieldErrors.name || formErrors.name}
+                  </p>
+                )}
               </div>
 
               {/* Description */}
               <div>
                 <Label htmlFor="description" className="mb-2 text-sm font-medium">
-                  Description
+                  Description *
                 </Label>
                 <Input
                   id="description"
@@ -320,7 +381,13 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Brief description of the persona"
                   className="mt-2"
+                  required
                 />
+                {(serverFieldErrors.description || formErrors.description) && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {serverFieldErrors.description || formErrors.description}
+                  </p>
+                )}
               </div>
 
               {/* Knowledge Base Selection */}
@@ -364,6 +431,11 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                 required
                 className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-sm:h-[calc(100dvh-250px)] dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
               />
+              {(serverFieldErrors.instructions || formErrors.instructions) && (
+                <p className="mt-1 text-xs text-red-500">
+                  {serverFieldErrors.instructions || formErrors.instructions}
+                </p>
+              )}
             </div>
           </div>
 
