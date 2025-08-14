@@ -97,7 +97,7 @@ export default function SearchResultsPage() {
             </div>
 
             <div className="mx-0">
-              {mode === 'smart-search' && results.length > 0`` && (
+              {mode === 'smart-search' && results.length > 0 && (
                 <div className="mt-1 pb-2 text-sm text-gray-600 dark:text-gray-300">
                   Showing top {results.length} most relevant files
                 </div>
