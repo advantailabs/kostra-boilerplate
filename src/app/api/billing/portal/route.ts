@@ -11,7 +11,7 @@ import { getUserByClerkId, setUserStripeCustomerId } from '../../../../services/
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const { userId: clerkUserId } = await auth();
     if (!clerkUserId) {
