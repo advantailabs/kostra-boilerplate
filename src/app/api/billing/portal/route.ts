@@ -35,10 +35,7 @@ export async function POST(request: Request) {
       await setUserStripeCustomerId(user.id, customerId);
     }
 
-    const origin =
-      (request as any).nextUrl?.origin ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      'http://localhost:3000';
+    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const base = origin.replace(/\/$/, '');
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,

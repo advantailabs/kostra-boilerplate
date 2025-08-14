@@ -46,8 +46,7 @@ export async function POST(request: NextRequest) {
       await setUserStripeCustomerId(user.id, customerId);
     }
 
-    const origin =
-      request.nextUrl?.origin || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const base = origin.replace(/\/$/, '');
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
