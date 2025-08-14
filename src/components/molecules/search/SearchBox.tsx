@@ -7,8 +7,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/atom/Button';
 import { PillSelect } from '@/components/atom/PillSelect';
 import { Textarea } from '@/components/atom/Textarea';
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import { SEARCH_MODE_OPTIONS, type SearchMode } from '@/lib/constants/search';
+import { getCredits } from '@/store/credits';
+import { openCreditPurchase } from '@/store/ui/modals';
 
 interface AttachedFile {
   id: string;
@@ -92,6 +95,13 @@ export function SearchBox({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
+
+    // Guard: require minimum credits to run search
+    const credits = getCredits();
+    if (credits < CREDIT_THRESHOLDS.searchChatMin) {
+      openCreditPurchase();
+      return;
+    }
 
     onSearch({
       query: searchQuery,

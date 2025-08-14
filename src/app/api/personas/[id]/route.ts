@@ -1,6 +1,7 @@
 import {
   errorResponse,
   forbiddenResponse,
+  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -10,6 +11,7 @@ import {
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
   deactivatePersonaService,
   getPersonaByIdService,
@@ -99,6 +101,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         message: err.message,
       }));
       return validationErrorResponse('Invalid input data', errors);
+    }
+
+    // Enforce credit threshold for update
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+      return insufficientCreditsResponse();
     }
 
     // Update persona

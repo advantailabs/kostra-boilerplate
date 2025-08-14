@@ -5,6 +5,7 @@
 import { RiCheckLine, RiFileCopyLine } from '@remixicon/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
+import { getApiErrorMessage } from '../../../../lib/utils/error-handler';
 
 import { Button } from '../../../../components/atom/Button';
 import { CreditDisplay } from '../../../../components/atom/CreditDisplay';
@@ -37,7 +38,9 @@ export default function SearchResultsPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [copiedAnswer, setCopiedAnswer] = React.useState(false);
   const mode = (params.get('mode') as SearchMode) || 'smart-search';
-  const { search, isPending } = useSmartSearchWithCredits();
+  const { search } = useSmartSearchWithCredits();
+  const lastQueryKeyRef = React.useRef<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleDownload = React.useCallback(async (fileId?: number | null) => {
     if (!fileId) return;
@@ -57,7 +60,13 @@ export default function SearchResultsPage() {
   React.useEffect(() => {
     const run = async () => {
       if (!query || !knowledgeBaseId) return;
+
+      const key = `${query}::${knowledgeBaseId}::${mode}`;
+      if (lastQueryKeyRef.current === key) return;
+      lastQueryKeyRef.current = key;
+
       setError(null);
+      setIsLoading(true);
       try {
         const data = await search({
           query,
@@ -70,7 +79,13 @@ export default function SearchResultsPage() {
         setResults(ordered);
         setAnswer((data as any).answer ?? null);
       } catch (e: any) {
-        setError(e?.message || 'Search failed');
+        setError(getApiErrorMessage(e, 'Search failed'));
+        setResults([]);
+        setAnswer(null);
+        // Allow retry for same params after an error
+        lastQueryKeyRef.current = null;
+      } finally {
+        setIsLoading(false);
       }
     };
     run();
@@ -97,18 +112,15 @@ export default function SearchResultsPage() {
               <h1 className="pt-6 text-2xl font-semibold text-gray-900 dark:text-white">
                 {query ? query.charAt(0).toUpperCase() + query.slice(1) : 'Search'}
               </h1>
-              <div className="pt-6">
-                <CreditDisplay size="sm" />
-              </div>
             </div>
 
             <div className="mx-0">
-              {mode === 'smart-search' && results.length > 0 && (
+              {!isLoading && !error && mode === 'smart-search' && results.length > 0 && (
                 <div className="mt-1 pb-2 text-sm text-gray-600 dark:text-gray-300">
                   Showing top {results.length} most relevant files
                 </div>
               )}
-              {isPending && (
+              {isLoading && (
                 <div className="space-y-6">
                   {Array.from({ length: 8 }).map((_, i) => (
                     <SearchResultSkeleton key={i} />
@@ -118,7 +130,7 @@ export default function SearchResultsPage() {
 
               {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
 
-              {!isPending && !error && (
+              {!isLoading && !error && (
                 <div className="mx-auto max-w-5xl space-y-6">
                   {mode === 'smart-qa' && !!answer && (
                     <>
@@ -186,7 +198,10 @@ export default function SearchResultsPage() {
         {/* Full-width background overlay to prevent text bleed-through */}
         <div className="pointer-events-none absolute inset-x-0 -bottom-4 -top-20 bg-gradient-to-b from-transparent via-white/90 to-white dark:via-gray-950/90 dark:to-gray-950" />
 
-        <div className="relative mx-auto w-full max-w-3xl bg-white py-3 dark:bg-gray-950">
+        <div className="relative mx-auto w-full max-w-3xl bg-white py-3 pt-6 dark:bg-gray-950">
+          <div className="absolute right-0 top-0 z-10">
+            <CreditDisplay size="sm" />
+          </div>
           <CompactSearchBox
             initialQuery={query}
             initialKnowledgeBaseId={knowledgeBaseId || undefined}

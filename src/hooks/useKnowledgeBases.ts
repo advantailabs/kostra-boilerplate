@@ -1,5 +1,8 @@
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import { knowledgeBasesApi } from '@/services/api/knowledge-bases';
 import { useAuthStore } from '@/store/auth';
+import { getCredits } from '@/store/credits';
+import { openCreditPurchase } from '@/store/ui/modals';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
@@ -27,7 +30,14 @@ export function useKnowledgeBase(id: number) {
 
 export function useCreateKnowledgeBase() {
   return useApiMutation({
-    mutationFn: (data: any) => knowledgeBasesApi.createKnowledgeBase(data),
+    mutationFn: async (data: any) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to create knowledge base');
+      }
+      return knowledgeBasesApi.createKnowledgeBase(data);
+    },
     successMessage: 'Knowledge base created successfully!',
     invalidateQueries: [['knowledge-bases']],
   });
@@ -37,8 +47,14 @@ export function useUpdateKnowledgeBase() {
   const queryClient = useQueryClient();
 
   return useApiMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) =>
-      knowledgeBasesApi.updateKnowledgeBase(id, data),
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to update knowledge base');
+      }
+      return knowledgeBasesApi.updateKnowledgeBase(id, data);
+    },
     successMessage: 'Knowledge base updated successfully!',
     // Do not pass invalidateQueries here to avoid duplicate invalidation
     onSuccess: (_, { id }) => {
@@ -61,8 +77,20 @@ export function useAddFileToKnowledgeBase() {
   const queryClient = useQueryClient();
 
   return useApiMutation({
-    mutationFn: ({ knowledgeBaseId, fileId }: { knowledgeBaseId: number; fileId: number }) =>
-      knowledgeBasesApi.addFileToKnowledgeBase(knowledgeBaseId, fileId),
+    mutationFn: async ({
+      knowledgeBaseId,
+      fileId,
+    }: {
+      knowledgeBaseId: number;
+      fileId: number;
+    }) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to add file to knowledge base');
+      }
+      return knowledgeBasesApi.addFileToKnowledgeBase(knowledgeBaseId, fileId);
+    },
     successMessage: 'File added to knowledge base!',
     onSuccess: (_, { knowledgeBaseId }) => {
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });

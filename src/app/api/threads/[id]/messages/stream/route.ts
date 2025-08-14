@@ -1,7 +1,15 @@
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { CREDIT_COSTS } from '@/lib/constants/credits';
+import {
+  errorResponse,
+  insufficientCreditsResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { streamAssistantRun } from '@/services/external/openai/messages';
 import { CreditService } from '@/services/internal/credit';
 import { uploadFileService } from '@/services/internal/file';
@@ -22,36 +30,26 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
-      return NextResponse.json(
-        { error: 'Invalid thread ID', message: 'Thread ID must be a number' },
-        { status: 400 }
-      );
+      return validationErrorResponse('Invalid input data', [
+        { field: 'id', message: 'Thread ID must be a number' },
+      ]);
     }
 
     // Verify thread exists and belongs to user
     const thread = await findByUserAndId(user.id, threadId);
     if (!thread) {
-      return NextResponse.json(
-        { error: 'Thread not found', message: 'Thread not found or access denied' },
-        { status: 404 }
-      );
+      return notFoundResponse('Thread not found or access denied');
     }
 
     // Parse and validate request body
@@ -59,16 +57,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const validationResult = addMessageSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          details: validationResult.error.issues.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
+      return validationErrorResponse(
+        'Invalid input data',
+        validationResult.error.issues.map((err: any) => ({
+          field: err.path.join('.'),
+          message: err.message,
+        }))
       );
     }
 
@@ -77,45 +71,23 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     // Get thread with messages for OpenAI thread ID
     const threadWithMessages = await findByIdWithMessagesInternal(threadId);
     if (!threadWithMessages) {
-      return NextResponse.json(
-        { error: 'Thread not found', message: 'Thread not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Thread not found');
     }
 
     // Check if persona has OpenAI assistant
     if (!threadWithMessages.persona?.openaiAssistantId) {
-      return NextResponse.json(
-        {
-          error: 'Assistant not available',
-          message: 'Thread persona does not have an associated OpenAI assistant',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Thread persona does not have an associated OpenAI assistant', 400);
     }
 
     // Check if thread has OpenAI thread ID
     if (!threadWithMessages.openaiThreadId) {
-      return NextResponse.json(
-        {
-          error: 'OpenAI thread not found',
-          message: 'Thread does not have an associated OpenAI thread',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Thread does not have an associated OpenAI thread', 400);
     }
 
     // Check if user has sufficient credits
     const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
     if (!hasCredits) {
-      return NextResponse.json(
-        {
-          error: 'Insufficient credits',
-          message:
-            'You do not have enough credits to send a message. Please purchase more credits.',
-        },
-        { status: 402 }
-      );
+      return insufficientCreditsResponse();
     }
 
     // If client sent files, upload them to OpenAI and create DB file records
@@ -290,9 +262,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     });
   } catch (error) {
     console.error('Error in streaming endpoint:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

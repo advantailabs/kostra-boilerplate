@@ -55,7 +55,7 @@ const Toaster = React.forwardRef<HTMLDivElement, ToasterProps>(
             // Base toast container
             toast:
               'toast bg-white text-gray-950 border border-gray-200 shadow-lg select-none dark:!bg-gray-950 dark:!text-gray-50 dark:!border-gray-900',
-            description: 'text-gray-500 dark:text-gray-400 select-none',
+            description: 'text-gray-600 dark:!text-gray-200 opacity-100 select-none',
             actionButton:
               'bg-gray-900 text-gray-50 hover:bg-gray-800 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200',
             cancelButton:

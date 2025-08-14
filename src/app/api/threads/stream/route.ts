@@ -1,9 +1,19 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { CREDIT_COSTS } from '@/lib/constants/credits';
+import {
+  errorResponse,
+  insufficientCreditsResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { streamAssistantRun } from '@/services/external/openai/messages';
 import { createThread as createOpenAIThread } from '@/services/external/openai/threads';
 import { generateThreadTitle as generateOpenAITitle } from '@/services/external/openai/title-generator';
+import { CreditService } from '@/services/internal/credit';
 import { uploadFileService } from '@/services/internal/file';
 import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
@@ -19,19 +29,13 @@ export async function POST(request: NextRequest) {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Parse and validate request body
@@ -39,16 +43,12 @@ export async function POST(request: NextRequest) {
     const validationResult = createThreadSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          details: validationResult.error.issues.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
+      return validationErrorResponse(
+        'Invalid input data',
+        validationResult.error.issues.map((err: any) => ({
+          field: err.path.join('.'),
+          message: err.message,
+        }))
       );
     }
 
@@ -57,21 +57,18 @@ export async function POST(request: NextRequest) {
     // Verify persona exists and belongs to user
     const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
     if (!persona) {
-      return NextResponse.json(
-        { error: 'Persona not found', message: 'Persona not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Persona not found');
     }
 
     // Check if persona has OpenAI assistant ID
     if (!persona.openaiAssistantId) {
-      return NextResponse.json(
-        {
-          error: 'Assistant not available',
-          message: 'Persona does not have an associated OpenAI assistant',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Persona does not have an associated OpenAI assistant', 400);
+    }
+
+    // Check if user has sufficient credits before starting a chat
+    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
+    if (!hasCredits) {
+      return insufficientCreditsResponse();
     }
 
     // Generate title from message using OpenAI
@@ -157,10 +154,7 @@ export async function POST(request: NextRequest) {
     if (!openaiThreadResult.success) {
       // If OpenAI thread creation fails, delete the DB thread and return error
       await deleteThread(thread.id);
-      return NextResponse.json(
-        { error: 'Failed to create OpenAI thread', message: openaiThreadResult.error },
-        { status: 500 }
-      );
+      return errorResponse('Failed to create OpenAI thread', 500);
     }
 
     // Update thread with OpenAI thread ID
@@ -237,12 +231,21 @@ export async function POST(request: NextRequest) {
                 }));
 
                 // Save the complete assistant response to database with citations
-                await createMessageWithCitations({
+                const assistantMessage = await createMessageWithCitations({
                   threadId: thread.id,
                   role: 'assistant',
                   content: fullResponse,
                   openaiMessageId: assistantMessageId,
                   citations: storedCitations,
+                });
+
+                // Deduct credits after successful message completion
+                await CreditService.deductCredits({
+                  userId: user.id,
+                  amount: CREDIT_COSTS.CHAT,
+                  operation: 'CHAT',
+                  objectId: assistantMessage.id.toString(),
+                  description: `Chat message in thread ${thread.id}`,
                 });
 
                 // Convert citations to public format (exclude openaiFileId)
@@ -310,9 +313,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in thread streaming endpoint:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

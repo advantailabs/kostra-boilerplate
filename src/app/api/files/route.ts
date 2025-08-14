@@ -1,5 +1,7 @@
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
   errorResponse,
+  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -102,6 +104,11 @@ export async function POST(request: NextRequest) {
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
       return notFoundResponse('User does not exist');
+    }
+
+    // Enforce credit threshold for uploads
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+      return insufficientCreditsResponse();
     }
 
     // Parse and validate request body

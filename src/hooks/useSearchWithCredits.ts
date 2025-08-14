@@ -1,40 +1,50 @@
 import { useCallback } from 'react';
 
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { type SmartSearchRequest } from '@/services/api/search';
-import { useCreditStore } from '@/store/credits';
+import { deductCreditsValue, getCredits, setCreditsValue, syncCreditsValue } from '@/store/credits';
+import { openCreditPurchase } from '@/store/ui/modals';
 
 import { useSmartSearch } from './useSearch';
 
 export function useSmartSearchWithCredits() {
   const searchHook = useSmartSearch();
-  const { deductCredits, addCredits, syncCredits } = useCreditStore();
+  // Use non-hook helpers for imperative access
 
   const searchWithCredits = useCallback(
     async (data: SmartSearchRequest) => {
+      // Guard: require minimum credits to run search
+      const currentCredits = getCredits();
+      if (currentCredits < CREDIT_THRESHOLDS.searchChatMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to search.');
+      }
       // Determine credit cost based on mode
       const isQA = data.mode === 'smart-qa';
       const creditCost = isQA ? CREDIT_COSTS.SMART_QA : CREDIT_COSTS.SMART_SEARCH;
 
       // Optimistically deduct credits
-      deductCredits(creditCost);
+      const previousCredits = getCredits();
+      deductCreditsValue(creditCost);
 
       try {
         const result = await searchHook.search(data);
 
         // Sync credits from server after successful operation
         setTimeout(() => {
-          syncCredits();
+          syncCreditsValue();
         }, 1000);
 
         return result;
       } catch (error) {
         // Revert optimistic update on error
-        addCredits(creditCost);
+        // Restore to exact previous credits to avoid drift
+        setCreditsValue(previousCredits);
         throw error;
       }
     },
-    [searchHook.search, deductCredits, addCredits, syncCredits]
+    [searchHook.search]
   );
 
   return {

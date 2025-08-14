@@ -11,9 +11,13 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useCallback } from 'react';
 
 import { siteConfig } from '@/app/siteConfig';
+import { Button } from '@/components/atom/Button';
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import { cx, focusRing } from '@/lib/utils';
+import { useUiModalsStore } from '@/store/ui/modals';
 
 import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
@@ -34,6 +38,8 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const { theme, resolvedTheme } = useTheme();
+  const openCreditPurchase = useUiModalsStore(state => state.openCreditPurchase);
+  const handleOpenPurchase = useCallback(() => openCreditPurchase(), [openCreditPurchase]);
 
   const isActive = (itemHref: string) => {
     // Exact match for home route to avoid highlighting when on sub-routes
@@ -132,6 +138,17 @@ export function Sidebar() {
             </div>
           </nav>
           <div className="mt-auto">
+            {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}
+            <div className="mb-2 flex items-center justify-between rounded-md border border-gray-200 px-2 py-1.5 dark:border-gray-800">
+              <CreditDisplay size="sm" />
+              <Button
+                variant="secondary"
+                className="btn-shimmer h-7 px-2 text-xs shadow-sm"
+                onClick={handleOpenPurchase}
+              >
+                Purchase
+              </Button>
+            </div>
             <UserProfileDesktop />
           </div>
         </aside>

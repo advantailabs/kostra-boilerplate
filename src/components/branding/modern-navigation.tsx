@@ -74,6 +74,7 @@ export function ModernNavigation() {
 
   const navItems = [
     { name: 'Home', href: '/#home', section: 'home' },
+    { name: 'Pricing', href: '/#pricing', section: 'pricing' },
     { name: 'Product', href: '/#product', section: 'product' },
     { name: 'Features', href: '/#features', section: 'features' },
     { name: 'Security', href: '/#security', section: 'security' },

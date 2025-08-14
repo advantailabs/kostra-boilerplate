@@ -216,10 +216,8 @@ export function EnhancedMessageInput({
       }
     });
 
-    // Clear the input so the same file can be selected again
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    // Always clear the input so the same file can be selected again, including after errors
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
     // Re-focus textarea after file selection
     setTimeout(() => {

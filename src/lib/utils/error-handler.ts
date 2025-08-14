@@ -35,6 +35,11 @@ export function handleApiError(error: unknown, customMessage?: string): void {
 
       // Show different toast types based on status code
       switch (response.status) {
+        case 402:
+          toast.error('Insufficient Credits', {
+            description: customMessage || errorData.message,
+          });
+          break;
         case 400:
           toast.error(message, {
             description: errorData.details,
@@ -107,6 +112,23 @@ export function handleApiError(error: unknown, customMessage?: string): void {
   else {
     toast.error(customMessage || 'An unexpected error occurred');
   }
+}
+
+/**
+ * Extracts a user-friendly error message from an unknown error, with Axios support
+ */
+export function getApiErrorMessage(
+  error: unknown,
+  fallbackMessage = 'An unexpected error occurred'
+) {
+  if (error instanceof AxiosError) {
+    const apiMessage = (error.response?.data as any)?.message;
+    return apiMessage || fallbackMessage;
+  }
+  if (error instanceof Error) {
+    return error.message || fallbackMessage;
+  }
+  return fallbackMessage;
 }
 
 /**

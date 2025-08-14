@@ -166,6 +166,11 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           );
         }
       });
+
+      // Important: reset the file input value so selecting the same file again triggers onChange
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     },
     [user?.id, selectedKnowledgeBases.length]
   );

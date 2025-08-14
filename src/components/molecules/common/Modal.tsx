@@ -147,7 +147,7 @@ export function Modal({
           {(footer || defaultFooter) && (
             <>
               <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
-              <div className="py-4 max-sm:py-3">{footer || defaultFooter}</div>
+              <div className="px-4 py-4 max-sm:py-3">{footer || defaultFooter}</div>
             </>
           )}
         </div>

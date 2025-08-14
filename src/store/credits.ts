@@ -57,3 +57,11 @@ export const useCreditStore = create<CreditState>()(
     }
   )
 );
+
+// Convenience, non-hook helpers for imperative access
+export const getCredits = () => useCreditStore.getState().credits;
+export const setCreditsValue = (value: number) => useCreditStore.getState().setCredits(value);
+export const addCreditsValue = (value: number) => useCreditStore.getState().addCredits(value);
+export const deductCreditsValue = (value: number) => useCreditStore.getState().deductCredits(value);
+export const clearCreditsValue = () => useCreditStore.getState().clearCredits();
+export const syncCreditsValue = () => useCreditStore.getState().syncCredits();

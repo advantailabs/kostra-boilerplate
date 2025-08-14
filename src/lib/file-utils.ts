@@ -177,9 +177,7 @@ export const PREFIX_TO_PURPOSE: ReadonlyArray<{
   purpose: UploadPurpose;
 }> = [
   { prefix: 'messages/attachments/', purpose: 'MessageAttachment' },
-  { prefix: 'threads/attachments/', purpose: 'ThreadAttachment' },
   { prefix: 'users/documents/', purpose: 'UserDocument' },
-  { prefix: 'users/files/', purpose: 'UserFile' },
   { prefix: 'personas/logos/', purpose: 'PersonaLogo' },
   { prefix: 'users/avatars/', purpose: 'UserAvatar' },
 ] as const;
@@ -188,9 +186,7 @@ export const PREFIX_TO_PURPOSE: ReadonlyArray<{
  * Infers upload purpose from an S3 key prefix.
  * Example prefixes:
  * - messages/attachments/ → MessageAttachment
- * - threads/attachments/ → ThreadAttachment
  * - users/documents/ → UserDocument
- * - users/files/ → UserFile
  * - personas/logos/ → PersonaLogo
  * - users/avatars/ → UserAvatar
  */

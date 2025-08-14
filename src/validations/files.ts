@@ -45,14 +45,7 @@ export const uploadFilesSchema = z
         size: z.number(),
         s3Key: z.string(),
         uploadPurpose: z
-          .enum([
-            'PersonaLogo',
-            'UserAvatar',
-            'UserFile',
-            'ThreadAttachment',
-            'MessageAttachment',
-            'UserDocument',
-          ])
+          .enum(['PersonaLogo', 'UserAvatar', 'MessageAttachment', 'UserDocument'])
           .optional(),
       })
     ),

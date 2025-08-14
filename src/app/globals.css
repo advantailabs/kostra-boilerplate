@@ -138,6 +138,54 @@
     transition: all 0.2s ease-in-out;
   }
 
+  /* Subtle shimmer attention effect for CTA buttons */
+  @keyframes shimmer-slide {
+    0% {
+      left: -150%;
+    }
+    100% {
+      left: 150%;
+    }
+  }
+
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    height: 100%;
+    width: 50%;
+    pointer-events: none;
+    /* Light mode: black shimmer */
+    background: linear-gradient(
+      120deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.14) 40%,
+      rgba(0, 0, 0, 0.2) 55%,
+      rgba(0, 0, 0, 0.1) 65%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    transform: skewX(-20deg);
+    animation: shimmer-slide 2.6s ease-in-out infinite;
+  }
+
+  /* Dark theme tweak for shimmer brightness */
+  .dark .btn-shimmer::after {
+    background: linear-gradient(
+      120deg,
+      rgba(99, 102, 241, 0) 0%,
+      /* indigo-500 transparent */ rgba(99, 102, 241, 0.18) 40%,
+      /* indigo-500 dim */ rgba(168, 85, 247, 0.22) 55%,
+      /* violet-500 dim */ rgba(99, 102, 241, 0.12) 65%,
+      rgba(99, 102, 241, 0) 100%
+    );
+  }
+
   /* Ensure proper button spacing and positioning */
   .chat-input-textarea:focus-within {
     border-color: rgb(99 102 241);

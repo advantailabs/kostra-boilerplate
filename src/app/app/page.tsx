@@ -30,12 +30,16 @@ export default function AppPage() {
               <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl dark:text-gray-100">
                 Smart Search
               </h1>
-              <CreditDisplay size="md" />
             </div>
           </div>
 
-          {/* Search Container */}
-          <SearchBox onSearch={handleSearch} initialKnowledgeBaseId={kb} initialMode={mode} />
+          {/* Search Container with top-right CreditDisplay */}
+          <div className="relative pt-4">
+            <div className="absolute right-0 top-0 z-10">
+              <CreditDisplay size="md" />
+            </div>
+            <SearchBox onSearch={handleSearch} initialKnowledgeBaseId={kb} initialMode={mode} />
+          </div>
         </div>
       </div>
     </div>

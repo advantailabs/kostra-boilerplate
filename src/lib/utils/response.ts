@@ -40,6 +40,17 @@ export const forbiddenResponse = (message?: string) => {
   );
 };
 
+// 402 - Payment required / insufficient credits
+export const insufficientCreditsResponse = (message?: string) => {
+  const error = message
+    ? { ...ERRORS.AUTH_INSUFFICIENT_CREDITS, message }
+    : ERRORS.AUTH_INSUFFICIENT_CREDITS;
+  return NextResponse.json(
+    { success: false, message: error.message },
+    { status: error.httpStatus }
+  );
+};
+
 export const internalServerErrorResponse = (message?: string) => {
   const error = message
     ? { ...ERRORS.GENERIC_INTERNAL_ERROR, message }

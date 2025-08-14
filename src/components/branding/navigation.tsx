@@ -26,7 +26,7 @@ export function Navigation() {
       <nav className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="text-xl font-bold text-gray-900">
-            Your Brand
+            Peon
           </Link>
 
           <div className="hidden items-center space-x-8 md:flex">

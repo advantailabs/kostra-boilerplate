@@ -1,3 +1,4 @@
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
   FileFilters,
   filesApi,
@@ -6,6 +7,8 @@ import {
   UploadFilesRequest,
 } from '@/services/api/files';
 import { useAuthStore } from '@/store/auth';
+import { getCredits } from '@/store/credits';
+import { openCreditPurchase } from '@/store/ui/modals';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
@@ -31,7 +34,14 @@ export function useFile(id: number) {
 
 export function useUploadFiles() {
   return useApiMutation({
-    mutationFn: (data: UploadFilesRequest) => filesApi.uploadFiles(data),
+    mutationFn: async (data: UploadFilesRequest) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to upload files');
+      }
+      return filesApi.uploadFiles(data);
+    },
     successMessage: 'Files uploaded successfully!',
     invalidateQueries: [['files']],
   });

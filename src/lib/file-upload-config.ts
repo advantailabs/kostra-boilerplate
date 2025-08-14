@@ -14,36 +14,6 @@ export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
       maxFileSize: 2 * 1024 * 1024, // 2MB
       keyPrefix: 'users/avatars',
     },
-    UserFile: {
-      bucket: 'private',
-      allowedMimeTypes: [
-        'application/pdf',
-        'text/plain',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-      ],
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      keyPrefix: 'users/files',
-    },
-    ThreadAttachment: {
-      bucket: 'private',
-      allowedMimeTypes: [
-        'application/pdf',
-        'text/plain',
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-      ],
-      maxFileSize: 5 * 1024 * 1024, // 5MB
-      keyPrefix: 'threads/attachments',
-    },
     MessageAttachment: {
       bucket: 'private',
       allowedMimeTypes: [
@@ -128,11 +98,6 @@ export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
         'application/x-sh',
         // PDF
         'application/pdf',
-        // Images
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
       ],
       maxFileSize: 100 * 1024 * 1024, // 100MB
       keyPrefix: 'users/documents',

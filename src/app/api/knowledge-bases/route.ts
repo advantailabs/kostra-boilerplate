@@ -1,4 +1,5 @@
 import {
+  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -8,6 +9,7 @@ import {
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
   createKnowledgeBaseService,
   getUserKnowledgeBasesPublicService,
@@ -85,6 +87,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { title, description, metadata } = validationResult.data;
+
+    // Enforce credit threshold for creation
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+      return insufficientCreditsResponse();
+    }
 
     // Create knowledge base
     const result = await createKnowledgeBaseService(user.id, {

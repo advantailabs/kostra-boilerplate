@@ -1,3 +1,4 @@
+import { handleApiError } from '@/lib/utils/error-handler';
 import { threadsApi } from '@/services/api/threads';
 import {
   AddMessageRequest,
@@ -104,6 +105,7 @@ export function useChat(threadId?: number) {
       setStreamingMessage('');
       setIsStreaming(false);
       setPendingMessages([]); // Clear pending messages on error
+      handleApiError(error);
       throw error;
     }
 
@@ -209,7 +211,7 @@ export function useChat(threadId?: number) {
         }
       }
     } catch (error) {
-      console.error('Error in streaming:', error);
+      handleApiError(error);
       setStreamingMessage('');
       setIsStreaming(false);
       setPendingMessages([]);

@@ -1,4 +1,7 @@
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import { personasApi } from '@/services/api/personas';
+import { getCredits } from '@/store/credits';
+import { openCreditPurchase } from '@/store/ui/modals';
 import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
 import { useQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
@@ -37,14 +40,27 @@ export function usePersonas() {
   });
 
   const createPersonaMutation = useApiMutation({
-    mutationFn: (data: CreatePersonaRequest) => personasApi.createPersona(data),
+    mutationFn: async (data: CreatePersonaRequest) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to create persona');
+      }
+      return personasApi.createPersona(data);
+    },
     successMessage: 'Persona created successfully!',
     invalidateQueries: [['personas']],
   });
 
   const updatePersonaMutation = useApiMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdatePersonaRequest }) =>
-      personasApi.updatePersona(id, data),
+    mutationFn: async ({ id, data }: { id: number; data: UpdatePersonaRequest }) => {
+      const credits = getCredits();
+      if (credits < CREDIT_THRESHOLDS.creationMin) {
+        openCreditPurchase();
+        throw new Error('Insufficient credits to update persona');
+      }
+      return personasApi.updatePersona(id, data);
+    },
     successMessage: 'Persona updated successfully!',
     invalidateQueries: [['personas']],
   });

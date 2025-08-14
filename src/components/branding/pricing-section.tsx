@@ -1,61 +1,15 @@
 'use client';
 
+import { PLANS } from '@/data/config/plans';
 import { motion } from 'framer-motion';
-
-const plans = [
-  {
-    name: 'Starter',
-    description: 'Perfect for small teams getting started',
-    price: 'Free',
-    period: '14-day trial',
-    features: [
-      'Up to 10 users',
-      '5GB storage',
-      '3 AI personas',
-      'Basic knowledge bases',
-      'Email support',
-    ],
-    cta: 'Start Free Trial',
-    popular: false,
-  },
-  {
-    name: 'Professional',
-    description: 'Ideal for growing organizations',
-    price: '$49',
-    period: 'per user/month',
-    features: [
-      'Up to 50 users',
-      '100GB storage',
-      'Unlimited AI personas',
-      'Advanced knowledge bases',
-      'Priority support',
-      'Usage analytics',
-    ],
-    cta: 'Start Free Trial',
-    popular: true,
-  },
-  {
-    name: 'Enterprise',
-    description: 'For large organizations with complex needs',
-    price: 'Custom',
-    period: 'contact sales',
-    features: [
-      'Unlimited users',
-      '1TB+ storage',
-      'Custom AI personas',
-      'Enterprise integrations',
-      'Dedicated support',
-      'Advanced security features',
-      'Custom deployment options',
-    ],
-    cta: 'Contact Sales',
-    popular: false,
-  },
-];
 
 export function PricingSection() {
   return (
-    <section className="bg-gray-800/30 py-24 sm:py-32">
+    <section className="relative overflow-hidden py-24 sm:py-32">
+      {/* Background glow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 select-none">
+        <div className="absolute left-1/2 top-0 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-indigo-600/20 to-violet-600/20 blur-3xl" />
+      </div>
       <div className="container mx-auto px-6">
         <motion.div
           className="mb-16 text-center"
@@ -64,80 +18,95 @@ export function PricingSection() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-300">
+          <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-600 dark:text-gray-300">
             Choose the plan that fits your organization's needs. Start free, upgrade when you're
             ready.
           </p>
         </motion.div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              className={`relative overflow-hidden rounded-3xl border p-8 backdrop-blur-sm transition-all hover:scale-105 ${
-                plan.popular
-                  ? 'border-blue-500/50 bg-gradient-to-b from-blue-500/10 to-violet-500/10'
-                  : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
-              }`}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              {/* Popular badge */}
-              {plan.popular && (
-                <div className="absolute right-0 top-0 -mr-1 -mt-1 h-32 w-32 overflow-hidden">
-                  <div className="absolute right-6 top-6 h-6 w-24 rotate-45 transform bg-gradient-to-r from-blue-600 to-violet-600 text-center">
-                    <span className="text-xs font-semibold text-white">Popular</span>
+          {PLANS.map((plan, index) => (
+            <div key={plan.id} className="relative">
+              {plan.id === 'pro' && (
+                <>
+                  {/* Subtle halo behind the card */}
+                  <div className="pointer-events-none absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-r from-indigo-600/40 to-violet-600/40 opacity-30 blur-2xl dark:opacity-40" />
+                  {/* Top centered pill */}
+                  <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+                    <span className="inline-flex items-center rounded-full bg-gray-900/90 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/20 backdrop-blur dark:bg-white/10">
+                      Recommended
+                    </span>
                   </div>
-                </div>
+                </>
               )}
 
-              {/* Plan header */}
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
-                <p className="mt-2 text-gray-400">{plan.description}</p>
-
-                <div className="mt-6 flex items-baseline">
-                  <span className="text-4xl font-bold text-white">{plan.price}</span>
-                  {plan.period && <span className="ml-2 text-gray-400">/{plan.period}</span>}
-                </div>
-              </div>
-
-              {/* Features list */}
-              <ul className="mb-8 space-y-4">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center">
-                    <svg
-                      className="mr-3 h-5 w-5 flex-shrink-0 text-green-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className="text-gray-300">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA button */}
-              <button
-                className={`w-full rounded-full px-6 py-4 text-lg font-semibold transition-all ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-blue-600 to-violet-600 text-white hover:from-blue-700 hover:to-violet-700'
-                    : 'border border-white/20 bg-white/5 text-white hover:border-white/30 hover:bg-white/10'
+              <motion.div
+                className={`relative flex flex-col overflow-hidden rounded-3xl border p-8 transition-all hover:scale-[1.02] ${
+                  plan.id === 'pro'
+                    ? 'border-indigo-400/60 bg-white/90 shadow-lg ring-1 ring-indigo-500/40 dark:border-indigo-300/20 dark:bg-white/[0.06]'
+                    : 'border-gray-200 bg-white/80 shadow-sm hover:border-gray-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20'
                 }`}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
               >
-                {plan.cta}
-              </button>
-            </motion.div>
+                {/* Plan header */}
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+                  <p className="mt-2 text-gray-600 dark:text-gray-400">{plan.description}</p>
+
+                  <div className="mt-6 flex items-baseline">
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                      {plan.price}
+                    </span>
+                    {plan.period && (
+                      <span className="ml-2 text-gray-500 dark:text-gray-400">/{plan.period}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Features list */}
+                <ul className="mb-8 flex-1 space-y-4">
+                  {plan.features.map(feature => (
+                    <li key={feature} className="flex items-center">
+                      <svg
+                        className="mr-3 h-5 w-5 flex-shrink-0 text-green-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span className="text-gray-700 dark:text-gray-300">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA buttons pinned at the bottom for consistent layout */}
+                <div className="mt-auto flex flex-col gap-3">
+                  <button
+                    className={`w-full rounded-full px-6 py-4 text-lg font-semibold transition-all ${
+                      plan.id === 'pro'
+                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-700 hover:to-violet-700'
+                        : 'border border-gray-200 bg-white text-gray-900 hover:border-gray-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:border-white/20'
+                    }`}
+                  >
+                    {plan.id === 'enterprise'
+                      ? 'Contact Sales'
+                      : plan.id === 'pro'
+                        ? 'Get Pro'
+                        : 'Start Free'}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           ))}
         </div>
 
@@ -162,7 +131,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">No Credit Card Required</h4>
-              <p className="text-gray-400">Start your 14-day free trial instantly</p>
+              <p className="text-gray-400">Start with 100 free credits instantly</p>
             </div>
 
             <div className="text-center">
@@ -177,7 +146,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">Quick Setup</h4>
-              <p className="text-gray-400">Get started in under 30 minutes</p>
+              <p className="text-gray-400">Get started in under 2 minutes</p>
             </div>
 
             <div className="text-center">

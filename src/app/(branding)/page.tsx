@@ -2,6 +2,7 @@ import { CTASection } from '@/components/branding/cta-section';
 import { CustomizationsSection } from '@/components/branding/customizations-section';
 import { InnovativeHero } from '@/components/branding/innovative-hero';
 import { MinimalFeatures } from '@/components/branding/minimal-features';
+import { PricingSection } from '@/components/branding/pricing-section';
 import { ScreenshotShowcase } from '@/components/branding/screenshot-showcase';
 import { SecuritySection } from '@/components/branding/security-section';
 import { Metadata } from 'next';
@@ -145,6 +146,10 @@ export default function HomePage() {
 
         <section id="integrations">
           <CustomizationsSection />
+        </section>
+
+        <section id="pricing">
+          <PricingSection />
         </section>
 
         <section id="cta">

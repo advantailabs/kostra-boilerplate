@@ -1,7 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
+  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -73,6 +75,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, description, instructions, tags, logo } = validationResult.data;
+
+    // Enforce credit threshold for creation
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+      return insufficientCreditsResponse();
+    }
 
     // Create persona
     const result = await createPersonaService(user.id, {

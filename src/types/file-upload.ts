@@ -1,10 +1,4 @@
-export type UploadPurpose =
-  | 'PersonaLogo'
-  | 'UserAvatar'
-  | 'UserFile'
-  | 'ThreadAttachment'
-  | 'MessageAttachment'
-  | 'UserDocument'; // New purpose for file explorer
+export type UploadPurpose = 'PersonaLogo' | 'UserAvatar' | 'MessageAttachment' | 'UserDocument';
 
 export interface UploadPurposeConfig {
   bucket: 'public' | 'private';

@@ -1,6 +1,7 @@
 import {
   errorResponse,
   forbiddenResponse,
+  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -8,7 +9,7 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+// import { NextResponse } from 'next/server';
 
 import { CREDIT_COSTS } from '../../../../lib/constants/credits';
 import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '../../../../lib/utils/search';
@@ -73,14 +74,7 @@ export async function POST(request: Request) {
     const creditCost = isQA ? CREDIT_COSTS.SMART_QA : CREDIT_COSTS.SMART_SEARCH;
     const hasCredits = await CreditService.hassufficientCredits(user.id, creditCost);
     if (!hasCredits) {
-      return NextResponse.json(
-        {
-          error: 'Insufficient credits',
-          message:
-            'You do not have enough credits to perform this search. Please purchase more credits.',
-        },
-        { status: 402 }
-      );
+      return insufficientCreditsResponse();
     }
 
     let answer: string | undefined;
