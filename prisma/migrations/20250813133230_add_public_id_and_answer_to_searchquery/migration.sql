@@ -10,9 +10,6 @@ ALTER TABLE "SearchQuery"
   ADD COLUMN "answer" TEXT,
   ADD COLUMN "publicId" TEXT;
 
--- 2) Ensure pgcrypto is available
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 -- 3) Backfill existing rows with UUIDs
 UPDATE "SearchQuery" SET "publicId" = gen_random_uuid()::text WHERE "publicId" IS NULL;
 
