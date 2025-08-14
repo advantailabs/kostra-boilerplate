@@ -59,7 +59,7 @@ async function handleUserCreatedOrUpdated(data: any) {
   const user = await upsertUser({
     clerkUserId: id,
     name: `${first_name} ${last_name}`,
-    email: primaryEmail,
+    email: primaryEmail || 'unknown@unknown.com',
     profilePicture: image_url,
     isOnboarded: true,
   });

@@ -142,11 +142,13 @@ enum SearchMode {
 
 model SearchQuery {
   id              Int            @id @default(autoincrement())
+  publicId        String         @unique @default(uuid())
   userId          Int
   knowledgeBaseId Int?
   query           String
   mode            SearchMode
   resultsCount    Int            @default(0)
+  answer          String?
   createdAt       DateTime       @default(now())
 
   user            User           @relation(fields: [userId], references: [id])

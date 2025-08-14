@@ -1,14 +1,16 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+// import Image from 'next/image';
+// import Link from 'next/link';
+import { RiCheckLine, RiFileCopyLine } from '@remixicon/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 import { Button } from '../../../../components/atom/Button';
+import MarkdownRenderer from '../../../../components/atom/SyntaxHighlighter';
 // Spinner kept for potential future use
 import { SearchResultSkeleton } from '../../../../components/atom/Skeleton';
-import { SearchBox } from '../../../../components/molecules/search/SearchBox';
+import { CompactSearchBox } from '../../../../components/molecules/search/CompactSearchBox';
 import { useSmartSearch } from '../../../../hooks/useSearch';
 import type { SearchMode } from '../../../../lib/constants/search';
 import { generateFileDownloadUrl } from '../../../../services/api/files';
@@ -30,7 +32,9 @@ export default function SearchResultsPage() {
   const query = params.get('q') || '';
   const knowledgeBaseId = params.get('kb') || '';
   const [results, setResults] = React.useState<ResultItem[]>([]);
+  const [answer, setAnswer] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [copiedAnswer, setCopiedAnswer] = React.useState(false);
   const mode = (params.get('mode') as SearchMode) || 'smart-search';
   const { search, isPending } = useSmartSearch();
 
@@ -59,7 +63,9 @@ export default function SearchResultsPage() {
           knowledgeBaseId: Number(knowledgeBaseId),
           mode,
         });
-        setResults(data.results || []);
+        const ordered = (data.results || []).slice().sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
+        setResults(ordered);
+        setAnswer((data as any).answer ?? null);
       } catch (e: any) {
         setError(e?.message || 'Search failed');
       }
@@ -78,115 +84,118 @@ export default function SearchResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-8 sm:py-6 dark:bg-gray-950">
-      <div className="mx-auto w-full max-w-5xl">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Link href="/app" className="flex items-center">
-              {/* Inverted light/dark: show dark symbol on light mode, light symbol on dark mode */}
-              <Image
-                src="/logos/dark-symbol.png"
-                alt="Peon"
-                width={36}
-                height={36}
-                className="block dark:hidden"
-                priority
-              />
-              <Image
-                src="/logos/light-symbol.png"
-                alt="Peon"
-                width={36}
-                height={36}
-                className="hidden dark:block"
-                priority
-              />
-            </Link>
-            <div className="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-gray-100">
-              {query}
+    <>
+      <div className="min-h-screen bg-white p-4 pb-40 sm:px-8 sm:py-6 dark:bg-gray-950">
+        <div className="mx-auto w-full max-w-3xl">
+          {/* Header removed (logo will be shown above search box) */}
+          {/* Single column: compact search box + centered results */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="pt-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                {query ? query.charAt(0).toUpperCase() + query.slice(1) : 'Search'}
+              </h1>
             </div>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            className="cursor-default rounded-full px-3 py-1"
-            onClick={() => {
-              const paramsNext = new URLSearchParams();
-              if (knowledgeBaseId) paramsNext.set('kb', knowledgeBaseId);
-              if (mode) paramsNext.set('mode', mode);
-              router.push(`/app?${paramsNext.toString()}`);
-            }}
-          >
-            ← Back
-          </Button>
-        </div>
-        {/* Single column: compact search box + centered results */}
-        <div className="space-y-6">
-          <div>
-            <SearchBox
-              variant="compact"
-              initialQuery={query}
-              initialKnowledgeBaseId={knowledgeBaseId || undefined}
-              initialMode={mode}
-              syncQueryParams
-              onSearch={({ query: q, knowledgeBaseId: kb, mode: m }) => {
-                const paramsNext = new URLSearchParams();
-                paramsNext.set('q', q);
-                if (kb) paramsNext.set('kb', kb);
-                paramsNext.set('mode', m);
-                router.push(`/app/search/results?${paramsNext.toString()}`);
-              }}
-            />
-            {mode === 'smart-search' && (
-              <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                Showing top 10 most relevant files
-              </div>
-            )}
-          </div>
 
-          <div className="-mx-4 sm:mx-0">
-            {isPending && (
-              <div className="space-y-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <SearchResultSkeleton key={i} />
-                ))}
-              </div>
-            )}
+            <div className="mx-0">
+              {mode === 'smart-search' && results.length > 0 && (
+                <div className="mt-1 pb-2 text-sm text-gray-600 dark:text-gray-300">
+                  Showing top {results.length} most relevant files
+                </div>
+              )}
+              {isPending && (
+                <div className="space-y-6">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <SearchResultSkeleton key={i} />
+                  ))}
+                </div>
+              )}
 
-            {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
+              {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
 
-            {!isPending && !error && (
-              <div className="mx-auto max-w-5xl space-y-6">
-                {results.map(item => (
-                  <div key={item.id} className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="p-0 text-left text-base font-medium text-blue-700 hover:underline dark:text-blue-400"
-                        onClick={() => handleDownload(item.fileId)}
-                        disabled={!item.fileId}
-                      >
-                        {item.filename}
-                      </Button>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Confidence: {item.score.toFixed(2)}
-                      </span>
+              {!isPending && !error && (
+                <div className="mx-auto max-w-5xl space-y-6">
+                  {mode === 'smart-qa' && !!answer && (
+                    <>
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="absolute right-2 top-2 z-10 p-1.5"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(answer || '');
+                              setCopiedAnswer(true);
+                              setTimeout(() => setCopiedAnswer(false), 2000);
+                            } catch (e) {
+                              // no-op
+                            }
+                          }}
+                          title={copiedAnswer ? 'Copied!' : 'Copy answer'}
+                        >
+                          {copiedAnswer ? (
+                            <RiCheckLine className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <RiFileCopyLine className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <MarkdownRenderer content={answer} />
+                      </div>
+                      <div className="my-4 h-px w-full bg-gray-200 dark:bg-gray-800" />
+                    </>
+                  )}
+                  {results.map(item => (
+                    <div key={item.id} className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="p-0 text-left text-base font-medium text-blue-700 hover:underline dark:text-blue-400"
+                          onClick={() => handleDownload(item.fileId)}
+                          disabled={!item.fileId}
+                        >
+                          {item.filename}
+                        </Button>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Confidence: {(item.score * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">
+                        {renderExcerpt(item)}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">
-                      {renderExcerpt(item)}
-                    </div>
-                  </div>
-                ))}
+                  ))}
 
-                {results.length === 0 && (
-                  <div className="text-sm text-gray-600 dark:text-gray-300">No results found.</div>
-                )}
-              </div>
-            )}
+                  {results.length === 0 && (
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      No results found.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className="sticky bottom-4 z-40">
+        {/* Full-width background overlay to prevent text bleed-through */}
+        <div className="pointer-events-none absolute inset-x-0 -bottom-4 -top-20 bg-gradient-to-b from-transparent via-white/90 to-white dark:via-gray-950/90 dark:to-gray-950" />
+
+        <div className="relative mx-auto w-full max-w-3xl bg-white py-3 dark:bg-gray-950">
+          <CompactSearchBox
+            initialQuery={query}
+            initialKnowledgeBaseId={knowledgeBaseId || undefined}
+            initialMode={mode}
+            syncQueryParams
+            onSearch={({ query: q, knowledgeBaseId: kb, mode: m }) => {
+              const paramsNext = new URLSearchParams();
+              paramsNext.set('q', q);
+              if (kb) paramsNext.set('kb', kb);
+              paramsNext.set('mode', m);
+              router.push(`/app/search/results?${paramsNext.toString()}`);
+            }}
+          />
+        </div>
+      </div>
+    </>
   );
 }

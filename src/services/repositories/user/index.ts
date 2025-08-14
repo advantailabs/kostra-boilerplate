@@ -1,13 +1,12 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+import { UserRole } from '@prisma/client';
 
 import { ClerkUserUpdate } from '@/app/types/user.type';
-
-const prisma = new PrismaClient();
 
 const upsertUser = async (user: ClerkUserUpdate) => {
   return prisma.user.upsert({
     where: { clerkUserId: user.clerkUserId },
-    update: { ...user, clerkUserId: undefined },
+    update: { ...user },
     create: user,
   });
 };

@@ -1,8 +1,9 @@
+import { prisma as sharedPrisma } from '@/lib/prisma';
 import { Message, Prisma, PrismaClient } from '@prisma/client';
 
 import { CreateMessageData, PublicMessage, StoredCitation } from '@/types/chat';
 
-const defaultPrisma = new PrismaClient();
+const defaultPrisma = sharedPrisma as PrismaClient;
 
 // Select object to exclude OpenAI fields from public responses
 const publicMessageSelect = {
