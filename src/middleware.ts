@@ -42,6 +42,7 @@ const PUBLIC_ROUTES: RouteConfig[] = [
   { path: '/terms-of-services', methods: [null], exact: false },
   { path: '/customizations', methods: [null], exact: false },
   { path: '/api/webhooks/clerk', methods: [null], exact: false },
+  { path: '/api/webhooks/stripe', methods: [null], exact: false },
   { path: '/api/auth', methods: [null], exact: false },
   {
     path: '/api/onboard',

@@ -36,4 +36,11 @@ const getUserByClerkId = async (clerkId: string) => {
   });
 };
 
-export { deleteUser, getUserByClerkId, getUserByRole, upsertUser };
+const setUserStripeCustomerId = async (userId: number, stripeCustomerId: string) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { stripeCustomerId },
+  });
+};
+
+export { deleteUser, getUserByClerkId, getUserByRole, setUserStripeCustomerId, upsertUser };

@@ -1,7 +1,9 @@
 'use client';
 
+import { useStripe } from '@/hooks/useStripe';
 import { useClerk, useUser } from '@clerk/nextjs';
 import {
+  RiBillLine,
   RiCoinLine,
   RiComputerLine,
   RiLogoutBoxRLine,
@@ -10,6 +12,7 @@ import {
 } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
 import {
@@ -37,6 +40,8 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
   const { theme, setTheme } = useTheme();
   const { signOut } = useClerk();
   const { user } = useUser();
+  useRouter();
+  const { openBillingPortal, isCreatingPortal } = useStripe();
 
   React.useEffect(() => {
     setMounted(true);
@@ -53,6 +58,18 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 disabled:opacity-60"
+              disabled={isCreatingPortal}
+              onClick={openBillingPortal}
+            >
+              <RiBillLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              Billing
+            </button>
+          </DropdownMenuItem>
+
           <DropdownMenuItem>
             <Link href="/app/credit-history" className="flex w-full items-center gap-2">
               <RiCoinLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />

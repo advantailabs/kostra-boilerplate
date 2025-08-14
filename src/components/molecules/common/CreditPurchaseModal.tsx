@@ -1,9 +1,9 @@
 'use client';
 
-import { siteConfig } from '@/app/siteConfig';
 import { Button } from '@/components/atom/Button';
 import { Modal } from '@/components/molecules/common/Modal';
 import { PLANS } from '@/data/config/plans';
+import { useStripe } from '@/hooks/useStripe';
 import { useCreditStore } from '@/store/credits';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,8 @@ export interface CreditPurchaseModalProps {
 }
 
 export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProps) {
-  const router = useRouter();
+  useRouter();
+  const { checkout, isCreatingCheckout } = useStripe();
   const credits = useCreditStore(state => state.credits);
   const footer = (
     <div className="flex w-full items-center justify-end gap-2">
@@ -23,9 +24,10 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       </Button>
       <Button
         variant="primary"
-        onClick={() => {
+        disabled={isCreatingCheckout}
+        onClick={async () => {
           onClose();
-          router.push(siteConfig.baseLinks.settings.billing);
+          await checkout('pro');
         }}
       >
         Purchase now

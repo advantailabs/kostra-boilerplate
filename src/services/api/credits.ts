@@ -10,6 +10,16 @@ export const getUserCredits = async (): Promise<number> => {
   return (response.data as any).data.credits as number;
 };
 
+export const createBillingPortalSession = async (): Promise<string> => {
+  const response = await axios.post<{ url: string } | any>('/billing/portal');
+  return ((response.data as any).data?.url || (response.data as any).url) as string;
+};
+
+export const createCheckoutSession = async (plan: string = 'pro'): Promise<string> => {
+  const response = await axios.post<{ url: string } | any>('/billing/checkout', { plan });
+  return ((response.data as any).data?.url || (response.data as any).url) as string;
+};
+
 export interface CreditHistoryItem {
   id: number;
   userId: number;

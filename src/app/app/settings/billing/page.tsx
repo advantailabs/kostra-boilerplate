@@ -11,6 +11,7 @@ import { Label } from '@/components/atom/Label';
 import { ProgressBar } from '@/components/atom/ProgressBar';
 import { ProgressCircle } from '@/components/atom/ProgressCircle';
 import { Switch } from '@/components/atom/Switch';
+import { useStripe } from '@/hooks/useStripe';
 import { cx } from '@/lib/utils';
 
 const data: {
@@ -55,6 +56,7 @@ const data: {
 
 export default function Billing() {
   const [isSpendMgmtEnabled, setIsSpendMgmtEnabled] = React.useState(true);
+  const { openBillingPortal, checkout, isCreatingPortal, isCreatingCheckout } = useStripe();
   return (
     <>
       <div className="rounded-lg bg-gray-50 p-6 ring-1 ring-inset ring-gray-200 dark:bg-gray-400/10 dark:ring-gray-800">
@@ -73,6 +75,14 @@ export default function Billing() {
         </p>
       </div>
       <div className="mt-6 space-y-10">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="primary" disabled={isCreatingPortal} onClick={openBillingPortal}>
+            Manage billing in Stripe
+          </Button>
+          <Button variant="secondary" disabled={isCreatingCheckout} onClick={() => checkout('pro')}>
+            Purchase credits
+          </Button>
+        </div>
         <section aria-labelledby="billing-overview">
           <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
             <div>

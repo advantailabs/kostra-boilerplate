@@ -1,11 +1,9 @@
 import { threadsApi } from '@/services/api/threads';
 import { ThreadWithPersona } from '@/types/chat';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
 export function useThreads() {
-  const queryClient = useQueryClient();
-
   // Infinite query for sidebar lazy loading (15 per page)
   const PAGE_SIZE = 15;
   const infinite = useInfiniteQuery({

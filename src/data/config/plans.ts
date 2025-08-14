@@ -59,7 +59,11 @@ export const CREDIT_THRESHOLDS = {
   creationMin: 50, // Minimum credits required for create/edit persona/KB and uploads
 } as const;
 
-export const STRIP_PRICING = {
-  PRODUCT_ID: 'prod_SrqkLsKjxVPymS',
-  PRICE_ID: 'prod_SrqkLsKjxVPymS',
-} as const;
+export const PLANS_CONFIG = {
+  pro: {
+    name: 'Pro Mode',
+    price: '10',
+    credits: 1000,
+    priceId: 'price_1Rw7nQ7Yrm2cxdH4gTIdRDup',
+  },
+};

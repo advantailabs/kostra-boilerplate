@@ -23,6 +23,7 @@ model User {
   role           UserRole        @default(USER)
   isOnboarded    Boolean         @default(false)
   credits        Float           @default(100.0) // Available credits
+  stripeCustomerId String?       @unique
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime? // Soft delete
