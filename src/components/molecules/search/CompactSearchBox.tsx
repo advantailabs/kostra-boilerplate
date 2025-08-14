@@ -1,8 +1,6 @@
 'use client';
 
-import { RiSendPlaneLine, RiSettings3Line } from '@remixicon/react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { RiSendPlaneLine, RiSettingsLine } from '@remixicon/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -90,26 +88,8 @@ export function CompactSearchBox({
   return (
     <div className="space-y-2">
       <div className="flex items-stretch gap-3">
-        <Link href="/app" className="flex items-center">
-          <Image
-            src="/logos/dark-symbol.png"
-            alt="Peon"
-            width={40}
-            height={40}
-            className="block h-10 w-10 dark:hidden"
-            priority
-          />
-          <Image
-            src="/logos/light-symbol.png"
-            alt="Peon"
-            width={40}
-            height={40}
-            className="hidden h-10 w-10 dark:block"
-            priority
-          />
-        </Link>
         <div
-          className={`flex-1 overflow-hidden rounded-full border border-gray-200 bg-white p-2 shadow-sm sm:p-3 dark:border-gray-800 dark:bg-gray-900 ${className}`}
+          className={`flex-1 overflow-hidden rounded-xl border border-gray-200 bg-white p-2 shadow-sm sm:rounded-2xl sm:p-3 dark:border-gray-800 dark:bg-gray-900 ${className}`}
         >
           <form onSubmit={handleSearch} className="space-y-0">
             <div className="relative overflow-hidden">
@@ -118,14 +98,14 @@ export function CompactSearchBox({
                 <Button
                   type="button"
                   variant="elevated"
-                  className="h-6 w-6 rounded-full p-0"
+                  className="h-6 w-6 p-0"
                   onClick={() => {
                     setTempSelectedKbId(selectedKnowledgeBaseId);
                     setTempSearchMode(searchMode);
                     setIsSettingsOpen(true);
                   }}
                 >
-                  <RiSettings3Line className="h-3 w-3" />
+                  <RiSettingsLine className="h-3 w-3" />
                 </Button>
               </div>
               <Input
@@ -148,7 +128,7 @@ export function CompactSearchBox({
                   <Button
                     type="submit"
                     variant="elevated"
-                    className="h-6 w-6 rounded-full bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
+                    className="h-6 w-6 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
                   >
                     <RiSendPlaneLine className="h-3 w-3" />
                   </Button>
@@ -157,10 +137,6 @@ export function CompactSearchBox({
             </div>
           </form>
         </div>
-      </div>
-      <div className="mt-1 flex items-center justify-between px-3 text-[10px] text-gray-500 sm:px-4 sm:text-xs dark:text-gray-400">
-        <div />
-        <div>Press Enter to send, Shift+Enter for new line</div>
       </div>
 
       <Modal

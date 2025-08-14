@@ -1,3 +1,4 @@
+import { prisma as sharedPrisma } from '@/lib/prisma';
 import { Persona, PrismaClient } from '@prisma/client';
 
 import {
@@ -8,7 +9,7 @@ import {
   UpdatePersonaData,
 } from '@/types/chat';
 
-const defaultPrisma = new PrismaClient();
+const defaultPrisma = sharedPrisma as PrismaClient;
 
 // Select object to exclude OpenAI fields from public responses
 const publicPersonaSelect = {

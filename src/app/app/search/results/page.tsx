@@ -2,10 +2,12 @@
 
 // import Image from 'next/image';
 // import Link from 'next/link';
+import { RiCheckLine, RiFileCopyLine } from '@remixicon/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 import { Button } from '../../../../components/atom/Button';
+import MarkdownRenderer from '../../../../components/atom/SyntaxHighlighter';
 // Spinner kept for potential future use
 import { SearchResultSkeleton } from '../../../../components/atom/Skeleton';
 import { CompactSearchBox } from '../../../../components/molecules/search/CompactSearchBox';
@@ -32,6 +34,7 @@ export default function SearchResultsPage() {
   const [results, setResults] = React.useState<ResultItem[]>([]);
   const [answer, setAnswer] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [copiedAnswer, setCopiedAnswer] = React.useState(false);
   const mode = (params.get('mode') as SearchMode) || 'smart-search';
   const { search, isPending } = useSmartSearch();
 
@@ -81,84 +84,118 @@ export default function SearchResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:px-8 sm:py-6 dark:bg-gray-950">
-      <div className="mx-auto w-full max-w-5xl">
-        {/* Header removed (logo will be shown above search box) */}
-        {/* Single column: compact search box + centered results */}
-        <div className="space-y-6">
-          <div>
-            {/* Page-level logo removed */}
-            <CompactSearchBox
-              initialQuery={query}
-              initialKnowledgeBaseId={knowledgeBaseId || undefined}
-              initialMode={mode}
-              syncQueryParams
-              onSearch={({ query: q, knowledgeBaseId: kb, mode: m }) => {
-                const paramsNext = new URLSearchParams();
-                paramsNext.set('q', q);
-                if (kb) paramsNext.set('kb', kb);
-                paramsNext.set('mode', m);
-                router.push(`/app/search/results?${paramsNext.toString()}`);
-              }}
-            />
-            {mode === 'smart-search' && (
-              <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                Showing top 10 most relevant files
-              </div>
-            )}
-          </div>
+    <>
+      <div className="min-h-screen bg-white p-4 pb-40 sm:px-8 sm:py-6 dark:bg-gray-950">
+        <div className="mx-auto w-full max-w-3xl">
+          {/* Header removed (logo will be shown above search box) */}
+          {/* Single column: compact search box + centered results */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="pt-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                {query ? query.charAt(0).toUpperCase() + query.slice(1) : 'Search'}
+              </h1>
+            </div>
 
-          <div className="-mx-4 sm:mx-0">
-            {isPending && (
-              <div className="space-y-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <SearchResultSkeleton key={i} />
-                ))}
-              </div>
-            )}
+            <div className="mx-0">
+              {mode === 'smart-search' && results.length > 0`` && (
+                <div className="mt-1 pb-2 text-sm text-gray-600 dark:text-gray-300">
+                  Showing top {results.length} most relevant files
+                </div>
+              )}
+              {isPending && (
+                <div className="space-y-6">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <SearchResultSkeleton key={i} />
+                  ))}
+                </div>
+              )}
 
-            {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
+              {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
 
-            {!isPending && !error && (
-              <div className="mx-auto max-w-5xl space-y-6">
-                {mode === 'smart-qa' && !!answer && (
-                  <>
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800 dark:text-gray-200">
-                      {answer}
+              {!isPending && !error && (
+                <div className="mx-auto max-w-5xl space-y-6">
+                  {mode === 'smart-qa' && !!answer && (
+                    <>
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="absolute right-2 top-2 z-10 p-1.5"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(answer || '');
+                              setCopiedAnswer(true);
+                              setTimeout(() => setCopiedAnswer(false), 2000);
+                            } catch (e) {
+                              // no-op
+                            }
+                          }}
+                          title={copiedAnswer ? 'Copied!' : 'Copy answer'}
+                        >
+                          {copiedAnswer ? (
+                            <RiCheckLine className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <RiFileCopyLine className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <MarkdownRenderer content={answer} />
+                      </div>
+                      <div className="my-4 h-px w-full bg-gray-200 dark:bg-gray-800" />
+                    </>
+                  )}
+                  {results.map(item => (
+                    <div key={item.id} className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="p-0 text-left text-base font-medium text-blue-700 hover:underline dark:text-blue-400"
+                          onClick={() => handleDownload(item.fileId)}
+                          disabled={!item.fileId}
+                        >
+                          {item.filename}
+                        </Button>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Confidence: {(item.score * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">
+                        {renderExcerpt(item)}
+                      </div>
                     </div>
-                    <div className="my-4 h-px w-full bg-gray-200 dark:bg-gray-800" />
-                  </>
-                )}
-                {results.map(item => (
-                  <div key={item.id} className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="p-0 text-left text-base font-medium text-blue-700 hover:underline dark:text-blue-400"
-                        onClick={() => handleDownload(item.fileId)}
-                        disabled={!item.fileId}
-                      >
-                        {item.filename}
-                      </Button>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Confidence: {(item.score * 100).toFixed(2)}%
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">
-                      {renderExcerpt(item)}
-                    </div>
-                  </div>
-                ))}
+                  ))}
 
-                {results.length === 0 && (
-                  <div className="text-sm text-gray-600 dark:text-gray-300">No results found.</div>
-                )}
-              </div>
-            )}
+                  {results.length === 0 && (
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      No results found.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className="sticky bottom-4 z-40">
+        {/* Full-width background overlay to prevent text bleed-through */}
+        <div className="pointer-events-none absolute inset-x-0 -bottom-4 -top-20 bg-gradient-to-b from-transparent via-white/90 to-white dark:via-gray-950/90 dark:to-gray-950" />
+
+        <div className="relative mx-auto w-full max-w-3xl bg-white py-3 dark:bg-gray-950">
+          <CompactSearchBox
+            initialQuery={query}
+            initialKnowledgeBaseId={knowledgeBaseId || undefined}
+            initialMode={mode}
+            syncQueryParams
+            onSearch={({ query: q, knowledgeBaseId: kb, mode: m }) => {
+              const paramsNext = new URLSearchParams();
+              paramsNext.set('q', q);
+              if (kb) paramsNext.set('kb', kb);
+              paramsNext.set('mode', m);
+              router.push(`/app/search/results?${paramsNext.toString()}`);
+            }}
+          />
+        </div>
+      </div>
+    </>
   );
 }

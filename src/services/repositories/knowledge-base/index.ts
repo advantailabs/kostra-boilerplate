@@ -6,7 +6,8 @@ import {
   UpdateKnowledgeBaseData,
 } from '../../../types/chat';
 
-const prisma = new PrismaClient();
+import { prisma as sharedPrisma } from '@/lib/prisma';
+const prisma = sharedPrisma as PrismaClient;
 
 // Select object to exclude OpenAI fields from public responses
 const publicKnowledgeBaseSelect = {

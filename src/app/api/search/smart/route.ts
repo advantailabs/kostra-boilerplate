@@ -2,8 +2,11 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '../../../../lib/utils/search';
-import { runSmartQA } from '../../../../services/external/openai/agent';
 import { searchVectorStore } from '../../../../services/external/openai/vector-store';
+import {
+  createSearchStrategy,
+  type SearchEngine,
+} from '../../../../services/internal/search/factory';
 import {
   getKnowledgeBaseWithVectorStore,
   persistSearch,
@@ -34,6 +37,7 @@ export async function POST(request: Request) {
     const query: string = body?.query;
     const knowledgeBaseIdRaw: string | number | undefined = body?.knowledgeBaseId;
     const modeRaw: string | undefined = body?.mode;
+    const engineRaw: string | undefined = body?.engine; // 'agentic' | 'responses' | 'vector'
     const limit: number = 10; // enforce top 10 on server
 
     if (!query || typeof query !== 'string' || query.trim().length === 0) {
@@ -73,25 +77,23 @@ export async function POST(request: Request) {
 
     let answer: string | undefined;
     let normalized: any[] = [];
-    if (isQA) {
-      const qa = await runSmartQA({ vectorStoreId: kb.vectorStoreId as string, query });
-
-      answer = qa.answer ?? undefined;
-      // Use citations from agent tool output when available
-      if (Array.isArray(qa.citations) && qa.citations.length > 0) {
-        normalized = qa.citations.map(c => ({
-          filename: c?.filename || 'Unknown',
-          score: typeof c?.score === 'number' ? c.score : 0,
-          attributes: c?.attributes ?? null,
-          // Normalize to same shape as smart-search so UI excerpt renders
-          content: c?.content ? [{ type: 'text', text: String(c.content) }] : null,
-          openaiFileId: c?.file_id ?? null,
-        }));
-        console.log('smart-qa using citations', normalized.length);
+    const resolvedEngine: SearchEngine = ((): SearchEngine => {
+      if (engineRaw === 'agentic' || engineRaw === 'responses' || engineRaw === 'vector') {
+        return engineRaw;
       }
-    }
+      return isQA ? 'responses' : 'vector';
+    })();
 
-    // Fallback: perform a direct vector search only if no citations were returned
+    const strategy = createSearchStrategy(resolvedEngine);
+    const result = await strategy.run({
+      vectorStoreId: kb.vectorStoreId as string,
+      query,
+      limit,
+    });
+    answer = result.answer ?? undefined;
+    normalized = Array.isArray(result.items) ? (result.items as any[]) : [];
+
+    // Fallback: perform a direct vector search only if no citations/results were returned
     if (normalized.length === 0) {
       const search = await searchVectorStore({
         vectorStoreId: kb.vectorStoreId,

@@ -5,6 +5,7 @@ export interface SmartSearchRequest {
   query: string;
   knowledgeBaseId: number;
   mode: SearchMode;
+  engine?: 'agentic' | 'responses' | 'vector';
 }
 
 export interface SmartSearchResultItem {

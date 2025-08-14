@@ -1,9 +1,10 @@
+import { prisma as sharedPrisma } from '@/lib/prisma';
 import { File, PrismaClient } from '@prisma/client';
 import { RepositoryResult } from '../../../types/chat';
 
 export type PublicFile = Omit<File, 'openaiFileId'>;
 
-const prisma = new PrismaClient();
+const prisma = sharedPrisma as PrismaClient;
 
 // Select object to exclude OpenAI fields from public responses
 const publicFileSelect = {
