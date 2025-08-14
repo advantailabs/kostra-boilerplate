@@ -1,4 +1,5 @@
 import { toast } from '@/components/atom/Toast';
+import { ERRORS } from '@/lib/utils/errors';
 import { AxiosError } from 'axios';
 
 interface ApiErrorResponse {
@@ -100,7 +101,17 @@ export function handleApiError(error: unknown, customMessage?: string): void {
   }
   // Handle fetch errors or other types
   else if (error instanceof Error) {
-    if (error.message.includes('Failed to fetch')) {
+    const messageLower = error.message.toLowerCase();
+
+    // Standardize client-side insufficient credits errors to a consistent toast
+    if (messageLower.includes('insufficient credit')) {
+      toast.error('Insufficient Credits', {
+        description: ERRORS.AUTH_INSUFFICIENT_CREDITS.message,
+      });
+      return;
+    }
+
+    if (messageLower.includes('failed to fetch')) {
       toast.error('Network Error', {
         description: 'Please check your internet connection and try again.',
       });

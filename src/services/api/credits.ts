@@ -9,3 +9,28 @@ export const getUserCredits = async (): Promise<number> => {
   // Standardized API returns { success: true, data: { credits } }
   return (response.data as any).data.credits as number;
 };
+
+export interface CreditHistoryItem {
+  id: number;
+  userId: number;
+  type: 'CREDIT' | 'DEBIT';
+  operation:
+    | 'CHAT'
+    | 'SMART_SEARCH'
+    | 'SMART_QA'
+    | 'INITIAL_CREDITS'
+    | 'MANUAL_ADJUSTMENT'
+    | 'CREDIT_PURCHASE';
+  amount: number;
+  balanceAfter: number;
+  objectId?: string | null;
+  description?: string | null;
+  createdAt: string;
+}
+
+export const getCreditHistory = async (limit = 50): Promise<CreditHistoryItem[]> => {
+  const response = await axios.get<{ history: CreditHistoryItem[] }>(
+    `/users/credits/history?limit=${limit}`
+  );
+  return (response.data as any).data.history as CreditHistoryItem[];
+};

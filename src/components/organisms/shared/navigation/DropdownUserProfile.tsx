@@ -1,8 +1,15 @@
 'use client';
 
 import { useClerk, useUser } from '@clerk/nextjs';
-import { RiComputerLine, RiMoonLine, RiSunLine } from '@remixicon/react';
+import {
+  RiCoinLine,
+  RiComputerLine,
+  RiLogoutBoxRLine,
+  RiMoonLine,
+  RiSunLine,
+} from '@remixicon/react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import * as React from 'react';
 
 import {
@@ -46,8 +53,22 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <Link href="/app/credit-history" className="flex w-full items-center gap-2">
+              <RiCoinLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              Credit history
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
           <DropdownMenuSubMenu>
-            <DropdownMenuSubMenuTrigger>Theme</DropdownMenuSubMenuTrigger>
+            <DropdownMenuSubMenuTrigger>
+              <span className="flex items-center gap-2">
+                <RiSunLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+                Theme
+              </span>
+            </DropdownMenuSubMenuTrigger>
             <DropdownMenuSubMenuContent>
               <DropdownMenuRadioGroup
                 value={theme}
@@ -85,7 +106,12 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => signOut()}>
+            <span className="flex items-center gap-2">
+              <RiLogoutBoxRLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              Sign out
+            </span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

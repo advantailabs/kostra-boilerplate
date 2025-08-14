@@ -58,3 +58,8 @@ export const CREDIT_THRESHOLDS = {
   searchChatMin: 1, // Minimum credits required to perform search/chat actions
   creationMin: 50, // Minimum credits required for create/edit persona/KB and uploads
 } as const;
+
+export const STRIP_PRICING = {
+  PRODUCT_ID: 'prod_SrqkLsKjxVPymS',
+  PRICE_ID: 'prod_SrqkLsKjxVPymS',
+} as const;

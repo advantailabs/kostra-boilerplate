@@ -1,52 +1,60 @@
-import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { CREDIT_COSTS } from '@/lib/constants/credits';
+import { getCreditHistory, getUserCredits, type CreditHistoryItem } from '@/services/api/credits';
 import { useAuthStore } from '@/store/auth';
-import { useCreditStore } from '@/store/credits';
 
-export function useCredits() {
-  const authUser = useAuthStore(state => state.user);
-  const { credits, deductCredits, addCredits, syncCredits } = useCreditStore();
+export function useCredits(limit = 100) {
+  const { user } = useAuthStore();
 
-  const deductCreditOptimistic = useCallback(
-    async (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA', onComplete?: () => void) => {
-      const cost = CREDIT_COSTS[operation];
+  const creditsQuery = useQuery({
+    queryKey: ['credits'],
+    queryFn: getUserCredits,
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
 
-      // Optimistic update
-      deductCredits(cost);
+  const historyQuery = useQuery<CreditHistoryItem[]>({
+    queryKey: ['creditHistory', limit],
+    queryFn: () => getCreditHistory(limit),
+    enabled: !!user?.id,
+    staleTime: 30_000,
+  });
 
-      try {
-        // Call the operation
-        if (onComplete) {
-          await onComplete();
-        }
+  const hasInsufficientCredits = (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA') => {
+    const cost = CREDIT_COSTS[operation];
+    const currentCredits = creditsQuery.data ?? user?.credits ?? 0;
+    return currentCredits < cost;
+  };
 
-        // Sync credits from server after successful operation
-        setTimeout(() => {
-          syncCredits();
-        }, 1000);
-      } catch (error) {
-        // Revert optimistic update on error
-        addCredits(cost);
-        throw error;
-      }
-    },
-    [deductCredits, addCredits, syncCredits]
-  );
-
-  const hasInsufficientCredits = useCallback(
-    (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA') => {
-      const cost = CREDIT_COSTS[operation];
-      const currentCredits = authUser?.credits ?? credits;
-      return currentCredits < cost;
-    },
-    [authUser?.credits, credits]
-  );
+  const totals = useMemo(() => {
+    const items = historyQuery.data ?? [];
+    const credit = items.filter(h => h.type === 'CREDIT').reduce((s, h) => s + h.amount, 0);
+    const debit = items.filter(h => h.type === 'DEBIT').reduce((s, h) => s + Math.abs(h.amount), 0);
+    return { credit, debit };
+  }, [historyQuery.data]);
 
   return {
-    credits: authUser?.credits ?? credits,
-    deductCreditOptimistic,
+    // credits
+    credits: creditsQuery.data,
+    isLoadingCredits: creditsQuery.isLoading,
+    isFetchingCredits: creditsQuery.isFetching,
+    refetchCredits: creditsQuery.refetch,
+
+    // history
+    history: historyQuery.data ?? [],
+    isLoadingHistory: historyQuery.isLoading,
+    isFetchingHistory: historyQuery.isFetching,
+    refetchHistory: historyQuery.refetch,
+    totals,
+
+    // helpers
     hasInsufficientCredits,
-    syncCredits,
-  };
+
+    // combined loading flags for convenience
+    isLoading: creditsQuery.isLoading || historyQuery.isLoading,
+    isFetching: creditsQuery.isFetching || historyQuery.isFetching,
+    isReady: !creditsQuery.isLoading && !historyQuery.isLoading,
+  } as const;
 }
