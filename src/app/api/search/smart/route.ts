@@ -1,8 +1,19 @@
+import {
+  errorResponse,
+  forbiddenResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
+import { CREDIT_COSTS } from '../../../../lib/constants/credits';
 import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '../../../../lib/utils/search';
 import { searchVectorStore } from '../../../../services/external/openai/vector-store';
+import { CreditService } from '../../../../services/internal/credit';
 import {
   createSearchStrategy,
   type SearchEngine,
@@ -19,18 +30,12 @@ export async function POST(request: Request) {
   try {
     const { userId: clerkUserId } = await auth();
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const body = await request.json();
@@ -41,39 +46,42 @@ export async function POST(request: Request) {
     const limit: number = 10; // enforce top 10 on server
 
     if (!query || typeof query !== 'string' || query.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'Validation failed', message: 'Query is required' },
-        { status: 400 }
-      );
+      return validationErrorResponse('Invalid input data', [
+        { field: 'query', message: 'Query is required' },
+      ]);
     }
 
     const knowledgeBaseId = knowledgeBaseIdRaw ? Number(knowledgeBaseIdRaw) : undefined;
     if (!knowledgeBaseId || Number.isNaN(knowledgeBaseId)) {
-      return NextResponse.json(
-        { error: 'Validation failed', message: 'knowledgeBaseId is required' },
-        { status: 400 }
-      );
+      return validationErrorResponse('Invalid input data', [
+        { field: 'knowledgeBaseId', message: 'knowledgeBaseId is required' },
+      ]);
     }
 
     const kb = await getKnowledgeBaseWithVectorStore(knowledgeBaseId);
     if (!kb || !kb.vectorStoreId) {
-      return NextResponse.json(
-        {
-          error: 'Knowledge base not configured',
-          message: 'Selected knowledge base has no vector store configured',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Selected knowledge base has no vector store configured', 400);
     }
     // Ensure user owns the knowledge base
     if (kb.userId !== user.id) {
-      return NextResponse.json(
-        { error: 'Forbidden', message: 'You do not have access to this knowledge base' },
-        { status: 403 }
-      );
+      return forbiddenResponse('You do not have access to this knowledge base');
     }
 
     const isQA = modeRaw === 'smart-qa';
+
+    // Check if user has sufficient credits
+    const creditCost = isQA ? CREDIT_COSTS.SMART_QA : CREDIT_COSTS.SMART_SEARCH;
+    const hasCredits = await CreditService.hassufficientCredits(user.id, creditCost);
+    if (!hasCredits) {
+      return NextResponse.json(
+        {
+          error: 'Insufficient credits',
+          message:
+            'You do not have enough credits to perform this search. Please purchase more credits.',
+        },
+        { status: 402 }
+      );
+    }
 
     let answer: string | undefined;
     let normalized: any[] = [];
@@ -102,10 +110,7 @@ export async function POST(request: Request) {
       });
 
       if (!search.success || !search.data) {
-        return NextResponse.json(
-          { error: 'Search failed', message: search.error || 'Unknown error' },
-          { status: 502 }
-        );
+        return errorResponse(search.error || 'Search failed', 502);
       }
 
       const dataArray: any[] = Array.isArray(search.data?.data) ? (search.data.data as any[]) : [];
@@ -121,7 +126,16 @@ export async function POST(request: Request) {
       results: normalized,
     });
 
-    return NextResponse.json({
+    // Deduct credits after successful search
+    await CreditService.deductCredits({
+      userId: user.id,
+      amount: creditCost,
+      operation: isQA ? 'SMART_QA' : 'SMART_SEARCH',
+      objectId: persisted.searchQueryId.toString(),
+      description: `${isQA ? 'Smart QA' : 'Smart search'} in knowledge base ${knowledgeBaseId}`,
+    });
+
+    return successResponse({
       searchQueryId: persisted.searchQueryId,
       answer: answer ?? null,
       results: persisted.results.map(r => ({
@@ -136,9 +150,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error in smart search:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

@@ -1,7 +1,13 @@
 import { getUserByClerkId } from '@/services/repositories/user';
 import { auth } from '@clerk/nextjs/server';
 import { SignJWT } from 'jose';
-import { NextResponse } from 'next/server';
+// No direct NextResponse usage; use standardized responses
+import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '@/lib/utils/response';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -15,13 +21,13 @@ export async function GET() {
     const session = await auth();
 
     if (!session || !session.userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const user = await getUserByClerkId(session.userId);
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return notFoundResponse('User not found');
     }
 
     // Ensure we only send serializable data
@@ -32,6 +38,7 @@ export async function GET() {
       profilePicture: user.profilePicture,
       role: user.role,
       isOnboarded: user.isOnboarded,
+      credits: user.credits,
       // Add any other serializable properties you need
     };
 
@@ -43,17 +50,18 @@ export async function GET() {
       name: user.name,
       profilePicture: user.profilePicture,
       isOnboarded: user.isOnboarded,
+      credits: user.credits,
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
       .sign(secret);
 
-    return NextResponse.json({
+    return successResponse({
       user: serializableUser,
       token,
     });
   } catch (error) {
     console.error('Auth error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return internalServerErrorResponse();
   }
 }

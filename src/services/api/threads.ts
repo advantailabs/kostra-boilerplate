@@ -35,7 +35,7 @@ export interface ThreadsApiClient {
 export const threadsApi: ThreadsApiClient = {
   async getThreadsPaginated(params: { limit: number; offset: number }) {
     const response = await axiosInstance.get('/threads', { params });
-    const { threads, pagination } = response.data;
+    const { threads, pagination } = (response.data as any).data || {};
     return {
       threads: threads || [],
       pagination: pagination || {
@@ -48,7 +48,7 @@ export const threadsApi: ThreadsApiClient = {
 
   async getThread(id: number): Promise<ThreadWithMessages> {
     const response = await axiosInstance.get(`/threads/${id}`);
-    const { thread } = response.data;
+    const { thread } = (response.data as any).data || {};
     return thread;
   },
 

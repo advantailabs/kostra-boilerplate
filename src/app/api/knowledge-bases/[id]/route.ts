@@ -1,5 +1,14 @@
+import {
+  errorResponse,
+  forbiddenResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import {
   deleteKnowledgeBaseService,
@@ -31,61 +40,43 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
-      return NextResponse.json(
-        { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
-        { status: 400 }
-      );
+      return errorResponse('Knowledge base ID must be a number', 400);
     }
 
     // Get knowledge base with files
     const result = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to fetch knowledge base', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
     if (!result.data) {
-      return NextResponse.json(
-        { error: 'Not found', message: 'Knowledge base not found' },
-        { status: 404 }
-      );
+      return notFoundResponse('Knowledge base not found');
     }
 
     // Check if user owns this knowledge base
     if (result.data.userId !== user.id) {
-      return NextResponse.json({ error: 'Forbidden', message: 'Access denied' }, { status: 403 });
+      return forbiddenResponse('Access denied');
     }
 
-    return NextResponse.json({
+    return successResponse({
       knowledgeBase: result.data,
       message: 'Knowledge base retrieved successfully',
     });
   } catch (error) {
     console.error('Error fetching knowledge base:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 
@@ -94,27 +85,18 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
-      return NextResponse.json(
-        { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
-        { status: 400 }
-      );
+      return errorResponse('Knowledge base ID must be a number', 400);
     }
 
     // Parse and validate request body
@@ -122,39 +104,27 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const validationResult = updateKnowledgeBaseSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          details: validationResult.error.issues.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
-      );
+      const errors = validationResult.error.issues.map((err: any) => ({
+        field: err.path.join('.'),
+        message: err.message,
+      }));
+      return validationErrorResponse('Invalid input data', errors);
     }
 
     // Update knowledge base
     const result = await updateKnowledgeBaseService(knowledgeBaseId, validationResult.data);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to update knowledge base', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       knowledgeBase: result.data,
       message: 'Knowledge base updated successfully',
     });
   } catch (error) {
     console.error('Error updating knowledge base:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 
@@ -163,27 +133,18 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
-      return NextResponse.json(
-        { error: 'Invalid ID', message: 'Knowledge base ID must be a number' },
-        { status: 400 }
-      );
+      return errorResponse('Knowledge base ID must be a number', 400);
     }
 
     // Get deleteFiles parameter from query string
@@ -194,20 +155,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to delete knowledge base', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       message: 'Knowledge base deleted successfully',
     });
   } catch (error) {
     console.error('Error deleting knowledge base:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

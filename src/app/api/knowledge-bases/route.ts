@@ -1,5 +1,12 @@
+import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import {
   createKnowledgeBaseService,
@@ -25,41 +32,29 @@ export async function GET() {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Get user's knowledge bases
     const result = await getUserKnowledgeBasesPublicService(user.id);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to fetch knowledge bases', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       knowledgeBases: result.data,
       message: 'Knowledge bases retrieved successfully',
     });
   } catch (error) {
     console.error('Error fetching knowledge bases:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 
@@ -68,19 +63,13 @@ export async function POST(request: NextRequest) {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Parse and validate request body
@@ -88,17 +77,11 @@ export async function POST(request: NextRequest) {
     const validationResult = createKnowledgeBaseSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          details: validationResult.error.issues.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
-      );
+      const errors = validationResult.error.issues.map((err: any) => ({
+        field: err.path.join('.'),
+        message: err.message,
+      }));
+      return validationErrorResponse('Invalid input data', errors);
     }
 
     const { title, description, metadata } = validationResult.data;
@@ -112,24 +95,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to create knowledge base', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json(
+    return successResponse(
       {
         knowledgeBase: result.data,
         message: 'Knowledge base created successfully',
       },
-      { status: 201 }
+      201
     );
   } catch (error) {
     console.error('Error creating knowledge base:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

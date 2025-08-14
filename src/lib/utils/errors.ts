@@ -1,0 +1,286 @@
+/**
+ * Centralized error definitions with error codes and messages
+ * Used across both frontend and backend for consistency
+ */
+
+export interface AppError {
+  code: string;
+  message: string;
+  httpStatus: number;
+}
+
+export const ERRORS = {
+  // Authentication Errors (AUTH_xxx)
+  AUTH_REQUIRED: {
+    code: 'AUTH_REQUIRED',
+    message: 'Authentication required',
+    httpStatus: 401,
+  },
+  AUTH_USER_NOT_FOUND: {
+    code: 'AUTH_USER_NOT_FOUND',
+    message: 'Your account could not be found. Please try signing out and signing back in.',
+    httpStatus: 404,
+  },
+  AUTH_INVALID_TOKEN: {
+    code: 'AUTH_INVALID_TOKEN',
+    message: 'Authentication error. Please sign out and sign back in.',
+    httpStatus: 401,
+  },
+  AUTH_INSUFFICIENT_CREDITS: {
+    code: 'AUTH_INSUFFICIENT_CREDITS',
+    message: 'Insufficient credits to perform this action.',
+    httpStatus: 402,
+  },
+
+  // Validation Errors (VALIDATION_xxx)
+  VALIDATION_FAILED: {
+    code: 'VALIDATION_FAILED',
+    message: 'Validation failed',
+    httpStatus: 400,
+  },
+  VALIDATION_EMAIL_INVALID: {
+    code: 'VALIDATION_EMAIL_INVALID',
+    message: 'Invalid email address',
+    httpStatus: 400,
+  },
+  VALIDATION_FILE_TYPE_INVALID: {
+    code: 'VALIDATION_FILE_TYPE_INVALID',
+    message: 'Invalid file type. Please upload a supported file format.',
+    httpStatus: 400,
+  },
+  VALIDATION_FILE_SIZE_EXCEEDED: {
+    code: 'VALIDATION_FILE_SIZE_EXCEEDED',
+    message: 'File size exceeds the maximum allowed limit.',
+    httpStatus: 400,
+  },
+
+  // Persona Errors (PERSONA_xxx)
+  PERSONA_NOT_FOUND: {
+    code: 'PERSONA_NOT_FOUND',
+    message: 'Persona not found',
+    httpStatus: 404,
+  },
+  PERSONA_CREATION_FAILED: {
+    code: 'PERSONA_CREATION_FAILED',
+    message: 'Failed to create persona. Please try again.',
+    httpStatus: 500,
+  },
+  PERSONA_UPDATE_FAILED: {
+    code: 'PERSONA_UPDATE_FAILED',
+    message: 'Failed to update persona. Please try again.',
+    httpStatus: 500,
+  },
+  PERSONA_DELETE_FAILED: {
+    code: 'PERSONA_DELETE_FAILED',
+    message: 'Failed to delete persona. Please try again.',
+    httpStatus: 500,
+  },
+
+  // Knowledge Base Errors (KB_xxx)
+  KB_NOT_FOUND: {
+    code: 'KB_NOT_FOUND',
+    message: 'Knowledge base not found',
+    httpStatus: 404,
+  },
+  KB_CREATION_FAILED: {
+    code: 'KB_CREATION_FAILED',
+    message: 'Failed to create knowledge base. Please try again.',
+    httpStatus: 500,
+  },
+  KB_UPDATE_FAILED: {
+    code: 'KB_UPDATE_FAILED',
+    message: 'Failed to update knowledge base. Please try again.',
+    httpStatus: 500,
+  },
+  KB_DELETE_FAILED: {
+    code: 'KB_DELETE_FAILED',
+    message: 'Failed to delete knowledge base. Please try again.',
+    httpStatus: 500,
+  },
+
+  // File Errors (FILE_xxx)
+  FILE_NOT_FOUND: {
+    code: 'FILE_NOT_FOUND',
+    message: 'File not found',
+    httpStatus: 404,
+  },
+  FILE_UPLOAD_FAILED: {
+    code: 'FILE_UPLOAD_FAILED',
+    message: 'Failed to upload file. Please try again.',
+    httpStatus: 500,
+  },
+  FILE_DELETE_FAILED: {
+    code: 'FILE_DELETE_FAILED',
+    message: 'Failed to delete file. Please try again.',
+    httpStatus: 500,
+  },
+  FILE_PROCESSING_FAILED: {
+    code: 'FILE_PROCESSING_FAILED',
+    message: 'Failed to process file. Please check the file format and try again.',
+    httpStatus: 500,
+  },
+  FILE_SIZE_TOO_LARGE: {
+    code: 'FILE_SIZE_TOO_LARGE',
+    message: 'File size is too large. Please upload a smaller file.',
+    httpStatus: 413,
+  },
+
+  // Thread/Chat Errors (THREAD_xxx)
+  THREAD_NOT_FOUND: {
+    code: 'THREAD_NOT_FOUND',
+    message: 'Conversation not found',
+    httpStatus: 404,
+  },
+  THREAD_CREATION_FAILED: {
+    code: 'THREAD_CREATION_FAILED',
+    message: 'Failed to create conversation. Please try again.',
+    httpStatus: 500,
+  },
+  MESSAGE_SEND_FAILED: {
+    code: 'MESSAGE_SEND_FAILED',
+    message: 'Failed to send message. Please try again.',
+    httpStatus: 500,
+  },
+
+  // Search Errors (SEARCH_xxx)
+  SEARCH_FAILED: {
+    code: 'SEARCH_FAILED',
+    message: 'Search failed. Please try again.',
+    httpStatus: 500,
+  },
+  SEARCH_QUERY_TOO_SHORT: {
+    code: 'SEARCH_QUERY_TOO_SHORT',
+    message: 'Search query must be at least 3 characters long.',
+    httpStatus: 400,
+  },
+
+  // Database Errors (DB_xxx)
+  DB_CONNECTION_FAILED: {
+    code: 'DB_CONNECTION_FAILED',
+    message: 'Unable to connect to the database. Please try again in a moment.',
+    httpStatus: 503,
+  },
+  DB_TIMEOUT: {
+    code: 'DB_TIMEOUT',
+    message: 'Database operation timed out. Please try again.',
+    httpStatus: 408,
+  },
+  DB_CONSTRAINT_VIOLATION: {
+    code: 'DB_CONSTRAINT_VIOLATION',
+    message: 'Invalid data provided. Please check your information and try again.',
+    httpStatus: 400,
+  },
+  DB_RECORD_NOT_FOUND: {
+    code: 'DB_RECORD_NOT_FOUND',
+    message: 'Required information not found. Please refresh the page and try again.',
+    httpStatus: 404,
+  },
+  DB_OPERATION_FAILED: {
+    code: 'DB_OPERATION_FAILED',
+    message: 'Database error occurred. Please try again or contact support if the issue persists.',
+    httpStatus: 500,
+  },
+
+  // Network Errors (NETWORK_xxx)
+  NETWORK_ERROR: {
+    code: 'NETWORK_ERROR',
+    message: 'Network error. Please check your internet connection and try again.',
+    httpStatus: 503,
+  },
+  NETWORK_TIMEOUT: {
+    code: 'NETWORK_TIMEOUT',
+    message: 'Request timed out. Please try again.',
+    httpStatus: 408,
+  },
+
+  // Generic Errors (GENERIC_xxx)
+  GENERIC_INTERNAL_ERROR: {
+    code: 'GENERIC_INTERNAL_ERROR',
+    message: 'An unexpected error occurred. Please try again.',
+    httpStatus: 500,
+  },
+  GENERIC_BAD_REQUEST: {
+    code: 'GENERIC_BAD_REQUEST',
+    message: 'Invalid request. Please check your information and try again.',
+    httpStatus: 400,
+  },
+  GENERIC_FORBIDDEN: {
+    code: 'GENERIC_FORBIDDEN',
+    message: 'You do not have permission to perform this action.',
+    httpStatus: 403,
+  },
+} as const;
+
+/**
+ * Create an error object from predefined errors
+ */
+export class AppErrorClass extends Error {
+  code: string;
+
+  httpStatus: number;
+
+  constructor(error: AppError, originalError?: Error) {
+    super(error.message);
+    this.name = 'AppError';
+    this.code = error.code;
+    this.httpStatus = error.httpStatus;
+
+    if (originalError?.stack) {
+      this.stack = originalError.stack;
+    }
+  }
+}
+
+/**
+ * Map Prisma error codes to application errors
+ */
+export function mapPrismaError(prismaError: any): AppError {
+  switch (prismaError.code) {
+    case 'P2002':
+      // Unique constraint violation
+      if (prismaError.meta?.target?.includes('name')) {
+        // Could be persona name, knowledge base title, etc.
+        return ERRORS.DB_CONSTRAINT_VIOLATION;
+      }
+      if (prismaError.meta?.target?.includes('email')) {
+        return ERRORS.VALIDATION_EMAIL_INVALID;
+      }
+      return ERRORS.DB_CONSTRAINT_VIOLATION;
+
+    case 'P2003':
+      // Foreign key constraint violation
+      return ERRORS.DB_CONSTRAINT_VIOLATION;
+
+    case 'P2025':
+      // Record not found
+      return ERRORS.DB_RECORD_NOT_FOUND;
+
+    case 'P1001':
+      // Connection error
+      return ERRORS.DB_CONNECTION_FAILED;
+
+    case 'P1008':
+      // Timeout
+      return ERRORS.DB_TIMEOUT;
+
+    default:
+      return ERRORS.DB_OPERATION_FAILED;
+  }
+}
+
+/**
+ * Get error by code
+ */
+export function getErrorByCode(code: string): AppError | null {
+  const errorKey = Object.keys(ERRORS).find(
+    key => ERRORS[key as keyof typeof ERRORS].code === code
+  );
+  return errorKey ? ERRORS[errorKey as keyof typeof ERRORS] : null;
+}
+
+/**
+ * Check if error is an application error
+ */
+export function isAppError(error: any): error is AppErrorClass {
+  return error instanceof AppErrorClass || (error?.code && error?.httpStatus);
+}

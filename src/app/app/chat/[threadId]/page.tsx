@@ -1,7 +1,7 @@
 'use client';
 
 import { ChatInterface } from '@/components/organisms/chat/ChatInterface';
-import { useChat } from '@/hooks/useChat';
+import { useChatWithCredits } from '@/hooks/useChatWithCredits';
 import { usePersonas } from '@/hooks/usePersonas';
 import { useThreads } from '@/hooks/useThreads';
 import { CreateThreadRequest } from '@/types/chat';
@@ -30,7 +30,7 @@ export default function ThreadPage() {
     isStreaming,
     streamingMessage,
     currentCitations,
-  } = useChat(threadId || undefined);
+  } = useChatWithCredits(threadId || undefined);
 
   // Redirect to main chat page if no threadId
   // Do not rely on the sidebar list to decide existence; the page fetches the thread directly

@@ -1,5 +1,6 @@
 'use client';
 
+import { handleApiError } from '@/lib/utils/error-handler';
 import { useMutation } from '@tanstack/react-query';
 
 import {
@@ -12,6 +13,7 @@ export function useSmartSearch() {
   const mutation = useMutation<SmartSearchResponse, Error, SmartSearchRequest>({
     mutationKey: ['smart-search'],
     mutationFn: smartSearch,
+    onError: (error: unknown) => handleApiError(error, 'Search failed'),
   });
 
   return {

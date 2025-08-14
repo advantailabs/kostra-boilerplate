@@ -1,6 +1,7 @@
 import { personasApi } from '@/services/api/personas';
 import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { useApiMutation } from './useApiMutation';
 
 // Utility function to extract file information from a persona
 export const getPersonaFileInfo = (persona: PersonaWithKnowledgeBase) => {
@@ -25,8 +26,6 @@ export const getPersonaFileInfo = (persona: PersonaWithKnowledgeBase) => {
 };
 
 export function usePersonas() {
-  const queryClient = useQueryClient();
-
   const {
     data: personas = [],
     isLoading,
@@ -37,26 +36,23 @@ export function usePersonas() {
     queryFn: personasApi.getPersonas,
   });
 
-  const createPersonaMutation = useMutation({
+  const createPersonaMutation = useApiMutation({
     mutationFn: (data: CreatePersonaRequest) => personasApi.createPersona(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['personas'] });
-    },
+    successMessage: 'Persona created successfully!',
+    invalidateQueries: [['personas']],
   });
 
-  const updatePersonaMutation = useMutation({
+  const updatePersonaMutation = useApiMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdatePersonaRequest }) =>
       personasApi.updatePersona(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['personas'] });
-    },
+    successMessage: 'Persona updated successfully!',
+    invalidateQueries: [['personas']],
   });
 
-  const deletePersonaMutation = useMutation({
+  const deletePersonaMutation = useApiMutation({
     mutationFn: (id: number) => personasApi.deletePersona(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['personas'] });
-    },
+    successMessage: 'Persona deleted successfully!',
+    invalidateQueries: [['personas']],
   });
 
   return {

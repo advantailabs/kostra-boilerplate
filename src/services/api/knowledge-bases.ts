@@ -21,22 +21,22 @@ export const knowledgeBasesApi: KnowledgeBasesApiClient = {
     const response = await axiosInstance.get('/knowledge-bases', {
       params: { page: _page, limit: _limit },
     });
-    return response.data;
+    return (response.data as any).data;
   },
 
   async getKnowledgeBase(_id: number): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.get(`/knowledge-bases/${_id}`);
-    return response.data.knowledgeBase;
+    return (response.data as any).data?.knowledgeBase;
   },
 
   async createKnowledgeBase(_data: any): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.post('/knowledge-bases', _data);
-    return response.data.knowledgeBase;
+    return (response.data as any).data?.knowledgeBase;
   },
 
   async updateKnowledgeBase(_id: number, _data: any): Promise<KnowledgeBaseWithFiles> {
     const response = await axiosInstance.put(`/knowledge-bases/${_id}`, _data);
-    return response.data.knowledgeBase;
+    return (response.data as any).data?.knowledgeBase;
   },
 
   async deleteKnowledgeBase(_id: number, _deleteFiles = false): Promise<void> {

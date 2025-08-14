@@ -1,7 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { streamAssistantRun } from '@/services/external/openai/messages';
+import { CreditService } from '@/services/internal/credit';
 import { uploadFileService } from '@/services/internal/file';
 import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import {
@@ -103,6 +105,19 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
+    // Check if user has sufficient credits
+    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
+    if (!hasCredits) {
+      return NextResponse.json(
+        {
+          error: 'Insufficient credits',
+          message:
+            'You do not have enough credits to send a message. Please purchase more credits.',
+        },
+        { status: 402 }
+      );
+    }
+
     // If client sent files, upload them to OpenAI and create DB file records
     let openaiAttachments: Array<{ file_id: string; tools?: Array<{ type: 'file_search' }> }> = [];
     const uploadedFileIds: number[] = [];
@@ -191,7 +206,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
                 }));
 
                 // Save the complete assistant response to database with citations
-                await createMessageWithCitations({
+                const assistantMessage = await createMessageWithCitations({
                   threadId,
                   role: 'assistant',
                   content: fullResponse,
@@ -201,6 +216,15 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
                 // Update thread timestamp
                 await updateThreadTimestamp(threadId);
+
+                // Deduct credits after successful message completion
+                await CreditService.deductCredits({
+                  userId: user.id,
+                  amount: CREDIT_COSTS.CHAT,
+                  operation: 'CHAT',
+                  objectId: assistantMessage.id.toString(),
+                  description: `Chat message in thread ${threadId}`,
+                });
 
                 // Convert citations to public format (exclude openaiFileId)
                 const publicCitations =

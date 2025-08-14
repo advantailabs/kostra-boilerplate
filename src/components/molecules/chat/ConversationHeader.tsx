@@ -1,4 +1,5 @@
 import { Avatar } from '@/components/atom/Avatar';
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import { Persona, Thread } from '@prisma/client';
 
 interface ConversationHeaderProps {
@@ -37,6 +38,7 @@ export function ConversationHeader({
             </p>
           </div>
         </div>
+        <CreditDisplay size="sm" />
       </div>
     );
   }
@@ -63,6 +65,7 @@ export function ConversationHeader({
           )}
         </div>
       </div>
+      <CreditDisplay size="sm" />
     </div>
   );
 }

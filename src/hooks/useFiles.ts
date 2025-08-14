@@ -7,6 +7,7 @@ import {
 } from '@/services/api/files';
 import { useAuthStore } from '@/store/auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from './useApiMutation';
 
 export function useFiles(filters?: FileFilters, page = 1, limit = 20) {
   const { user } = useAuthStore();
@@ -29,25 +30,22 @@ export function useFile(id: number) {
 }
 
 export function useUploadFiles() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useApiMutation({
     mutationFn: (data: UploadFilesRequest) => filesApi.uploadFiles(data),
-    onSuccess: () => {
-      // Invalidate and refetch files list
-      queryClient.invalidateQueries({ queryKey: ['files'] });
-    },
+    successMessage: 'Files uploaded successfully!',
+    invalidateQueries: [['files']],
   });
 }
 
 export function useUpdateFile() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateFileRequest }) =>
       filesApi.updateFile(id, data),
+    successMessage: 'File updated successfully!',
+    // Avoid double invalidation: handle manually here
     onSuccess: (_, { id }) => {
-      // Invalidate specific file and files list
       queryClient.invalidateQueries({ queryKey: ['file', id] });
       queryClient.invalidateQueries({ queryKey: ['files'] });
     },
@@ -55,15 +53,10 @@ export function useUpdateFile() {
 }
 
 export function useDeleteFile() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ id }: { id: number }) => filesApi.deleteFile(id),
-    onSuccess: () => {
-      // Only invalidate files-related queries
-      queryClient.invalidateQueries({ queryKey: ['files'] });
-      // Remove unnecessary knowledge base invalidations that cause API calls during download
-    },
+    successMessage: 'File deleted successfully!',
+    invalidateQueries: [['files']],
   });
 }
 

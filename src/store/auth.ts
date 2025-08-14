@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { useCreditStore } from './credits';
+
 interface User {
   id: string; // Database user ID
   email: string;
@@ -8,6 +10,7 @@ interface User {
   profilePicture: string | null;
   role: string;
   isOnboarded: boolean;
+  credits: number;
 }
 
 interface AuthState {
@@ -22,8 +25,16 @@ export const useAuthStore = create<AuthState>()(
     set => ({
       user: null,
       token: null,
-      setAuth: (user: User, token: string) => set(() => ({ user, token })),
-      clearAuth: () => set(() => ({ user: null, token: null })),
+      setAuth: (user: User, token: string) => {
+        set(() => ({ user, token }));
+        // Sync credits with the credit store when user data is set
+        useCreditStore.getState().setCredits(user.credits);
+      },
+      clearAuth: () => {
+        set(() => ({ user: null, token: null }));
+        // Clear credits when user logs out
+        useCreditStore.getState().clearCredits();
+      },
     }),
     {
       name: 'auth-storage',

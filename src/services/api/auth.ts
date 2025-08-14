@@ -8,11 +8,13 @@ interface AuthResponse {
     profilePicture: string | null;
     role: string;
     isOnboarded: boolean;
+    credits: number;
   };
   token: string;
 }
 
 export const getAuth = async (): Promise<AuthResponse> => {
   const response = await axios.get<AuthResponse>('/auth');
-  return response.data;
+  // Standardized API returns { success: true, data: { user, token } }
+  return (response.data as any).data as AuthResponse;
 };

@@ -7,11 +7,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 import { Button } from '../../../../components/atom/Button';
+import { CreditDisplay } from '../../../../components/atom/CreditDisplay';
 import MarkdownRenderer from '../../../../components/atom/SyntaxHighlighter';
 // Spinner kept for potential future use
 import { SearchResultSkeleton } from '../../../../components/atom/Skeleton';
 import { CompactSearchBox } from '../../../../components/molecules/search/CompactSearchBox';
-import { useSmartSearch } from '../../../../hooks/useSearch';
+import { useSmartSearchWithCredits } from '../../../../hooks/useSearchWithCredits';
 import type { SearchMode } from '../../../../lib/constants/search';
 import { generateFileDownloadUrl } from '../../../../services/api/files';
 
@@ -36,7 +37,7 @@ export default function SearchResultsPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [copiedAnswer, setCopiedAnswer] = React.useState(false);
   const mode = (params.get('mode') as SearchMode) || 'smart-search';
-  const { search, isPending } = useSmartSearch();
+  const { search, isPending } = useSmartSearchWithCredits();
 
   const handleDownload = React.useCallback(async (fileId?: number | null) => {
     if (!fileId) return;
@@ -63,7 +64,9 @@ export default function SearchResultsPage() {
           knowledgeBaseId: Number(knowledgeBaseId),
           mode,
         });
-        const ordered = (data.results || []).slice().sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
+        const ordered = (data.results || [])
+          .slice()
+          .sort((a: any, b: any) => (a.rank ?? 0) - (b.rank ?? 0));
         setResults(ordered);
         setAnswer((data as any).answer ?? null);
       } catch (e: any) {
@@ -90,10 +93,13 @@ export default function SearchResultsPage() {
           {/* Header removed (logo will be shown above search box) */}
           {/* Single column: compact search box + centered results */}
           <div className="space-y-6">
-            <div>
+            <div className="flex items-center justify-between">
               <h1 className="pt-6 text-2xl font-semibold text-gray-900 dark:text-white">
                 {query ? query.charAt(0).toUpperCase() + query.slice(1) : 'Search'}
               </h1>
+              <div className="pt-6">
+                <CreditDisplay size="sm" />
+              </div>
             </div>
 
             <div className="mx-0">

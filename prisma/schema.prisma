@@ -22,6 +22,7 @@ model User {
   profilePicture String? // URL to the profile picture
   role           UserRole        @default(USER)
   isOnboarded    Boolean         @default(false)
+  credits        Float           @default(100.0) // Available credits
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime? // Soft delete
@@ -30,6 +31,7 @@ model User {
   files          File[]
   knowledgeBases KnowledgeBase[]
   searchQueries  SearchQuery[]
+  creditHistory  CreditHistory[]
 }
 
 model Thread {
@@ -135,9 +137,39 @@ model MessageFile {
   @@unique([messageId, fileId])
 }
 
+model CreditHistory {
+  id                Int                   @id @default(autoincrement())
+  userId            Int
+  type              CreditTransactionType
+  operation         CreditOperation
+  amount            Float // Amount of credits (positive for credit, negative for debit)
+  balanceAfter      Float // Balance after this transaction
+  objectId          String? // Related object ID (messageId, searchQueryId, etc.)
+  description       String? // Optional description
+  createdAt         DateTime              @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
 enum SearchMode {
   SMART_SEARCH
   QA
+}
+
+enum CreditTransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum CreditOperation {
+  CHAT
+  SMART_SEARCH
+  SMART_QA
+  INITIAL_CREDITS
+  MANUAL_ADJUSTMENT
+  CREDIT_PURCHASE
 }
 
 model SearchQuery {

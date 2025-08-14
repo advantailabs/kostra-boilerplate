@@ -1,5 +1,11 @@
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+// Using standardized response helpers
+import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '@/lib/utils/response';
 
 import { getUserThreadsPaginated } from '@/services/internal/chat';
 import { getUserByClerkId } from '@/services/repositories/user';
@@ -18,32 +24,23 @@ export async function GET(request: Request) {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Get user's threads (paginated by default; default limit 15)
     const result = await getUserThreadsPaginated(user.id, limit, offset);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to fetch threads', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       threads: result.data,
       pagination: {
         limit,
@@ -54,10 +51,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching threads:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 

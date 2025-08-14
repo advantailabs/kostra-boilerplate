@@ -1,6 +1,7 @@
 import { knowledgeBasesApi } from '@/services/api/knowledge-bases';
 import { useAuthStore } from '@/store/auth';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from './useApiMutation';
 
 export function useKnowledgeBases(page = 1, limit = 50) {
   const { user } = useAuthStore();
@@ -25,25 +26,22 @@ export function useKnowledgeBase(id: number) {
 }
 
 export function useCreateKnowledgeBase() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useApiMutation({
     mutationFn: (data: any) => knowledgeBasesApi.createKnowledgeBase(data),
-    onSuccess: () => {
-      // Invalidate and refetch knowledge bases list
-      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
-    },
+    successMessage: 'Knowledge base created successfully!',
+    invalidateQueries: [['knowledge-bases']],
   });
 }
 
 export function useUpdateKnowledgeBase() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) =>
       knowledgeBasesApi.updateKnowledgeBase(id, data),
+    successMessage: 'Knowledge base updated successfully!',
+    // Do not pass invalidateQueries here to avoid duplicate invalidation
     onSuccess: (_, { id }) => {
-      // Invalidate specific knowledge base and knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', id] });
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
     },
@@ -51,26 +49,22 @@ export function useUpdateKnowledgeBase() {
 }
 
 export function useDeleteKnowledgeBase() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ id, deleteFiles }: { id: number; deleteFiles?: boolean }) =>
       knowledgeBasesApi.deleteKnowledgeBase(id, deleteFiles),
-    onSuccess: () => {
-      // Invalidate knowledge bases list
-      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
-    },
+    successMessage: 'Knowledge base deleted successfully!',
+    invalidateQueries: [['knowledge-bases']],
   });
 }
 
 export function useAddFileToKnowledgeBase() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ knowledgeBaseId, fileId }: { knowledgeBaseId: number; fileId: number }) =>
       knowledgeBasesApi.addFileToKnowledgeBase(knowledgeBaseId, fileId),
+    successMessage: 'File added to knowledge base!',
     onSuccess: (_, { knowledgeBaseId }) => {
-      // Invalidate specific knowledge base and knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
       queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
       queryClient.invalidateQueries({ queryKey: ['files'] });
@@ -81,11 +75,11 @@ export function useAddFileToKnowledgeBase() {
 export function useRemoveFileFromKnowledgeBase() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useApiMutation({
     mutationFn: ({ knowledgeBaseId, fileId }: { knowledgeBaseId: number; fileId: number }) =>
       knowledgeBasesApi.removeFileFromKnowledgeBase(knowledgeBaseId, fileId),
+    successMessage: 'File removed from knowledge base!',
     onSuccess: (_, { knowledgeBaseId }) => {
-      // Invalidate specific knowledge base and knowledge bases list
       queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
       queryClient.invalidateQueries({ queryKey: ['files'] });
     },

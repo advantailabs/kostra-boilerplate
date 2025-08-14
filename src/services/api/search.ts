@@ -25,6 +25,6 @@ export interface SmartSearchResponse {
 }
 
 export async function smartSearch(payload: SmartSearchRequest): Promise<SmartSearchResponse> {
-  const { data } = await axiosInstance.post('/search/smart', payload);
-  return data as SmartSearchResponse;
+  const response = await axiosInstance.post('/search/smart', payload);
+  return (response.data as any).data as SmartSearchResponse;
 }

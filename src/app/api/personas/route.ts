@@ -1,6 +1,13 @@
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
+import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
@@ -13,41 +20,29 @@ export async function GET() {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Get user's personas
     const result = await getUserPersonasService(user.id);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to fetch personas', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       personas: result.data,
       message: 'Personas retrieved successfully',
     });
   } catch (error) {
     console.error('Error fetching personas:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 
@@ -56,19 +51,13 @@ export async function POST(request: NextRequest) {
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     // Parse and validate request body
@@ -76,17 +65,11 @@ export async function POST(request: NextRequest) {
     const validationResult = createPersonaSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          message: 'Invalid input data',
-          details: validationResult.error.issues.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        { status: 400 }
-      );
+      const errors = validationResult.error.issues.map((err: any) => ({
+        field: err.path.join('.'),
+        message: err.message,
+      }));
+      return validationErrorResponse('Invalid input data', errors);
     }
 
     const { name, description, instructions, tags, logo } = validationResult.data;
@@ -102,24 +85,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to create persona', message: result.error },
-        { status: 500 }
-      );
+      return internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json(
+    return successResponse(
       {
         persona: result.data,
         message: 'Persona created successfully',
       },
-      { status: 201 }
+      201
     );
   } catch (error) {
     console.error('Error creating persona:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }

@@ -64,27 +64,27 @@ export const filesApi: FilesApiClient = {
     if (_filters?.mimeType) params.append('mimeType', _filters.mimeType);
 
     const response = await axiosInstance.get(`/files?${params.toString()}`);
-    return response.data;
+    return (response.data as any).data;
   },
 
   async getFile(_id: number): Promise<any> {
     const response = await axiosInstance.get(`/files/${_id}`);
-    return response.data;
+    return (response.data as any).data;
   },
 
   async uploadFiles(_data: UploadFilesRequest): Promise<any> {
     const response = await axiosInstance.post('/files', _data);
-    return response.data;
+    return (response.data as any).data;
   },
 
   async updateFile(_id: number, _data: UpdateFileRequest): Promise<any> {
     const response = await axiosInstance.put(`/files/${_id}`, _data);
-    return response.data;
+    return (response.data as any).data;
   },
 
   async deleteFile(_id: number): Promise<any> {
     const response = await axiosInstance.delete(`/files/${_id}`);
-    return response.data;
+    return (response.data as any).data;
   },
 };
 
@@ -94,5 +94,5 @@ export async function generateFileDownloadUrl(fileId: number): Promise<{
   filename: string;
 }> {
   const response = await axiosInstance.post(`/files/${fileId}/download`);
-  return response.data;
+  return (response.data as any).data;
 }

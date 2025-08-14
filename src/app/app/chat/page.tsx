@@ -2,7 +2,7 @@
 
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { ChatInterface } from '@/components/organisms/chat/ChatInterface';
-import { useChat } from '@/hooks/useChat';
+import { useChatWithCredits } from '@/hooks/useChatWithCredits';
 import { usePersonas } from '@/hooks/usePersonas';
 import { useThreads } from '@/hooks/useThreads';
 import { CreateThreadRequest } from '@/types/chat';
@@ -21,7 +21,7 @@ export default function ChatPage() {
   } = useThreads();
 
   const { createThreadStreaming, isStreaming, streamingMessage, currentCitations } =
-    useChat(undefined); // No active thread on main chat page
+    useChatWithCredits(undefined); // No active thread on main chat page
 
   const handleCreateThread = async (
     personaId: number,

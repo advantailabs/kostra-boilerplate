@@ -1,6 +1,7 @@
 import { threadsApi } from '@/services/api/threads';
 import { ThreadWithPersona } from '@/types/chat';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useApiMutation } from './useApiMutation';
 
 export function useThreads() {
   const queryClient = useQueryClient();
@@ -21,11 +22,10 @@ export function useThreads() {
     getNextPageParam: lastPage => (lastPage.hasMore ? lastPage.nextOffset : undefined),
   });
 
-  const deleteThreadMutation = useMutation({
+  const deleteThreadMutation = useApiMutation({
     mutationFn: (id: number) => threadsApi.deleteThread(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['threads', 'infinite'] });
-    },
+    successMessage: 'Thread deleted successfully',
+    invalidateQueries: [['threads', 'infinite']],
   });
 
   const infiniteThreads = (infinite.data?.pages.flatMap(p => p.page) || []) as ThreadWithPersona[];

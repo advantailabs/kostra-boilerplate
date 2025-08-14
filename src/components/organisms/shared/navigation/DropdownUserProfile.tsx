@@ -5,6 +5,7 @@ import { RiComputerLine, RiMoonLine, RiSunLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +44,13 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align={align}>
         <DropdownMenuLabel>{user?.primaryEmailAddress?.emailAddress}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="cursor-default">
+            <CreditDisplay size="sm" />
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuSubMenu>
             <DropdownMenuSubMenuTrigger>Theme</DropdownMenuSubMenuTrigger>

@@ -1,8 +1,16 @@
 import { generateDownloadUrl } from '@/lib/s3';
+import {
+  errorResponse,
+  forbiddenResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '@/lib/utils/response';
 import { findFileById } from '@/services/repositories/file';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -11,31 +19,31 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     const user = await getUserByClerkId(userId);
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return notFoundResponse('User not found');
     }
 
     const fileId = parseInt(params.id, 10);
     if (Number.isNaN(fileId)) {
-      return NextResponse.json({ error: 'Invalid file ID' }, { status: 400 });
+      return errorResponse('Invalid file ID', 400);
     }
 
     // Get file details from database
     const fileResult = await findFileById(fileId);
     if (!fileResult.success || !fileResult.data) {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+      return notFoundResponse('File not found');
     }
 
     const file = fileResult.data;
 
     // Check if user owns the file
     if (file.userId !== user.id) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      return forbiddenResponse('Access denied');
     }
 
     // Use the filename as the S3 key and default to private bucket
@@ -45,13 +53,13 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
     // Generate download URL
     const { downloadUrl, expiresAt } = await generateDownloadUrl(bucket, key, file.originalName);
 
-    return NextResponse.json({
+    return successResponse({
       downloadUrl,
       expiresAt,
       filename: file.originalName,
     });
   } catch (error) {
     console.error('Error generating download URL:', error);
-    return NextResponse.json({ error: 'Failed to generate download URL' }, { status: 500 });
+    return internalServerErrorResponse('Failed to generate download URL');
   }
 }

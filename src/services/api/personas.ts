@@ -11,17 +11,17 @@ interface PersonasApiClient {
 export const personasApi: PersonasApiClient = {
   async getPersonas(): Promise<PersonaWithKnowledgeBase[]> {
     const response = await axiosInstance.get('/personas');
-    return response.data.personas || [];
+    return response.data.data?.personas || [];
   },
 
   async createPersona(data: CreatePersonaRequest): Promise<PersonaWithKnowledgeBase> {
     const response = await axiosInstance.post('/personas', data);
-    return response.data.persona;
+    return response.data.data?.persona;
   },
 
   async updatePersona(id: number, data: UpdatePersonaRequest): Promise<PersonaWithKnowledgeBase> {
     const response = await axiosInstance.put(`/personas/${id}`, data);
-    return response.data.persona;
+    return response.data.data || response.data.persona;
   },
 
   async deletePersona(id: number): Promise<void> {

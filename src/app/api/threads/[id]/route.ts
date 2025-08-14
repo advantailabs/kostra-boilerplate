@@ -1,5 +1,12 @@
+import {
+  errorResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '@/lib/utils/response';
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
 import { getUserByClerkId } from '@/services/repositories/user';
@@ -12,49 +19,36 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
-      return NextResponse.json(
-        { error: 'Invalid thread ID', message: 'Thread ID must be a number' },
-        { status: 400 }
-      );
+      return errorResponse('Thread ID must be a number', 400);
     }
 
     // Get thread with messages
     const result = await getThreadWithMessages(user.id, threadId);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to fetch thread', message: result.error },
-        { status: result.error?.includes('not found') ? 404 : 500 }
-      );
+      return result.error?.includes('not found')
+        ? notFoundResponse('Thread not found')
+        : internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       thread: result.data,
       message: 'Thread retrieved successfully',
     });
   } catch (error) {
     console.error('Error fetching thread:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
 
@@ -63,47 +57,34 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
     const { userId: clerkUserId } = await auth();
 
     if (!clerkUserId) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+      return unauthorizedResponse();
     }
 
     // Get user from database
     const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found', message: 'User does not exist' },
-        { status: 404 }
-      );
+      return notFoundResponse('User does not exist');
     }
 
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
-      return NextResponse.json(
-        { error: 'Invalid thread ID', message: 'Thread ID must be a number' },
-        { status: 400 }
-      );
+      return errorResponse('Thread ID must be a number', 400);
     }
 
     // Delete thread
     const result = await deleteThreadService(user.id, threadId);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to delete thread', message: result.error },
-        { status: result.error?.includes('not found') ? 404 : 500 }
-      );
+      return result.error?.includes('not found')
+        ? notFoundResponse('Thread not found')
+        : internalServerErrorResponse(result.error);
     }
 
-    return NextResponse.json({
+    return successResponse({
       message: 'Thread deleted successfully',
     });
   } catch (error) {
     console.error('Error deleting thread:', error);
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    return internalServerErrorResponse();
   }
 }
