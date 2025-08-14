@@ -24,10 +24,11 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       </Button>
       <Button
         variant="primary"
-        disabled={isCreatingCheckout}
+        isLoading={isCreatingCheckout}
+        loadingText="Purchasing..."
         onClick={async () => {
-          onClose();
           await checkout('pro');
+          onClose();
         }}
       >
         Purchase now
