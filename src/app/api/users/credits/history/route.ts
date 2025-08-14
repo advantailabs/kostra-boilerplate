@@ -1,10 +1,10 @@
 import { auth } from '@clerk/nextjs/server';
 
 import {
-    internalServerErrorResponse,
-    notFoundResponse,
-    successResponse,
-    unauthorizedResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  unauthorizedResponse,
 } from '@/lib/utils/response';
 import { CreditService } from '@/services/internal/credit';
 import { getUserByClerkId } from '@/services/repositories/user';

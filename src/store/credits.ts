@@ -7,9 +7,9 @@ import { useAuthStore } from './auth';
 interface CreditState {
   credits: number;
   initialized: boolean;
-  setCredits: (credits: number) => void;
-  deductCredits: (amount: number) => void;
-  addCredits: (amount: number) => void;
+  setCredits: (_credits: number) => void;
+  deductCredits: (_amount: number) => void;
+  addCredits: (_mount: number) => void;
   clearCredits: () => void;
   syncCredits: () => Promise<void>;
   initializeFromAuth: () => void;
@@ -21,14 +21,14 @@ export const useCreditStore = create<CreditState>()(
       credits: 0,
       initialized: false,
       setCredits: (credits: number) => set(() => ({ credits, initialized: true })),
-      deductCredits: (amount: number) => {
+      deductCredits: (_amount: number) => {
         const currentCredits = get().credits;
-        const newCredits = Math.max(0, currentCredits - amount);
+        const newCredits = Math.max(0, currentCredits - _amount);
         set(() => ({ credits: newCredits }));
       },
-      addCredits: (amount: number) => {
+      addCredits: (_amount: number) => {
         const currentCredits = get().credits;
-        set(() => ({ credits: currentCredits + amount }));
+        set(() => ({ credits: currentCredits + _amount }));
       },
       clearCredits: () => set(() => ({ credits: 0, initialized: false })),
       syncCredits: async () => {

@@ -7,6 +7,9 @@ import {
 } from '../../../types/chat';
 
 import { prisma as sharedPrisma } from '@/lib/prisma';
+
+// eslint-disable-next-line import/newline-after-import
+
 const prisma = sharedPrisma as PrismaClient;
 
 // Select object to exclude OpenAI fields from public responses

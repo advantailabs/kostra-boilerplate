@@ -52,7 +52,7 @@ export async function runSmartQA(params: RunSmartQAParams): Promise<RunSmartQARe
     for (const out of outputs) {
       const providerData = out?.providerData;
       if (providerData && providerData.type === 'file_search_call') {
-        const results = providerData.results;
+        const { results } = providerData;
         for (const r of results) {
           citations.push({
             file_id: r?.file_id,

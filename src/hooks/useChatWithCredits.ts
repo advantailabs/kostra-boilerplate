@@ -39,7 +39,7 @@ export function useChatWithCredits(threadId?: number) {
         throw error;
       }
     },
-    [chatHook.createThreadStreaming]
+    [chatHook]
   );
 
   const addMessageStreamingWithCredits = useCallback(
@@ -69,7 +69,7 @@ export function useChatWithCredits(threadId?: number) {
         throw error;
       }
     },
-    [chatHook.addMessageStreaming]
+    [chatHook]
   );
 
   return {

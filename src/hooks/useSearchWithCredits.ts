@@ -44,7 +44,7 @@ export function useSmartSearchWithCredits() {
         throw error;
       }
     },
-    [searchHook.search]
+    [searchHook]
   );
 
   return {

@@ -59,38 +59,40 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {PLANS.map((plan, idx) => {
-            const CardContent = () => (
-              <>
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                    {plan.name}
-                  </h3>
-                  {plan.badge && (
-                    <span className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-600 dark:text-indigo-400">
-                      {plan.badge}
+            function CardContent() {
+              return (
+                <>
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                      {plan.name}
+                    </h3>
+                    {plan.badge && (
+                      <span className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-600 dark:text-indigo-400">
+                        {plan.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{plan.description}</p>
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                      {plan.price}
                     </span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{plan.description}</p>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                    {plan.price}
-                  </span>
-                  {plan.period && <span className="text-xs text-gray-500">/ {plan.period}</span>}
-                </div>
-                <ul className="mt-3 space-y-2">
-                  {plan.features.map(feature => (
-                    <li
-                      key={feature}
-                      className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
-                    >
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            );
+                    {plan.period && <span className="text-xs text-gray-500">/ {plan.period}</span>}
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {plan.features.map(feature => (
+                      <li
+                        key={feature}
+                        className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
+                      >
+                        <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              );
+            }
 
             return (
               <motion.div

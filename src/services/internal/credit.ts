@@ -107,7 +107,7 @@ export class CreditService {
             userId,
             type: CREDIT_TRANSACTION_TYPES.CREDIT,
             operation: CREDIT_OPERATIONS[operation],
-            amount: amount, // Positive for credit
+            amount, // Positive for credit
             balanceAfter: newBalance,
             objectId,
             description,

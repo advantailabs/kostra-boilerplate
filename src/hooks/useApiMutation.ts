@@ -2,9 +2,9 @@ import { handleApiError, handleApiSuccess } from '@/lib/utils/error-handler';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface UseApiMutationOptions<TData, TVariables> {
-  mutationFn: (variables: TVariables) => Promise<TData>;
-  onSuccess?: (data: TData, variables: TVariables) => void;
-  onError?: (error: unknown, variables: TVariables) => void;
+  mutationFn: (_: TVariables) => Promise<TData>;
+  onSuccess?: (_data: TData, _variables: TVariables) => void;
+  onError?: (_error: unknown, _variables: TVariables) => void;
   invalidateQueries?: string[][];
   successMessage?: string;
   errorMessage?: string;
@@ -28,7 +28,7 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
 
   return useMutation({
     mutationFn,
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Handle success toast
       if (showSuccessToast && successMessage) {
         handleApiSuccess({ message: successMessage });
@@ -41,16 +41,16 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
 
       // Call custom onSuccess handler
       if (onSuccess) {
-        onSuccess(data, variables);
+        onSuccess(data, _variables);
       }
     },
-    onError: (error, variables) => {
+    onError: (error, _variables) => {
       // Handle error with toast
       handleApiError(error, errorMessage);
 
       // Call custom onError handler
       if (onError) {
-        onError(error, variables);
+        onError(error, _variables);
       }
     },
   });

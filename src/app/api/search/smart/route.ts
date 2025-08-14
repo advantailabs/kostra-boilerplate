@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       return insufficientCreditsResponse();
     }
 
-    let answer: string | undefined;
+    const answerRef: { value?: string } = {};
     let normalized: any[] = [];
     const resolvedEngine: SearchEngine = ((): SearchEngine => {
       if (engineRaw === 'agentic' || engineRaw === 'responses' || engineRaw === 'vector') {
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
       query,
       limit,
     });
-    answer = result.answer ?? undefined;
+    answerRef.value = result.answer ?? undefined;
     normalized = Array.isArray(result.items) ? (result.items as any[]) : [];
 
     // Fallback: perform a direct vector search only if no citations/results were returned
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
       knowledgeBaseId,
       query,
       mode: mapFrontendModeToPrismaMode(isQA ? 'smart-qa' : 'smart-search'),
-      answer,
+      answer: answerRef.value,
       results: normalized,
     });
 
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
 
     return successResponse({
       searchQueryId: persisted.searchQueryId,
-      answer: answer ?? null,
+      answer: answerRef.value ?? null,
       results: persisted.results.map(r => ({
         id: r.id,
         filename: r.filename,

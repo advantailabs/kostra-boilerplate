@@ -26,7 +26,7 @@ export function handleApiError(error: unknown, customMessage?: string): void {
 
   // Handle Axios errors
   if (error instanceof AxiosError) {
-    const response = error.response;
+    const { response } = error;
 
     if (response?.data) {
       const errorData = response.data as ApiErrorResponse;

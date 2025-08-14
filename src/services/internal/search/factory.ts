@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { transformOpenAiResults } from '@/lib/utils/search';
 import { runSmartQA } from '@/services/external/openai/agent';
 import { runResponsesQA } from '@/services/external/openai/responses';
@@ -25,10 +26,11 @@ export interface SearchRunResult {
 }
 
 export interface SearchStrategy {
-  run(params: SearchRunParams): Promise<SearchRunResult>;
+  run(_params: SearchRunParams): Promise<SearchRunResult>;
 }
 
 class AgenticStrategy implements SearchStrategy {
+  // eslint-disable-next-line class-methods-use-this
   async run(params: SearchRunParams): Promise<SearchRunResult> {
     const { vectorStoreId, query } = params;
     const qa = await runSmartQA({ vectorStoreId, query });
@@ -48,6 +50,7 @@ class AgenticStrategy implements SearchStrategy {
 }
 
 class ResponsesStrategy implements SearchStrategy {
+  // eslint-disable-next-line class-methods-use-this
   async run(params: SearchRunParams): Promise<SearchRunResult> {
     const { vectorStoreId, query, limit } = params;
     const qa = await runResponsesQA({
@@ -72,6 +75,7 @@ class ResponsesStrategy implements SearchStrategy {
 }
 
 class VectorStrategy implements SearchStrategy {
+  // eslint-disable-next-line class-methods-use-this
   async run(params: SearchRunParams): Promise<SearchRunResult> {
     const { vectorStoreId, query, limit = 10 } = params;
     const search = await searchVectorStore({ vectorStoreId, query, limit });
@@ -84,6 +88,7 @@ class VectorStrategy implements SearchStrategy {
   }
 }
 
+// eslint-disable-next-line max-classes-per-file
 export function createSearchStrategy(engine: SearchEngine): SearchStrategy {
   switch (engine) {
     case 'agentic':

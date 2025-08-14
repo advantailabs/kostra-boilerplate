@@ -1,7 +1,12 @@
+/* eslint-env node */
+/* eslint-disable vars-on-top */
+/* eslint-disable no-undef */
+/* eslint-disable no-var */
 import { PrismaClient } from '@prisma/client';
 
 declare global {
   // eslint-disable-next-line no-var
+  // eslint-disable-next-line no-unused-vars
   var prisma: PrismaClient | undefined;
 }
 
