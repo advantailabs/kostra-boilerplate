@@ -1,6 +1,6 @@
 import { prisma as sharedPrisma } from '@/lib/prisma';
+import { RepositoryResult } from '@/types/chat';
 import { File, PrismaClient } from '@prisma/client';
-import { RepositoryResult } from '../../../types/chat';
 
 export type PublicFile = Omit<File, 'openaiFileId'>;
 

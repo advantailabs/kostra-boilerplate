@@ -1,6 +1,6 @@
 import { createVectorStore } from '@/services/external/openai/vector-store';
+import { createKnowledgeBaseService } from '@/services/internal/knowledge-base';
 import { createKnowledgeBase } from '@/services/repositories/knowledge-base';
-import { createKnowledgeBaseService } from '../knowledge-base';
 
 // Mock external dependencies
 jest.mock('@/services/external/openai/vector-store');

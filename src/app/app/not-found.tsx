@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Button } from '@/components/atom/Button';
 import { ArrowAnimated } from '@/components/icons/ArrowAnimated';
 
+import { siteConfig } from '@/app/siteConfig';
 import { DatabaseLogo } from '../../../public/DatabaseLogo';
-import { siteConfig } from '../siteConfig';
 
 export default function NotFound() {
   return (

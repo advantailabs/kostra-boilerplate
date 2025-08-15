@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/molecules/common/Select';
+import { KnowledgeBaseFileUploader } from '@/components/organisms/modules/knowledge-bases/KnowledgeBaseFileUploader';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useKnowledgeBases, useRemoveFileFromKnowledgeBase } from '@/hooks/useKnowledgeBases';
 import { formatFileSize, getFileIcon } from '@/lib/file-utils';
@@ -19,7 +20,6 @@ import { RiAddLine, RiCloseLine, RiDeleteBinLine, RiImageAddLine } from '@remixi
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
-import { KnowledgeBaseFileUploader } from '../knowledge-bases/KnowledgeBaseFileUploader';
 
 interface PersonaModalProps {
   isOpen: boolean;

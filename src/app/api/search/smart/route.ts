@@ -11,19 +11,13 @@ import {
 import { auth } from '@clerk/nextjs/server';
 // import { NextResponse } from 'next/server';
 
-import { CREDIT_COSTS } from '../../../../lib/constants/credits';
-import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '../../../../lib/utils/search';
-import { searchVectorStore } from '../../../../services/external/openai/vector-store';
-import { CreditService } from '../../../../services/internal/credit';
-import {
-  createSearchStrategy,
-  type SearchEngine,
-} from '../../../../services/internal/search/factory';
-import {
-  getKnowledgeBaseWithVectorStore,
-  persistSearch,
-} from '../../../../services/repositories/search';
-import { getUserByClerkId } from '../../../../services/repositories/user';
+import { CREDIT_COSTS } from '@/lib/constants/credits';
+import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '@/lib/utils/search';
+import { searchVectorStore } from '@/services/external/openai/vector-store';
+import { CreditService } from '@/services/internal/credit';
+import { createSearchStrategy, type SearchEngine } from '@/services/internal/search/factory';
+import { getKnowledgeBaseWithVectorStore, persistSearch } from '@/services/repositories/search';
+import { getUserByClerkId } from '@/services/repositories/user';
 
 export const dynamic = 'force-dynamic';
 

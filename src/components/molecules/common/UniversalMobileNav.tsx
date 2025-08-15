@@ -1,12 +1,12 @@
 'use client';
 
+import UserProfile from '@/components/branding/UserProfile';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import UserProfile from '../../branding/UserProfile';
 
 interface NavItem {
   name: string;

@@ -4,7 +4,7 @@ import {
   getThreadWithMessages,
   getUserThreads,
   restoreThreadService,
-} from '../chat';
+} from '@/services/internal/chat';
 
 import {
   deleteThread,
@@ -13,12 +13,15 @@ import {
   findByUserAndIdIncludingDeleted,
   findByUserId,
   restoreThread,
-} from '../../repositories/thread';
+} from '@/services/repositories/thread';
 
-import { deleteMessagesByThreadId, restoreMessagesByThreadId } from '../../repositories/message';
+import {
+  deleteMessagesByThreadId,
+  restoreMessagesByThreadId,
+} from '@/services/repositories/message';
 
 // Mock the repository functions
-jest.mock('../../repositories/thread', () => ({
+jest.mock('@/services/repositories/thread', () => ({
   deleteThread: jest.fn(),
   findByIdWithMessages: jest.fn(),
   findByUserAndId: jest.fn(),
@@ -27,7 +30,7 @@ jest.mock('../../repositories/thread', () => ({
   restoreThread: jest.fn(),
 }));
 
-jest.mock('../../repositories/message', () => ({
+jest.mock('@/services/repositories/message', () => ({
   deleteMessagesByThreadId: jest.fn(),
   restoreMessagesByThreadId: jest.fn(),
 }));

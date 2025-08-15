@@ -1,13 +1,13 @@
 import { auth } from '@clerk/nextjs/server';
 
-import { stripe } from '../../../../lib/stripe';
+import { stripe } from '@/lib/stripe';
 import {
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   unauthorizedResponse,
-} from '../../../../lib/utils/response';
-import { getUserByClerkId, setUserStripeCustomerId } from '../../../../services/repositories/user';
+} from '@/lib/utils/response';
+import { getUserByClerkId, setUserStripeCustomerId } from '@/services/repositories/user';
 
 export const dynamic = 'force-dynamic';
 

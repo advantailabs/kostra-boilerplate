@@ -2,20 +2,20 @@
 
 // import Image from 'next/image';
 // import Link from 'next/link';
+import { getApiErrorMessage } from '@/lib/utils/error-handler';
 import { RiCheckLine, RiFileCopyLine } from '@remixicon/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
-import { getApiErrorMessage } from '../../../../lib/utils/error-handler';
 
-import { Button } from '../../../../components/atom/Button';
-import { CreditDisplay } from '../../../../components/atom/CreditDisplay';
-import MarkdownRenderer from '../../../../components/atom/SyntaxHighlighter';
+import { Button } from '@/components/atom/Button';
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
+import MarkdownRenderer from '@/components/atom/SyntaxHighlighter';
 // Spinner kept for potential future use
-import { SearchResultSkeleton } from '../../../../components/atom/Skeleton';
-import { CompactSearchBox } from '../../../../components/molecules/search/CompactSearchBox';
-import { useSmartSearchWithCredits } from '../../../../hooks/useSearchWithCredits';
-import type { SearchMode } from '../../../../lib/constants/search';
-import { generateFileDownloadUrl } from '../../../../services/api/files';
+import { SearchResultSkeleton } from '@/components/atom/Skeleton';
+import { CompactSearchBox } from '@/components/molecules/search/CompactSearchBox';
+import { useSmartSearchWithCredits } from '@/hooks/useSearchWithCredits';
+import type { SearchMode } from '@/lib/constants/search';
+import { generateFileDownloadUrl } from '@/services/api/files';
 
 interface ResultItem {
   id: string;

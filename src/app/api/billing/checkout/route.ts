@@ -1,15 +1,15 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
-import { PLANS_CONFIG } from '../../../../data/config/plans';
-import { stripe } from '../../../../lib/stripe';
+import { PLANS_CONFIG } from '@/data/config/plans';
+import { stripe } from '@/lib/stripe';
 import {
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   unauthorizedResponse,
-} from '../../../../lib/utils/response';
-import { getUserByClerkId, setUserStripeCustomerId } from '../../../../services/repositories/user';
+} from '@/lib/utils/response';
+import { getUserByClerkId, setUserStripeCustomerId } from '@/services/repositories/user';
 
 export const dynamic = 'force-dynamic';
 
