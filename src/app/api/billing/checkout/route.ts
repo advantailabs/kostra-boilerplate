@@ -27,14 +27,13 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => ({}));
     const { plan = 'pro' } = body as { plan?: keyof typeof PLANS_CONFIG };
-    const planConfig = PLANS_CONFIG[plan];
-    const envPriceOverride =
+    const priceId =
+      // eslint-disable-next-line no-nested-ternary
       plan === 'pro'
         ? process.env.STRIPE_PRO_PRICE_ID
         : plan === 'creditPack'
           ? process.env.STRIPE_CREDIT_PACK_PRICE_ID
           : undefined;
-    const priceId = envPriceOverride || planConfig?.priceId;
     if (!priceId) {
       return successResponse({ error: 'Invalid plan selected' }, 400);
     }

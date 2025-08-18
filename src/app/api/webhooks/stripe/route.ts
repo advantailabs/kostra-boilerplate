@@ -53,9 +53,8 @@ export async function POST(request: Request) {
           expand: ['lines.data.price'],
         });
 
-        const configuredProPriceId = process.env.STRIPE_PRO_PRICE_ID || PLANS_CONFIG.pro.priceId;
-        const configuredCreditPackPriceId =
-          process.env.STRIPE_CREDIT_PACK_PRICE_ID || PLANS_CONFIG.creditPack.priceId;
+        const configuredProPriceId = process.env.STRIPE_PRO_PRICE_ID;
+        const configuredCreditPackPriceId = process.env.STRIPE_CREDIT_PACK_PRICE_ID;
         const getLinePriceId = (line: any): string | null => {
           // Standard subscription/checkout price object
           if (line?.price?.id) return line.price.id as string;
