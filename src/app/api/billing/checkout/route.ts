@@ -27,9 +27,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => ({}));
     const { plan = 'pro' } = body as { plan?: keyof typeof PLANS_CONFIG };
-    const envPrice = process.env.STRIPE_PRICE_ID || '';
     const planConfig = PLANS_CONFIG[plan];
-    const priceId = envPrice || planConfig?.priceId;
+    const envPriceOverride =
+      plan === 'pro'
+        ? process.env.STRIPE_PRO_PRICE_ID
+        : plan === 'creditPack'
+          ? process.env.STRIPE_CREDIT_PACK_PRICE_ID
+          : undefined;
+    const priceId = envPriceOverride || planConfig?.priceId;
     if (!priceId) {
       return successResponse({ error: 'Invalid plan selected' }, 400);
     }
@@ -48,25 +53,45 @@ export async function POST(request: NextRequest) {
 
     const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const base = origin.replace(/\/$/, '');
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      customer: customerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      // Ensure an Invoice is created and finalized so it shows in Billing Portal
-      invoice_creation: { enabled: true },
-      allow_promotion_codes: true,
-      success_url: `${base}/app/credit-history?status=success`,
-      cancel_url: `${base}/app/credit-history?status=cancel`,
-      metadata: {
-        userId: String(user.id),
-        plan,
-      },
-    });
+    // Use subscription checkout for pro, one-time payment for creditPack
+    const session = await stripe.checkout.sessions.create(
+      plan === 'pro'
+        ? {
+            mode: 'subscription',
+            customer: customerId,
+            line_items: [
+              {
+                price: priceId,
+                quantity: 1,
+              },
+            ],
+            allow_promotion_codes: true,
+            success_url: `${base}/app/settings/billing?status=success`,
+            cancel_url: `${base}/app/settings/billing?status=cancel`,
+            metadata: {
+              userId: String(user.id),
+              plan,
+            },
+          }
+        : {
+            mode: 'payment',
+            customer: customerId,
+            line_items: [
+              {
+                price: priceId,
+                quantity: 1,
+              },
+            ],
+            invoice_creation: { enabled: true },
+            allow_promotion_codes: true,
+            success_url: `${base}/app/credit-history?status=success`,
+            cancel_url: `${base}/app/credit-history?status=cancel`,
+            metadata: {
+              userId: String(user.id),
+              plan,
+            },
+          }
+    );
 
     return successResponse({ url: session.url });
   } catch (error) {

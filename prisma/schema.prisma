@@ -14,6 +14,11 @@ enum UserRole {
   USER
 }
 
+enum UserPlan {
+  FREE
+  PRO
+}
+
 model User {
   id             Int             @id @default(autoincrement())
   clerkUserId    String          @unique
@@ -24,6 +29,9 @@ model User {
   isOnboarded    Boolean         @default(false)
   credits        Float           @default(100.0) // Available credits
   stripeCustomerId String?       @unique
+  plan           UserPlan        @default(FREE)
+  isOverDue      Boolean         @default(false)
+  planExpiringAt DateTime?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime? // Soft delete

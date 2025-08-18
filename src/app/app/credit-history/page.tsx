@@ -1,6 +1,7 @@
 'use client';
 
-import { RiCoinLine } from '@remixicon/react';
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
+import { RiCoinLine, RiVipCrownLine } from '@remixicon/react';
 
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeader } from '@/components/molecules/common/PageHeader';
@@ -14,9 +15,11 @@ import {
 } from '@/components/molecules/common/Table';
 import { useCredits } from '@/hooks/useCredits';
 import { formatters } from '@/lib/format-utils';
+import { useAuthStore } from '@/store/auth';
 
 export default function CreditHistoryPage() {
   const { history, totals, isLoading } = useCredits(100);
+  const user = useAuthStore(state => state.user);
 
   if (isLoading) return <LoadingScreen message="Loading credit history..." />;
 
@@ -27,7 +30,13 @@ export default function CreditHistoryPage() {
       </div>
 
       <div className="p-4 max-sm:p-3">
-        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="rounded-md border border-gray-200 p-3 dark:border-gray-800">
+            <div className="text-xs text-gray-500">Available Credits</div>
+            <div className="mt-1 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <RiCoinLine className="h-5 w-5 text-yellow-500" /> <CreditDisplay showIcon={false} />
+            </div>
+          </div>
           <div className="rounded-md border border-gray-200 p-3 dark:border-gray-800">
             <div className="text-xs text-gray-500">Total Credits</div>
             <div className="mt-1 flex items-center gap-2 text-lg font-semibold text-emerald-600 dark:text-emerald-400">
@@ -40,6 +49,15 @@ export default function CreditHistoryPage() {
               <RiCoinLine className="h-5 w-5" /> {formatters.unit(totals.debit)}
             </div>
           </div>
+          {user?.plan === 'PRO' && (
+            <div className="rounded-md border border-gray-200 p-3 dark:border-gray-800">
+              <div className="text-xs text-gray-500">Pro Renewal</div>
+              <div className="mt-1 flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+                <RiVipCrownLine className="h-5 w-5" />
+                {user.planExpiringAt ? new Date(user.planExpiringAt).toLocaleDateString() : '-'}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="rounded-md border border-gray-200 dark:border-gray-800">

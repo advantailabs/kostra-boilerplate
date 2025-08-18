@@ -39,6 +39,9 @@ export async function GET() {
       role: user.role,
       isOnboarded: user.isOnboarded,
       credits: user.credits,
+      plan: user.plan,
+      isOverdue: user.isOverDue,
+      planExpiringAt: user.planExpiringAt ? user.planExpiringAt.toISOString() : null,
       // Add any other serializable properties you need
     };
 
@@ -51,6 +54,9 @@ export async function GET() {
       profilePicture: user.profilePicture,
       isOnboarded: user.isOnboarded,
       credits: user.credits,
+      plan: user.plan,
+      isOverdue: user.isOverDue,
+      planExpiringAt: user.planExpiringAt ? user.planExpiringAt.toISOString() : null,
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')

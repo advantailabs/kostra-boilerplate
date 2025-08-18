@@ -6,6 +6,7 @@ import {
   RiFileLine,
   RiSearchLine,
   RiUserLine,
+  RiVipCrownLine,
 } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ import { siteConfig } from '@/app/siteConfig';
 import { Button } from '@/components/atom/Button';
 import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import { cx, focusRing } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
 import { useUiModalsStore } from '@/store/ui/modals';
 
 import MobileSidebar from './MobileSidebar';
@@ -40,6 +42,7 @@ export function Sidebar() {
   const { theme, resolvedTheme } = useTheme();
   const openCreditPurchase = useUiModalsStore(state => state.openCreditPurchase);
   const handleOpenPurchase = useCallback(() => openCreditPurchase(), [openCreditPurchase]);
+  const userPlan = useAuthStore(state => state.user?.plan);
 
   const isActive = (itemHref: string) => {
     // Exact match for home route to avoid highlighting when on sub-routes
@@ -141,13 +144,19 @@ export function Sidebar() {
             {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}
             <div className="mb-2 flex items-center justify-between rounded-md border border-gray-200 px-2 py-1.5 dark:border-gray-800">
               <CreditDisplay size="sm" />
-              <Button
-                variant="secondary"
-                className="btn-shimmer h-7 px-2 text-xs shadow-sm"
-                onClick={handleOpenPurchase}
-              >
-                Purchase
-              </Button>
+              {userPlan === 'PRO' ? (
+                <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-700 dark:text-amber-300">
+                  <RiVipCrownLine className="size-3.5" /> Pro User
+                </span>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="btn-shimmer h-7 px-2 text-xs shadow-sm"
+                  onClick={handleOpenPurchase}
+                >
+                  Purchase
+                </Button>
+              )}
             </div>
             <UserProfileDesktop />
           </div>

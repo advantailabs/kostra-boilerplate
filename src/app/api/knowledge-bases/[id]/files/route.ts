@@ -1,6 +1,5 @@
 import {
   errorResponse,
-  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -10,7 +9,6 @@ import {
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
-import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import {
   addFileToKnowledgeBaseService,
   getKnowledgeBaseFilesService,
@@ -98,11 +96,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     const { fileId } = validationResult.data;
-
-    // Enforce credit threshold for adding files
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
-      return insufficientCreditsResponse();
-    }
 
     // Add file to knowledge base
     const result = await addFileToKnowledgeBaseService(knowledgeBaseId, fileId);

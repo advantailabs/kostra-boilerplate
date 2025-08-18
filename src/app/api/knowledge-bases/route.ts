@@ -1,5 +1,5 @@
 import {
-  insufficientCreditsResponse,
+  errorResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -9,12 +9,14 @@ import {
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
-import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { FREE_LIMITS } from '@/data/config/plans';
+import { prisma } from '@/lib/prisma';
 import {
   createKnowledgeBaseService,
   getUserKnowledgeBasesPublicService,
 } from '@/services/internal/knowledge-base';
 import { getUserByClerkId } from '@/services/repositories/user';
+import { UserPlan } from '@prisma/client';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -88,9 +90,14 @@ export async function POST(request: NextRequest) {
 
     const { title, description, metadata } = validationResult.data;
 
-    // Enforce credit threshold for creation
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
-      return insufficientCreditsResponse();
+    // Enforce Free plan limit: max 1 knowledge base
+    if (user.plan === UserPlan.FREE) {
+      const kbCount = await prisma.knowledgeBase.count({
+        where: { userId: user.id, deletedAt: null },
+      });
+      if (kbCount >= FREE_LIMITS.knowledgeBases) {
+        return errorResponse('Free plan limit reached: You can only create 1 knowledge base.', 403);
+      }
     }
 
     // Create knowledge base

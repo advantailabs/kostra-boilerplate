@@ -11,6 +11,9 @@ interface User {
   role: string;
   isOnboarded: boolean;
   credits: number;
+  plan?: string;
+  isOverdue?: boolean;
+  planExpiringAt?: string | null;
 }
 
 interface AuthState {

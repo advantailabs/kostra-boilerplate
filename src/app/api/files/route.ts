@@ -1,7 +1,7 @@
-import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { FREE_LIMITS } from '@/data/config/plans';
+import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
-  insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -106,9 +106,18 @@ export async function POST(request: NextRequest) {
       return notFoundResponse('User does not exist');
     }
 
-    // Enforce credit threshold for uploads
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
-      return insufficientCreditsResponse();
+    // Enforce Free plan total file limit for uploads (user files + KB files)
+    if (user.plan === 'FREE') {
+      const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+      // Determine how many files are being uploaded in this request
+      const bodyForCount = await request
+        .clone()
+        .json()
+        .catch(() => null);
+      const incomingCount = Array.isArray(bodyForCount?.files) ? bodyForCount.files.length : 1;
+      if (totalFiles + incomingCount > FREE_LIMITS.filesTotal) {
+        return errorResponse('Free plan limit reached: You can upload up to 50 total files.', 403);
+      }
     }
 
     // Parse and validate request body

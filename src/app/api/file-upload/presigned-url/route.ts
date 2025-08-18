@@ -1,5 +1,6 @@
-import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { FREE_LIMITS } from '@/data/config/plans';
 import { validateFileUpload } from '@/lib/file-upload-config';
+import { prisma } from '@/lib/prisma';
 import { generatePresignedUrl } from '@/lib/s3';
 import {
   insufficientCreditsResponse,
@@ -40,13 +41,16 @@ export async function POST(request: NextRequest) {
       ]);
     }
 
-    // Enforce credit threshold for generating presigned URLs
-    // Block for MessageAttachment and UserDocument when credits are low
-    if (
-      user.credits < CREDIT_THRESHOLDS.creationMin &&
-      (uploadPurpose === 'MessageAttachment' || uploadPurpose === 'UserDocument')
-    ) {
-      return insufficientCreditsResponse();
+    // Enforce Free plan total files for MessageAttachment and UserDocument
+    if (uploadPurpose === 'MessageAttachment' || uploadPurpose === 'UserDocument') {
+      if (user.plan === 'FREE') {
+        const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+        if (totalFiles >= FREE_LIMITS.filesTotal) {
+          return insufficientCreditsResponse(
+            'Free plan limit reached: You can upload up to 50 total files.'
+          );
+        }
+      }
     }
 
     // Validate file upload configuration

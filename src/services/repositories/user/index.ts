@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { UserRole } from '@prisma/client';
+import { UserPlan, UserRole } from '@prisma/client';
 
 import { ClerkUserUpdate } from '@/app/types/user.type';
 
@@ -43,4 +43,26 @@ const setUserStripeCustomerId = async (userId: number, stripeCustomerId: string)
   });
 };
 
-export { deleteUser, getUserByClerkId, getUserByRole, setUserStripeCustomerId, upsertUser };
+const setUserPlan = async (userId: number, plan: UserPlan) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { plan },
+  });
+};
+
+const setUserOverdue = async (userId: number, isOverDue: boolean) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { isOverDue },
+  });
+};
+
+export {
+  deleteUser,
+  getUserByClerkId,
+  getUserByRole,
+  setUserOverdue,
+  setUserPlan,
+  setUserStripeCustomerId,
+  upsertUser,
+};

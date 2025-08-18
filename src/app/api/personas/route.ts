@@ -1,9 +1,10 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
-import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { FREE_LIMITS } from '@/data/config/plans';
+import { prisma } from '@/lib/prisma';
 import {
-  insufficientCreditsResponse,
+  errorResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -13,6 +14,7 @@ import {
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
+import { UserPlan } from '@prisma/client';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -76,9 +78,21 @@ export async function POST(request: NextRequest) {
 
     const { name, description, instructions, tags, logo } = validationResult.data;
 
-    // Enforce credit threshold for creation
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
-      return insufficientCreditsResponse();
+    // Enforce Free plan limit: max 1 persona
+    if (user.plan === UserPlan.FREE) {
+      const personaCount = await prisma.persona.count({
+        where: { userId: user.id, deletedAt: null },
+      });
+      if (personaCount >= FREE_LIMITS.personas) {
+        return errorResponse('Free plan limit reached: You can only create 1 persona.', 403);
+      }
+      // Also ensure KB limit isn't exceeded since persona creation creates a KB
+      const kbCount = await prisma.knowledgeBase.count({
+        where: { userId: user.id, deletedAt: null },
+      });
+      if (kbCount >= FREE_LIMITS.knowledgeBases) {
+        return errorResponse('Free plan limit reached: You can only have 1 knowledge base.', 403);
+      }
     }
 
     // Create persona

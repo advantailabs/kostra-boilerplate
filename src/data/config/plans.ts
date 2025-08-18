@@ -14,25 +14,19 @@ export const PLANS: Plan[] = [
     name: 'Free Mode',
     price: '$0',
     description:
-      'Best to try Peon. Limited usage. If credits drop below 50 you automatically move to Free Mode.',
-    features: [
-      'Auto-switch to Free when credits < 50',
-      'No persona creation when credits < 50',
-      'No file upload when credits < 50',
-      'No knowledge base creation when credits < 50',
-      'Basic chat & search',
-    ],
+      'Best to try Peon. Free users can have 1 persona, 1 knowledge base, and up to 50 total files. 50 credits are available to start with.',
+    features: ['1 persona', '1 knowledge base', 'Up to 50 total files', 'Basic Chat & Search'],
     badge: 'Limited',
   },
   {
     id: 'pro',
     name: 'Pro Mode',
     price: '$10',
-    period: 'per 1000 credits',
-    description: 'Unlock creation features and higher limits with flexible credit packs.',
+    period: 'month',
+    description: 'Monthly subscription. Unlimited creation features and higher limits each month.',
     features: [
-      'Unlimited personas',
-      'Unlimited knowledge bases',
+      '10,000 credits per month',
+      'Unlimited personas & knowledge bases',
       'Up to 10,000 file uploads',
       '5 GB file storage included',
       'Priority support',
@@ -56,14 +50,27 @@ export const PLANS: Plan[] = [
 
 export const CREDIT_THRESHOLDS = {
   searchChatMin: 1, // Minimum credits required to perform search/chat actions
-  creationMin: 50, // Minimum credits required for create/edit persona/KB and uploads
+  // Creation actions are controlled by plan-based limits for Free users
+  creationMin: 0,
+} as const;
+
+export const FREE_LIMITS = {
+  personas: 1,
+  knowledgeBases: 1,
+  filesTotal: 5,
 } as const;
 
 export const PLANS_CONFIG = {
   pro: {
     name: 'Pro Mode',
     price: '10',
+    credits: 10000,
+    priceId: 'price_1Rwmse4zmLWsZXN8lswamntg',
+  },
+  creditPack: {
+    name: 'Credit Pack',
+    price: '10',
     credits: 1000,
-    priceId: 'price_1Rw7nQ7Yrm2cxdH4gTIdRDup',
+    priceId: 'price_1Rw8Z14zmLWsZXN8wJnpYnRw',
   },
 };

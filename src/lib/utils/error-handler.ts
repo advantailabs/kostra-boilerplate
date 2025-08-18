@@ -34,12 +34,21 @@ export function handleApiError(error: unknown, customMessage?: string): void {
       // Use custom message if provided, otherwise use API message
       const message = customMessage || errorData.message || 'An unexpected error occurred';
 
+      // Normalize message for specialized handling
+      const messageLower = (errorData.message || '').toLowerCase();
+
       // Show different toast types based on status code
       switch (response.status) {
         case 402:
-          toast.error('Insufficient Credits', {
-            description: customMessage || errorData.message,
-          });
+          if (messageLower.includes('free plan limit')) {
+            toast.error('Free Plan Limit Reached', {
+              description: customMessage || errorData.message,
+            });
+          } else {
+            toast.error('Insufficient Credits', {
+              description: customMessage || errorData.message,
+            });
+          }
           break;
         case 400:
           toast.error(message, {
@@ -52,9 +61,15 @@ export function handleApiError(error: unknown, customMessage?: string): void {
           });
           break;
         case 403:
-          toast.error('Access Denied', {
-            description: message,
-          });
+          if (messageLower.includes('free plan limit')) {
+            toast.error('Free Plan Limit Reached', {
+              description: message,
+            });
+          } else {
+            toast.error('Access Denied', {
+              description: message,
+            });
+          }
           break;
         case 404:
           toast.error('Not Found', {

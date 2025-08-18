@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { useApiMutation } from '@/hooks/useApiMutation';
 import { createBillingPortalSession, createCheckoutSession } from '@/services/api/credits';
 
-export type CreditPlanId = 'pro';
+export type CreditPlanId = 'pro' | 'creditPack';
 
 export function useStripe() {
   const portalMutation = useApiMutation<string, void>({

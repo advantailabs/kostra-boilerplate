@@ -18,21 +18,45 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
   const { checkout, isCreatingCheckout } = useStripe();
   const credits = useCreditStore(state => state.credits);
   const footer = (
-    <div className="flex w-full items-center justify-end gap-2">
-      <Button asChild variant="secondary">
-        <a href="mailto:hi@peon.sh?subject=Enterprise%20Plan%20Inquiry">Contact - hi@peon.sh</a>
-      </Button>
-      <Button
-        variant="primary"
-        isLoading={isCreatingCheckout}
-        loadingText="Purchasing..."
-        onClick={async () => {
-          await checkout('pro');
-          onClose();
-        }}
-      >
-        Purchase now
-      </Button>
+    <div className="flex w-full items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          Contact{' '}
+          <a
+            href="mailto:hi@peon.io?subject=Enterprise%20Plan%20Inquiry"
+            className="font-medium underline underline-offset-2"
+          >
+            hi@peon.io
+          </a>{' '}
+          for enterprise
+        </p>
+        {/*
+        <Button
+          variant="secondary"
+          isLoading={isCreatingCheckout}
+          loadingText="Opening..."
+          onClick={async () => {
+            await checkout('creditPack');
+            onClose();
+          }}
+        >
+          Topup Credits (one-time)
+        </Button>
+        */}
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="primary"
+          isLoading={isCreatingCheckout}
+          loadingText="Redirecting..."
+          onClick={async () => {
+            await checkout('pro');
+            onClose();
+          }}
+        >
+          Subscribe to Pro ($10/mo)
+        </Button>
+      </div>
     </div>
   );
   return (

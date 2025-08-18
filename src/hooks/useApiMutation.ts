@@ -1,5 +1,6 @@
 import { handleApiError, handleApiSuccess } from '@/lib/utils/error-handler';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 interface UseApiMutationOptions<TData, TVariables> {
   mutationFn: (_: TVariables) => Promise<TData>;
@@ -45,8 +46,10 @@ export function useApiMutation<TData = unknown, TVariables = unknown>({
       }
     },
     onError: (error, _variables) => {
-      // Handle error with toast
-      handleApiError(error, errorMessage);
+      // Avoid duplicate toasts: axios interceptor already shows a toast for Axios errors
+      if (!(error instanceof AxiosError)) {
+        handleApiError(error, errorMessage);
+      }
 
       // Call custom onError handler
       if (onError) {
