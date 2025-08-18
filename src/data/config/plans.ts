@@ -65,7 +65,7 @@ export const PLANS_CONFIG = {
     name: 'Pro Mode',
     price: '10',
     credits: 10000,
-    priceId: 'price_1Rwmse4zmLWsZXN8lswamntg',
+    priceId: 'price_1RxUIw8sPEd8cuIzZiBYWjw2',
   },
   creditPack: {
     name: 'Credit Pack',
