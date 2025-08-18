@@ -149,13 +149,15 @@ export function Sidebar() {
                   <RiVipCrownLine className="size-3.5" /> Pro User
                 </span>
               ) : (
-                <Button
-                  variant="secondary"
-                  className="btn-shimmer h-7 px-2 text-xs shadow-sm"
-                  onClick={handleOpenPurchase}
-                >
-                  Purchase
-                </Button>
+                <div className="rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px] shadow-[0_0_16px_rgba(99,102,241,0.35)]">
+                  <Button
+                    variant="ghost"
+                    className="btn-shimmer h-7 border-transparent bg-white px-2 text-xs text-gray-900 hover:bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 dark:hover:bg-gray-900/60"
+                    onClick={handleOpenPurchase}
+                  >
+                    Upgrade to Pro
+                  </Button>
+                </div>
               )}
             </div>
             <UserProfileDesktop />

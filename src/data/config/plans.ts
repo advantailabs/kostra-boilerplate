@@ -21,7 +21,7 @@ export const PLANS: Plan[] = [
   {
     id: 'pro',
     name: 'Pro Mode',
-    price: '$10',
+    price: '$15',
     period: 'month',
     description: 'Monthly subscription. Unlimited creation features and higher limits each month.',
     features: [
@@ -63,7 +63,7 @@ export const FREE_LIMITS = {
 export const PLANS_CONFIG = {
   pro: {
     name: 'Pro Mode',
-    price: '10',
+    price: '15',
     credits: 10000,
   },
   creditPack: {

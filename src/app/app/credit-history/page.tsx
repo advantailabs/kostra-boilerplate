@@ -58,13 +58,15 @@ export default function CreditHistoryPage() {
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   <RiVipCrownLine className="h-5 w-5" /> Free Plan
                 </div>
-                <Button
-                  variant="secondary"
-                  className="h-8 px-3 text-xs"
-                  onClick={() => openCreditPurchase()}
-                >
-                  Purchase
-                </Button>
+                <div className="rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px] shadow-[0_0_16px_rgba(99,102,241,0.35)]">
+                  <Button
+                    variant="ghost"
+                    className="h-8 border-transparent bg-white px-3 text-xs text-gray-900 hover:bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 dark:hover:bg-gray-900/60"
+                    onClick={() => openCreditPurchase()}
+                  >
+                    Upgrade to Pro
+                  </Button>
+                </div>
               </div>
             </div>
           )}

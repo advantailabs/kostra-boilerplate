@@ -13,6 +13,7 @@ import { ProgressCircle } from '@/components/atom/ProgressCircle';
 import { Switch } from '@/components/atom/Switch';
 import { useStripe } from '@/hooks/useStripe';
 import { cx } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
 
 const data: {
   name: string;
@@ -57,6 +58,8 @@ const data: {
 export default function Billing() {
   const [isSpendMgmtEnabled, setIsSpendMgmtEnabled] = React.useState(true);
   const { openBillingPortal, checkout, isCreatingPortal, isCreatingCheckout } = useStripe();
+  const { user } = useAuthStore();
+  const isFreePlan = (user?.plan || 'FREE') === 'FREE';
   return (
     <>
       <div className="rounded-lg bg-gray-50 p-6 ring-1 ring-inset ring-gray-200 dark:bg-gray-400/10 dark:ring-gray-800">
@@ -79,7 +82,16 @@ export default function Billing() {
           <Button variant="primary" disabled={isCreatingPortal} onClick={openBillingPortal}>
             Manage billing in Stripe
           </Button>
-          <Button variant="secondary" disabled={isCreatingCheckout} onClick={() => checkout('pro')}>
+          <Button
+            variant={isFreePlan ? 'primary' : 'secondary'}
+            className={
+              isFreePlan
+                ? 'shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-500 ring-offset-2'
+                : undefined
+            }
+            disabled={isCreatingCheckout}
+            onClick={() => checkout('pro')}
+          >
             Purchase credits
           </Button>
         </div>

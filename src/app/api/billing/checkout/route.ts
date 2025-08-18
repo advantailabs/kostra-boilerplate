@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
               },
             ],
             allow_promotion_codes: true,
-            success_url: `${base}/app/settings/billing?status=success`,
-            cancel_url: `${base}/app/settings/billing?status=cancel`,
+            success_url: `${base}/app/credit-history?status=success`,
+            cancel_url: `${base}/app/credit-history?status=cancel`,
             metadata: {
               userId: String(user.id),
               plan,
