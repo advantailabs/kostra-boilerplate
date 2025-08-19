@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     url: 'https://peon.sh',
     images: [
       {
-        url: '/screenshots/persona-chat.jpg',
+        url: '/screenshots/search.png',
         width: 1200,
         height: 630,
         alt: 'Peon AI Chat Interface',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: 'Peon - Your Personal AI Assistant',
     description:
       'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
-    images: ['/screenshots/persona-chat.jpg'],
+    images: ['/screenshots/search.png'],
   },
   alternates: {
     canonical: 'https://peon.sh',
