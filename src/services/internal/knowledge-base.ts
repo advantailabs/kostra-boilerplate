@@ -226,14 +226,11 @@ const deleteKnowledgeBaseService = async (
       };
     }
 
-    console.log('Result:', result);
-
     // Always delete the vector store if it exists
     if (result.data?.vectorStoreId) {
       console.log('Deleting vector store:', result.data.vectorStoreId);
       try {
-        const res = await deleteVectorStore(result.data.vectorStoreId);
-        console.log('Vector store deleted:', res);
+        await deleteVectorStore(result.data.vectorStoreId);
       } catch (error) {
         console.error('Error deleting vector store:', error);
         // Continue with deletion even if vector store deletion fails
