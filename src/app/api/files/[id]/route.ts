@@ -1,6 +1,5 @@
 import {
   errorResponse,
-  forbiddenResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -48,7 +47,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
     // Check if user owns this file
     if (result.data.userId !== user.id) {
-      return forbiddenResponse('Access denied');
+      return notFoundResponse('File not found');
     }
 
     return successResponse({
@@ -92,7 +91,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     // Check if user owns this file
     if (fileResult.data.userId !== user.id) {
-      return forbiddenResponse('Access denied');
+      return notFoundResponse('File not found');
     }
 
     // Parse and validate request body
@@ -150,7 +149,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
     }
 
     if (fileResult.data.userId !== user.id) {
-      return forbiddenResponse('Access denied');
+      return notFoundResponse('File not found');
     }
 
     // Delete file

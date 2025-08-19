@@ -185,10 +185,11 @@ const getKnowledgeBaseByIdPublicService = async (
 
 const updateKnowledgeBaseService = async (
   id: number,
-  data: UpdateKnowledgeBaseData
+  data: UpdateKnowledgeBaseData,
+  currentUserId?: number
 ): Promise<KnowledgeBaseServiceResult<any>> => {
   try {
-    const result = await updateKnowledgeBase(id, data);
+    const result = await updateKnowledgeBase(id, data, currentUserId);
 
     if (!result.success) {
       return {
@@ -212,10 +213,11 @@ const updateKnowledgeBaseService = async (
 
 const deleteKnowledgeBaseService = async (
   id: number,
-  deleteFiles: boolean = false
+  deleteFiles: boolean = false,
+  currentUserId?: number
 ): Promise<KnowledgeBaseServiceResult<boolean>> => {
   try {
-    const result = await deleteKnowledgeBase(id, deleteFiles);
+    const result = await deleteKnowledgeBase(id, deleteFiles, currentUserId);
 
     if (!result.success) {
       return {
@@ -274,10 +276,15 @@ const deleteKnowledgeBaseService = async (
 // and are re-exported here for convenience
 const addFileToKnowledgeBaseService = async (
   knowledgeBaseId: number,
-  fileId: number
+  fileId: number,
+  currentUserId?: number
 ): Promise<KnowledgeBaseServiceResult<void>> => {
   try {
-    const result = await addFileToKnowledgeBaseFromFileService(fileId, knowledgeBaseId);
+    const result = await addFileToKnowledgeBaseFromFileService(
+      fileId,
+      knowledgeBaseId,
+      currentUserId
+    );
 
     if (!result.success) {
       return {
@@ -300,10 +307,15 @@ const addFileToKnowledgeBaseService = async (
 
 const removeFileFromKnowledgeBaseService = async (
   knowledgeBaseId: number,
-  fileId: number
+  fileId: number,
+  currentUserId?: number
 ): Promise<KnowledgeBaseServiceResult<void>> => {
   try {
-    const result = await removeFileFromKnowledgeBaseFromFileService(fileId, knowledgeBaseId);
+    const result = await removeFileFromKnowledgeBaseFromFileService(
+      fileId,
+      knowledgeBaseId,
+      currentUserId
+    );
 
     if (!result.success) {
       return {

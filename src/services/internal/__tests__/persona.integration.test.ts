@@ -56,7 +56,9 @@ const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof create
 const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
 const mockUpdateAssistant = updateAssistant as jest.MockedFunction<typeof updateAssistant>;
 
-describe('Persona Service - End-to-End Tests', () => {
+const maybeDescribe = process.env.SKIP_DB_SETUP === '1' ? describe.skip : describe;
+
+maybeDescribe('Persona Service - End-to-End Tests', () => {
   let testUser: any;
 
   beforeEach(async () => {

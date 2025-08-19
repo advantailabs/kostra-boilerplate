@@ -1,3 +1,4 @@
+import { ALLOWED_ORIGINS } from '@/lib/constants/cors';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -301,12 +302,15 @@ export async function POST(request: NextRequest) {
     });
 
     // Return the streaming response
+    const origin = request.headers.get('origin') ?? '';
+    const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '';
+
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
+        ...(corsOrigin && { 'Access-Control-Allow-Origin': corsOrigin }),
         'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Headers': 'Content-Type',
       },

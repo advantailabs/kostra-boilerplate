@@ -9,6 +9,7 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
+import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { auth } from '@clerk/nextjs/server';
@@ -145,6 +146,19 @@ export async function POST(request: NextRequest) {
     }
 
     const { files, knowledgeBaseIds } = validationResult.data;
+
+    // If KB IDs are provided, ensure all belong to current user
+    if (knowledgeBaseIds && knowledgeBaseIds.length > 0) {
+      const ownershipChecks = await Promise.all(
+        knowledgeBaseIds.map(async id => {
+          const kb = await getKnowledgeBaseByIdPublicService(id);
+          return kb.success && kb.data && kb.data.userId === user.id;
+        })
+      );
+      if (!ownershipChecks.every(Boolean)) {
+        return notFoundResponse('Knowledge base not found');
+      }
+    }
 
     // Process files in parallel using Promise.all
     const uploadPromises = files.map(async fileData => {
