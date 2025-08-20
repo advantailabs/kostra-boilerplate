@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const CORS_OPTIONS = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-ID',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-ID, X-Custom-Token',
 } as const;
 
 /**
@@ -80,7 +80,7 @@ export function createPreflightResponse(request: NextRequest): Response {
 
   const headers: Record<string, string> = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-ID, X-Custom-Token',
   };
 
   if (corsOrigin) {
