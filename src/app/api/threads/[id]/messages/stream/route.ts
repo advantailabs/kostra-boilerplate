@@ -1,8 +1,8 @@
-import { ALLOWED_ORIGINS } from '@/lib/constants/cors';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { CREDIT_COSTS } from '@/lib/constants/credits';
+import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
   errorResponse,
   insufficientCreditsResponse,
@@ -25,6 +25,11 @@ import { addMessageSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
+
+// Handle preflight OPTIONS request
+export async function OPTIONS(request: NextRequest) {
+  return createPreflightResponse(request);
+}
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -251,18 +256,14 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     });
 
     // Return the streaming response
-    const origin = request.headers.get('origin') ?? '';
-    const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '';
-
     return new Response(stream, {
-      headers: {
+      headers: withCors(request, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
-        ...(corsOrigin && { 'Access-Control-Allow-Origin': corsOrigin }),
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }),
     });
   } catch (error) {
     console.error('Error in streaming endpoint:', error);

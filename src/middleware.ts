@@ -25,10 +25,11 @@ const middleware = clerkMiddleware(
     // Check if route is configured
     const isConfigured = isRouteConfigured(path);
     if (!isConfigured) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: 'Route not found', message: 'This route is not configured' },
         { status: 404 }
       );
+      return applyCorsHeaders(request, response);
     }
 
     // Check for presence of a custom token (may be used for elevated access)
@@ -47,7 +48,8 @@ const middleware = clerkMiddleware(
       try {
         await auth.protect();
       } catch (e) {
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        return applyCorsHeaders(request, response);
       }
 
       // Default to USER role if no custom token provided
@@ -55,12 +57,13 @@ const middleware = clerkMiddleware(
       const hasAccess = checkAccess(path, method, effectiveRole);
 
       if (!hasAccess) {
-        return NextResponse.json(
+        const response = NextResponse.json(
           {
             error: 'You do not have sufficient privileges to perform this action',
           },
           { status: 403 }
         );
+        return applyCorsHeaders(request, response);
       }
     }
 
