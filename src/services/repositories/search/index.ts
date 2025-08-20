@@ -39,6 +39,21 @@ export async function persistSearch({
     // Ensure ranking is based on score (highest score = rank 1)
     const resultsSortedByScoreDesc = [...results].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
+    // Find actual file IDs for files that exist in this knowledge base
+    const fileMappings = new Map<string, number>();
+    if (knowledgeBaseId) {
+      const filesInKb = await prisma.fileKnowledgeBase.findMany({
+        where: { knowledgeBaseId },
+        include: { file: true },
+      });
+
+      filesInKb.forEach(fkb => {
+        if (fkb.file.openaiFileId) {
+          fileMappings.set(fkb.file.openaiFileId, fkb.file.id);
+        }
+      });
+    }
+
     const created = await prisma.searchQuery.create({
       data: {
         userId,
@@ -55,12 +70,11 @@ export async function persistSearch({
               attributes: (r.attributes as Prisma.InputJsonValue) ?? undefined,
               content: (r.content as Prisma.InputJsonValue) ?? undefined,
               openaiFileId: r.openaiFileId ?? undefined,
-              // Best-effort link to File by openaiFileId when available
-              file: r.openaiFileId
-                ? ({
-                    connect: { openaiFileId: r.openaiFileId },
-                  } as any)
-                : undefined,
+              // Connect to actual file if it exists in this knowledge base
+              file:
+                r.openaiFileId && fileMappings.has(r.openaiFileId)
+                  ? { connect: { id: fileMappings.get(r.openaiFileId)! } }
+                  : undefined,
             })
           ),
         },
