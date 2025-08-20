@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { CREDIT_COSTS } from '@/lib/constants/credits';
+import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
   errorResponse,
   insufficientCreditsResponse,
@@ -23,6 +24,11 @@ import { createThreadSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
+
+// Handle preflight OPTIONS request
+export async function OPTIONS(request: NextRequest) {
+  return createPreflightResponse(request);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -302,14 +308,13 @@ export async function POST(request: NextRequest) {
 
     // Return the streaming response
     return new Response(stream, {
-      headers: {
+      headers: withCors(request, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }),
     });
   } catch (error) {
     console.error('Error in thread streaming endpoint:', error);

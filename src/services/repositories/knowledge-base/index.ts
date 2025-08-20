@@ -230,9 +230,29 @@ export async function findKnowledgeBasesByUserIdPublic(
 
 export async function updateKnowledgeBase(
   id: number,
-  data: UpdateKnowledgeBaseData
+  data: UpdateKnowledgeBaseData,
+  userId?: number
 ): Promise<RepositoryResult<KnowledgeBase>> {
   try {
+    if (userId) {
+      const result = await prisma.knowledgeBase.updateMany({
+        where: { id, userId },
+        data: {
+          title: data.title,
+          description: data.description,
+          metadata: data.metadata,
+          vectorStoreId: data.vectorStoreId,
+          updatedAt: new Date(),
+        },
+      });
+      if (result.count === 0) {
+        return { success: false, error: 'Knowledge base not found' };
+      }
+      // Fetch updated record to return
+      const updated = await prisma.knowledgeBase.findUnique({ where: { id } });
+      return { success: true, data: updated as KnowledgeBase };
+    }
+
     const knowledgeBase = await prisma.knowledgeBase.update({
       where: { id },
       data: {
@@ -253,7 +273,8 @@ export async function updateKnowledgeBase(
 
 export async function deleteKnowledgeBase(
   id: number,
-  deleteFiles: boolean = false
+  deleteFiles: boolean = false,
+  userId?: number
 ): Promise<
   RepositoryResult<{
     deleted: boolean;
@@ -266,8 +287,8 @@ export async function deleteKnowledgeBase(
     let vectorStoreId: string | null = null;
 
     // Get the knowledge base to access vectorStoreId
-    const knowledgeBase = await prisma.knowledgeBase.findUnique({
-      where: { id },
+    const knowledgeBase = await prisma.knowledgeBase.findFirst({
+      where: userId ? { id, userId } : { id },
       select: { vectorStoreId: true },
     });
 
@@ -304,10 +325,20 @@ export async function deleteKnowledgeBase(
     }
 
     // Soft delete the knowledge base
-    await prisma.knowledgeBase.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    if (userId) {
+      const res = await prisma.knowledgeBase.updateMany({
+        where: { id, userId },
+        data: { deletedAt: new Date() },
+      });
+      if (res.count === 0) {
+        return { success: false, error: 'Knowledge base not found' };
+      }
+    } else {
+      await prisma.knowledgeBase.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+    }
 
     return {
       success: true,

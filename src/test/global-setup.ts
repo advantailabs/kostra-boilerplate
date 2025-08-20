@@ -4,6 +4,10 @@ export default async function globalSetup() {
   console.log('🔧 Setting up test database...');
 
   try {
+    if (process.env.SKIP_DB_SETUP === '1') {
+      console.log('⏭️  SKIP_DB_SETUP=1 set, skipping database setup for tests');
+      return;
+    }
     // Set test database URL
     const testDatabaseUrl = 'postgresql://postgres:postgres@127.0.0.1:5432/test';
     process.env.POSTGRES_URL = testDatabaseUrl;

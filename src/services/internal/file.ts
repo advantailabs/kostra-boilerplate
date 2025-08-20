@@ -71,7 +71,8 @@ export interface FileListResult {
 // Forward declarations of functions that are used before they are defined
 const addFileToKnowledgeBaseService = async (
   fileId: number,
-  knowledgeBaseId: number
+  knowledgeBaseId: number,
+  currentUserId?: number
 ): Promise<FileServiceResult<void>> => {
   try {
     // Get the file to check if it exists and get its OpenAI file ID
@@ -97,6 +98,16 @@ const addFileToKnowledgeBaseService = async (
     }
 
     const knowledgeBase = kbResult.data;
+
+    // Enforce ownership when currentUserId is provided
+    if (currentUserId !== undefined) {
+      if (file.userId !== currentUserId || knowledgeBase.userId !== currentUserId) {
+        return {
+          success: false,
+          error: 'Not found',
+        };
+      }
+    }
 
     // Add file to knowledge base in database
     const dbResult = await addFileToKnowledgeBase(fileId, knowledgeBaseId);
@@ -140,7 +151,8 @@ const addFileToKnowledgeBaseService = async (
 
 const removeFileFromKnowledgeBaseService = async (
   fileId: number,
-  knowledgeBaseId: number
+  knowledgeBaseId: number,
+  currentUserId?: number
 ): Promise<FileServiceResult<void>> => {
   try {
     // Get the file to check if it exists and get its OpenAI file ID
@@ -166,6 +178,16 @@ const removeFileFromKnowledgeBaseService = async (
     }
 
     const knowledgeBase = kbResult.data;
+
+    // Enforce ownership when currentUserId is provided
+    if (currentUserId !== undefined) {
+      if (file.userId !== currentUserId || knowledgeBase.userId !== currentUserId) {
+        return {
+          success: false,
+          error: 'Not found',
+        };
+      }
+    }
 
     // Remove file from knowledge base in database
     const dbResult = await removeFileFromKnowledgeBase(fileId, knowledgeBaseId);
@@ -253,8 +275,6 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
       data.file.name
     );
 
-    console.log('downloadUrlResult', downloadUrlResult);
-
     // Create a readable stream from the presigned URL
     const response = await fetch(downloadUrlResult.downloadUrl);
     if (!response.ok) {
@@ -313,7 +333,8 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
       const addToKbPromises = data.knowledgeBaseIds.map(async knowledgeBaseId => {
         const kbResult = await addFileToKnowledgeBaseService(
           createResult.data!.id,
-          knowledgeBaseId
+          knowledgeBaseId,
+          data.userId
         );
         if (!kbResult.success) {
           console.warn('Failed to add file to knowledge base:', kbResult.error);

@@ -51,7 +51,9 @@ const mockGenerateOpenAITitle = generateOpenAITitle as jest.MockedFunction<
   typeof generateOpenAITitle
 >;
 
-describe('Chat Service - End-to-End Tests', () => {
+const maybeDescribe = process.env.SKIP_DB_SETUP === '1' ? describe.skip : describe;
+
+maybeDescribe('Chat Service - End-to-End Tests', () => {
   let testUser: any;
   let testPersona: any;
 

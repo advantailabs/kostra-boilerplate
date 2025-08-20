@@ -1,5 +1,6 @@
 'use client';
 
+import { uploadFileViaPresignedUrl } from '@/lib/presigned-upload';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Modal } from '@/components/molecules/common/Modal';
@@ -95,7 +96,6 @@ export function KnowledgeBaseFileUploader({
       // Upload each file to S3 only
       newFiles.forEach(async uploadingFile => {
         try {
-          const { uploadFileViaPresignedUrl } = await import('@/lib/presigned-upload');
           const { key } = await uploadFileViaPresignedUrl({
             file: uploadingFile.file,
             uploadPurpose: 'UserDocument',

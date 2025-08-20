@@ -2,14 +2,35 @@
 
 const nextConfig = {
   images: {
-    domains: [
-      'img.clerk.com',
-      'images.clerk.dev',
-      'pub-1c83380c5e270f0d584e576e038edc6b.r2.dev',
-      'pub-af1e06f43a504834a771308801881057.r2.dev',
-      'peon.sh',
-      'public-storage.peon.sh',
-      'private-storage.peon.sh',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.clerk.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pub-1c83380c5e270f0d584e576e038edc6b.r2.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pub-af1e06f43a504834a771308801881057.r2.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'peon.sh',
+      },
+      {
+        protocol: 'https',
+        hostname: 'public-storage.peon.sh',
+      },
+      {
+        protocol: 'https',
+        hostname: 'private-storage.peon.sh',
+      },
     ],
   },
 

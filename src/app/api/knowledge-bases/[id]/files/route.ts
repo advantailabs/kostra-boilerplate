@@ -11,9 +11,10 @@ import { NextRequest } from 'next/server';
 
 import {
   addFileToKnowledgeBaseService,
-  getKnowledgeBaseFilesService,
+  getFileByIdService,
   removeFileFromKnowledgeBaseService,
-} from '@/services/internal/knowledge-base';
+} from '@/services/internal/file';
+import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
 import { getUserByClerkId } from '@/services/repositories/user';
 import { z } from 'zod';
 
@@ -47,15 +48,24 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
       return errorResponse('Knowledge base ID must be a number', 400);
     }
 
-    // Get files for knowledge base
-    const result = await getKnowledgeBaseFilesService(knowledgeBaseId);
+    // Ensure the knowledge base exists and belongs to the user
+    const kbCheck = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
+    if (!kbCheck.success) {
+      return internalServerErrorResponse(kbCheck.error);
+    }
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+      return notFoundResponse('Knowledge base not found');
+    }
+
+    // Get files for knowledge base (reuse KB public fetch)
+    const result = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
     }
 
     return successResponse({
-      files: result.data,
+      files: result.data?.fileKnowledgeBases?.map(fkb => fkb.file) || [],
       message: 'Files retrieved successfully',
     });
   } catch (error) {
@@ -97,8 +107,26 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     const { fileId } = validationResult.data;
 
+    // Ensure the knowledge base exists and belongs to the user
+    const kbCheck = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
+    if (!kbCheck.success) {
+      return internalServerErrorResponse(kbCheck.error);
+    }
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+      return notFoundResponse('Knowledge base not found');
+    }
+
+    // Ensure the file belongs to the user (prevent cross-tenant file linking)
+    const fileCheck = await getFileByIdService(fileId);
+    if (!fileCheck.success) {
+      return internalServerErrorResponse(fileCheck.error);
+    }
+    if (!fileCheck.data || (fileCheck.data as any).userId !== user.id) {
+      return notFoundResponse('File not found');
+    }
+
     // Add file to knowledge base
-    const result = await addFileToKnowledgeBaseService(knowledgeBaseId, fileId);
+    const result = await addFileToKnowledgeBaseService(fileId, knowledgeBaseId, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
@@ -146,8 +174,26 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     const { fileId } = validationResult.data;
 
+    // Ensure the knowledge base exists and belongs to the user
+    const kbCheck = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
+    if (!kbCheck.success) {
+      return internalServerErrorResponse(kbCheck.error);
+    }
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+      return notFoundResponse('Knowledge base not found');
+    }
+
+    // Ensure the file belongs to the user
+    const fileCheck = await getFileByIdService(fileId);
+    if (!fileCheck.success) {
+      return internalServerErrorResponse(fileCheck.error);
+    }
+    if (!fileCheck.data || (fileCheck.data as any).userId !== user.id) {
+      return notFoundResponse('File not found');
+    }
+
     // Remove file from knowledge base
-    const result = await removeFileFromKnowledgeBaseService(knowledgeBaseId, fileId);
+    const result = await removeFileFromKnowledgeBaseService(fileId, knowledgeBaseId, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

@@ -1,6 +1,5 @@
 import {
   errorResponse,
-  forbiddenResponse,
   insufficientCreditsResponse,
   internalServerErrorResponse,
   notFoundResponse,
@@ -69,7 +68,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
     // Check if user owns this knowledge base
     if (result.data.userId !== user.id) {
-      return forbiddenResponse('Access denied');
+      return notFoundResponse('Knowledge base not found');
     }
 
     return successResponse({
@@ -118,8 +117,21 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return insufficientCreditsResponse();
     }
 
+    // Ensure the knowledge base exists and belongs to the user
+    const kbCheck = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
+    if (!kbCheck.success) {
+      return internalServerErrorResponse(kbCheck.error);
+    }
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+      return notFoundResponse('Knowledge base not found');
+    }
+
     // Update knowledge base
-    const result = await updateKnowledgeBaseService(knowledgeBaseId, validationResult.data);
+    const result = await updateKnowledgeBaseService(
+      knowledgeBaseId,
+      validationResult.data,
+      user.id
+    );
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
@@ -158,8 +170,17 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { searchParams } = new URL(request.url);
     const deleteFiles = searchParams.get('deleteFiles') === 'true';
 
+    // Ensure the knowledge base exists and belongs to the user
+    const kbCheck = await getKnowledgeBaseByIdPublicService(knowledgeBaseId);
+    if (!kbCheck.success) {
+      return internalServerErrorResponse(kbCheck.error);
+    }
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+      return notFoundResponse('Knowledge base not found');
+    }
+
     // Delete knowledge base
-    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles);
+    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
