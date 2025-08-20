@@ -49,7 +49,7 @@ const Toaster = React.forwardRef<HTMLDivElement, ToasterProps>(
         position={position}
         expand={expand}
         visibleToasts={visibleToasts}
-        closeButton
+        closeButton={false}
         toastOptions={{
           classNames: {
             // Base toast container
