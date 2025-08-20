@@ -86,7 +86,7 @@ export function createPreflightResponse(request: NextRequest): Response {
   if (corsOrigin) {
     headers['Access-Control-Allow-Origin'] = corsOrigin;
     headers['Access-Control-Allow-Credentials'] = 'true';
-    headers['Vary'] = 'Origin';
+    headers.Vary = 'Origin';
   }
 
   return new Response(null, {
