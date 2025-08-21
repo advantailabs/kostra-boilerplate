@@ -2,10 +2,11 @@
 
 import { RiSearchEyeLine, RiSendPlaneLine, RiUserLine } from '@remixicon/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { PillSelect } from '@/components/atom/PillSelect';
+import { SpeechRecognitionButton } from '@/components/atom/SpeechRecognitionButton';
 import { Textarea } from '@/components/atom/Textarea';
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
@@ -49,17 +50,44 @@ export function SearchBox({
     initialKnowledgeBaseId ?? ''
   );
   const [searchMode, setSearchMode] = useState<SearchMode>(initialMode ?? 'smart-search');
+  const [previousQuery, setPreviousQuery] = useState(initialQuery ?? '');
+
+  const handleTranscript = (transcript: string | null) => {
+    // When final transcript arrives, append to the previous query
+    if (transcript) {
+      setSearchQuery(previousQuery + transcript);
+      setPreviousQuery(prev => prev + transcript);
+    }
+  };
+
+  const handleInterimTranscript = (transcript: string | null) => {
+    // Show interim results in real-time, but keep track of previous query
+    // If transcript is null, it means we're stopping or starting fresh, so clear everything
+    if (transcript === null) {
+      setSearchQuery('');
+      setPreviousQuery('');
+    } else {
+      setSearchQuery(previousQuery + transcript);
+    }
+  };
+
+  const handleSpeechStop = () => {
+    // Clear the textarea and reset previous query when speech recognition stops
+    setSearchQuery('');
+    setPreviousQuery('');
+  };
+
   const router = useRouter();
   const pathname = usePathname();
   const urlParams = useSearchParams();
 
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
-  const knowledgeBases = React.useMemo(
+  const knowledgeBases = useMemo(
     () => knowledgeBasesData?.knowledgeBases || [],
     [knowledgeBasesData?.knowledgeBases]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Prefer initialKnowledgeBaseId from props if provided; otherwise default to first KB
     if (knowledgeBases.length > 0 && !selectedKnowledgeBaseId) {
       setSelectedKnowledgeBaseId(initialKnowledgeBaseId ?? knowledgeBases[0].id.toString());
@@ -67,7 +95,7 @@ export function SearchBox({
   }, [knowledgeBases, selectedKnowledgeBaseId, initialKnowledgeBaseId]);
 
   // Sync kb/mode to URL when requested
-  React.useEffect(() => {
+  useEffect(() => {
     if (!syncQueryParams) return;
     const params = new URLSearchParams(urlParams.toString());
     if (selectedKnowledgeBaseId) params.set('kb', selectedKnowledgeBaseId);
@@ -77,9 +105,9 @@ export function SearchBox({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKnowledgeBaseId, searchMode, syncQueryParams]);
 
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const adjustTextareaHeight = React.useCallback(() => {
+  const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
@@ -88,7 +116,7 @@ export function SearchBox({
     textarea.style.height = `${newHeight}px`;
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     adjustTextareaHeight();
   }, [searchQuery, adjustTextareaHeight]);
 
@@ -171,7 +199,7 @@ export function SearchBox({
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSearch(e as any);
+                  handleSearch(e);
                 }
               }}
             />
@@ -192,6 +220,12 @@ export function SearchBox({
             </div>
 
             <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
+              <SpeechRecognitionButton
+                onTranscript={handleTranscript}
+                onInterimTranscript={handleInterimTranscript}
+                onSpeechStop={handleSpeechStop}
+                className="h-5 w-5 sm:h-6 sm:w-6"
+              />
               <Button
                 type="submit"
                 variant="elevated"
@@ -206,6 +240,7 @@ export function SearchBox({
       <div className="text-center">
         <p className="text-xs text-gray-500 dark:text-gray-400">
           Press Enter to send, Shift+Enter for new line
+          <span className="mt-1 block">🎤 Click mic to start voice input (types in real-time)</span>
         </p>
       </div>
     </div>
