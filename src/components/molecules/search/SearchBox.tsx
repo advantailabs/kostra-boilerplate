@@ -50,31 +50,35 @@ export function SearchBox({
     initialKnowledgeBaseId ?? ''
   );
   const [searchMode, setSearchMode] = useState<SearchMode>(initialMode ?? 'smart-search');
-  const [previousQuery, setPreviousQuery] = useState(initialQuery ?? '');
+  // previousQuery state removed as it's no longer needed for appending
+
+  // Speech recognition ref removed as component doesn't support it currently
 
   const handleTranscript = (transcript: string | null) => {
-    // When final transcript arrives, append to the previous query
+    // When final transcript arrives, just set the current query (no appending)
     if (transcript) {
-      setSearchQuery(previousQuery + transcript);
-      setPreviousQuery(prev => prev + transcript);
+      setSearchQuery(transcript);
     }
   };
 
   const handleInterimTranscript = (transcript: string | null) => {
-    // Show interim results in real-time, but keep track of previous query
+    // Show interim results in real-time
     // If transcript is null, it means we're stopping or starting fresh, so clear everything
     if (transcript === null) {
       setSearchQuery('');
-      setPreviousQuery('');
     } else {
-      setSearchQuery(previousQuery + transcript);
+      setSearchQuery(transcript);
     }
   };
 
-  const handleSpeechStop = () => {
-    // Clear the textarea and reset previous query when speech recognition stops
+  const handleSpeechStart = () => {
+    // Clear current query when starting fresh speech
     setSearchQuery('');
-    setPreviousQuery('');
+  };
+
+  const handleSpeechStop = () => {
+    // Clear the textarea when speech recognition stops
+    setSearchQuery('');
   };
 
   const router = useRouter();
@@ -102,8 +106,7 @@ export function SearchBox({
     else params.delete('kb');
     if (searchMode) params.set('mode', searchMode);
     router.replace(`${pathname}?${params.toString()}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKnowledgeBaseId, searchMode, syncQueryParams]);
+  }, [selectedKnowledgeBaseId, searchMode, syncQueryParams, router, pathname, urlParams]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -117,7 +120,15 @@ export function SearchBox({
   }, []);
 
   useEffect(() => {
-    adjustTextareaHeight();
+    if (searchQuery === '') {
+      // Reset textarea height when query is cleared
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = '64px'; // Default height
+      }
+    } else {
+      adjustTextareaHeight();
+    }
   }, [searchQuery, adjustTextareaHeight]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -131,16 +142,28 @@ export function SearchBox({
       return;
     }
 
+    // Store the current query before clearing
+    const currentQuery = searchQuery;
+
     onSearch({
-      query: searchQuery,
+      query: currentQuery,
       files: attachedFiles,
       knowledgeBaseId: selectedKnowledgeBaseId,
       mode: searchMode,
     });
 
+    // Clear the search query after successful search
+    setSearchQuery('');
+
+    // Reset textarea height to default
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = '64px'; // Default height
+    }
+
     // Navigate to results page for the homepage/default usage
     const params = new URLSearchParams();
-    params.set('q', searchQuery);
+    params.set('q', currentQuery);
     if (selectedKnowledgeBaseId) params.set('kb', selectedKnowledgeBaseId);
     params.set('mode', searchMode);
     router.push(`/app/search/results?${params.toString()}`);
@@ -223,6 +246,7 @@ export function SearchBox({
               <SpeechRecognitionButton
                 onTranscript={handleTranscript}
                 onInterimTranscript={handleInterimTranscript}
+                onSpeechStart={handleSpeechStart}
                 onSpeechStop={handleSpeechStop}
                 className="h-5 w-5 sm:h-6 sm:w-6"
               />

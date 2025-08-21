@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
+import { SpeechRecognitionButton } from '@/components/atom/SpeechRecognitionButton';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import { SEARCH_MODE_OPTIONS, type SearchMode } from '@/lib/constants/search';
@@ -47,6 +48,8 @@ export function CompactSearchBox({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempSelectedKbId, setTempSelectedKbId] = useState<string>('');
   const [tempSearchMode, setTempSearchMode] = useState<SearchMode>('smart-search');
+  // previousQuery state removed as it's no longer needed for appending
+  // Speech recognition ref removed as component doesn't support it currently
   const router = useRouter();
   const pathname = usePathname();
   const urlParams = useSearchParams();
@@ -70,8 +73,7 @@ export function CompactSearchBox({
     else params.delete('kb');
     if (searchMode) params.set('mode', searchMode);
     router.replace(`${pathname}?${params.toString()}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKnowledgeBaseId, searchMode, syncQueryParams]);
+  }, [selectedKnowledgeBaseId, searchMode, syncQueryParams, router, pathname, urlParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,8 +85,37 @@ export function CompactSearchBox({
       knowledgeBaseId: selectedKnowledgeBaseId,
       mode: searchMode,
     });
+
+    // Clear the search query after successful search
+    setSearchQuery('');
   };
 
+  const handleTranscript = (transcript: string | null) => {
+    // When final transcript arrives, just set the current query (no appending)
+    if (transcript) {
+      setSearchQuery(transcript);
+    }
+  };
+
+  const handleInterimTranscript = (transcript: string | null) => {
+    // Show interim results in real-time
+    // If transcript is null, it means we're stopping or starting fresh, so clear everything
+    if (transcript === null) {
+      setSearchQuery('');
+    } else {
+      setSearchQuery(transcript);
+    }
+  };
+
+  const handleSpeechStart = () => {
+    // Clear current query when starting fresh speech
+    setSearchQuery('');
+  };
+
+  const handleSpeechStop = () => {
+    // Clear the textarea when speech recognition stops
+    setSearchQuery('');
+  };
   return (
     <div className="space-y-2">
       <div className="flex items-stretch gap-3">
@@ -117,7 +148,7 @@ export function CompactSearchBox({
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
-                    handleSearch(e as any);
+                    handleSearch(e as React.FormEvent);
                   }
                 }}
                 autoFocus
@@ -125,6 +156,13 @@ export function CompactSearchBox({
 
               <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 space-x-1">
+                  <SpeechRecognitionButton
+                    onTranscript={handleTranscript}
+                    onInterimTranscript={handleInterimTranscript}
+                    onSpeechStart={handleSpeechStart}
+                    onSpeechStop={handleSpeechStop}
+                    className="h-5 w-5 sm:h-6 sm:w-6"
+                  />
                   <Button
                     type="submit"
                     variant="elevated"

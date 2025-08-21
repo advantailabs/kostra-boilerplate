@@ -54,6 +54,7 @@ declare global {
 interface SpeechRecognitionButtonProps {
   onTranscript: (_transcript: string | null) => void;
   onInterimTranscript?: (_transcript: string | null) => void;
+  onSpeechStart?: () => void;
   onSpeechStop?: () => void;
   className?: string;
   disabled?: boolean;
@@ -62,6 +63,7 @@ interface SpeechRecognitionButtonProps {
 export function SpeechRecognitionButton({
   onTranscript,
   onInterimTranscript,
+  onSpeechStart,
   onSpeechStop,
   className = '',
   disabled = false,
@@ -116,6 +118,11 @@ export function SpeechRecognitionButton({
         setIsStarting(false);
         isStartingRef.current = false;
         isListeningRef.current = true;
+
+        // Notify parent component that speech recognition has started
+        if (onSpeechStart) {
+          onSpeechStart();
+        }
       }
     };
 
@@ -173,7 +180,7 @@ export function SpeechRecognitionButton({
     };
 
     return recognition;
-  }, [onInterimTranscript, onSpeechStop, onTranscript]);
+  }, [onInterimTranscript, onSpeechStart, onSpeechStop, onTranscript]);
 
   const toggleListening = useCallback(() => {
     if (!isSpeechSupported || disabled) return;
