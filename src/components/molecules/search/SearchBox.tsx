@@ -240,7 +240,6 @@ export function SearchBox({
       <div className="text-center">
         <p className="text-xs text-gray-500 dark:text-gray-400">
           Press Enter to send, Shift+Enter for new line
-          <span className="mt-1 block">🎤 Click mic to start voice input (types in real-time)</span>
         </p>
       </div>
     </div>
