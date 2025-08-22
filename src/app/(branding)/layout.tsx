@@ -36,24 +36,21 @@ export default function BrandingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} overflow-x-hidden bg-black text-white antialiased`}>
-        <div className="relative min-h-screen overflow-x-hidden bg-black">
-          <ModernNavigation />
-          <main className="relative pt-12 md:pt-16">{children}</main>
-          <MinimalFooter />
-        </div>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent browser scroll restoration on page load
-              if (typeof window !== 'undefined' && 'scrollRestoration' in wind  ow.history) {
-                window.history.scrollRestoration = 'manual';
-              }
-            `,
-          }}
-        />
-      </body>
-    </html>
+    <div className="relative min-h-screen overflow-x-hidden bg-black">
+      <ModernNavigation />
+      <main className="relative pt-12 md:pt-16">{children}</main>
+      <MinimalFooter />
+      <script
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: `
+            // Prevent browser scroll restoration on page load
+            if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+              window.history.scrollRestoration = 'manual';
+            }
+          `,
+        }}
+      />
+    </div>
   );
 }
