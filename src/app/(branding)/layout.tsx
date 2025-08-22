@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import React from 'react';
 
 import { MinimalFooter } from '@/components/branding/minimal-footer';
@@ -6,7 +6,8 @@ import { ModernNavigation } from '@/components/branding/modern-navigation';
 import type { Metadata } from 'next';
 import '../globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+// Font is available but not currently used in this layout
+// const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Peon - Your Personal AI Peon',

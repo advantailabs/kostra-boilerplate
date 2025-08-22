@@ -4,6 +4,12 @@ import { PLANS } from '@/data/config/plans';
 import { motion } from 'framer-motion';
 
 export function PricingSection() {
+  const getButtonText = (planId: string) => {
+    if (planId === 'enterprise') return 'Contact Sales';
+    if (planId === 'pro') return 'Get Pro';
+    return 'Start Free';
+  };
+
   return (
     <section className="relative overflow-hidden py-24 sm:py-32">
       {/* Background glow */}
@@ -98,11 +104,7 @@ export function PricingSection() {
                         : 'border border-gray-200 bg-white text-gray-900 hover:border-gray-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:border-white/20'
                     }`}
                   >
-                    {plan.id === 'enterprise'
-                      ? 'Contact Sales'
-                      : plan.id === 'pro'
-                        ? 'Get Pro'
-                        : 'Start Free'}
+                    {getButtonText(plan.id)}
                   </button>
                 </div>
               </motion.div>

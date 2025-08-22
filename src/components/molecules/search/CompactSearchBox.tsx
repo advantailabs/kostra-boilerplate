@@ -60,6 +60,32 @@ export function CompactSearchBox({
     [knowledgeBasesData?.knowledgeBases]
   );
 
+  const getKbButtonClassName = (kbId: string) => {
+    if (tempSelectedKbId === kbId) {
+      return 'bg-gray-900 text-white dark:bg-white dark:text-gray-900';
+    }
+    return 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800';
+  };
+
+  const renderKnowledgeBases = () => {
+    if (loadingKnowledgeBases) {
+      return <div className="p-2 text-xs text-gray-500 dark:text-gray-400">Loading...</div>;
+    }
+    if (knowledgeBases.length === 0) {
+      return <div className="p-2 text-xs text-gray-500 dark:text-gray-400">No knowledge bases</div>;
+    }
+    return knowledgeBases.map(kb => (
+      <button
+        key={kb.id}
+        type="button"
+        onClick={() => setTempSelectedKbId(kb.id.toString())}
+        className={`w-full rounded-md px-2 py-2 text-left text-sm transition-colors ${getKbButtonClassName(kb.id.toString())}`}
+      >
+        {kb.title}
+      </button>
+    ));
+  };
+
   React.useEffect(() => {
     if (knowledgeBases.length > 0 && !selectedKnowledgeBaseId) {
       setSelectedKnowledgeBaseId(initialKnowledgeBaseId ?? knowledgeBases[0].id.toString());
@@ -195,28 +221,7 @@ export function CompactSearchBox({
               Knowledge bases
             </h3>
             <div className="max-h-64 space-y-1 overflow-auto rounded-md border border-gray-200 p-1 dark:border-gray-800">
-              {loadingKnowledgeBases ? (
-                <div className="p-2 text-xs text-gray-500 dark:text-gray-400">Loading...</div>
-              ) : knowledgeBases.length === 0 ? (
-                <div className="p-2 text-xs text-gray-500 dark:text-gray-400">
-                  No knowledge bases
-                </div>
-              ) : (
-                knowledgeBases.map(kb => (
-                  <button
-                    key={kb.id}
-                    type="button"
-                    onClick={() => setTempSelectedKbId(kb.id.toString())}
-                    className={`w-full rounded-md px-2 py-2 text-left text-sm transition-colors ${
-                      tempSelectedKbId === kb.id.toString()
-                        ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-                    }`}
-                  >
-                    {kb.title}
-                  </button>
-                ))
-              )}
+              {renderKnowledgeBases()}
             </div>
           </div>
           <div>

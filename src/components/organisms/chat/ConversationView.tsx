@@ -22,7 +22,7 @@ interface ConversationViewProps {
     _message: string,
     _files?: Array<{ originalName: string; mimeType: string; size: number; s3Key: string }>
   ) => void;
-  onDeleteThread: (_threadId: number) => void;
+  // onDeleteThread: (_threadId: number) => void; // Not currently used
   showPersonaModal?: boolean;
   onClosePersonaModal?: () => void;
   isStreaming?: boolean;

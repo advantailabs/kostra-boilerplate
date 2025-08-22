@@ -260,28 +260,37 @@ export function SpeechRecognitionButton({
 
   const isDisabled = disabled || !isSpeechSupported;
 
+  const getButtonClassName = () => {
+    if (isListening) {
+      return 'animate-pulse bg-red-500 text-white hover:bg-red-600';
+    }
+    if (isStarting) {
+      return 'animate-pulse bg-blue-500 text-white';
+    }
+    return 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600';
+  };
+
+  const getButtonTitle = () => {
+    if (!isSpeechSupported) {
+      return 'Speech recognition not supported';
+    }
+    if (isListening) {
+      return 'Stop listening';
+    }
+    if (isStarting) {
+      return 'Starting...';
+    }
+    return 'Start listening';
+  };
+
   return (
     <Button
       type="button"
       variant="ghost"
       onClick={toggleListening}
       disabled={isDisabled}
-      className={`h-5 w-5 p-0 transition-all duration-200 sm:h-6 sm:w-6 ${className} ${
-        isListening
-          ? 'animate-pulse bg-red-500 text-white hover:bg-red-600'
-          : isStarting
-            ? 'animate-pulse bg-blue-500 text-white'
-            : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-      } ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
-      title={
-        isSpeechSupported
-          ? isListening
-            ? 'Stop listening'
-            : isStarting
-              ? 'Starting...'
-              : 'Start listening'
-          : 'Speech recognition not supported'
-      }
+      className={`h-5 w-5 p-0 transition-all duration-200 sm:h-6 sm:w-6 ${className} ${getButtonClassName()} ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
+      title={getButtonTitle()}
     >
       <RiMicLine className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
     </Button>

@@ -60,11 +60,15 @@ export function CitationList({
       <div className="flex flex-wrap gap-1">
         {uniqueCitations.map(citation => {
           const isDownloadable = citation.fileId > 0;
-          const title = isAttachments
-            ? isDownloadable
-              ? `Download ${citation.originalName}`
-              : `Uploading ${citation.originalName}...`
-            : citation.originalName;
+          const getTitle = () => {
+            if (isAttachments) {
+              return isDownloadable
+                ? `Download ${citation.originalName}`
+                : `Uploading ${citation.originalName}...`;
+            }
+            return citation.originalName;
+          };
+          const title = getTitle();
           return (
             <button
               key={citation.fileId}
