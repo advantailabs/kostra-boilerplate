@@ -94,7 +94,6 @@ export function ChatInterface({
           activeThread={activeThread}
           onCreateThread={onCreateThread}
           onSendMessage={onSendMessage}
-          onDeleteThread={onDeleteThread}
           showPersonaModal={showPersonaModal}
           onClosePersonaModal={handleClosePersonaModal}
           isStreaming={isStreaming}

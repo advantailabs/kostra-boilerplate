@@ -13,13 +13,9 @@ export interface CreditPurchaseModalProps {
   onClose: () => void;
 }
 
-export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProps) {
-  useRouter();
-  const { checkout, isCreatingCheckout } = useStripe();
-  const credits = useCreditStore(state => state.credits);
-
-  // CardContent component moved outside map to prevent recreation on every render
-  const CardContent = ({ plan }: { plan: (typeof PLANS)[0] }) => (
+// CardContent component moved outside to prevent recreation on every render
+function CardContent({ plan }: { plan: (typeof PLANS)[0] }) {
+  return (
     <>
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{plan.name}</h3>
@@ -47,6 +43,12 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       </ul>
     </>
   );
+}
+
+export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProps) {
+  useRouter();
+  const { checkout, isCreatingCheckout } = useStripe();
+  const credits = useCreditStore(state => state.credits);
 
   const footer = (
     <div className="flex w-full items-center justify-between gap-2">
