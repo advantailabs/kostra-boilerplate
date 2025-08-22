@@ -1,7 +1,12 @@
 import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
-import { Dialog, DialogContent } from '@/components/molecules/common/Dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/molecules/common/Dialog';
 import { Persona, Thread } from '@prisma/client';
 import { RiCloseLine, RiEditBoxLine, RiMessage2Line } from '@remixicon/react';
 import { useState } from 'react';
@@ -136,6 +141,10 @@ export function ThreadSearchModal({
         {/* Search Header */}
         <div className="flex items-center border-b border-gray-200 px-4 py-3 dark:border-gray-700">
           <div className="flex-1">
+            <DialogTitle className="sr-only">Search Threads</DialogTitle>
+            <DialogDescription className="sr-only">
+              Search through your chat threads and start new conversations
+            </DialogDescription>
             <Input
               type="text"
               placeholder="Search threads..."

@@ -69,8 +69,11 @@ export default function RootLayout({
   return (
     // @ts-ignore - Ignoring ClerkProvider type error
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+      <html lang="en" className="dark" suppressHydrationWarning>
+        <body
+          className={`${inter.className} overflow-x-hidden bg-black text-white antialiased`}
+          suppressHydrationWarning
+        >
           <Providers>{children}</Providers>
         </body>
       </html>

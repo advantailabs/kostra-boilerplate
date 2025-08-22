@@ -297,13 +297,19 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                   Logo
                 </Label>
                 <div className="relative">
-                  <button
-                    type="button"
+                  <div
                     className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
                       isUploading ? 'opacity-50' : ''
                     } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
                     onClick={handleLogoClick}
-                    disabled={isUploading}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleLogoClick();
+                      }
+                    }}
                     aria-label="Upload logo"
                   >
                     <input
@@ -343,7 +349,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
                         <span className="mt-1 text-xs">Upload</span>
                       </div>
                     )}
-                  </button>
+                  </div>
                 </div>
 
                 {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
