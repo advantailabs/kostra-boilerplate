@@ -1,5 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
-
+import { getAuthUser } from '@/lib/auth/jwt';
 import {
   internalServerErrorResponse,
   notFoundResponse,
@@ -7,18 +6,19 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { CreditService } from '@/services/internal/credit';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-    if (!clerkUserId) {
+    const authUser = await getAuthUser(request);
+
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

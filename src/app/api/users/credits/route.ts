@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 // Using standardized response helpers
 import {
   internalServerErrorResponse,
@@ -7,22 +6,24 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
+import { getAuthUser } from '@/lib/auth/jwt';
 import { CreditService } from '@/services/internal/credit';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

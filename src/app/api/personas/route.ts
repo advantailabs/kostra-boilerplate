@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { FREE_LIMITS } from '@/data/config/plans';
+import { getAuthUser } from '@/lib/auth/jwt';
 import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
@@ -12,23 +12,23 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
 import { UserPlan } from '@prisma/client';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -52,14 +52,14 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

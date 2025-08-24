@@ -5,7 +5,7 @@
 import { getApiErrorMessage } from '@/lib/utils/error-handler';
 import { RiCheckLine, RiFileCopyLine } from '@remixicon/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { CreditDisplay } from '@/components/atom/CreditDisplay';
@@ -28,7 +28,7 @@ interface ResultItem {
   rank: number;
 }
 
-export default function SearchResultsPage() {
+function SearchResultsPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const query = params.get('q') || '';
@@ -218,5 +218,32 @@ export default function SearchResultsPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function SearchResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white dark:bg-gray-950">
+          <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+            <div className="w-full max-w-3xl px-4">
+              <div className="mb-8 text-center">
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                  Search Results
+                </h1>
+              </div>
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-2/3 rounded bg-gray-200 dark:bg-gray-700" />
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <SearchResultsPageContent />
+    </Suspense>
   );
 }

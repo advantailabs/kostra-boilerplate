@@ -5,25 +5,25 @@ import {
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { getAuthUser } from '@/lib/auth/jwt';
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -52,16 +52,16 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

@@ -1,15 +1,15 @@
 'use client';
 
-import { useClerk, useUser } from '@clerk/nextjs';
+import { useAuthStore } from '@/store/auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function UserProfile() {
-  const { user } = useUser();
+  const { user, clearAuth } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
-  const clerk = useClerk();
-
+  const router = useRouter();
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -26,9 +26,19 @@ function UserProfile() {
     setIsOpen(!isOpen);
   };
 
-  const handleSignOutClick = () => {
-    clerk.signOut();
-    setIsOpen(false);
+  const handleSignOutClick = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      clearAuth();
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -37,9 +47,9 @@ function UserProfile() {
         onClick={toggleMenu}
         className="flex items-center rounded-full ring-2 ring-transparent transition-all hover:ring-gray-200 focus:outline-none focus:ring-blue-200"
       >
-        {user?.hasImage ? (
+        {user?.profilePicture ? (
           <Image
-            src={user?.imageUrl}
+            src={user?.profilePicture}
             alt="User Avatar"
             width={32}
             height={32}
@@ -47,17 +57,15 @@ function UserProfile() {
           />
         ) : (
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-            {user?.firstName?.[0] ||
-              user?.emailAddresses?.[0]?.emailAddress?.[0]?.toUpperCase() ||
-              '?'}
+            {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
           </div>
         )}
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-lg border border-gray-100 bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 transition-all">
           <div className="border-b border-gray-100 px-4 py-3">
-            <p className="text-sm font-medium text-gray-900">{user?.fullName || 'User'}</p>
-            <p className="text-xs text-gray-500">{user?.emailAddresses?.[0]?.emailAddress}</p>
+            <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
+            <p className="text-xs text-gray-500">{user?.email}</p>
           </div>
           <div className="py-1">
             <Link

@@ -7,16 +7,16 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { getAuthUser } from '@/lib/auth/jwt';
 import {
   deleteKnowledgeBaseService,
   getKnowledgeBaseByIdPublicService,
   updateKnowledgeBaseService,
 } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -36,16 +36,16 @@ const updateKnowledgeBaseSchema = z.object({
   metadata: z.any().optional(),
 });
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -83,14 +83,14 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -149,14 +149,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

@@ -1,9 +1,9 @@
+import { getAuthUser } from '@/lib/auth/jwt';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
-import { auth } from '@clerk/nextjs/server';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { DELETE, PUT } from '../route';
 
-jest.mock('@clerk/nextjs/server');
+jest.mock('@/lib/auth/jwt');
 jest.mock('@/services/repositories/user');
 jest.mock('@/services/internal/knowledge-base', () => ({
   getKnowledgeBaseByIdPublicService: jest.fn(),
@@ -11,6 +11,8 @@ jest.mock('@/services/internal/knowledge-base', () => ({
   deleteKnowledgeBaseService: jest.fn(),
 }));
 
+const mockGetAuthUser = getAuthUser as jest.MockedFunction<typeof getAuthUser>;
+const mockGetUserByGoogleId = getUserByGoogleId as jest.MockedFunction<typeof getUserByGoogleId>;
 const mockGetKb = getKnowledgeBaseByIdPublicService as jest.MockedFunction<
   typeof getKnowledgeBaseByIdPublicService
 >;
@@ -21,23 +23,26 @@ describe('KB ownership enforcement (route guards)', () => {
   });
 
   it('returns 404 when updating foreign KB', async () => {
-    // Mock auth to return a clerk user ID
-    (auth as jest.MockedFunction<typeof auth>).mockResolvedValue({
-      userId: 'clerk_1',
-      sessionClaims: {},
-      sessionId: 'session_1',
-      actor: null,
-      orgId: null,
-      orgRole: null,
-      orgSlug: null,
-      redirectToSignIn: jest.fn(),
-    } as any);
+    // Mock getAuthUser to return a JWT payload
+    mockGetAuthUser.mockResolvedValue({
+      userId: 1,
+      email: 'test@example.com',
+      role: 'USER',
+      name: 'Test User',
+      profilePicture: undefined,
+      isOnboarded: true,
+      credits: 100,
+      plan: 'FREE',
+      isOverdue: false,
+      planExpiringAt: undefined,
+      googleId: 'google_123',
+    });
 
-    // Mock getUserByClerkId to return a user with ID 1
-    (getUserByClerkId as jest.MockedFunction<typeof getUserByClerkId>).mockResolvedValue({
+    // Mock getUserByGoogleId to return a user with ID 1
+    mockGetUserByGoogleId.mockResolvedValue({
       id: 1,
       role: 'USER',
-      clerkUserId: 'clerk_1',
+      googleId: 'google_123',
       name: 'Test User',
       email: 'test@example.com',
       profilePicture: null,
@@ -46,7 +51,7 @@ describe('KB ownership enforcement (route guards)', () => {
       stripeCustomerId: null,
       plan: 'FREE',
       planExpiringAt: null,
-      overdue: false,
+      isOverDue: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
@@ -71,23 +76,26 @@ describe('KB ownership enforcement (route guards)', () => {
   });
 
   it('returns 404 when deleting foreign KB', async () => {
-    // Mock auth to return a clerk user ID
-    (auth as jest.MockedFunction<typeof auth>).mockResolvedValue({
-      userId: 'clerk_1',
-      sessionClaims: {},
-      sessionId: 'session_1',
-      actor: null,
-      orgId: null,
-      orgRole: null,
-      orgSlug: null,
-      redirectToSignIn: jest.fn(),
-    } as any);
+    // Mock getAuthUser to return a JWT payload
+    mockGetAuthUser.mockResolvedValue({
+      userId: 1,
+      email: 'test@example.com',
+      role: 'USER',
+      name: 'Test User',
+      profilePicture: undefined,
+      isOnboarded: true,
+      credits: 100,
+      plan: 'FREE',
+      isOverdue: false,
+      planExpiringAt: undefined,
+      googleId: 'google_123',
+    });
 
-    // Mock getUserByClerkId to return a user with ID 1
-    (getUserByClerkId as jest.MockedFunction<typeof getUserByClerkId>).mockResolvedValue({
+    // Mock getUserByGoogleId to return a user with ID 1
+    mockGetUserByGoogleId.mockResolvedValue({
       id: 1,
       role: 'USER',
-      clerkUserId: 'clerk_1',
+      googleId: 'google_123',
       name: 'Test User',
       email: 'test@example.com',
       profilePicture: null,
@@ -96,7 +104,7 @@ describe('KB ownership enforcement (route guards)', () => {
       stripeCustomerId: null,
       plan: 'FREE',
       planExpiringAt: null,
-      overdue: false,
+      isOverDue: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,

@@ -1,4 +1,5 @@
 import { FREE_LIMITS } from '@/data/config/plans';
+import { getAuthUser } from '@/lib/auth/jwt';
 import { validateFileUpload } from '@/lib/file-upload-config';
 import { prisma } from '@/lib/prisma';
 import { generatePresignedUrl } from '@/lib/s3';
@@ -11,9 +12,8 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -21,12 +21,12 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) return unauthorizedResponse();
+    if (!authUser) return unauthorizedResponse();
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) return notFoundResponse('User does not exist');
 
     const body: FileUploadRequest = await request.json();

@@ -6,16 +6,16 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { FREE_LIMITS } from '@/data/config/plans';
+import { getAuthUser } from '@/lib/auth/jwt';
 import { prisma } from '@/lib/prisma';
 import {
   createKnowledgeBaseService,
   getUserKnowledgeBasesPublicService,
 } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { UserPlan } from '@prisma/client';
 import { z } from 'zod';
 
@@ -31,16 +31,20 @@ const createKnowledgeBaseSchema = z.object({
   metadata: z.any().optional(),
 });
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
+    console.log('authUser', authUser);
+
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
+
+    console.log('user', user);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -64,14 +68,14 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

@@ -10,10 +10,11 @@ import {
 } from '@/lib/utils/response';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
+
+import { getAuthUser } from '@/lib/auth/jwt';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -41,14 +42,12 @@ if (typeof global.File === 'undefined') {
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
+    const authUser = await getAuthUser(request);
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -95,14 +94,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
+    const authUser = await getAuthUser(request);
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

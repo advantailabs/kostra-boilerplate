@@ -1,24 +1,28 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getAuthUser } from '@/lib/auth/jwt';
+import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  unauthorizedResponse,
+} from '@/lib/utils/response';
+import { getUserByGoogleId } from '@/services/repositories/user';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const user = await currentUser();
+    const authUser = await getAuthUser(request);
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!authUser) {
+      return unauthorizedResponse();
     }
 
     // Get user data
-    const dbUser = await getUserByClerkId(user.id);
+    const dbUser = await getUserByGoogleId(authUser.googleId);
 
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return notFoundResponse('User not found');
     }
 
     // Return standard settings
@@ -36,6 +40,6 @@ export async function GET() {
     return NextResponse.json(response);
   } catch (error) {
     console.error('[USER_DATA]', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return internalServerErrorResponse();
   }
 }

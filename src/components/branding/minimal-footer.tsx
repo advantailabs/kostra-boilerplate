@@ -1,9 +1,10 @@
 'use client';
 
-import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useAuthStore } from '@/store/auth';
 
 type FooterLink = {
   name: string;
@@ -45,7 +46,8 @@ const footerSections: FooterSection[] = [
 ];
 
 export function MinimalFooter() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { user } = useAuthStore();
+
   return (
     <footer className="border-t border-white/5 bg-black">
       <div className="container mx-auto px-4 sm:px-6">
@@ -138,22 +140,13 @@ export function MinimalFooter() {
                   <ul className="space-y-3 sm:space-y-4">
                     {section.links.map(link => {
                       // Skip sign-in link if user is already signed in
-                      if (link.isSignIn && isLoaded && isSignedIn) return null;
+                      if (link.isSignIn && user) return null;
                       // Skip dashboard link if user is not signed in
-                      if (link.isDashboard && (!isLoaded || !isSignedIn)) return null;
+                      if (link.isDashboard && !user) return null;
 
                       return (
                         <li key={link.name}>
                           {(() => {
-                            if (link.isSignIn) {
-                              return (
-                                <SignInButton mode="modal">
-                                  <button className="text-xs text-gray-400 transition-colors duration-200 hover:text-white sm:text-sm">
-                                    {link.name}
-                                  </button>
-                                </SignInButton>
-                              );
-                            }
                             if (link.isDashboard) {
                               return (
                                 <Link

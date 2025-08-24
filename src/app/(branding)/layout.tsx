@@ -3,6 +3,7 @@ import React from 'react';
 
 import { MinimalFooter } from '@/components/branding/minimal-footer';
 import { ModernNavigation } from '@/components/branding/modern-navigation';
+import { SignInModalProvider } from '@/providers/SignInModalProvider';
 import type { Metadata } from 'next';
 import '../globals.css';
 
@@ -37,21 +38,23 @@ export default function BrandingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-black">
-      <ModernNavigation />
-      <main className="relative pt-12 md:pt-16">{children}</main>
-      <MinimalFooter />
-      <script
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: `
-            // Prevent browser scroll restoration on page load
-            if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
-              window.history.scrollRestoration = 'manual';
-            }
-          `,
-        }}
-      />
-    </div>
+    <SignInModalProvider>
+      <div className="relative min-h-screen overflow-x-hidden bg-black">
+        <ModernNavigation />
+        <main className="relative pt-12 md:pt-16">{children}</main>
+        <MinimalFooter />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent browser scroll restoration on page load
+              if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                window.history.scrollRestoration = 'manual';
+              }
+            `,
+          }}
+        />
+      </div>
+    </SignInModalProvider>
   );
 }

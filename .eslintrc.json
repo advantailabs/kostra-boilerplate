@@ -83,7 +83,10 @@
     "global-require": "off",
 
     // Disable overly strict label accessibility rule
-    "jsx-a11y/label-has-associated-control": "off"
+    "jsx-a11y/label-has-associated-control": "off",
+
+    // Disable react/no-danger rule
+    "react/no-danger": "off"
   },
   "settings": {
     "import/resolver": {

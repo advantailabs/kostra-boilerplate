@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { getAuthUser } from '@/lib/auth/jwt';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
@@ -20,7 +20,7 @@ import {
   findByUserAndId,
   updateThreadTimestamp,
 } from '@/services/repositories/thread';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { addMessageSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -33,14 +33,14 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!clerkUserId) {
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
     // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

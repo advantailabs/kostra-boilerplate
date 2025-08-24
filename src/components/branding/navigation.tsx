@@ -1,20 +1,14 @@
 'use client';
 
-import { useClerk, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+import { GoogleSignInButton } from '@/components/molecules/common/GoogleSignInButton';
+import { useAuthStore } from '@/store/auth';
 import UserProfile from './UserProfile';
 
 export function Navigation() {
-  const clerk = useClerk();
-  const { isSignedIn } = useUser();
-
-  const handleSignInClick = () => {
-    clerk.openSignIn({
-      forceRedirectUrl: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
-    });
-  };
+  const { user } = useAuthStore();
 
   return (
     <motion.header
@@ -39,13 +33,9 @@ export function Navigation() {
             <Link href="#about" className="text-gray-700 hover:text-gray-900">
               About
             </Link>
-            {isSignedIn && <UserProfile />}
+            {user && <UserProfile />}
 
-            {!isSignedIn && (
-              <button onClick={handleSignInClick} className="text-blue-500">
-                Sign In
-              </button>
-            )}
+            {!user && <GoogleSignInButton className="text-blue-500">Sign In</GoogleSignInButton>}
           </div>
         </div>
       </nav>

@@ -1,26 +1,21 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { RiMore2Fill } from '@remixicon/react';
 import Image from 'next/image';
 
-import { Button } from '@/components/atom/Button';
 import { cx, focusRing } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
 
+import { Button } from '@/components/atom/Button';
 import { DropdownUserProfile } from './DropdownUserProfile';
 
 export function UserProfileDesktop() {
-  const { user } = useUser();
+  const { user } = useAuthStore();
 
-  const initials =
-    user?.firstName && user?.lastName
-      ? `${user.firstName[0]}${user.lastName[0]}`
-      : user?.firstName?.slice(0, 1) || '?';
+  if (!user) return null;
 
-  const fullName =
-    user?.firstName && user?.lastName
-      ? `${user.firstName} ${user.lastName}`
-      : user?.firstName || '';
+  const initials = user.name ? user.name.substring(0, 2).toUpperCase() : '??';
+  const fullName = user.name;
 
   return (
     <DropdownUserProfile>
@@ -33,9 +28,9 @@ export function UserProfileDesktop() {
         )}
       >
         <span className="flex items-center gap-3">
-          {user?.imageUrl ? (
+          {user.profilePicture ? (
             <Image
-              src={user.imageUrl}
+              src={user.profilePicture}
               alt={fullName}
               width={32}
               height={32}
@@ -61,12 +56,11 @@ export function UserProfileDesktop() {
 }
 
 export function UserProfileMobile() {
-  const { user } = useUser();
+  const { user } = useAuthStore();
 
-  const initials =
-    user?.firstName && user?.lastName
-      ? `${user.firstName[0]}${user.lastName[0]}`
-      : user?.firstName?.slice(0, 2) || '??';
+  if (!user) return null;
+
+  const initials = user.name ? user.name.substring(0, 2).toUpperCase() : '??';
 
   return (
     <DropdownUserProfile align="end">
@@ -77,10 +71,10 @@ export function UserProfileMobile() {
           'group flex items-center rounded-md p-1 text-sm font-medium text-gray-900 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10'
         )}
       >
-        {user?.imageUrl ? (
+        {user.profilePicture ? (
           <Image
-            src={user.imageUrl}
-            alt={user.firstName || ''}
+            src={user.profilePicture}
+            alt={user.name || ''}
             width={32}
             height={32}
             className="size-7 rounded-full"

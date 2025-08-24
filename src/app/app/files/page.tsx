@@ -11,10 +11,10 @@ import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
 import { formatFileSize } from '@/lib/file-utils';
 import { FileFilters, filesApi } from '@/services/api/files';
-import { useAuth } from '@clerk/nextjs';
+import { useAuthStore } from '@/store/auth';
 
 export default function FilesPage() {
-  const { userId } = useAuth();
+  const { user } = useAuthStore();
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -26,7 +26,7 @@ export default function FilesPage() {
 
   const loadFiles = useCallback(
     async (pageNum = 1, append = false) => {
-      if (!userId) return;
+      if (!user) return;
 
       try {
         setLoading(true);
@@ -47,7 +47,7 @@ export default function FilesPage() {
         setLoading(false);
       }
     },
-    [userId, filters]
+    [user, filters]
   );
 
   useEffect(() => {

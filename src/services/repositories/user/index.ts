@@ -1,19 +1,28 @@
 import { prisma } from '@/lib/prisma';
 import { UserPlan, UserRole } from '@prisma/client';
 
-import { ClerkUserUpdate } from '@/app/types/user.type';
+export interface GoogleUserUpdate {
+  googleId: string;
+  name: string;
+  email: string;
+  profilePicture?: string;
+  isOnboarded?: boolean;
+}
 
-const upsertUser = async (user: ClerkUserUpdate) => {
+const upsertUser = async (user: GoogleUserUpdate) => {
   return prisma.user.upsert({
-    where: { clerkUserId: user.clerkUserId },
+    where: { googleId: user.googleId },
     update: { ...user },
-    create: user,
+    create: {
+      ...user,
+      isOnboarded: user.isOnboarded ?? false,
+    },
   });
 };
 
-const deleteUser = async (clerkUserId: string) => {
+const deleteUser = async (googleId: string) => {
   return prisma.user.update({
-    where: { clerkUserId },
+    where: { googleId },
     data: { deletedAt: new Date() },
   });
 };
@@ -30,9 +39,15 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
   });
 };
 
-const getUserByClerkId = async (clerkId: string) => {
+const getUserByGoogleId = async (googleId: string) => {
   return prisma.user.findUnique({
-    where: { clerkUserId: clerkId },
+    where: { googleId },
+  });
+};
+
+const getUserByEmail = async (email: string) => {
+  return prisma.user.findUnique({
+    where: { email },
   });
 };
 
@@ -59,7 +74,8 @@ const setUserOverdue = async (userId: number, isOverDue: boolean) => {
 
 export {
   deleteUser,
-  getUserByClerkId,
+  getUserByEmail,
+  getUserByGoogleId,
   getUserByRole,
   setUserOverdue,
   setUserPlan,

@@ -1,11 +1,15 @@
 'use client';
 
-import { SignInButton, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+import { SignInButton } from '@/components/atom/SignInButton';
+import { useSignInModalContext } from '@/providers/SignInModalProvider';
+import { useAuthStore } from '@/store/auth';
+
 export function CTASection() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { user } = useAuthStore();
+  const { openModal } = useSignInModalContext();
 
   return (
     <section className="relative -mt-1 bg-black py-16 sm:py-20 md:py-24">
@@ -29,7 +33,7 @@ export function CTASection() {
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-              {isLoaded && isSignedIn ? (
+              {user ? (
                 <Link href="/app">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -40,18 +44,12 @@ export function CTASection() {
                   </motion.button>
                 </Link>
               ) : (
-                <SignInButton mode="modal">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
-                    onClick={() => {
-                      // We'll handle the redirect after sign-in manually
-                      localStorage.setItem('redirectAfterSignIn', '/app');
-                    }}
-                  >
-                    Sign In Now
-                  </motion.button>
+                <SignInButton
+                  onClick={openModal}
+                  variant="light"
+                  className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
+                >
+                  Sign In Now
                 </SignInButton>
               )}
             </div>

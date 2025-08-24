@@ -1,4 +1,3 @@
-import { ClerkProvider } from '@clerk/nextjs';
 import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -67,16 +66,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // @ts-ignore - Ignoring ClerkProvider type error
-    <ClerkProvider>
-      <html lang="en" className="dark" suppressHydrationWarning>
-        <body
-          className={`${inter.className} overflow-x-hidden bg-black text-white antialiased`}
-          suppressHydrationWarning
-        >
-          <Providers>{children}</Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body
+        className={`${inter.className} overflow-x-hidden bg-black text-white antialiased`}
+        suppressHydrationWarning
+      >
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }

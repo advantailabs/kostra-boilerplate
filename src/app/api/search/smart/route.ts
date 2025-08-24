@@ -8,27 +8,31 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
-// import { NextResponse } from 'next/server';
 
+import { getAuthUser } from '@/lib/auth/jwt';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { mapFrontendModeToPrismaMode, transformOpenAiResults } from '@/lib/utils/search';
 import { searchVectorStore } from '@/services/external/openai/vector-store';
 import { CreditService } from '@/services/internal/credit';
 import { createSearchStrategy, type SearchEngine } from '@/services/internal/search/factory';
 import { getKnowledgeBaseWithVectorStore, persistSearch } from '@/services/repositories/search';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserByGoogleId } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-    if (!clerkUserId) {
+    const authUser = await getAuthUser(request);
+
+    console.log('authUser', authUser);
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
-    const user = await getUserByClerkId(clerkUserId);
+    const user = await getUserByGoogleId(authUser.googleId);
+
+    console.log('user', user);
     if (!user) {
       return notFoundResponse('User does not exist');
     }

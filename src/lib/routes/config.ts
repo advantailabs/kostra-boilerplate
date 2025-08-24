@@ -21,8 +21,10 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/screenshots/[...path]', isPublic: true },
 
   // Public webhooks and auth
-  { path: '/api/webhooks/clerk', isPublic: true },
   { path: '/api/webhooks/stripe', isPublic: true },
+  { path: '/api/auth/google', isPublic: true },
+  { path: '/api/auth/google/callback', isPublic: true },
+  { path: '/api/auth/logout', isPublic: true },
   { path: '/api/auth', isPublic: true },
 
   // Protected app pages - require authentication

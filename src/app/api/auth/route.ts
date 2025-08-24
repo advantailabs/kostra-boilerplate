@@ -1,6 +1,6 @@
-import { getUserByClerkId } from '@/services/repositories/user';
-import { auth } from '@clerk/nextjs/server';
-import { SignJWT } from 'jose';
+import { generateJWT, getAuthUser } from '@/lib/auth/jwt';
+import { getUserByGoogleId } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 // No direct NextResponse usage; use standardized responses
 import {
   internalServerErrorResponse,
@@ -14,17 +14,19 @@ export const dynamic = 'force-dynamic';
 
 export const revalidate = 0;
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    const authUser = await getAuthUser(request);
 
-    if (!session || !session.userId) {
+    console.log('authUser', authUser);
+
+    if (!authUser) {
       return unauthorizedResponse();
     }
 
-    const user = await getUserByClerkId(session.userId);
+    const user = await getUserByGoogleId(authUser.googleId);
+
+    console.log('user', user);
 
     if (!user) {
       return notFoundResponse('User not found');
@@ -32,35 +34,20 @@ export async function GET() {
 
     // Ensure we only send serializable data
     const serializableUser = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      profilePicture: user.profilePicture,
-      role: user.role,
-      isOnboarded: user.isOnboarded,
-      credits: user.credits,
-      plan: user.plan,
-      isOverdue: user.isOverDue,
-      planExpiringAt: user.planExpiringAt ? user.planExpiringAt.toISOString() : null,
-      // Add any other serializable properties you need
+      id: authUser.userId,
+      email: authUser.email,
+      name: authUser.name,
+      profilePicture: authUser.profilePicture,
+      role: authUser.role,
+      isOnboarded: authUser.isOnboarded,
+      credits: authUser.credits,
+      plan: authUser.plan,
+      isOverdue: authUser.isOverdue,
+      planExpiringAt: authUser.planExpiringAt,
     };
 
-    const secret = new TextEncoder().encode(JWT_SECRET);
-    const token = await new SignJWT({
-      userId: user.id,
-      role: user.role,
-      email: user.email,
-      name: user.name,
-      profilePicture: user.profilePicture,
-      isOnboarded: user.isOnboarded,
-      credits: user.credits,
-      plan: user.plan,
-      isOverdue: user.isOverDue,
-      planExpiringAt: user.planExpiringAt ? user.planExpiringAt.toISOString() : null,
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('24h')
-      .sign(secret);
+    // Generate a new token (refresh)
+    const token = await generateJWT(authUser);
 
     return successResponse({
       user: serializableUser,
