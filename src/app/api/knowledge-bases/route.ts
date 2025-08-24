@@ -39,12 +39,9 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    console.log('authUser', authUser);
-
     // Get user from database
     const user = await getUserByGoogleId(authUser.googleId);
 
-    console.log('user', user);
     if (!user) {
       return notFoundResponse('User does not exist');
     }
@@ -76,6 +73,7 @@ export async function POST(request: NextRequest) {
 
     // Get user from database
     const user = await getUserByGoogleId(authUser.googleId);
+
     if (!user) {
       return notFoundResponse('User does not exist');
     }

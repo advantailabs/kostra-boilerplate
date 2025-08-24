@@ -15,8 +15,8 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    // const { userId: clerkUserId } = await auth();
     const authUser = await getAuthUser(request);
+
     if (!authUser) {
       return unauthorizedResponse();
     }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       const customer = await stripe.customers.create({
         email: user.email,
         name: user.name,
-        metadata: { userId: String(user.id), googleId: authUser.userId },
+        metadata: { userId: String(user.id), googleId: authUser.googleId },
       });
       customerId = customer.id;
       await setUserStripeCustomerId(user.id, customerId);

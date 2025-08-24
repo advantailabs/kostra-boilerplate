@@ -18,15 +18,11 @@ export async function GET(request: NextRequest) {
   try {
     const authUser = await getAuthUser(request);
 
-    console.log('authUser', authUser);
-
     if (!authUser) {
       return unauthorizedResponse();
     }
 
     const user = await getUserByGoogleId(authUser.googleId);
-
-    console.log('user', user);
 
     if (!user) {
       return notFoundResponse('User not found');
