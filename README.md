@@ -1,6 +1,6 @@
 # Peon - Minimalistic Project and Task Management System
 
-A minimalistic project and task management system built with Next.js, TypeScript, and Tailwind CSS. Peon helps you organize projects, track tasks, and boost productivity with a clean and intuitive interface.
+A file management and organization system built with Next.js, TypeScript, and Tailwind CSS. Peon helps you organize files, track file changes, and boost productivity with a clean and intuitive interface. It provides features like file versioning, sharing, and collaboration while maintaining a minimalist design focused on simplicity and ease of use.
 
 ## 🚀 Features
 
@@ -28,8 +28,8 @@ Before you begin, ensure you have the following installed:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/tracko.git
-cd tracko
+git clone https://github.com/hironate/peon.git
+cd peon
 ```
 
 2. Install dependencies:
