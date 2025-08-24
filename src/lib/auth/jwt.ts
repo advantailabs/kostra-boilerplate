@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const { JWT_SECRET } = process.env;
 const JWT_ALGORITHM = 'HS256';
 
 export interface JWTPayload {

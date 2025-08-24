@@ -24,6 +24,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'private-storage.peon.sh',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
 
