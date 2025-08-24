@@ -6,7 +6,7 @@ A minimalistic project and task management system built with Next.js, TypeScript
 
 - ⚡️ Next.js 14 with App Router
 - 🎨 Tailwind CSS for styling
-- 🔒 Authentication with Clerk
+- 🔒 Authentication with Google OAuth
 - 📊 Data visualization with Recharts
 - 🎯 TypeScript for type safety
 - 🎭 Dark/Light mode support
@@ -47,9 +47,11 @@ cp .env.example .env
 Then edit the `.env` file and add your configuration values:
 
 ```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-DATABASE_URL=your_database_url
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+POSTGRES_URL=your_database_url
+JWT_SECRET=your_jwt_secret
 ```
 
 4. Initialize the database:
@@ -213,7 +215,7 @@ This project is proprietary and licensed to Advant. All rights reserved. Unautho
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Radix UI](https://www.radix-ui.com/)
-- [Clerk](https://clerk.com/)
+- [Google OAuth](https://developers.google.com/identity/protocols/oauth2)
 - [Prisma](https://www.prisma.io/)
 - [Supabase](https://supabase.com/)
 
