@@ -2,11 +2,14 @@
 
 import { RiSendPlaneLine, RiSettingsLine } from '@remixicon/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
-import { SpeechRecognitionButton } from '@/components/atom/SpeechRecognitionButton';
+import {
+  SpeechRecognitionButton,
+  type SpeechRecognitionButtonRef,
+} from '@/components/atom/SpeechRecognitionButton';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import { SEARCH_MODE_OPTIONS, type SearchMode } from '@/lib/constants/search';
@@ -54,6 +57,9 @@ export function CompactSearchBox({
   const pathname = usePathname();
   const urlParams = useSearchParams();
 
+  // Add ref for SpeechRecognitionButton to control speech recognition
+  const speechRecognitionRef = useRef<SpeechRecognitionButtonRef | null>(null);
+
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
   const knowledgeBases = React.useMemo(
     () => knowledgeBasesData?.knowledgeBases || [],
@@ -85,6 +91,11 @@ export function CompactSearchBox({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
+
+    // Stop listening when search is submitted
+    if (speechRecognitionRef.current) {
+      speechRecognitionRef.current.stopListening();
+    }
 
     onSearch({
       query: searchQuery,
@@ -164,6 +175,7 @@ export function CompactSearchBox({
               <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 space-x-1">
                   <SpeechRecognitionButton
+                    ref={speechRecognitionRef}
                     onTranscript={handleTranscript}
                     onInterimTranscript={handleInterimTranscript}
                     onSpeechStart={handleSpeechStart}
