@@ -66,6 +66,13 @@ export function CompactSearchBox({
     }
   }, [knowledgeBases, selectedKnowledgeBaseId, initialKnowledgeBaseId]);
 
+  // Update internal state when initialQuery prop changes
+  React.useEffect(() => {
+    if (initialQuery !== undefined) {
+      setSearchQuery(initialQuery);
+    }
+  }, [initialQuery]);
+
   React.useEffect(() => {
     if (!syncQueryParams) return;
     const params = new URLSearchParams(urlParams.toString());
@@ -86,8 +93,8 @@ export function CompactSearchBox({
       mode: searchMode,
     });
 
-    // Clear the search query after successful search
-    setSearchQuery('');
+    // Don't set isSubmitting here - let the navigation happen naturally
+    // The input will be preserved by the initialQuery prop when the component remounts
   };
 
   const handleTranscript = (transcript: string | null) => {
@@ -97,7 +104,7 @@ export function CompactSearchBox({
     }
   };
 
-  const handleInterimTranscript = (transcript: string | null) => {
+  const handleInterimTranscript = (transcript: string | null): void => {
     // Show interim results in real-time
     // If transcript is null, it means we're stopping or starting fresh, so clear everything
     if (transcript === null) {
@@ -108,13 +115,13 @@ export function CompactSearchBox({
   };
 
   const handleSpeechStart = () => {
-    // Clear current query when starting fresh speech
+    // This ensures the input is cleared when user starts recording again
     setSearchQuery('');
   };
 
   const handleSpeechStop = () => {
-    // Clear the textarea when speech recognition stops
-    setSearchQuery('');
+    // Don't clear the input when speech recognition stops
+    // Keep the transcript for potential editing or sending
   };
   return (
     <div className="space-y-2">
@@ -168,7 +175,7 @@ export function CompactSearchBox({
                     variant="elevated"
                     className="h-6 w-6 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
                   >
-                    <RiSendPlaneLine className="h-3 w-3" />
+                    <RiSendPlaneLine className="h-3 w-3 dark:text-gray-600" />
                   </Button>
                 </div>
               </div>

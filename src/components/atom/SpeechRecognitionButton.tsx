@@ -75,13 +75,17 @@ export function SpeechRecognitionButton({
   const isStartingRef = useRef(false);
   const isListeningRef = useRef(false);
 
+  // Add refs to track accumulated text and manage continuous recognition
+  const accumulatedTextRef = useRef('');
+  const restartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSpeechTimeRef = useRef<number>(0);
+
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         setIsSpeechSupported(true);
-        // Don't create instance here - we'll create it fresh each time
       }
     }
   }, []);
@@ -92,9 +96,12 @@ export function SpeechRecognitionButton({
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
-        } catch (error) {
+        } catch {
           // Ignore cleanup errors
         }
+      }
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
       }
     };
   }, []);
@@ -112,14 +119,12 @@ export function SpeechRecognitionButton({
     recognition.lang = 'en-US';
 
     recognition.onstart = () => {
-      // Only update state if we're in starting mode
       if (isStartingRef.current) {
         setIsListening(true);
         setIsStarting(false);
         isStartingRef.current = false;
         isListeningRef.current = true;
 
-        // Notify parent component that speech recognition has started
         if (onSpeechStart) {
           onSpeechStart();
         }
@@ -127,14 +132,57 @@ export function SpeechRecognitionButton({
     };
 
     recognition.onend = () => {
-      // Only update state if we're in listening mode
+      // Only restart if we're still supposed to be listening
       if (isListeningRef.current) {
+        const now = Date.now();
+        const timeSinceLastSpeech = now - lastSpeechTimeRef.current;
+
+        // If it's been more than 2 seconds since last speech, restart recognition
+        if (timeSinceLastSpeech > 2000) {
+          // Restart recognition after pause
+          if (recognitionRef.current) {
+            try {
+              recognitionRef.current.stop();
+            } catch {
+              // Ignore stop errors
+            }
+          }
+
+          const newRecognition = createRecognitionInstance();
+          if (newRecognition) {
+            recognitionRef.current = newRecognition;
+            newRecognition.start();
+          }
+        } else {
+          // Set a timeout to restart after 2 seconds of no speech
+          if (restartTimeoutRef.current) {
+            clearTimeout(restartTimeoutRef.current);
+          }
+          restartTimeoutRef.current = setTimeout(() => {
+            if (isListeningRef.current) {
+              if (recognitionRef.current) {
+                try {
+                  recognitionRef.current.stop();
+                } catch {
+                  // Ignore stop errors
+                }
+              }
+
+              const newRecognition = createRecognitionInstance();
+              if (newRecognition) {
+                recognitionRef.current = newRecognition;
+                newRecognition.start();
+              }
+            }
+          }, 2000);
+        }
+      } else {
+        // We're actually stopping, so update state
         setIsListening(false);
         setIsStarting(false);
         isStartingRef.current = false;
         isListeningRef.current = false;
 
-        // Notify parent component that speech recognition has stopped
         if (onSpeechStop) {
           onSpeechStop();
         }
@@ -142,7 +190,6 @@ export function SpeechRecognitionButton({
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      // Only process results if we're actually listening
       if (!isListeningRef.current) {
         return;
       }
@@ -159,24 +206,61 @@ export function SpeechRecognitionButton({
         }
       }
 
-      // Send interim results immediately for real-time typing
-      if (interimTranscript && onInterimTranscript) {
-        onInterimTranscript(interimTranscript);
+      // Update last speech time
+      if (finalTranscript || interimTranscript) {
+        lastSpeechTimeRef.current = Date.now();
       }
 
-      // Send final results when sentence is complete
+      // Clear restart timeout since we're getting speech input
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+        restartTimeoutRef.current = null;
+      }
+
+      // Handle final results - accumulate with existing text
       if (finalTranscript) {
-        onTranscript(finalTranscript);
+        accumulatedTextRef.current += `${finalTranscript} `;
+        onTranscript(accumulatedTextRef.current.trim());
+      }
+
+      // Handle interim results - show accumulated + current interim
+      if (interimTranscript && onInterimTranscript) {
+        const fullInterimText = accumulatedTextRef.current + interimTranscript;
+        onInterimTranscript(fullInterimText.trim());
       }
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event.error);
-      // Reset all states on error
-      setIsListening(false);
-      setIsStarting(false);
-      isStartingRef.current = false;
-      isListeningRef.current = false;
+      // Only reset state if it's a fatal error
+      if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        // These are recoverable errors, try to restart
+        if (isListeningRef.current) {
+          setTimeout(() => {
+            if (isListeningRef.current) {
+              if (recognitionRef.current) {
+                try {
+                  recognitionRef.current.stop();
+                } catch {
+                  // Ignore stop errors
+                }
+              }
+
+              const newRecognition = createRecognitionInstance();
+              if (newRecognition) {
+                recognitionRef.current = newRecognition;
+                newRecognition.start();
+              }
+            }
+          }, 1000);
+        }
+      } else {
+        // Fatal error, reset state
+        setIsListening(false);
+        setIsStarting(false);
+        isStartingRef.current = false;
+        isListeningRef.current = false;
+        accumulatedTextRef.current = '';
+      }
     };
 
     return recognition;
@@ -186,56 +270,66 @@ export function SpeechRecognitionButton({
     if (!isSpeechSupported || disabled) return;
 
     if (isListening) {
-      // Stop listening - based on current state
+      // Stop listening
       try {
-        // Clear any pending interim results immediately
+        // Clear accumulated text
+        accumulatedTextRef.current = '';
+
+        // Clear any pending interim results
         if (onInterimTranscript) {
           onInterimTranscript(null);
         }
 
-        // Immediately update state to show we're stopping
+        // Clear restart timeout
+        if (restartTimeoutRef.current) {
+          clearTimeout(restartTimeoutRef.current);
+          restartTimeoutRef.current = null;
+        }
+
+        // Update state
         setIsListening(false);
         setIsStarting(false);
         isStartingRef.current = false;
         isListeningRef.current = false;
 
-        // Stop the recognition and clear the reference
+        // Stop recognition
         if (recognitionRef.current) {
           try {
             recognitionRef.current.stop();
-          } catch (error) {
+          } catch {
             // Ignore stop errors
           }
           recognitionRef.current = null;
         }
-      } catch (error) {
-        console.error('Failed to stop speech recognition:', error);
-        // State is already set to false above
+      } catch {
+        // Handle any errors silently
       }
     } else {
-      // Start listening - based on current state
+      // Start listening
       try {
+        // Reset accumulated text
+        accumulatedTextRef.current = '';
+
         // Set starting state
         setIsStarting(true);
         setIsListening(false);
         isStartingRef.current = true;
         isListeningRef.current = false;
 
-        // Clear any previous speech input when starting fresh
+        // Clear any previous speech input
         if (onInterimTranscript) {
           onInterimTranscript(null);
         }
 
-        // Create a fresh instance and start
+        // Create instance and start
         const recognition = createRecognitionInstance();
         if (recognition) {
           recognitionRef.current = recognition;
           recognition.start();
 
-          // Fallback timeout in case events don't fire
+          // Fallback timeout
           setTimeout(() => {
             if (isStartingRef.current && !isListening) {
-              console.warn('Speech recognition start timeout, resetting state');
               setIsStarting(false);
               setIsListening(false);
               isStartingRef.current = false;
@@ -246,8 +340,7 @@ export function SpeechRecognitionButton({
         } else {
           throw new Error('Failed to create recognition instance');
         }
-      } catch (error) {
-        console.error('Failed to start speech recognition:', error);
+      } catch {
         // Reset state on error
         setIsStarting(false);
         setIsListening(false);

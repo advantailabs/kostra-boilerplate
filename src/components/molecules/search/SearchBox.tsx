@@ -152,9 +152,6 @@ export function SearchBox({
       mode: searchMode,
     });
 
-    // Clear the search query after successful search
-    setSearchQuery('');
-
     // Reset textarea height to default
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
