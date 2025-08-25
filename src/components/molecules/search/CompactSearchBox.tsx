@@ -117,16 +117,17 @@ export function CompactSearchBox({
 
   const handleInterimTranscript = (transcript: string | null): void => {
     // Show interim results in real-time
-    // If transcript is null, it means we're stopping or starting fresh, so clear everything
+    // Only clear input when transcript is null AND we're starting fresh
     if (transcript === null) {
-      setSearchQuery('');
+      // Don't clear here - let handleSpeechStart handle clearing when starting new session
+      // This prevents clearing when stopping speech recognition
     } else {
       setSearchQuery(transcript);
     }
   };
 
   const handleSpeechStart = () => {
-    // This ensures the input is cleared when user starts recording again
+    // Clear the input when user starts recording again
     setSearchQuery('');
   };
 

@@ -50,6 +50,7 @@ export function SearchBox({
     initialKnowledgeBaseId ?? ''
   );
   const [searchMode, setSearchMode] = useState<SearchMode>(initialMode ?? 'smart-search');
+  const [isListening, setIsListening] = useState(false);
   // previousQuery state removed as it's no longer needed for appending
 
   // Speech recognition ref removed as component doesn't support it currently
@@ -65,20 +66,26 @@ export function SearchBox({
     // Show interim results in real-time
     // If transcript is null, it means we're stopping or starting fresh, so clear everything
     if (transcript === null) {
-      setSearchQuery('');
+      // Don't clear the text when stopping - preserve what was typed
+      if (isListening) {
+        setIsListening(false);
+      }
     } else {
       setSearchQuery(transcript);
     }
   };
 
   const handleSpeechStart = () => {
-    // Clear current query when starting fresh speech
-    setSearchQuery('');
+    // Only clear current query when starting fresh speech if we weren't listening before
+    if (!isListening) {
+      setSearchQuery('');
+    }
+    setIsListening(true);
   };
 
   const handleSpeechStop = () => {
-    // Clear the textarea when speech recognition stops
-    setSearchQuery('');
+    // Don't clear the textarea when speech recognition stops - preserve what was typed
+    setIsListening(false);
   };
 
   const router = useRouter();
