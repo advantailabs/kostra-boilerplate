@@ -10,12 +10,13 @@ import {
 import { NextRequest } from 'next/server';
 
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   deleteKnowledgeBaseService,
   getKnowledgeBaseByIdPublicService,
   updateKnowledgeBaseService,
 } from '@/services/internal/knowledge-base';
+import { getUserById } from '@/services/repositories/user';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -37,9 +38,10 @@ const updateKnowledgeBaseSchema = z.object({
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this knowledge base
-    if (result.data.userId !== authUser.userId) {
+    if (result.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -76,9 +78,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -100,7 +103,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Enforce credit threshold for update
-    if (authUser.credits < CREDIT_THRESHOLDS.creationMin) {
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
       return insufficientCreditsResponse();
     }
 
@@ -109,7 +112,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -117,7 +120,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const result = await updateKnowledgeBaseService(
       knowledgeBaseId,
       validationResult.data,
-      authUser.userId
+      user.id
     );
 
     if (!result.success) {
@@ -136,9 +139,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -156,12 +159,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
     // Delete knowledge base
-    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles, authUser.userId);
+    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

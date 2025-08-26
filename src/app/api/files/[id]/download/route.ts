@@ -1,4 +1,4 @@
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { generateDownloadUrl } from '@/lib/s3';
 import {
   errorResponse,
@@ -9,6 +9,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { findFileById } from '@/services/repositories/file';
+import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -16,8 +17,9 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -35,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const file = fileResult.data;
 
     // Check if user owns the file
-    if (file.userId !== authUser.userId) {
+    if (file.userId !== user.id) {
       return forbiddenResponse('Access denied');
     }
 

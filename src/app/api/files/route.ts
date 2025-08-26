@@ -1,5 +1,4 @@
 import { FREE_LIMITS } from '@/data/config/plans';
-import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -13,7 +12,9 @@ import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getTotalFilesCount } from '@/services/repositories/file';
+import { getUserById } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -41,8 +42,9 @@ if (typeof global.File === 'undefined') {
 
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
       validationResult.data;
 
     // Get files
-    const result = await getUserFilesService(authUser.userId, page, limit, {
+    const result = await getUserFilesService(user.id, page, limit, {
       search,
       sortBy,
       sortOrder,
@@ -88,23 +90,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
     // Enforce Free plan total file limit for uploads (user files + KB files)
-    if (authUser.plan === 'FREE') {
-      const totalFiles = await prisma.file.count({
-        where: { userId: authUser.userId, deletedAt: null },
-      });
+    if (user.plan === 'FREE') {
+      const totalFiles = await getTotalFilesCount(user.id);
+      if (!totalFiles.success) {
+        return internalServerErrorResponse(totalFiles.error);
+      }
+
       // Determine how many files are being uploaded in this request
       const bodyForCount = await request
         .clone()
         .json()
         .catch(() => null);
       const incomingCount = Array.isArray(bodyForCount?.files) ? bodyForCount.files.length : 1;
-      if (totalFiles + incomingCount > FREE_LIMITS.filesTotal) {
+      if (totalFiles.data + incomingCount > FREE_LIMITS.filesTotal) {
         return errorResponse('Free plan limit reached: You can upload up to 50 total files.', 403);
       }
     }
@@ -140,7 +145,7 @@ export async function POST(request: NextRequest) {
       const ownershipChecks = await Promise.all(
         knowledgeBaseIds.map(async id => {
           const kb = await getKnowledgeBaseByIdPublicService(id);
-          return kb.success && kb.data && kb.data.userId === authUser.userId;
+          return kb.success && kb.data && kb.data.userId === user.id;
         })
       );
       if (!ownershipChecks.every(Boolean)) {
@@ -156,7 +161,7 @@ export async function POST(request: NextRequest) {
 
       // Upload file
       const result = await uploadFileService({
-        userId: authUser.userId,
+        userId: user.id,
         file: mockFile,
         s3Key: fileData.s3Key,
         knowledgeBaseIds,

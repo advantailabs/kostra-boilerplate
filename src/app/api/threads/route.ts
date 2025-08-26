@@ -5,8 +5,9 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { getUserThreadsPaginated } from '@/services/internal/chat';
+import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -20,14 +21,15 @@ export async function GET(request: NextRequest) {
     const limit = Math.max(1, Math.min(100, limitParam ? parseInt(limitParam, 10) : 15));
     const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
 
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
     // Get user's threads (paginated by default; default limit 15)
-    const result = await getUserThreadsPaginated(authUser.userId, limit, offset);
+    const result = await getUserThreadsPaginated(user.id, limit, offset);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

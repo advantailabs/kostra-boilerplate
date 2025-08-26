@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/atom/Button';
+import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
 import { useAuthStore } from '@/store/auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'sonner';
@@ -10,27 +11,13 @@ interface GoogleSignInButtonProps {
 }
 
 export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
+  const googleSignInMutation = useGoogleSignIn();
   const { setAuth } = useAuthStore();
 
   const handleSuccess = async (tokenResponse: any) => {
     try {
-      // Decode the JWT token to get user info
-      const response = await fetch('/api/auth/google/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          credential: tokenResponse.access_token,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to verify Google token');
-      }
-
-      const { user, token } = await response.json();
+      const data = await googleSignInMutation.mutateAsync(tokenResponse.access_token);
+      const { user, token } = data;
 
       // Update auth store
       setAuth(user, token);

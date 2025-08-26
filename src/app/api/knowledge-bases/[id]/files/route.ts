@@ -8,13 +8,14 @@ import {
 } from '@/lib/utils/response';
 import { NextRequest } from 'next/server';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   addFileToKnowledgeBaseService,
   getFileByIdService,
   removeFileFromKnowledgeBaseService,
 } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
+import { getUserById } from '@/services/repositories/user';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -30,9 +31,10 @@ const removeFileSchema = z.object({
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -69,9 +71,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -99,7 +102,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -108,12 +111,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!fileCheck.success) {
       return internalServerErrorResponse(fileCheck.error);
     }
-    if (!fileCheck.data || (fileCheck.data as any).userId !== authUser.userId) {
+    if (!fileCheck.data || (fileCheck.data as any).userId !== user.id) {
       return notFoundResponse('File not found');
     }
 
     // Add file to knowledge base
-    const result = await addFileToKnowledgeBaseService(fileId, knowledgeBaseId, authUser.userId);
+    const result = await addFileToKnowledgeBaseService(fileId, knowledgeBaseId, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
@@ -130,9 +133,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -160,7 +163,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
+    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -169,16 +172,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!fileCheck.success) {
       return internalServerErrorResponse(fileCheck.error);
     }
-    if (!fileCheck.data || (fileCheck.data as any).userId !== authUser.userId) {
+    if (!fileCheck.data || (fileCheck.data as any).userId !== user.id) {
       return notFoundResponse('File not found');
     }
 
     // Remove file from knowledge base
-    const result = await removeFileFromKnowledgeBaseService(
-      fileId,
-      knowledgeBaseId,
-      authUser.userId
-    );
+    const result = await removeFileFromKnowledgeBaseService(fileId, knowledgeBaseId, user.id);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

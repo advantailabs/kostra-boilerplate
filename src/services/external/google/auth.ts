@@ -1,4 +1,5 @@
 // This file handles Google OAuth authentication using @react-oauth/google
+import axios from 'axios';
 
 export interface GoogleUserInfo {
   id: string;
@@ -25,15 +26,15 @@ export const validateGoogleResponse = (response: any): boolean => {
 };
 
 export async function verifyGoogleToken(accessToken: string) {
-  // Use the access token to get user info from Google's userinfo endpoint
-  const googleResponse = await fetch(
-    `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`
-  );
-
-  if (!googleResponse.ok) {
+  try {
+    // Use the access token to get user info from Google's userinfo endpoint
+    const { data } = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return data;
+  } catch (error) {
     throw new Error('Invalid Google access token');
   }
-
-  const userInfo = await googleResponse.json();
-  return userInfo;
 }

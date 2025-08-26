@@ -35,44 +35,55 @@ const middleware = async (request: NextRequest) => {
   const matchedRoute = findMatchingRoute(path);
   const needsRoleAccess = requiresRoleAccess(matchedRoute, method);
 
-  // Only protect non-public routes
-  if (!isPublic) {
-    const authUser = await getAuthUser(request);
-    if (!authUser) {
+  let authUser: any = null;
+
+  // Get authenticated user if available (for both public and protected routes)
+  try {
+    authUser = await getAuthUser(request);
+  } catch (error) {
+    // Ignore auth errors for public routes
+    if (!isPublic) {
       const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
       return applyCorsHeaders(request, response);
     }
+  }
+
+  // Only protect non-public routes
+  if (!isPublic && !authUser) {
+    const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    return applyCorsHeaders(request, response);
   }
 
   if (needsRoleAccess) {
     // Ensure the user is authenticated for role-gated routes
-    try {
-      const authUser = await getAuthUser(request);
-      if (!authUser) {
-        const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-        return applyCorsHeaders(request, response);
-      }
-
-      // Default to USER role if no custom token provided
-      const effectiveRole = getEffectiveUserRole(userRole);
-      const hasAccess = checkAccess(path, method, effectiveRole);
-
-      if (!hasAccess) {
-        const response = NextResponse.json(
-          {
-            error: 'You do not have sufficient privileges to perform this action',
-          },
-          { status: 403 }
-        );
-        return applyCorsHeaders(request, response);
-      }
-    } catch (error) {
+    if (!authUser) {
       const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return applyCorsHeaders(request, response);
+    }
+
+    // Default to USER role if no custom token provided
+    const effectiveRole = getEffectiveUserRole(userRole);
+    const hasAccess = checkAccess(path, method, effectiveRole);
+
+    if (!hasAccess) {
+      const response = NextResponse.json(
+        {
+          error: 'You do not have sufficient privileges to perform this action',
+        },
+        { status: 403 }
+      );
       return applyCorsHeaders(request, response);
     }
   }
 
-  return applyCorsHeaders(request, NextResponse.next());
+  // Create response with user ID in headers if user is authenticated
+  const response = NextResponse.next();
+
+  if (authUser?.userId) {
+    response.headers.set('x-user-id', authUser.userId.toString());
+  }
+
+  return applyCorsHeaders(request, response);
 };
 
 export default middleware;

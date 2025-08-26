@@ -1,5 +1,6 @@
 'use client';
 
+import { useLogout } from '@/hooks/useLogout';
 import { useAuthStore } from '@/store/auth';
 import { googleLogout } from '@react-oauth/google';
 import Image from 'next/image';
@@ -9,6 +10,7 @@ import { useEffect, useState } from 'react';
 
 function UserProfile() {
   const { user, clearAuth } = useAuthStore();
+  const logoutMutation = useLogout();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -29,10 +31,7 @@ function UserProfile() {
 
   const handleSignOutClick = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await logoutMutation.mutateAsync();
       router.push('/');
     } catch (error) {
       console.error('Logout error:', error);

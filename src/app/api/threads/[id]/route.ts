@@ -7,17 +7,18 @@ import {
 } from '@/lib/utils/response';
 import { NextRequest } from 'next/server';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getAuthUser, getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
+import { getUserById } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Get thread with messages
-    const result = await getThreadWithMessages(authUser.userId, threadId);
+    const result = await getThreadWithMessages(user.id, threadId);
 
     if (!result.success) {
       return result.error?.includes('not found')

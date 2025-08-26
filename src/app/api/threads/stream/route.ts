@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
@@ -19,6 +19,7 @@ import { uploadFileService } from '@/services/internal/file';
 import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
+import { getUserById } from '@/services/repositories/user';
 import { createThreadSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -31,9 +32,9 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
     const { personaId, message: initialMessage, files } = validationResult.data;
 
     // Verify persona exists and belongs to user
-    const persona = await findPersonaByUserAndIdInternal(authUser.userId, personaId);
+    const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
     if (!persona) {
       return notFoundResponse('Persona not found');
     }
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has sufficient credits before starting a chat
-    const hasCredits = await CreditService.hassufficientCredits(authUser.userId, CREDIT_COSTS.CHAT);
+    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
     if (!hasCredits) {
       return insufficientCreditsResponse();
     }
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     // Create thread in database
     const thread = await createThread({
-      userId: authUser.userId,
+      userId: user.id,
       personaId,
       title,
     });
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
           Object.defineProperty(mockFile, 'size', { value: f.size });
 
           const result = await uploadFileService({
-            userId: authUser.userId,
+            userId: user.id,
             file: mockFile,
             s3Key: f.s3Key,
             uploadPurpose: f.uploadPurpose || 'MessageAttachment',
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
       initialMessageAttachments: openaiAttachments,
       metadata: {
         dbThreadId: thread.id.toString(),
-        userId: authUser.userId.toString(),
+        userId: user.id.toString(),
         personaId: personaId.toString(),
       },
     });
@@ -240,7 +241,7 @@ export async function POST(request: NextRequest) {
 
                 // Deduct credits after successful message completion
                 await CreditService.deductCredits({
-                  userId: authUser.userId,
+                  userId: user.id,
                   amount: CREDIT_COSTS.CHAT,
                   operation: 'CHAT',
                   objectId: assistantMessage.id.toString(),

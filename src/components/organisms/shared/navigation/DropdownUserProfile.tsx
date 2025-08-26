@@ -1,5 +1,6 @@
 'use client';
 
+import { useLogout } from '@/hooks/useLogout';
 import { useStripe } from '@/hooks/useStripe';
 import { googleLogout } from '@react-oauth/google';
 import {
@@ -41,6 +42,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
   const { theme, setTheme } = useTheme();
   const { user } = useAuthStore();
   const { openBillingPortal, isCreatingPortal } = useStripe();
+  const logoutMutation = useLogout();
 
   const { clearAuth } = useAuthStore();
   const router = useRouter();
@@ -48,10 +50,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
   const handleLogout = async () => {
     try {
       // Call logout API to clear server-side session
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await logoutMutation.mutateAsync();
       router.push('/');
     } catch (error) {
       console.error('Logout error:', error);

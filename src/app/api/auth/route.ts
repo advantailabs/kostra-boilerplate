@@ -1,4 +1,4 @@
-import { generateJWT, getAuthUser } from '@/lib/auth/jwt';
+import { generateJWT, getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { NextRequest } from 'next/server';
 // No direct NextResponse usage; use standardized responses
 import {
@@ -6,6 +6,7 @@ import {
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
+import { getUserById } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -14,28 +15,29 @@ export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
     // Ensure we only send serializable data
     const serializableUser = {
-      id: authUser.userId,
-      email: authUser.email,
-      name: authUser.name,
-      profilePicture: authUser.profilePicture,
-      role: authUser.role,
-      isOnboarded: authUser.isOnboarded,
-      credits: authUser.credits,
-      plan: authUser.plan,
-      isOverdue: authUser.isOverdue,
-      planExpiringAt: authUser.planExpiringAt,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      profilePicture: user.profilePicture,
+      role: user.role,
+      isOnboarded: user.isOnboarded,
+      credits: user.credits,
+      plan: user.plan,
+      isOverdue: user.isOverDue,
+      planExpiringAt: user.planExpiringAt,
     };
 
     // Generate a new token (refresh)
-    const token = await generateJWT(authUser);
+    const token = await generateJWT(user as any);
 
     return successResponse({
       user: serializableUser,

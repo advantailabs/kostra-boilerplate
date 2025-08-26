@@ -1,9 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 
-const { JWT_SECRET } = process.env;
-const JWT_ALGORITHM = 'HS256';
-
 export interface JWTPayload {
   userId: number;
   email: string;
@@ -19,20 +16,24 @@ export interface JWTPayload {
   stripeCustomerId?: string;
 }
 
-export const generateJWT = async (payload: JWTPayload): Promise<string> => {
-  const secret = new TextEncoder().encode(JWT_SECRET);
+const JWT_ALGORITHM = 'HS256';
+const JWT_SECRET_RAW = process.env.JWT_SECRET;
+if (!JWT_SECRET_RAW) {
+  throw new Error('JWT_SECRET must be set');
+}
+const JWT_SECRET_KEY = new TextEncoder().encode(JWT_SECRET_RAW);
 
+export const generateJWT = async (payload: JWTPayload): Promise<string> => {
   return new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: JWT_ALGORITHM })
     .setIssuedAt()
     .setExpirationTime('24h')
-    .sign(secret);
+    .sign(JWT_SECRET_KEY);
 };
 
 export const verifyJWT = async (token: string): Promise<JWTPayload> => {
   try {
-    const secret = new TextEncoder().encode(JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret, {
+    const { payload } = await jwtVerify(token, JWT_SECRET_KEY, {
       algorithms: [JWT_ALGORITHM],
     });
 
@@ -58,4 +59,9 @@ export const getAuthUser = async (request: NextRequest): Promise<JWTPayload | nu
   } catch (error) {
     return null;
   }
+};
+
+export const getUserIdFromHeaders = (request: NextRequest): string | null => {
+  const userId = request.headers.get('x-user-id');
+  return userId;
 };

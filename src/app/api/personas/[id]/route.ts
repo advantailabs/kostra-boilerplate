@@ -11,12 +11,13 @@ import {
 import { NextRequest } from 'next/server';
 
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   deactivatePersonaService,
   getPersonaByIdService,
   updatePersonaService,
 } from '@/services/internal/persona';
+import { getUserById } from '@/services/repositories/user';
 import { updatePersonaSchema } from '@/validations/persona';
 
 // Force dynamic rendering for this API route
@@ -30,9 +31,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Check if persona belongs to user
-    if (result.data?.userId !== authUser.userId) {
+    if (result.data?.userId !== user.id) {
       return forbiddenResponse('You do not have access to this persona');
     }
 
@@ -67,9 +69,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -91,12 +94,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Enforce credit threshold for update
-    if (authUser.credits < CREDIT_THRESHOLDS.creationMin) {
+    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
       return insufficientCreditsResponse();
     }
 
     // Update persona
-    const result = await updatePersonaService(authUser.userId, personaId, validationResult.data);
+    const result = await updatePersonaService(user.id, personaId, validationResult.data);
 
     if (!result.success) {
       return result.error?.includes('not found')
@@ -116,9 +119,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -128,7 +131,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Deactivate persona
-    const result = await deactivatePersonaService(authUser.userId, personaId);
+    const result = await deactivatePersonaService(user.id, personaId);
 
     if (!result.success) {
       return result.error?.includes('not found')

@@ -1,4 +1,4 @@
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -8,6 +8,7 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
+import { getUserById } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
@@ -16,9 +17,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this file
-    if (result.data.userId !== authUser.userId) {
+    if (result.data.userId !== user.id) {
       return notFoundResponse('File not found');
     }
 
@@ -55,9 +57,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -77,7 +80,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this file
-    if (fileResult.data.userId !== authUser.userId) {
+    if (fileResult.data.userId !== user.id) {
       return notFoundResponse('File not found');
     }
 
@@ -112,9 +115,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -129,7 +132,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return notFoundResponse('File not found');
     }
 
-    if (fileResult.data.userId !== authUser.userId) {
+    if (fileResult.data.userId !== user.id) {
       return notFoundResponse('File not found');
     }
 

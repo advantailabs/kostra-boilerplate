@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
@@ -20,6 +20,7 @@ import {
   findByUserAndId,
   updateThreadTimestamp,
 } from '@/services/repositories/thread';
+import { getUserById } from '@/services/repositories/user';
 import { addMessageSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -32,9 +33,10 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!authUser) {
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Verify thread exists and belongs to user
-    const thread = await findByUserAndId(authUser.userId, threadId);
+    const thread = await findByUserAndId(user.id, threadId);
     if (!thread) {
       return notFoundResponse('Thread not found or access denied');
     }
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Check if user has sufficient credits
-    const hasCredits = await CreditService.hassufficientCredits(authUser.userId, CREDIT_COSTS.CHAT);
+    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
     if (!hasCredits) {
       return insufficientCreditsResponse();
     }
@@ -98,7 +100,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         const mockFile = new File([], f.originalName, { type: f.mimeType });
         Object.defineProperty(mockFile, 'size', { value: f.size });
         const result = await uploadFileService({
-          userId: authUser.userId,
+          userId: user.id,
           file: mockFile,
           s3Key: f.s3Key,
           uploadPurpose: f.uploadPurpose || 'MessageAttachment',
@@ -190,7 +192,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
                 // Deduct credits after successful message completion
                 await CreditService.deductCredits({
-                  userId: authUser.userId,
+                  userId: user.id,
                   amount: CREDIT_COSTS.CHAT,
                   operation: 'CHAT',
                   objectId: assistantMessage.id.toString(),

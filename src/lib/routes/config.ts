@@ -166,6 +166,15 @@ export const ALL_ROUTES: RouteConfig[] = [
     },
   },
 
+  // API routes - auth
+  {
+    path: '/api/auth',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
+    },
+  },
+
   // API routes - users
   {
     path: '/api/users/data',

@@ -20,6 +20,22 @@ const upsertUser = async (user: GoogleUserUpdate) => {
   });
 };
 
+const createUser = async (user: GoogleUserUpdate) => {
+  return prisma.user.create({
+    data: {
+      email: user.email,
+      name: user.name,
+      googleId: user.googleId,
+      profilePicture: user.profilePicture,
+      role: 'USER',
+      isOnboarded: true,
+      credits: 100,
+      plan: UserPlan.FREE,
+      isOverDue: false,
+    },
+  });
+};
+
 const deleteUser = async (googleId: string) => {
   return prisma.user.update({
     where: { googleId },
@@ -40,14 +56,26 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
 };
 
 const getUserByGoogleId = async (googleId: string) => {
+  return prisma.user.findFirst({
+    where: { googleId, deletedAt: null },
+  });
+};
+
+const getUserById = async (userId: string | number | null) => {
+  const id = Number(userId);
+
+  if (!id || id <= 0) {
+    return null;
+  }
+
   return prisma.user.findUnique({
-    where: { googleId },
+    where: { id },
   });
 };
 
 const getUserByEmail = async (email: string) => {
-  return prisma.user.findUnique({
-    where: { email },
+  return prisma.user.findFirst({
+    where: { email, deletedAt: null },
   });
 };
 
@@ -72,13 +100,30 @@ const setUserOverdue = async (userId: number, isOverDue: boolean) => {
   });
 };
 
+const getUserByGoogleIdOrEmail = async (googleId: string, email: string) => {
+  return prisma.user.findFirst({
+    where: { OR: [{ googleId }, { email }] },
+  });
+};
+
+const updateUserGoogleId = async (userId: number, googleId: string) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { googleId },
+  });
+};
+
 export {
+  createUser,
   deleteUser,
   getUserByEmail,
   getUserByGoogleId,
+  getUserByGoogleIdOrEmail,
+  getUserById,
   getUserByRole,
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,
+  updateUserGoogleId,
   upsertUser,
 };
