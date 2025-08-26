@@ -47,9 +47,7 @@ cp .env.example .env
 Then edit the `.env` file and add your configuration values:
 
 ```env
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 POSTGRES_URL=your_database_url
 JWT_SECRET=your_jwt_secret
 ```

@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuthStore } from '@/store/auth';
+import { googleLogout } from '@react-oauth/google';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -36,6 +37,7 @@ function UserProfile() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      googleLogout();
       clearAuth();
       setIsOpen(false);
     }

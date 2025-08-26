@@ -17,7 +17,6 @@ import {
   getPersonaByIdService,
   updatePersonaService,
 } from '@/services/internal/persona';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { updatePersonaSchema } from '@/validations/persona';
 
 // Force dynamic rendering for this API route
@@ -37,12 +36,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const personaId = parseInt(params.id, 10);
     if (Number.isNaN(personaId)) {
       return errorResponse('Persona ID must be a number', 400);
@@ -58,7 +51,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Check if persona belongs to user
-    if (result.data?.userId !== user.id) {
+    if (result.data?.userId !== authUser.userId) {
       return forbiddenResponse('You do not have access to this persona');
     }
 
@@ -80,12 +73,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const personaId = parseInt(params.id, 10);
     if (Number.isNaN(personaId)) {
       return errorResponse('Persona ID must be a number', 400);
@@ -104,12 +91,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Enforce credit threshold for update
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+    if (authUser.credits < CREDIT_THRESHOLDS.creationMin) {
       return insufficientCreditsResponse();
     }
 
     // Update persona
-    const result = await updatePersonaService(user.id, personaId, validationResult.data);
+    const result = await updatePersonaService(authUser.userId, personaId, validationResult.data);
 
     if (!result.success) {
       return result.error?.includes('not found')
@@ -135,19 +122,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const personaId = parseInt(params.id, 10);
     if (Number.isNaN(personaId)) {
       return errorResponse('Persona ID must be a number', 400);
     }
 
     // Deactivate persona
-    const result = await deactivatePersonaService(user.id, personaId);
+    const result = await deactivatePersonaService(authUser.userId, personaId);
 
     if (!result.success) {
       return result.error?.includes('not found')

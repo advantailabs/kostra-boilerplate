@@ -3,7 +3,6 @@ import {
   forbiddenResponse,
   insufficientCreditsResponse,
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
@@ -16,7 +15,6 @@ import { searchVectorStore } from '@/services/external/openai/vector-store';
 import { CreditService } from '@/services/internal/credit';
 import { createSearchStrategy, type SearchEngine } from '@/services/internal/search/factory';
 import { getKnowledgeBaseWithVectorStore, persistSearch } from '@/services/repositories/search';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -27,12 +25,6 @@ export async function POST(request: NextRequest) {
 
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    const user = await getUserByGoogleId(authUser.googleId);
-
-    if (!user) {
-      return notFoundResponse('User does not exist');
     }
 
     const body = await request.json();
@@ -60,7 +52,7 @@ export async function POST(request: NextRequest) {
       return errorResponse('Selected knowledge base has no vector store configured', 400);
     }
     // Ensure user owns the knowledge base
-    if (kb.userId !== user.id) {
+    if (kb.userId !== authUser.userId) {
       return forbiddenResponse('You do not have access to this knowledge base');
     }
 
@@ -68,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user has sufficient credits
     const creditCost = isQA ? CREDIT_COSTS.SMART_QA : CREDIT_COSTS.SMART_SEARCH;
-    const hasCredits = await CreditService.hassufficientCredits(user.id, creditCost);
+    const hasCredits = await CreditService.hassufficientCredits(authUser.userId, creditCost);
     if (!hasCredits) {
       return insufficientCreditsResponse();
     }
@@ -108,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     const persisted = await persistSearch({
-      userId: user.id,
+      userId: authUser.userId,
       knowledgeBaseId,
       query,
       mode: mapFrontendModeToPrismaMode(isQA ? 'smart-qa' : 'smart-search'),
@@ -118,7 +110,7 @@ export async function POST(request: NextRequest) {
 
     // Deduct credits after successful search
     await CreditService.deductCredits({
-      userId: user.id,
+      userId: authUser.userId,
       amount: creditCost,
       operation: isQA ? 'SMART_QA' : 'SMART_SEARCH',
       objectId: persisted.searchQueryId.toString(),

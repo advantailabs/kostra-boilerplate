@@ -19,7 +19,6 @@ import { uploadFileService } from '@/services/internal/file';
 import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { createThreadSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -36,12 +35,6 @@ export async function POST(request: NextRequest) {
 
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
     }
 
     // Parse and validate request body
@@ -61,7 +54,7 @@ export async function POST(request: NextRequest) {
     const { personaId, message: initialMessage, files } = validationResult.data;
 
     // Verify persona exists and belongs to user
-    const persona = await findPersonaByUserAndIdInternal(user.id, personaId);
+    const persona = await findPersonaByUserAndIdInternal(authUser.userId, personaId);
     if (!persona) {
       return notFoundResponse('Persona not found');
     }
@@ -72,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has sufficient credits before starting a chat
-    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
+    const hasCredits = await CreditService.hassufficientCredits(authUser.userId, CREDIT_COSTS.CHAT);
     if (!hasCredits) {
       return insufficientCreditsResponse();
     }
@@ -83,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // Create thread in database
     const thread = await createThread({
-      userId: user.id,
+      userId: authUser.userId,
       personaId,
       title,
     });
@@ -102,7 +95,7 @@ export async function POST(request: NextRequest) {
           Object.defineProperty(mockFile, 'size', { value: f.size });
 
           const result = await uploadFileService({
-            userId: user.id,
+            userId: authUser.userId,
             file: mockFile,
             s3Key: f.s3Key,
             uploadPurpose: f.uploadPurpose || 'MessageAttachment',
@@ -152,7 +145,7 @@ export async function POST(request: NextRequest) {
       initialMessageAttachments: openaiAttachments,
       metadata: {
         dbThreadId: thread.id.toString(),
-        userId: user.id.toString(),
+        userId: authUser.userId.toString(),
         personaId: personaId.toString(),
       },
     });
@@ -247,7 +240,7 @@ export async function POST(request: NextRequest) {
 
                 // Deduct credits after successful message completion
                 await CreditService.deductCredits({
-                  userId: user.id,
+                  userId: authUser.userId,
                   amount: CREDIT_COSTS.CHAT,
                   operation: 'CHAT',
                   objectId: assistantMessage.id.toString(),

@@ -20,7 +20,6 @@ import {
   findByUserAndId,
   updateThreadTimestamp,
 } from '@/services/repositories/thread';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { addMessageSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -39,12 +38,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
       return validationErrorResponse('Invalid input data', [
@@ -53,7 +46,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Verify thread exists and belongs to user
-    const thread = await findByUserAndId(user.id, threadId);
+    const thread = await findByUserAndId(authUser.userId, threadId);
     if (!thread) {
       return notFoundResponse('Thread not found or access denied');
     }
@@ -91,7 +84,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Check if user has sufficient credits
-    const hasCredits = await CreditService.hassufficientCredits(user.id, CREDIT_COSTS.CHAT);
+    const hasCredits = await CreditService.hassufficientCredits(authUser.userId, CREDIT_COSTS.CHAT);
     if (!hasCredits) {
       return insufficientCreditsResponse();
     }
@@ -105,7 +98,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         const mockFile = new File([], f.originalName, { type: f.mimeType });
         Object.defineProperty(mockFile, 'size', { value: f.size });
         const result = await uploadFileService({
-          userId: user.id,
+          userId: authUser.userId,
           file: mockFile,
           s3Key: f.s3Key,
           uploadPurpose: f.uploadPurpose || 'MessageAttachment',
@@ -197,7 +190,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
                 // Deduct credits after successful message completion
                 await CreditService.deductCredits({
-                  userId: user.id,
+                  userId: authUser.userId,
                   amount: CREDIT_COSTS.CHAT,
                   operation: 'CHAT',
                   objectId: assistantMessage.id.toString(),

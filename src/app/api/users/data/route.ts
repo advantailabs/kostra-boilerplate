@@ -1,10 +1,5 @@
 import { getAuthUser } from '@/lib/auth/jwt';
-import {
-  internalServerErrorResponse,
-  notFoundResponse,
-  unauthorizedResponse,
-} from '@/lib/utils/response';
-import { getUserByGoogleId } from '@/services/repositories/user';
+import { internalServerErrorResponse, unauthorizedResponse } from '@/lib/utils/response';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -18,22 +13,15 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user data
-    const dbUser = await getUserByGoogleId(authUser.googleId);
-
-    if (!dbUser) {
-      return notFoundResponse('User not found');
-    }
-
     // Return standard settings
     const response = {
       user: {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        profilePicture: dbUser.profilePicture,
-        role: dbUser.role,
-        isOnboarded: dbUser.isOnboarded,
+        id: authUser.userId,
+        name: authUser.name,
+        email: authUser.email,
+        profilePicture: authUser.profilePicture,
+        role: authUser.role,
+        isOnboarded: authUser.isOnboarded,
       },
     };
 

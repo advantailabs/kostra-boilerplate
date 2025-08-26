@@ -1,10 +1,8 @@
 import { generateJWT, getAuthUser } from '@/lib/auth/jwt';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 // No direct NextResponse usage; use standardized responses
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
@@ -20,12 +18,6 @@ export async function GET(request: NextRequest) {
 
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    const user = await getUserByGoogleId(authUser.googleId);
-
-    if (!user) {
-      return notFoundResponse('User not found');
     }
 
     // Ensure we only send serializable data

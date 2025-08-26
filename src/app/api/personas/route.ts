@@ -6,13 +6,11 @@ import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
 import { UserPlan } from '@prisma/client';
 
@@ -27,14 +25,8 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Get user's personas
-    const result = await getUserPersonasService(user.id);
+    const result = await getUserPersonasService(authUser.userId);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
@@ -58,12 +50,6 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Parse and validate request body
     const body = await request.json();
     const validationResult = createPersonaSchema.safeParse(body);
@@ -79,16 +65,16 @@ export async function POST(request: NextRequest) {
     const { name, description, instructions, tags, logo } = validationResult.data;
 
     // Enforce Free plan limit: max 1 persona
-    if (user.plan === UserPlan.FREE) {
+    if (authUser.plan === UserPlan.FREE) {
       const personaCount = await prisma.persona.count({
-        where: { userId: user.id, deletedAt: null },
+        where: { userId: authUser.userId, deletedAt: null },
       });
       if (personaCount >= FREE_LIMITS.personas) {
         return errorResponse('Free plan limit reached: You can only create 1 persona.', 403);
       }
       // Also ensure KB limit isn't exceeded since persona creation creates a KB
       const kbCount = await prisma.knowledgeBase.count({
-        where: { userId: user.id, deletedAt: null },
+        where: { userId: authUser.userId, deletedAt: null },
       });
       if (kbCount >= FREE_LIMITS.knowledgeBases) {
         return errorResponse('Free plan limit reached: You can only have 1 knowledge base.', 403);
@@ -96,8 +82,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create persona
-    const result = await createPersonaService(user.id, {
-      userId: user.id,
+    const result = await createPersonaService(authUser.userId, {
+      userId: authUser.userId,
       name,
       description,
       instructions,

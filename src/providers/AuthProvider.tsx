@@ -42,7 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuth = async () => {
       try {
         const data = await getAuth();
-        console.log('data', data);
         if (data.user && data.token) {
           setAuth(data.user, data.token);
         }

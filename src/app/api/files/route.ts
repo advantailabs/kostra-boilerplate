@@ -10,7 +10,6 @@ import {
 } from '@/lib/utils/response';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
@@ -47,11 +46,6 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Parse and validate query parameters
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -69,7 +63,7 @@ export async function GET(request: NextRequest) {
       validationResult.data;
 
     // Get files
-    const result = await getUserFilesService(user.id, page, limit, {
+    const result = await getUserFilesService(authUser.userId, page, limit, {
       search,
       sortBy,
       sortOrder,
@@ -99,14 +93,11 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Enforce Free plan total file limit for uploads (user files + KB files)
-    if (user.plan === 'FREE') {
-      const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+    if (authUser.plan === 'FREE') {
+      const totalFiles = await prisma.file.count({
+        where: { userId: authUser.userId, deletedAt: null },
+      });
       // Determine how many files are being uploaded in this request
       const bodyForCount = await request
         .clone()
@@ -149,7 +140,7 @@ export async function POST(request: NextRequest) {
       const ownershipChecks = await Promise.all(
         knowledgeBaseIds.map(async id => {
           const kb = await getKnowledgeBaseByIdPublicService(id);
-          return kb.success && kb.data && kb.data.userId === user.id;
+          return kb.success && kb.data && kb.data.userId === authUser.userId;
         })
       );
       if (!ownershipChecks.every(Boolean)) {
@@ -165,7 +156,7 @@ export async function POST(request: NextRequest) {
 
       // Upload file
       const result = await uploadFileService({
-        userId: user.id,
+        userId: authUser.userId,
         file: mockFile,
         s3Key: fileData.s3Key,
         knowledgeBaseIds,

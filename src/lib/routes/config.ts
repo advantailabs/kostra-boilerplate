@@ -22,10 +22,9 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   // Public webhooks and auth
   { path: '/api/webhooks/stripe', isPublic: true },
-  { path: '/api/auth/google', isPublic: true },
-  { path: '/api/auth/google/callback', isPublic: true },
   { path: '/api/auth/logout', isPublic: true },
   { path: '/api/auth', isPublic: true },
+  { path: '/api/auth/google/verify', isPublic: true },
 
   // Protected app pages - require authentication
   { path: '/onboarding', isPublic: false, accessTo: { GET: [USER, ADMIN] } },

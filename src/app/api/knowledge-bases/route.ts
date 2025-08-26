@@ -1,7 +1,6 @@
 import {
   errorResponse,
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
@@ -15,7 +14,6 @@ import {
   createKnowledgeBaseService,
   getUserKnowledgeBasesPublicService,
 } from '@/services/internal/knowledge-base';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { UserPlan } from '@prisma/client';
 import { z } from 'zod';
 
@@ -39,15 +37,8 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Get user's knowledge bases
-    const result = await getUserKnowledgeBasesPublicService(user.id);
+    const result = await getUserKnowledgeBasesPublicService(authUser.userId);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);
@@ -71,13 +62,6 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Parse and validate request body
     const body = await request.json();
     const validationResult = createKnowledgeBaseSchema.safeParse(body);
@@ -93,9 +77,9 @@ export async function POST(request: NextRequest) {
     const { title, description, metadata } = validationResult.data;
 
     // Enforce Free plan limit: max 1 knowledge base
-    if (user.plan === UserPlan.FREE) {
+    if (authUser.plan === UserPlan.FREE) {
       const kbCount = await prisma.knowledgeBase.count({
-        where: { userId: user.id, deletedAt: null },
+        where: { userId: authUser.userId, deletedAt: null },
       });
       if (kbCount >= FREE_LIMITS.knowledgeBases) {
         return errorResponse('Free plan limit reached: You can only create 1 knowledge base.', 403);
@@ -103,8 +87,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create knowledge base
-    const result = await createKnowledgeBaseService(user.id, {
-      userId: user.id,
+    const result = await createKnowledgeBaseService(authUser.userId, {
+      userId: authUser.userId,
       title,
       description,
       metadata,

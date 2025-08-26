@@ -1,14 +1,12 @@
 // Using standardized response helpers
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
 import { getAuthUser } from '@/lib/auth/jwt';
 import { CreditService } from '@/services/internal/credit';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -22,14 +20,8 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Get current credits
-    const credits = await CreditService.getUserCredits(user.id);
+    const credits = await CreditService.getUserCredits(authUser.userId);
 
     return successResponse({
       credits,

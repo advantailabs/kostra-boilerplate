@@ -1,14 +1,12 @@
 // Using standardized response helpers
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
 import { getAuthUser } from '@/lib/auth/jwt';
 import { getUserThreadsPaginated } from '@/services/internal/chat';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -28,14 +26,8 @@ export async function GET(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     // Get user's threads (paginated by default; default limit 15)
-    const result = await getUserThreadsPaginated(user.id, limit, offset);
+    const result = await getUserThreadsPaginated(authUser.userId, limit, offset);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

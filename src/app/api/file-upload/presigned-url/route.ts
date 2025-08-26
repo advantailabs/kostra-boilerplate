@@ -12,7 +12,6 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
 import { NextRequest } from 'next/server';
 
@@ -24,10 +23,6 @@ export async function POST(request: NextRequest) {
     const authUser = await getAuthUser(request);
 
     if (!authUser) return unauthorizedResponse();
-
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) return notFoundResponse('User does not exist');
 
     const body: FileUploadRequest = await request.json();
     const { uploadPurpose, fileType, objectName, objectId } = body;
@@ -44,8 +39,10 @@ export async function POST(request: NextRequest) {
 
     // Enforce Free plan total files for MessageAttachment and UserDocument
     if (uploadPurpose === 'MessageAttachment' || uploadPurpose === 'UserDocument') {
-      if (user.plan === 'FREE') {
-        const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+      if (authUser.plan === 'FREE') {
+        const totalFiles = await prisma.file.count({
+          where: { userId: authUser.userId, deletedAt: null },
+        });
         if (totalFiles >= FREE_LIMITS.filesTotal) {
           return insufficientCreditsResponse(
             'Free plan limit reached: You can upload up to 50 total files.'
@@ -71,14 +68,15 @@ export async function POST(request: NextRequest) {
             { field: 'objectId', message: 'Persona ID must be a number' },
           ]);
         }
-        const persona = await findPersonaByUserAndId(user.id, personaId);
+        const persona = await findPersonaByUserAndId(authUser.userId, personaId);
         if (!persona) return notFoundResponse('Persona not found');
         break;
       }
       case 'UserAvatar': {
         // Only the current user can upload their avatar. objectId must match user.id
         const userId = Number(objectId);
-        if (Number.isNaN(userId) || userId !== user.id) return notFoundResponse('User not found');
+        if (Number.isNaN(userId) || userId !== authUser.userId)
+          return notFoundResponse('User not found');
         break;
       }
       case 'MessageAttachment': {
@@ -89,7 +87,8 @@ export async function POST(request: NextRequest) {
       case 'UserDocument': {
         // Uploading documents for the current user only
         const userId = Number(objectId);
-        if (Number.isNaN(userId) || userId !== user.id) return notFoundResponse('User not found');
+        if (Number.isNaN(userId) || userId !== authUser.userId)
+          return notFoundResponse('User not found');
         break;
       }
       default:

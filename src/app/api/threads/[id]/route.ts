@@ -9,7 +9,6 @@ import { NextRequest } from 'next/server';
 
 import { getAuthUser } from '@/lib/auth/jwt';
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
-import { getUserByGoogleId } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -22,19 +21,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
       return errorResponse('Thread ID must be a number', 400);
     }
 
     // Get thread with messages
-    const result = await getThreadWithMessages(user.id, threadId);
+    const result = await getThreadWithMessages(authUser.userId, threadId);
 
     if (!result.success) {
       return result.error?.includes('not found')
@@ -60,19 +53,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const threadId = parseInt(params.id, 10);
     if (Number.isNaN(threadId)) {
       return errorResponse('Thread ID must be a number', 400);
     }
 
     // Delete thread
-    const result = await deleteThreadService(user.id, threadId);
+    const result = await deleteThreadService(authUser.userId, threadId);
 
     if (!result.success) {
       return result.error?.includes('not found')

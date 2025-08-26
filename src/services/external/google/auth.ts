@@ -1,16 +1,4 @@
-import { OAuth2Client } from 'google-auth-library';
-
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
-
-if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-  throw new Error('Google OAuth credentials not configured');
-}
-
-const oauth2Client = new OAuth2Client(
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/api/auth/google/callback'
-);
+// This file handles Google OAuth authentication using @react-oauth/google
 
 export interface GoogleUserInfo {
   id: string;
@@ -20,56 +8,32 @@ export interface GoogleUserInfo {
   verified_email: boolean;
 }
 
-export const getGoogleAuthUrl = (state?: string) => {
-  const scopes = [
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email',
-  ];
-
-  return oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes,
-    state,
-  });
-};
-
-export const getGoogleTokens = async (code: string) => {
-  const { tokens } = await oauth2Client.getToken(code);
-  return tokens;
-};
-
-export const verifyGoogleToken = async (idToken: string): Promise<GoogleUserInfo> => {
-  const ticket = await oauth2Client.verifyIdToken({
-    idToken,
-    audience: GOOGLE_CLIENT_ID,
-  });
-
-  const payload = ticket.getPayload();
-  if (!payload) {
-    throw new Error('Invalid Google token');
-  }
-
+// Helper function to extract user info from Google OAuth response
+export const extractGoogleUserInfo = (response: any): GoogleUserInfo => {
   return {
-    id: payload.sub,
-    email: payload.email!,
-    name: payload.name!,
-    picture: payload.picture,
-    verified_email: payload.email_verified || false,
+    id: response.id || response.sub,
+    email: response.email,
+    name: response.name,
+    picture: response.picture,
+    verified_email: response.verified_email || response.email_verified || false,
   };
 };
 
-export const getGoogleUserInfo = async (accessToken: string): Promise<GoogleUserInfo> => {
-  oauth2Client.setCredentials({ access_token: accessToken });
+// Helper function to validate Google OAuth response
+export const validateGoogleResponse = (response: any): boolean => {
+  return !!(response && response.email && (response.id || response.sub));
+};
 
-  const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+export async function verifyGoogleToken(accessToken: string) {
+  // Use the access token to get user info from Google's userinfo endpoint
+  const googleResponse = await fetch(
+    `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`
+  );
 
-  if (!userInfoResponse.ok) {
-    throw new Error('Failed to fetch Google user info');
+  if (!googleResponse.ok) {
+    throw new Error('Invalid Google access token');
   }
 
-  return userInfoResponse.json();
-};
+  const userInfo = await googleResponse.json();
+  return userInfo;
+}

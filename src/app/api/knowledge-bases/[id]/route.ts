@@ -16,7 +16,6 @@ import {
   getKnowledgeBaseByIdPublicService,
   updateKnowledgeBaseService,
 } from '@/services/internal/knowledge-base';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -44,12 +43,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
       return errorResponse('Knowledge base ID must be a number', 400);
@@ -67,7 +60,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this knowledge base
-    if (result.data.userId !== user.id) {
+    if (result.data.userId !== authUser.userId) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -89,12 +82,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
       return errorResponse('Knowledge base ID must be a number', 400);
@@ -113,7 +100,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Enforce credit threshold for update
-    if (user.credits < CREDIT_THRESHOLDS.creationMin) {
+    if (authUser.credits < CREDIT_THRESHOLDS.creationMin) {
       return insufficientCreditsResponse();
     }
 
@@ -122,7 +109,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
       return notFoundResponse('Knowledge base not found');
     }
 
@@ -130,7 +117,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const result = await updateKnowledgeBaseService(
       knowledgeBaseId,
       validationResult.data,
-      user.id
+      authUser.userId
     );
 
     if (!result.success) {
@@ -155,12 +142,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const knowledgeBaseId = parseInt(params.id, 10);
     if (Number.isNaN(knowledgeBaseId)) {
       return errorResponse('Knowledge base ID must be a number', 400);
@@ -175,12 +156,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     if (!kbCheck.success) {
       return internalServerErrorResponse(kbCheck.error);
     }
-    if (!kbCheck.data || kbCheck.data.userId !== user.id) {
+    if (!kbCheck.data || kbCheck.data.userId !== authUser.userId) {
       return notFoundResponse('Knowledge base not found');
     }
 
     // Delete knowledge base
-    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles, user.id);
+    const result = await deleteKnowledgeBaseService(knowledgeBaseId, deleteFiles, authUser.userId);
 
     if (!result.success) {
       return internalServerErrorResponse(result.error);

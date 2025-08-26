@@ -8,7 +8,6 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
@@ -21,12 +20,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
     }
 
     const fileId = parseInt(params.id, 10);
@@ -46,7 +39,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this file
-    if (result.data.userId !== user.id) {
+    if (result.data.userId !== authUser.userId) {
       return notFoundResponse('File not found');
     }
 
@@ -68,12 +61,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const fileId = parseInt(params.id, 10);
     if (Number.isNaN(fileId)) {
       return errorResponse('File ID must be a number', 400);
@@ -90,7 +77,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Check if user owns this file
-    if (fileResult.data.userId !== user.id) {
+    if (fileResult.data.userId !== authUser.userId) {
       return notFoundResponse('File not found');
     }
 
@@ -131,12 +118,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return unauthorizedResponse();
     }
 
-    // Get user from database
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
-    }
-
     const fileId = parseInt(params.id, 10);
     if (Number.isNaN(fileId)) {
       return errorResponse('File ID must be a number', 400);
@@ -148,7 +129,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return notFoundResponse('File not found');
     }
 
-    if (fileResult.data.userId !== user.id) {
+    if (fileResult.data.userId !== authUser.userId) {
       return notFoundResponse('File not found');
     }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useStripe } from '@/hooks/useStripe';
+import { googleLogout } from '@react-oauth/google';
 import {
   RiBillLine,
   RiCoinLine,
@@ -56,6 +57,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
       console.error('Logout error:', error);
     } finally {
       // Clear client-side auth state
+      googleLogout();
       clearAuth();
       // Redirect to home page
       router.push('/');

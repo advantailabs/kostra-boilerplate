@@ -9,7 +9,6 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { findFileById } from '@/services/repositories/file';
-import { getUserByGoogleId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -20,12 +19,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const authUser = await getAuthUser(request);
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    const user = await getUserByGoogleId(authUser.googleId);
-
-    if (!user) {
-      return notFoundResponse('User not found');
     }
 
     const fileId = parseInt(params.id, 10);
@@ -42,7 +35,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const file = fileResult.data;
 
     // Check if user owns the file
-    if (file.userId !== user.id) {
+    if (file.userId !== authUser.userId) {
       return forbiddenResponse('Access denied');
     }
 

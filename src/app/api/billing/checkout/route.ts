@@ -5,11 +5,10 @@ import { getAuthUser } from '@/lib/auth/jwt';
 import { stripe } from '@/lib/stripe';
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
-import { getUserByGoogleId, setUserStripeCustomerId } from '@/services/repositories/user';
+import { setUserStripeCustomerId } from '@/services/repositories/user';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,11 +18,6 @@ export async function POST(request: NextRequest) {
 
     if (!authUser) {
       return unauthorizedResponse();
-    }
-
-    const user = await getUserByGoogleId(authUser.googleId);
-    if (!user) {
-      return notFoundResponse('User does not exist');
     }
 
     const body = await request.json().catch(() => ({}));
@@ -40,15 +34,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Ensure Stripe customer exists
-    let customerId = user.stripeCustomerId || '';
+    let customerId = authUser.stripeCustomerId || '';
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.name,
-        metadata: { userId: String(user.id), googleId: authUser.googleId },
+        email: authUser.email,
+        name: authUser.name,
+        metadata: { userId: String(authUser.userId), googleId: authUser.googleId },
       });
       customerId = customer.id;
-      await setUserStripeCustomerId(user.id, customerId);
+      await setUserStripeCustomerId(authUser.userId, customerId);
     }
 
     const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -69,7 +63,7 @@ export async function POST(request: NextRequest) {
             success_url: `${base}/app/credit-history?status=success`,
             cancel_url: `${base}/app/credit-history?status=cancel`,
             metadata: {
-              userId: String(user.id),
+              userId: String(authUser.userId),
               plan,
             },
           }
@@ -87,7 +81,7 @@ export async function POST(request: NextRequest) {
             success_url: `${base}/app/credit-history?status=success`,
             cancel_url: `${base}/app/credit-history?status=cancel`,
             metadata: {
-              userId: String(user.id),
+              userId: String(authUser.userId),
               plan,
             },
           }

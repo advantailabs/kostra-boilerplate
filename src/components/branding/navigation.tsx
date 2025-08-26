@@ -35,7 +35,7 @@ export function Navigation() {
             </Link>
             {user && <UserProfile />}
 
-            {!user && <GoogleSignInButton className="text-blue-500">Sign In</GoogleSignInButton>}
+            {!user && <GoogleSignInButton className="text-blue-500" />}
           </div>
         </div>
       </nav>

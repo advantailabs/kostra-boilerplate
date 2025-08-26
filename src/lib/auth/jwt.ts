@@ -16,6 +16,7 @@ export interface JWTPayload {
   isOverdue: boolean;
   planExpiringAt?: string;
   googleId: string;
+  stripeCustomerId?: string;
 }
 
 export const generateJWT = async (payload: JWTPayload): Promise<string> => {
@@ -42,12 +43,6 @@ export const verifyJWT = async (token: string): Promise<JWTPayload> => {
 };
 
 export const extractTokenFromRequest = (request: NextRequest): string | null => {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.substring(7);
-  }
-
-  // Also check for token in cookies
   const token = request.cookies.get('auth-token')?.value;
   return token || null;
 };
