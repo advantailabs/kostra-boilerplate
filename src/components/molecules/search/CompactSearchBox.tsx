@@ -2,11 +2,14 @@
 
 import { RiSendPlaneLine, RiSettingsLine } from '@remixicon/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
-import { SpeechRecognitionButton } from '@/components/atom/SpeechRecognitionButton';
+import {
+  SpeechRecognitionButton,
+  type SpeechRecognitionButtonRef,
+} from '@/components/atom/SpeechRecognitionButton';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 import { SEARCH_MODE_OPTIONS, type SearchMode } from '@/lib/constants/search';
@@ -54,6 +57,9 @@ export function CompactSearchBox({
   const pathname = usePathname();
   const urlParams = useSearchParams();
 
+  // Add ref for SpeechRecognitionButton to control speech recognition
+  const speechRecognitionRef = useRef<SpeechRecognitionButtonRef | null>(null);
+
   const { data: knowledgeBasesData, isLoading: loadingKnowledgeBases } = useKnowledgeBases();
   const knowledgeBases = React.useMemo(
     () => knowledgeBasesData?.knowledgeBases || [],
@@ -92,6 +98,13 @@ export function CompactSearchBox({
     }
   }, [knowledgeBases, selectedKnowledgeBaseId, initialKnowledgeBaseId]);
 
+  // Update internal state when initialQuery prop changes
+  React.useEffect(() => {
+    if (initialQuery !== undefined) {
+      setSearchQuery(initialQuery);
+    }
+  }, [initialQuery]);
+
   React.useEffect(() => {
     if (!syncQueryParams) return;
     const params = new URLSearchParams(urlParams.toString());
@@ -105,6 +118,11 @@ export function CompactSearchBox({
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
+    // Stop listening when search is submitted
+    if (speechRecognitionRef.current) {
+      speechRecognitionRef.current.stopListening();
+    }
+
     onSearch({
       query: searchQuery,
       files: attachedFiles,
@@ -112,8 +130,8 @@ export function CompactSearchBox({
       mode: searchMode,
     });
 
-    // Clear the search query after successful search
-    setSearchQuery('');
+    // Don't set isSubmitting here - let the navigation happen naturally
+    // The input will be preserved by the initialQuery prop when the component remounts
   };
 
   const handleTranscript = (transcript: string | null) => {
@@ -123,24 +141,25 @@ export function CompactSearchBox({
     }
   };
 
-  const handleInterimTranscript = (transcript: string | null) => {
+  const handleInterimTranscript = (transcript: string | null): void => {
     // Show interim results in real-time
-    // If transcript is null, it means we're stopping or starting fresh, so clear everything
+    // Only clear input when transcript is null AND we're starting fresh
     if (transcript === null) {
-      setSearchQuery('');
+      // Don't clear here - let handleSpeechStart handle clearing when starting new session
+      // This prevents clearing when stopping speech recognition
     } else {
       setSearchQuery(transcript);
     }
   };
 
   const handleSpeechStart = () => {
-    // Clear current query when starting fresh speech
+    // Clear the input when user starts recording again
     setSearchQuery('');
   };
 
   const handleSpeechStop = () => {
-    // Clear the textarea when speech recognition stops
-    setSearchQuery('');
+    // Don't clear the input when speech recognition stops
+    // Keep the transcript for potential editing or sending
   };
   return (
     <div className="space-y-2">
@@ -183,6 +202,7 @@ export function CompactSearchBox({
               <div className="flex items-center justify-end space-x-1 overflow-hidden sm:space-x-2">
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 space-x-1">
                   <SpeechRecognitionButton
+                    ref={speechRecognitionRef}
                     onTranscript={handleTranscript}
                     onInterimTranscript={handleInterimTranscript}
                     onSpeechStart={handleSpeechStart}
@@ -194,7 +214,7 @@ export function CompactSearchBox({
                     variant="elevated"
                     className="h-6 w-6 bg-gray-800 p-0 text-gray-300 hover:bg-gray-800 hover:text-gray-300 dark:bg-white dark:text-gray-600 dark:hover:bg-white dark:hover:text-gray-600"
                   >
-                    <RiSendPlaneLine className="h-3 w-3" />
+                    <RiSendPlaneLine className="h-3 w-3 dark:text-gray-600" />
                   </Button>
                 </div>
               </div>
