@@ -1,4 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import * as Sentry from '@sentry/nextjs';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import React from 'react';
 
@@ -13,41 +15,51 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-export const metadata = {
-  metadataBase: new URL('https://peon.sh'),
-  title: siteConfig.name,
-  description: siteConfig.description,
-  keywords: [],
-  authors: [
-    {
-      name: 'Peon',
-      url: 'https://peon.sh',
-    },
-  ],
-  creator: 'Peon',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: siteConfig.url,
+export function generateMetadata(): Metadata {
+  const sentryData = Sentry.getTraceData();
+  const filteredSentryData = Object.fromEntries(
+    Object.entries(sentryData).filter(([_, value]) => value !== undefined)
+  );
+
+  return {
+    metadataBase: new URL('https://peon.sh'),
     title: siteConfig.name,
     description: siteConfig.description,
-    siteName: siteConfig.name,
-  },
-  icons: {
-    icon: [
-      { url: '/favicon/favicon.ico' },
-      { url: '/favicon/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-    ],
-    apple: { url: '/favicon/apple-touch-icon.png' },
-    other: [
+    keywords: [],
+    authors: [
       {
-        rel: 'manifest',
-        url: '/favicon/site.webmanifest',
+        name: 'Peon',
+        url: 'https://peon.sh',
       },
     ],
-  },
-};
+    creator: 'Peon',
+    openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      url: siteConfig.url,
+      title: siteConfig.name,
+      description: siteConfig.description,
+      siteName: siteConfig.name,
+    },
+    icons: {
+      icon: [
+        { url: '/favicon/favicon.ico' },
+        { url: '/favicon/favicon.svg', type: 'image/svg+xml' },
+        { url: '/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      ],
+      apple: { url: '/favicon/apple-touch-icon.png' },
+      other: [
+        {
+          rel: 'manifest',
+          url: '/favicon/site.webmanifest',
+        },
+      ],
+    },
+    other: {
+      ...filteredSentryData,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -57,8 +69,11 @@ export default function RootLayout({
   return (
     // @ts-ignore - Ignoring ClerkProvider type error
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+      <html lang="en" className="dark" suppressHydrationWarning>
+        <body
+          className={`${inter.className} overflow-x-hidden bg-black text-white antialiased`}
+          suppressHydrationWarning
+        >
           <Providers>{children}</Providers>
         </body>
       </html>
