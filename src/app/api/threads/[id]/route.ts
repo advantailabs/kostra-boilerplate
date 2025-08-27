@@ -7,7 +7,7 @@ import {
 } from '@/lib/utils/response';
 import { NextRequest } from 'next/server';
 
-import { getAuthUser, getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { deleteThreadService, getThreadWithMessages } from '@/services/internal/chat';
 import { getUserById } from '@/services/repositories/user';
 
@@ -48,9 +48,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser) {
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -60,7 +60,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Delete thread
-    const result = await deleteThreadService(authUser.userId, threadId);
+    const result = await deleteThreadService(user.id, threadId);
 
     if (!result.success) {
       return result.error?.includes('not found')

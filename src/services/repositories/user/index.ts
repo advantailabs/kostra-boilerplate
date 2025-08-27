@@ -27,7 +27,7 @@ const createUser = async (user: GoogleUserUpdate) => {
       name: user.name,
       googleId: user.googleId,
       profilePicture: user.profilePicture,
-      role: 'USER',
+      role: UserRole.USER,
       isOnboarded: true,
       credits: 100,
       plan: UserPlan.FREE,
@@ -69,7 +69,7 @@ const getUserById = async (userId: string | number | null) => {
   }
 
   return prisma.user.findUnique({
-    where: { id },
+    where: { id, deletedAt: null },
   });
 };
 
@@ -102,7 +102,10 @@ const setUserOverdue = async (userId: number, isOverDue: boolean) => {
 
 const getUserByGoogleIdOrEmail = async (googleId: string, email: string) => {
   return prisma.user.findFirst({
-    where: { OR: [{ googleId }, { email }] },
+    where: {
+      deletedAt: null,
+      OR: [{ googleId }, { email }],
+    },
   });
 };
 
