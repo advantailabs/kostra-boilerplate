@@ -12,6 +12,7 @@
     "build:only": "next build",
     "start": "next start",
     "migrate": "prisma migrate dev",
+    "migrate:prod": "prisma migrate deploy",
     "seed": "prisma db seed",
     "lint": "next lint",
     "generate": "prisma generate",

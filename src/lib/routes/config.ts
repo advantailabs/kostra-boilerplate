@@ -15,6 +15,7 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   // Static files and assets (should be handled by Next.js but included for safety)
   { path: '/favicon.ico', isPublic: true },
+  { path: '/favicon/[...path]', isPublic: true },
   { path: '/_next/[...path]', isPublic: true },
   { path: '/images/[...path]', isPublic: true },
   { path: '/logos/[...path]', isPublic: true },

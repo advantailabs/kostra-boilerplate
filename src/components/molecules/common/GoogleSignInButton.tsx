@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/atom/Button';
 import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
+import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { useAuthStore } from '@/store/auth';
 import { useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'sonner';
@@ -13,16 +14,41 @@ interface GoogleSignInButtonProps {
 export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
   const googleSignInMutation = useGoogleSignIn();
   const { setAuth } = useAuthStore();
+  const { closeModal } = useSignInModalContext();
 
   const handleSuccess = async (tokenResponse: any) => {
     try {
-      const data = await googleSignInMutation.mutateAsync(tokenResponse.access_token);
-      const { user, token } = data;
+      const response = await googleSignInMutation.mutateAsync(tokenResponse.access_token);
+
+      // The API now returns AuthResponse directly
+      const { user, token } = response;
+
+      // Validate that user object has required properties
+      if (!user || !token) {
+        throw new Error('Invalid response from server: missing user or token');
+      }
+
+      // Ensure user has required properties with defaults for missing ones
+      const validatedUser = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        profilePicture: user.profilePicture || null,
+        role: user.role || 'user',
+        isOnboarded: user.isOnboarded ?? false,
+        credits: user.credits ?? 0,
+        plan: user.plan,
+        isOverdue: user.isOverdue,
+        planExpiringAt: user.planExpiringAt,
+      };
 
       // Update auth store
-      setAuth(user, token);
+      setAuth(validatedUser, token);
 
       toast.success('Successfully signed in with Google!');
+
+      // Close the sign-in modal after successful authentication
+      closeModal();
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to sign in with Google');
@@ -40,6 +66,8 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
       onClick={() => login()}
       className={`${className} hover:bg-none hover:text-current`}
       variant="light"
+      isLoading={googleSignInMutation.isPending}
+      loadingText="Signing in..."
     >
       <svg width="20" height="20" viewBox="0 0 24 24">
         <path

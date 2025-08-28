@@ -8,7 +8,10 @@ interface AuthResponse {
     profilePicture: string | null;
     role: string;
     isOnboarded: boolean;
-    credits: number;
+    credits?: number; // Make credits optional
+    plan?: string;
+    isOverdue?: boolean;
+    planExpiringAt?: string | null;
   };
   token: string;
 }
@@ -19,11 +22,12 @@ export const getAuth = async (): Promise<AuthResponse> => {
   return (response.data as any).data as AuthResponse;
 };
 
-export const googleSignIn = async (credential: string) => {
+export const googleSignIn = async (credential: string): Promise<AuthResponse> => {
   const response = await axios.post('/auth/google/verify', {
     credential,
   });
-  return response.data;
+  // Standardized API returns { success: true, data: { user, token } }
+  return (response.data as any).data as AuthResponse;
 };
 
 export const logout = async () => {

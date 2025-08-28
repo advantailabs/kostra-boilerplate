@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/atom/Button';
 import Image from 'next/image';
 import React from 'react';
 import { GoogleSignInButton } from './common/GoogleSignInButton';
@@ -32,8 +33,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
   if (!isOpen) return null;
 
   return (
-    <button
-      type="button"
+    <div
       onClick={e => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -49,8 +49,9 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
         className="relative mx-4 w-full max-w-sm overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl transition-all duration-300"
       >
         {/* Close button */}
-        <button
+        <Button
           onClick={onClose}
+          variant="ghost"
           className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
           aria-label="Close modal"
         >
@@ -65,7 +66,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
-        </button>
+        </Button>
 
         {/* Content */}
         <div className="p-8">
@@ -118,7 +119,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
           </div>
         </div>
       </div>
-    </button>
+    </div>
   );
 }
 

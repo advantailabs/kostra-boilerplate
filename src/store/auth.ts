@@ -10,7 +10,7 @@ interface User {
   profilePicture: string | null;
   role: string;
   isOnboarded: boolean;
-  credits: number;
+  credits?: number; // Make credits optional since we provide a default
   plan?: string;
   isOverdue?: boolean;
   planExpiringAt?: string | null;
@@ -29,9 +29,14 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       setAuth: (user: User, token: string) => {
-        set(() => ({ user, token }));
+        // Ensure user has a default credits value if not provided
+        const userWithDefaults = {
+          ...user,
+          credits: user.credits ?? 0,
+        };
+        set(() => ({ user: userWithDefaults, token }));
         // Sync credits with the credit store when user data is set
-        setCreditsValue(user.credits);
+        setCreditsValue(userWithDefaults.credits);
       },
       clearAuth: () => {
         set(() => ({ user: null, token: null }));

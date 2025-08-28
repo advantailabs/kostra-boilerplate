@@ -21,7 +21,7 @@ enum UserPlan {
 
 model User {
   id             Int             @id @default(autoincrement())
-  clerkUserId    String          @unique
+  googleId       String?         @unique
   name           String
   email          String          @unique
   profilePicture String? // URL to the profile picture

@@ -10,12 +10,12 @@ import { getAuth } from '@/services/api/auth';
 import { useAuthStore } from '@/store/auth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { setAuth, clearAuth, user, token } = useAuthStore();
+  const { setAuth, clearAuth, user } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
   const { isLoading } = useQuery({
-    queryKey: ['auth', token],
+    queryKey: ['auth'],
     queryFn: async () => {
       try {
         const data = await getAuth();
@@ -30,30 +30,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
     },
-    enabled: !!token, // Only run if we have a token
-    staleTime: 1000 * 30, // Consider data fresh for 30 seconds
+    // Run on mount to check for existing auth, but only once
+    enabled: true,
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
     refetchOnWindowFocus: false,
     retry: false,
     refetchOnMount: false,
+    // Prevent multiple calls when not authenticated
+    retryOnMount: false,
+    // Add cache time to prevent unnecessary refetches
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
   });
-
-  // Check for token in cookies on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const data = await getAuth();
-        if (data.user && data.token) {
-          setAuth(data.user, data.token);
-        }
-      } catch (error) {
-        clearAuth();
-      }
-    };
-
-    if (!token) {
-      checkAuth();
-    }
-  }, [token, setAuth, clearAuth]);
 
   // Redirect to onboarding if not onboarded
   useEffect(() => {
