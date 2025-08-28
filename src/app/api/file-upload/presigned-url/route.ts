@@ -1,4 +1,5 @@
 import { FREE_LIMITS } from '@/data/config/plans';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { validateFileUpload } from '@/lib/file-upload-config';
 import { prisma } from '@/lib/prisma';
 import { generatePresignedUrl } from '@/lib/s3';
@@ -11,9 +12,8 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -21,13 +21,10 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) return unauthorizedResponse();
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
-    if (!user) return notFoundResponse('User does not exist');
+    if (!user) return unauthorizedResponse();
 
     const body: FileUploadRequest = await request.json();
     const { uploadPurpose, fileType, objectName, objectId } = body;
@@ -45,7 +42,9 @@ export async function POST(request: NextRequest) {
     // Enforce Free plan total files for MessageAttachment and UserDocument
     if (uploadPurpose === 'MessageAttachment' || uploadPurpose === 'UserDocument') {
       if (user.plan === 'FREE') {
-        const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+        const totalFiles = await prisma.file.count({
+          where: { userId: user.id, deletedAt: null },
+        });
         if (totalFiles >= FREE_LIMITS.filesTotal) {
           return insufficientCreditsResponse(
             'Free plan limit reached: You can upload up to 50 total files.'

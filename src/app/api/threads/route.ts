@@ -1,19 +1,19 @@
-import { auth } from '@clerk/nextjs/server';
 // Using standardized response helpers
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { getUserThreadsPaginated } from '@/services/internal/chat';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const limitParam = searchParams.get('limit');
@@ -21,16 +21,11 @@ export async function GET(request: Request) {
     const limit = Math.max(1, Math.min(100, limitParam ? parseInt(limitParam, 10) : 15));
     const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10)) : 0;
 
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Get user's threads (paginated by default; default limit 15)

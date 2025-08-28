@@ -1,12 +1,12 @@
 # Peon - Minimalistic Project and Task Management System
 
-A minimalistic project and task management system built with Next.js, TypeScript, and Tailwind CSS. Peon helps you organize projects, track tasks, and boost productivity with a clean and intuitive interface.
+A file management and organization system built with Next.js, TypeScript, and Tailwind CSS. Peon helps you organize files, track file changes, and boost productivity with a clean and intuitive interface. It provides features like file versioning, sharing, and collaboration while maintaining a minimalist design focused on simplicity and ease of use.
 
 ## 🚀 Features
 
 - ⚡️ Next.js 14 with App Router
 - 🎨 Tailwind CSS for styling
-- 🔒 Authentication with Clerk
+- 🔒 Authentication with Google OAuth
 - 📊 Data visualization with Recharts
 - 🎯 TypeScript for type safety
 - 🎭 Dark/Light mode support
@@ -28,8 +28,8 @@ Before you begin, ensure you have the following installed:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/tracko.git
-cd tracko
+git clone https://github.com/hironate/peon.git
+cd peon
 ```
 
 2. Install dependencies:
@@ -47,9 +47,9 @@ cp .env.example .env
 Then edit the `.env` file and add your configuration values:
 
 ```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-DATABASE_URL=your_database_url
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+POSTGRES_URL=your_database_url
+JWT_SECRET=your_jwt_secret
 ```
 
 4. Initialize the database:
@@ -213,7 +213,7 @@ This project is proprietary and licensed to Advant. All rights reserved. Unautho
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Radix UI](https://www.radix-ui.com/)
-- [Clerk](https://clerk.com/)
+- [Google OAuth](https://developers.google.com/identity/protocols/oauth2)
 - [Prisma](https://www.prisma.io/)
 - [Supabase](https://supabase.com/)
 

@@ -8,16 +8,16 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   deactivatePersonaService,
   getPersonaByIdService,
   updatePersonaService,
 } from '@/services/internal/persona';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { updatePersonaSchema } from '@/validations/persona';
 
 // Force dynamic rendering for this API route
@@ -29,18 +29,13 @@ interface RouteParams {
   };
 }
 
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const personaId = parseInt(params.id, 10);
@@ -74,16 +69,11 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const personaId = parseInt(params.id, 10);
@@ -127,18 +117,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const personaId = parseInt(params.id, 10);

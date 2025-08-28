@@ -1,26 +1,21 @@
-import { auth } from '@clerk/nextjs/server';
-
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { CreditService } from '@/services/internal/credit';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const { searchParams } = new URL(request.url);

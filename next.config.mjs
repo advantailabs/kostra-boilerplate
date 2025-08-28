@@ -32,12 +32,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'private-storage.peon.sh',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
 
   // Enable SSG/SSR optimizations
   experimental: {
-    optimizePackageImports: ['@clerk/nextjs', 'framer-motion'],
+    optimizePackageImports: ['framer-motion'],
   },
 
   // Custom headers for static content caching

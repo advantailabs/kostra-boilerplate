@@ -6,16 +6,16 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   addFileToKnowledgeBaseService,
   getFileByIdService,
   removeFileFromKnowledgeBaseService,
 } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { z } from 'zod';
 
 // Force dynamic rendering for this API route
@@ -29,18 +29,13 @@ const removeFileSchema = z.object({
   fileId: z.number().positive('File ID must be a positive number'),
 });
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);
@@ -76,16 +71,11 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);
@@ -143,16 +133,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const knowledgeBaseId = parseInt(params.id, 10);

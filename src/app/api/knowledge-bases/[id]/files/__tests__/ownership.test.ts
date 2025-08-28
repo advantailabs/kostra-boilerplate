@@ -1,10 +1,10 @@
+import { getAuthUser } from '@/lib/auth/jwt';
 import { addFileToKnowledgeBaseService, getFileByIdService } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
-import { auth } from '@clerk/nextjs/server';
+import { getUserByGoogleId } from '@/services/repositories/user';
 import { POST } from '../route';
 
-jest.mock('@clerk/nextjs/server');
+jest.mock('@/lib/auth/jwt');
 jest.mock('@/services/repositories/user');
 jest.mock('@/services/internal/knowledge-base');
 jest.mock('@/services/internal/file', () => ({
@@ -13,6 +13,8 @@ jest.mock('@/services/internal/file', () => ({
   removeFileFromKnowledgeBaseService: jest.fn(),
 }));
 
+const mockGetAuthUser = getAuthUser as jest.MockedFunction<typeof getAuthUser>;
+const mockGetUserByGoogleId = getUserByGoogleId as jest.MockedFunction<typeof getUserByGoogleId>;
 const mockGetKb = getKnowledgeBaseByIdPublicService as jest.MockedFunction<
   typeof getKnowledgeBaseByIdPublicService
 >;
@@ -27,23 +29,26 @@ describe('KB files endpoints - ownership checks', () => {
   });
 
   it('returns 404 when adding file to foreign KB due to ownership check', async () => {
-    // Mock auth to return a clerk user ID
-    (auth as jest.MockedFunction<typeof auth>).mockResolvedValue({
-      userId: 'clerk_1',
-      sessionClaims: {},
-      sessionId: 'session_1',
-      actor: null,
-      orgId: null,
-      orgRole: null,
-      orgSlug: null,
-      redirectToSignIn: jest.fn(),
-    } as any);
+    // Mock getAuthUser to return a JWT payload
+    mockGetAuthUser.mockResolvedValue({
+      userId: 1,
+      email: 'test@example.com',
+      role: 'USER',
+      name: 'Test User',
+      profilePicture: undefined,
+      isOnboarded: true,
+      credits: 100,
+      plan: 'FREE',
+      isOverdue: false,
+      planExpiringAt: undefined,
+      googleId: 'google_123',
+    });
 
-    // Mock getUserByClerkId to return a user with ID 1
-    (getUserByClerkId as jest.MockedFunction<typeof getUserByClerkId>).mockResolvedValue({
+    // Mock getUserByGoogleId to return a user with ID 1
+    mockGetUserByGoogleId.mockResolvedValue({
       id: 1,
       role: 'USER',
-      clerkUserId: 'clerk_1',
+      googleId: 'google_123',
       name: 'Test User',
       email: 'test@example.com',
       profilePicture: null,
@@ -52,7 +57,7 @@ describe('KB files endpoints - ownership checks', () => {
       stripeCustomerId: null,
       plan: 'FREE',
       planExpiringAt: null,
-      overdue: false,
+      isOverDue: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
@@ -83,23 +88,26 @@ describe('KB files endpoints - ownership checks', () => {
   });
 
   it('returns 404 when adding file to KB due to file ownership check', async () => {
-    // Mock auth to return a clerk user ID
-    (auth as jest.MockedFunction<typeof auth>).mockResolvedValue({
-      userId: 'clerk_1',
-      sessionClaims: {},
-      sessionId: 'session_1',
-      actor: null,
-      orgId: null,
-      orgRole: null,
-      orgSlug: null,
-      redirectToSignIn: jest.fn(),
-    } as any);
+    // Mock getAuthUser to return a JWT payload
+    mockGetAuthUser.mockResolvedValue({
+      userId: 1,
+      email: 'test@example.com',
+      role: 'USER',
+      name: 'Test User',
+      profilePicture: undefined,
+      isOnboarded: true,
+      credits: 100,
+      plan: 'FREE',
+      isOverdue: false,
+      planExpiringAt: undefined,
+      googleId: 'google_123',
+    });
 
-    // Mock getUserByClerkId to return a user with ID 1
-    (getUserByClerkId as jest.MockedFunction<typeof getUserByClerkId>).mockResolvedValue({
+    // Mock getUserByGoogleId to return a user with ID 1
+    mockGetUserByGoogleId.mockResolvedValue({
       id: 1,
       role: 'USER',
-      clerkUserId: 'clerk_1',
+      googleId: 'google_123',
       name: 'Test User',
       email: 'test@example.com',
       profilePicture: null,
@@ -108,7 +116,7 @@ describe('KB files endpoints - ownership checks', () => {
       stripeCustomerId: null,
       plan: 'FREE',
       planExpiringAt: null,
-      overdue: false,
+      isOverDue: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,

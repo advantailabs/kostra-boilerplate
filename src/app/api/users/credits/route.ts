@@ -1,30 +1,25 @@
-import { auth } from '@clerk/nextjs/server';
 // Using standardized response helpers
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CreditService } from '@/services/internal/credit';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Get current credits

@@ -1,3 +1,4 @@
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { generateDownloadUrl } from '@/lib/s3';
 import {
   errorResponse,
@@ -8,24 +9,18 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { findFileById } from '@/services/repositories/file';
-import { getUserByClerkId } from '@/services/repositories/user';
-import { auth } from '@clerk/nextjs/server';
+import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return unauthorizedResponse();
-    }
-
-    const user = await getUserByClerkId(userId);
-
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User not found');
+      return unauthorizedResponse();
     }
 
     const fileId = parseInt(params.id, 10);

@@ -1,5 +1,4 @@
 import { FREE_LIMITS } from '@/data/config/plans';
-import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -10,10 +9,12 @@ import {
 } from '@/lib/utils/response';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
 import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
-import { getUserByClerkId } from '@/services/repositories/user';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
+
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getTotalFilesCount } from '@/services/repositories/file';
+import { getUserById } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -41,16 +42,10 @@ if (typeof global.File === 'undefined') {
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Parse and validate query parameters
@@ -95,28 +90,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Enforce Free plan total file limit for uploads (user files + KB files)
     if (user.plan === 'FREE') {
-      const totalFiles = await prisma.file.count({ where: { userId: user.id, deletedAt: null } });
+      const totalFiles = await getTotalFilesCount(user.id);
+      if (!totalFiles.success) {
+        return internalServerErrorResponse(totalFiles.error);
+      }
+
       // Determine how many files are being uploaded in this request
       const bodyForCount = await request
         .clone()
         .json()
         .catch(() => null);
       const incomingCount = Array.isArray(bodyForCount?.files) ? bodyForCount.files.length : 1;
-      if (totalFiles + incomingCount > FREE_LIMITS.filesTotal) {
+      if (totalFiles.data + incomingCount > FREE_LIMITS.filesTotal) {
         return errorResponse('Free plan limit reached: You can upload up to 50 total files.', 403);
       }
     }

@@ -15,15 +15,17 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   // Static files and assets (should be handled by Next.js but included for safety)
   { path: '/favicon.ico', isPublic: true },
+  { path: '/favicon/[...path]', isPublic: true },
   { path: '/_next/[...path]', isPublic: true },
   { path: '/images/[...path]', isPublic: true },
   { path: '/logos/[...path]', isPublic: true },
   { path: '/screenshots/[...path]', isPublic: true },
 
   // Public webhooks and auth
-  { path: '/api/webhooks/clerk', isPublic: true },
   { path: '/api/webhooks/stripe', isPublic: true },
+  { path: '/api/auth/logout', isPublic: true },
   { path: '/api/auth', isPublic: true },
+  { path: '/api/auth/google/verify', isPublic: true },
 
   // Protected app pages - require authentication
   { path: '/onboarding', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -162,6 +164,15 @@ export const ALL_ROUTES: RouteConfig[] = [
     isPublic: false,
     accessTo: {
       POST: [USER, ADMIN],
+    },
+  },
+
+  // API routes - auth
+  {
+    path: '/api/auth',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
     },
   },
 

@@ -1,41 +1,35 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { internalServerErrorResponse, unauthorizedResponse } from '@/lib/utils/response';
+import { getUserById } from '@/services/repositories/user';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const user = await currentUser();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Get user data
-    const dbUser = await getUserByClerkId(user.id);
-
-    if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return unauthorizedResponse();
     }
 
     // Return standard settings
     const response = {
       user: {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        profilePicture: dbUser.profilePicture,
-        role: dbUser.role,
-        isOnboarded: dbUser.isOnboarded,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        role: user.role,
+        isOnboarded: user.isOnboarded,
       },
     };
 
     return NextResponse.json(response);
   } catch (error) {
     console.error('[USER_DATA]', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return internalServerErrorResponse();
   }
 }

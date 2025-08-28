@@ -1,7 +1,8 @@
 'use client';
 
+import { useLogout } from '@/hooks/useLogout';
 import { useStripe } from '@/hooks/useStripe';
-import { useClerk, useUser } from '@clerk/nextjs';
+import { googleLogout } from '@react-oauth/google';
 import {
   RiBillLine,
   RiCoinLine,
@@ -12,7 +13,6 @@ import {
 } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
 import {
@@ -29,6 +29,8 @@ import {
   DropdownMenuSubMenuTrigger,
   DropdownMenuTrigger,
 } from '@/components/molecules/common/Dropdown';
+import { useAuthStore } from '@/store/auth';
+import { useRouter } from 'next/navigation';
 
 export type DropdownUserProfileProps = {
   children: React.ReactNode;
@@ -38,23 +40,42 @@ export type DropdownUserProfileProps = {
 export function DropdownUserProfile({ children, align = 'start' }: DropdownUserProfileProps) {
   const [mounted, setMounted] = React.useState(false);
   const { theme, setTheme } = useTheme();
-  const { signOut } = useClerk();
-  const { user } = useUser();
-  useRouter();
+  const { user } = useAuthStore();
   const { openBillingPortal, isCreatingPortal } = useStripe();
+  const logoutMutation = useLogout();
+
+  const { clearAuth } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      // Call logout API to clear server-side session
+      await logoutMutation.mutateAsync();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear client-side auth state
+      googleLogout();
+      clearAuth();
+      // Redirect to home page
+      router.push('/');
+    }
+  };
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  if (!mounted || !user) {
     return null;
   }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align={align}>
-        <DropdownMenuLabel>{user?.primaryEmailAddress?.emailAddress}</DropdownMenuLabel>
+        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -123,11 +144,11 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => signOut()}>
-            <span className="flex items-center gap-2">
+          <DropdownMenuItem>
+            <button type="button" className="flex w-full items-center gap-2" onClick={handleLogout}>
               <RiLogoutBoxRLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
               Sign out
-            </span>
+            </button>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

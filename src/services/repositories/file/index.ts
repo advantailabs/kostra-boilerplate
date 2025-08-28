@@ -378,3 +378,13 @@ export async function findFileByOpenaiFileId(
     return { success: false, error: 'Failed to find file' };
   }
 }
+
+export async function getTotalFilesCount(userId: number): Promise<RepositoryResult<number>> {
+  try {
+    const total = await prisma.file.count({ where: { userId, deletedAt: null } });
+    return { success: true, data: total };
+  } catch (error) {
+    console.error('Error getting total files count:', error);
+    return { success: false, error: 'Failed to get total files count' };
+  }
+}

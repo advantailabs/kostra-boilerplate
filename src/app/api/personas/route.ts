@@ -1,36 +1,30 @@
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 import { FREE_LIMITS } from '@/data/config/plans';
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
 import { UserPlan } from '@prisma/client';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Get user's personas
@@ -52,16 +46,11 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Parse and validate request body

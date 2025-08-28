@@ -1,3 +1,4 @@
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -7,26 +8,20 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const fileId = parseInt(params.id, 10);
@@ -62,16 +57,11 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
 
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const fileId = parseInt(params.id, 10);
@@ -123,18 +113,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     const fileId = parseInt(params.id, 10);

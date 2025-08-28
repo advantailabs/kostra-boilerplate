@@ -16,6 +16,10 @@ export const errorResponse = (error: AppError | string, status?: number) => {
   );
 };
 
+export const badRequestResponse = (message?: string, status: number = 400) => {
+  return NextResponse.json({ success: false, message }, { status });
+};
+
 export const notFoundResponse = (message?: string) => {
   const error = message ? { ...ERRORS.DB_RECORD_NOT_FOUND, message } : ERRORS.DB_RECORD_NOT_FOUND;
   return NextResponse.json(

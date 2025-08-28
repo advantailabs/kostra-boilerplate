@@ -1,7 +1,9 @@
 'use client';
 
+import { SignInButton } from '@/components/atom/SignInButton';
 import UserProfile from '@/components/branding/UserProfile';
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { useSignInModalContext } from '@/providers/SignInModalProvider';
+import { useAuthStore } from '@/store/auth';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -27,7 +29,8 @@ export function UniversalMobileNav({
   showUserProfile = true,
   className = '',
 }: UniversalMobileNavProps) {
-  const { isSignedIn, isLoaded } = useUser();
+  const { user } = useAuthStore();
+  const { openModal } = useSignInModalContext();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -190,19 +193,20 @@ export function UniversalMobileNav({
           {/* Sidebar Footer - Fixed at bottom */}
           {showUserProfile && (
             <div className="flex-shrink-0 border-t border-white/10 bg-black/95 p-6 pb-12">
-              {isLoaded && isSignedIn ? (
+              {user ? (
                 <div className="flex items-center justify-center py-4">
                   <UserProfile />
                 </div>
               ) : (
-                <SignInButton mode="modal">
-                  <button
+                <div onClick={() => setIsMobileMenuOpen(false)} role="button" tabIndex={0}>
+                  <SignInButton
+                    onClick={openModal}
+                    variant="light"
                     className="w-full rounded-lg bg-white px-4 py-3 text-center text-sm font-medium text-black transition-all duration-200 hover:bg-gray-100"
-                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Sign In
-                  </button>
-                </SignInButton>
+                    Sign In Now
+                  </SignInButton>
+                </div>
               )}
             </div>
           )}

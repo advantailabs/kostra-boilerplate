@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession, useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -11,23 +10,14 @@ import { getAuth } from '@/services/api/auth';
 import { useAuthStore } from '@/store/auth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { isSignedIn, isLoaded } = useUser();
-  const { session } = useSession();
   const { setAuth, clearAuth, user } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
   const { isLoading } = useQuery({
-    queryKey: ['auth', session?.id],
+    queryKey: ['auth'],
     queryFn: async () => {
       try {
-        if (!session) {
-          throw new Error('No session available');
-        }
-        const token = await session.getToken();
-        if (!token) {
-          throw new Error('No token available');
-        }
         const data = await getAuth();
         if (data.user && data.token) {
           setAuth(data.user, data.token);
@@ -40,25 +30,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
     },
-    enabled: isSignedIn && isLoaded && !!session,
-    staleTime: 1000 * 30, // Consider data fresh for 30 seconds
+    // Run on mount to check for existing auth, but only once
+    enabled: true,
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
     refetchOnWindowFocus: false,
     retry: false,
     refetchOnMount: false,
+    // Prevent multiple calls when not authenticated
+    retryOnMount: false,
+    // Add cache time to prevent unnecessary refetches
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
   });
-
-  // Clear auth if user is not signed in
-  useEffect(() => {
-    if (!isSignedIn && isLoaded) {
-      clearAuth();
-    }
-  }, [isSignedIn, isLoaded, clearAuth]);
 
   // Redirect to onboarding if not onboarded
   useEffect(() => {
     if (
-      isSignedIn &&
-      isLoaded &&
       user &&
       user.isOnboarded === false &&
       pathname !== siteConfig.baseLinks.onboarding &&
@@ -67,13 +53,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.replace(siteConfig.baseLinks.onboarding);
     }
     // If onboarded and on onboarding page, redirect to overview
-    if (isSignedIn && isLoaded && user && user.isOnboarded === true && pathname === '/onboarding') {
+    if (user && user.isOnboarded === true && pathname === '/onboarding') {
       router.replace(siteConfig.baseLinks.home);
     }
-  }, [isSignedIn, isLoaded, user, pathname, router]);
+  }, [user, pathname, router]);
 
-  // Show loading state while Clerk is loading or while fetching auth data
-  if (!isLoaded || isLoading) {
+  // Show loading state while fetching auth data
+  if (isLoading) {
     return (
       <div className="bg-background flex h-screen w-screen items-center justify-center">
         <Spinner size="md" color="text-primary" />

@@ -55,9 +55,13 @@ export async function createTestUser(overrides: Partial<any> = {}) {
   const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
   return testPrisma.user.create({
     data: {
-      clerkUserId: `test_user_${uniqueId}`,
+      googleId: `google_${uniqueId}`,
       email: `test${uniqueId}@example.com`,
       name: 'Test User',
+      isOnboarded: true,
+      credits: 100,
+      plan: 'FREE',
+      isOverDue: false,
       ...overrides,
     },
   });
@@ -131,17 +135,38 @@ export async function createTestFile(userId: number, overrides: Partial<any> = {
   });
 }
 
-// Mock Clerk auth for testing
-export function mockClerkAuth(userId: string) {
-  const mockAuth = jest.fn().mockResolvedValue({ userId });
-  return mockAuth;
+// Mock Google Auth with JWT for testing
+export function mockGoogleAuth(userId: number, googleId: string) {
+  const mockAuthUser = jest.fn().mockResolvedValue({
+    userId,
+    email: 'test@example.com',
+    role: 'USER',
+    name: 'Test User',
+    profilePicture: undefined,
+    isOnboarded: true,
+    credits: 100,
+    plan: 'FREE',
+    isOverdue: false,
+    planExpiringAt: undefined,
+    googleId,
+  });
+  return mockAuthUser;
 }
 
 // Mock next request/response
-export function createMockRequest(body: any = {}, params: any = {}) {
+export function createMockRequest(body: any = {}, params: any = {}, headers: any = {}) {
   return {
     json: jest.fn().mockResolvedValue(body),
     params,
+    headers: new Map(Object.entries(headers)),
+    cookies: {
+      get: jest.fn().mockImplementation((name: string) => {
+        if (name === 'auth-token') {
+          return { value: 'mock-jwt-token' };
+        }
+        return undefined;
+      }),
+    },
   } as any;
 }
 
@@ -151,4 +176,11 @@ export function createMockResponse() {
     status: jest.fn().mockReturnThis(),
   };
   return mockResponse as any;
+}
+
+// Helper to create authenticated mock requests
+export function createAuthenticatedMockRequest(userId: number, body: any = {}, params: any = {}) {
+  return createMockRequest(body, params, {
+    authorization: `Bearer mock-jwt-token-for-user-${userId}`,
+  });
 }

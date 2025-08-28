@@ -1,26 +1,21 @@
-import { auth } from '@clerk/nextjs/server';
-
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { stripe } from '@/lib/stripe';
 import {
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
-import { getUserByClerkId, setUserStripeCustomerId } from '@/services/repositories/user';
+import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
+import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Ensure Stripe customer exists
@@ -29,7 +24,7 @@ export async function POST() {
       const customer = await stripe.customers.create({
         email: user.email,
         name: user.name,
-        metadata: { userId: String(user.id), clerkUserId: user.clerkUserId },
+        metadata: { userId: String(user.id), googleId: user.googleId },
       });
       customerId = customer.id;
       await setUserStripeCustomerId(user.id, customerId);

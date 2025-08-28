@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CREDIT_COSTS } from '@/lib/constants/credits';
 import { createPreflightResponse, withCors } from '@/lib/routes/cors';
 import {
@@ -19,7 +19,7 @@ import { uploadFileService } from '@/services/internal/file';
 import { addFilesToMessage, createMessageWithCitations } from '@/services/repositories/message';
 import { findPersonaByUserAndIdInternal } from '@/services/repositories/persona';
 import { createThread, deleteThread, updateThreadOpenAIId } from '@/services/repositories/thread';
-import { getUserByClerkId } from '@/services/repositories/user';
+import { getUserById } from '@/services/repositories/user';
 import { createThreadSchema } from '@/validations/chat';
 
 // Force dynamic rendering for this API route
@@ -32,16 +32,10 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth();
-
-    if (!clerkUserId) {
-      return unauthorizedResponse();
-    }
-
-    // Get user from database
-    const user = await getUserByClerkId(clerkUserId);
+    const userId = getUserIdFromHeaders(request);
+    const user = await getUserById(userId);
     if (!user) {
-      return notFoundResponse('User does not exist');
+      return unauthorizedResponse();
     }
 
     // Parse and validate request body
