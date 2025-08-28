@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       plan: user.plan,
       isOverdue: user.isOverDue,
       planExpiringAt: user.planExpiringAt?.toISOString(),
-      googleId: user.googleId,
+      googleId: user.googleId || '', // Ensure googleId is always a string
     };
 
     const token = await generateJWT(jwtPayload);
