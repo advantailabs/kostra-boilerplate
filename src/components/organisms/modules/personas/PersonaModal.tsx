@@ -1,23 +1,11 @@
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { Modal } from '@/components/molecules/common/Modal';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/molecules/common/Select';
-import { KnowledgeBaseFileUploader } from '@/components/organisms/modules/knowledge-bases/KnowledgeBaseFileUploader';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { useKnowledgeBases, useRemoveFileFromKnowledgeBase } from '@/hooks/useKnowledgeBases';
-import { formatFileSize, getFileIcon } from '@/lib/file-utils';
 import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { Persona } from '@prisma/client';
-import { RiAddLine, RiCloseLine, RiDeleteBinLine, RiImageAddLine } from '@remixicon/react';
-import { useQueryClient } from '@tanstack/react-query';
+import { RiCloseLine, RiImageAddLine } from '@remixicon/react';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -35,25 +23,14 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     description: '',
     instructions: '',
     logo: '',
-    knowledgeBaseId: '',
   });
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [deleteFileDialog, setDeleteFileDialog] = useState<{
-    isOpen: boolean;
-    fileId: number | null;
-    fileName: string;
-  }>({ isOpen: false, fileId: null, fileName: '' });
-  const [fileUploaderOpen, setFileUploaderOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
-
-  const { data: knowledgeBasesData } = useKnowledgeBases();
-  const removeFileMutation = useRemoveFileFromKnowledgeBase();
 
   const {
     uploadFile,
@@ -63,16 +40,11 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
   } = useFileUpload({
     uploadPurpose: 'PersonaLogo',
     objectName: 'persona',
-    objectId: persona?.id || 'new',
+    objectId: persona?.id || 0, // Use 0 for new personas to prevent upload
     onSuccess: url => {
       setFormData(prev => ({ ...prev, logo: url }));
     },
   });
-
-  // Get selected knowledge base with files
-  const selectedKnowledgeBase = knowledgeBasesData?.knowledgeBases?.find(
-    kb => kb.id === parseInt(formData.knowledgeBaseId, 10)
-  );
 
   useEffect(() => {
     if (mode === 'edit' && persona) {
@@ -81,7 +53,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description: persona.description || '',
         instructions: persona.instructions,
         logo: persona.logo || '',
-        knowledgeBaseId: persona.knowledgeBaseId?.toString() || '',
       });
       // Set logo preview with full S3 URL if logo exists
       setLogoPreview(persona.logo ? `${S3_PUBLIC_BASE_URL}/${persona.logo}` : null);
@@ -91,7 +62,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
         description: '',
         instructions: '',
         logo: '',
-        knowledgeBaseId: '',
       });
       setLogoPreview(null);
     }
@@ -127,54 +97,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     clearError();
   };
 
-  const handleDeleteFile = (fileId: number, fileName: string) => {
-    setDeleteFileDialog({
-      isOpen: true,
-      fileId,
-      fileName,
-    });
-  };
-
-  const confirmDeleteFile = async () => {
-    if (!deleteFileDialog.fileId || !formData.knowledgeBaseId) return;
-
-    try {
-      await removeFileMutation.mutateAsync({
-        knowledgeBaseId: parseInt(formData.knowledgeBaseId, 10),
-        fileId: deleteFileDialog.fileId,
-      });
-
-      // Manually invalidate queries to refresh the file list
-      const knowledgeBaseId = parseInt(formData.knowledgeBaseId, 10);
-      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
-      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
-
-      setDeleteFileDialog({ isOpen: false, fileId: null, fileName: '' });
-    } catch (error) {
-      console.error('Failed to delete file:', error);
-    }
-  };
-
-  const handleAddFiles = () => {
-    if (formData.knowledgeBaseId) {
-      setFileUploaderOpen(true);
-    }
-  };
-
-  const handleFileUploaderClose = () => {
-    setFileUploaderOpen(false);
-  };
-
-  const handleFilesUploaded = () => {
-    // Invalidate and refetch knowledge base data to update the file list
-    if (formData.knowledgeBaseId) {
-      const knowledgeBaseId = parseInt(formData.knowledgeBaseId, 10);
-      queryClient.invalidateQueries({ queryKey: ['knowledge-base', knowledgeBaseId] });
-      queryClient.invalidateQueries({ queryKey: ['knowledge-bases'] });
-    }
-    setFileUploaderOpen(false);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -198,7 +120,6 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
     try {
       await onSubmit({
         ...formData,
-        knowledgeBaseId: formData.knowledgeBaseId ? parseInt(formData.knowledgeBaseId, 10) : null,
       });
       onClose();
     } catch (error: any) {
@@ -263,286 +184,153 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
   );
 
   return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        description={description}
-        maxWidth="max-w-full"
-        contentClassName="h-screen max-h-screen w-screen rounded-none max-sm:h-[100dvh] max-sm:max-h-[100dvh] max-sm:overflow-y-auto overflow-hidden"
-        removePadding
-        footer={customFooter}
-      >
-        <div className="grid h-full grid-cols-1 sm:grid-cols-[25%_35%_40%]">
-          {/* Global/server error */}
-          {(serverError || Object.keys(serverFieldErrors).length > 0) && (
-            <div className="col-span-full border-b border-red-200 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/50 dark:text-red-400">
-              <p className="font-medium">{serverError || 'There were validation errors'}</p>
-              {Object.keys(serverFieldErrors).length > 0 && (
-                <ul className="mt-1 list-disc pl-5">
-                  {Object.entries(serverFieldErrors).map(([field, msg]) => (
-                    <li key={field}>{`${field}: ${msg}`}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-          {/* Column 1: Logo, Title, Description, Knowledge Base */}
-          <div className="overflow-y-auto border-r border-gray-200 max-sm:border-b max-sm:border-r-0 max-sm:border-gray-200 dark:border-gray-800 max-sm:dark:border-gray-800">
-            <div className="space-y-4 p-4 max-sm:space-y-3 max-sm:p-3">
-              {/* Logo Section */}
-              <div>
-                <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
-                  Logo
-                </Label>
-                <div className="relative">
-                  <div
-                    className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
-                      isUploading ? 'opacity-50' : ''
-                    } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
-                    onClick={handleLogoClick}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleLogoClick();
-                      }
-                    }}
-                    aria-label="Upload logo"
-                  >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleLogoChange}
-                      disabled={isUploading}
-                      id="logo"
-                    />
-                    {logoPreview ? (
-                      <div className="relative h-full w-full rounded-lg">
-                        <Image
-                          src={logoPreview}
-                          alt="Logo preview"
-                          fill
-                          className="rounded-lg object-cover"
-                          sizes="80px"
-                        />
-                        {/* Remove Logo Button positioned on the logo */}
-                        <button
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleRemoveLogo();
-                          }}
-                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
-                          aria-label="Remove logo"
-                        >
-                          <RiCloseLine className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-gray-500">
-                        <RiImageAddLine className="h-5 w-5" />
-                        <span className="mt-1 text-xs">Upload</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
-                {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
-              </div>
-
-              {/* Name */}
-              <div>
-                <Label htmlFor="name" className="mb-2 text-sm font-medium">
-                  Name *
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter persona name"
-                  className="mt-2"
-                  required
-                />
-                {(serverFieldErrors.name || formErrors.name) && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {serverFieldErrors.name || formErrors.name}
-                  </p>
-                )}
-              </div>
-
-              {/* Description */}
-              <div>
-                <Label htmlFor="description" className="mb-2 text-sm font-medium">
-                  Description *
-                </Label>
-                <Input
-                  id="description"
-                  value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief description of the persona"
-                  className="mt-2"
-                  required
-                />
-                {(serverFieldErrors.description || formErrors.description) && (
-                  <p className="mt-1 text-xs text-red-500">
-                    {serverFieldErrors.description || formErrors.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Knowledge Base Selection */}
-              <div>
-                <Label htmlFor="knowledgeBase" className="mb-2 text-sm font-medium">
-                  Knowledge Base
-                </Label>
-                <Select
-                  value={formData.knowledgeBaseId || 'none'}
-                  onValueChange={value =>
-                    setFormData({ ...formData, knowledgeBaseId: value === 'none' ? '' : value })
-                  }
-                >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Select a knowledge base (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No knowledge base</SelectItem>
-                    {knowledgeBasesData?.knowledgeBases?.map(kb => (
-                      <SelectItem key={kb.id} value={kb.id.toString()}>
-                        {kb.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      description={description}
+      maxWidth="max-w-2xl"
+      footer={customFooter}
+    >
+      <div className="space-y-6 p-6">
+        {/* Global/server error */}
+        {(serverError || Object.keys(serverFieldErrors).length > 0) && (
+          <div className="border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/50 dark:text-red-400">
+            <p className="font-medium">{serverError || 'There were validation errors'}</p>
+            {Object.keys(serverFieldErrors).length > 0 && (
+              <ul className="mt-1 list-disc pl-5">
+                {Object.entries(serverFieldErrors).map(([field, msg]) => (
+                  <li key={field}>{`${field}: ${msg}`}</li>
+                ))}
+              </ul>
+            )}
           </div>
+        )}
 
-          {/* Column 2: Instructions */}
-          <div className="overflow-y-auto border-r border-gray-200 max-sm:border-b max-sm:border-r-0 max-sm:border-gray-200 dark:border-gray-800 max-sm:dark:border-gray-800">
-            <div className="h-full p-4 max-sm:p-3">
-              <Label htmlFor="instructions" className="mb-2 text-sm font-medium">
-                Instructions *
-              </Label>
-              <textarea
-                id="instructions"
-                value={formData.instructions}
-                onChange={e => setFormData({ ...formData, instructions: e.target.value })}
-                placeholder="Detailed instructions for the AI assistant"
-                required
-                className="mt-2 h-[calc(100vh-250px)] w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-sm:h-[calc(100dvh-250px)] dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+        {/* Logo Section */}
+        <div>
+          <Label htmlFor="logo" className="mb-2 block text-sm font-medium">
+            Logo
+          </Label>
+          <div className="relative">
+            <div
+              className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${isUploading ? 'opacity-50' : ''
+                } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
+              onClick={handleLogoClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleLogoClick();
+                }
+              }}
+              aria-label="Upload logo"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleLogoChange}
+                disabled={isUploading}
+                id="logo"
               />
-              {(serverFieldErrors.instructions || formErrors.instructions) && (
-                <p className="mt-1 text-xs text-red-500">
-                  {serverFieldErrors.instructions || formErrors.instructions}
-                </p>
+              {logoPreview ? (
+                <div className="relative h-full w-full rounded-lg">
+                  <Image
+                    src={logoPreview}
+                    alt="Logo preview"
+                    fill
+                    className="rounded-lg object-cover"
+                    sizes="80px"
+                  />
+                  {/* Remove Logo Button positioned on the logo */}
+                  <button
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleRemoveLogo();
+                    }}
+                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+                    aria-label="Remove logo"
+                  >
+                    <RiCloseLine className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-500">
+                  <RiImageAddLine className="h-5 w-5" />
+                  <span className="mt-1 text-xs">Upload</span>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Column 3: Files */}
-          <div className="overflow-y-auto">
-            <div className="p-4 pb-2 max-sm:p-3 max-sm:pb-2">
-              <div className="flex items-center justify-between">
-                <Label className="mb-2 text-sm font-medium">Knowledge Base Files</Label>
-                {formData.knowledgeBaseId && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="h-5 w-5 p-0"
-                    onClick={handleAddFiles}
-                    aria-label="Add Files"
-                  >
-                    <RiAddLine className="h-3.5 w-3.5" />
-                  </Button>
-                )}
-              </div>
-
-              {(() => {
-                if (!formData.knowledgeBaseId) {
-                  return (
-                    <div className="mt-2 py-4 text-center text-sm text-gray-500 sm:py-8">
-                      Select a knowledge base to view files
-                    </div>
-                  );
-                }
-                if (!selectedKnowledgeBase?.fileKnowledgeBases?.length) {
-                  return (
-                    <div className="mt-2 py-4 text-center text-sm text-gray-500 sm:py-8">
-                      No files in this knowledge base
-                    </div>
-                  );
-                }
-                return (
-                  <div className="mt-1 grid max-h-[calc(100vh-250px)] grid-cols-2 gap-1 overflow-y-auto max-sm:max-h-[calc(100dvh-250px)]">
-                    {selectedKnowledgeBase.fileKnowledgeBases.map(({ file }) => {
-                      const FileIcon = getFileIcon(file.mimeType);
-                      return (
-                        <div
-                          key={file.id}
-                          className="group flex items-center justify-between rounded border border-gray-200 p-1.5 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                        >
-                          <div className="flex min-w-0 flex-1 items-center space-x-1.5">
-                            <FileIcon className="h-2.5 w-2.5 flex-shrink-0 text-gray-400" />
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-[10px] font-medium text-gray-900 dark:text-gray-100">
-                                {file.originalName}
-                              </p>
-                              <div className="flex items-center space-x-1 text-[8px] text-gray-500">
-                                <span>{formatFileSize(file.size)}</span>
-                                <span>•</span>
-                                <span>
-                                  {file.originalName.split('.').pop()?.toUpperCase() || 'FILE'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteFile(file.id, file.originalName)}
-                            className="ml-1 flex-shrink-0 text-red-500 opacity-0 transition-all hover:text-red-700 group-hover:opacity-100"
-                            aria-label="Delete file"
-                          >
-                            <RiDeleteBinLine className="h-2.5 w-2.5" />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
+          {uploadError && <p className="mt-2 text-xs text-red-500">{uploadError}</p>}
+          {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
         </div>
-      </Modal>
 
-      {/* Delete File Confirmation Dialog */}
-      <DeleteDialog
-        isOpen={deleteFileDialog.isOpen}
-        onClose={() => setDeleteFileDialog({ isOpen: false, fileId: null, fileName: '' })}
-        onConfirm={confirmDeleteFile}
-        title="Delete File"
-        description={`Are you sure you want to remove "${deleteFileDialog.fileName}" from this knowledge base? The file itself will not be deleted.`}
-        confirmText="Remove File"
-        cancelText="Cancel"
-        isLoading={removeFileMutation.isPending}
-        itemName={deleteFileDialog.fileName}
-      />
+        {/* Name */}
+        <div>
+          <Label htmlFor="name" className="mb-2 text-sm font-medium">
+            Name *
+          </Label>
+          <Input
+            id="name"
+            value={formData.name}
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Enter persona name"
+            className="mt-2"
+            required
+          />
+          {(serverFieldErrors.name || formErrors.name) && (
+            <p className="mt-1 text-xs text-red-500">
+              {serverFieldErrors.name || formErrors.name}
+            </p>
+          )}
+        </div>
 
-      {/* File Uploader Dialog */}
-      {fileUploaderOpen && formData.knowledgeBaseId && (
-        <KnowledgeBaseFileUploader
-          isOpen={fileUploaderOpen}
-          onClose={handleFileUploaderClose}
-          onUploaded={handleFilesUploaded}
-          knowledgeBaseId={parseInt(formData.knowledgeBaseId, 10)}
-        />
-      )}
-    </>
+        {/* Description */}
+        <div>
+          <Label htmlFor="description" className="mb-2 text-sm font-medium">
+            Description *
+          </Label>
+          <Input
+            id="description"
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Brief description of the persona"
+            className="mt-2"
+            required
+          />
+          {(serverFieldErrors.description || formErrors.description) && (
+            <p className="mt-1 text-xs text-red-500">
+              {serverFieldErrors.description || formErrors.description}
+            </p>
+          )}
+        </div>
+
+        {/* Instructions */}
+        <div>
+          <Label htmlFor="instructions" className="mb-2 text-sm font-medium">
+            Instructions *
+          </Label>
+          <textarea
+            id="instructions"
+            value={formData.instructions}
+            onChange={e => setFormData({ ...formData, instructions: e.target.value })}
+            placeholder="Detailed instructions for the AI assistant"
+            required
+            className="mt-2 h-32 w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+          />
+          {(serverFieldErrors.instructions || formErrors.instructions) && (
+            <p className="mt-1 text-xs text-red-500">
+              {serverFieldErrors.instructions || formErrors.instructions}
+            </p>
+          )}
+        </div>
+      </div>
+    </Modal>
   );
 }

@@ -8,7 +8,7 @@ import { PageHeader } from '@/components/molecules/common/PageHeader';
 import { ModalAddPersona } from '@/components/organisms/modules/personas/ModalAddPersona';
 import { ModalEditPersona } from '@/components/organisms/modules/personas/ModalEditPersona';
 import { usePersonas } from '@/hooks/usePersonas';
-import { CreatePersonaRequest, PersonaWithKnowledgeBase, UpdatePersonaRequest } from '@/types/chat';
+import { CreatePersonaRequest, PublicPersona, UpdatePersonaRequest } from '@/types/chat';
 import { RiAddLine } from '@remixicon/react';
 import { useState } from 'react';
 
@@ -18,8 +18,8 @@ export default function PersonasPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [editingPersona, setEditingPersona] = useState<PersonaWithKnowledgeBase | null>(null);
-  const [deletingPersona, setDeletingPersona] = useState<PersonaWithKnowledgeBase | null>(null);
+  const [editingPersona, setEditingPersona] = useState<PublicPersona | null>(null);
+  const [deletingPersona, setDeletingPersona] = useState<PublicPersona | null>(null);
 
   const handleAddPersona = async (personaData: CreatePersonaRequest) => {
     try {
@@ -54,12 +54,12 @@ export default function PersonasPage() {
     }
   };
 
-  const openEditModal = (persona: PersonaWithKnowledgeBase) => {
+  const openEditModal = (persona: PublicPersona) => {
     setEditingPersona(persona);
     setShowEditModal(true);
   };
 
-  const openDeleteModal = (persona: PersonaWithKnowledgeBase) => {
+  const openDeleteModal = (persona: PublicPersona) => {
     setDeletingPersona(persona);
     setShowDeleteModal(true);
   };

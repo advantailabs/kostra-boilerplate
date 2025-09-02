@@ -4,7 +4,6 @@ import { Persona, PrismaClient } from '@prisma/client';
 import {
   CreatePersonaData,
   PublicPersona,
-  PublicPersonaWithKnowledgeBase,
   PublicPersonaWithUser,
   UpdatePersonaData,
 } from '@/types/chat';
@@ -20,7 +19,6 @@ const publicPersonaSelect = {
   instructions: true,
   tags: true,
   logo: true,
-  knowledgeBaseId: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
@@ -39,8 +37,6 @@ const createPersona = async (
       instructions: data.instructions,
       tags: data.tags,
       logo: data.logo,
-      openaiAssistantId: data.openaiAssistantId,
-      knowledgeBaseId: data.knowledgeBaseId,
     },
   });
 };
@@ -64,7 +60,7 @@ const findActiveByUserId = async (
 const findActiveByUserIdWithFiles = async (
   userId: number,
   prisma: PrismaClient = defaultPrisma
-): Promise<PublicPersonaWithKnowledgeBase[]> => {
+): Promise<PublicPersona[]> => {
   return prisma.persona.findMany({
     where: {
       userId,
@@ -72,41 +68,6 @@ const findActiveByUserIdWithFiles = async (
     },
     select: {
       ...publicPersonaSelect,
-      knowledgeBase: {
-        select: {
-          id: true,
-          userId: true,
-          title: true,
-          description: true,
-          metadata: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-          // Explicitly exclude vectorStoreId
-          fileKnowledgeBases: {
-            where: { file: { deletedAt: null } },
-            include: {
-              file: {
-                select: {
-                  id: true,
-                  filename: true,
-                  originalName: true,
-                  mimeType: true,
-                  size: true,
-                  url: true,
-                  createdAt: true,
-                  updatedAt: true,
-                  // Explicitly exclude openaiFileId
-                },
-              },
-            },
-          },
-          personas: {
-            where: { deletedAt: null },
-            select: publicPersonaSelect,
-          },
-        },
-      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -144,57 +105,11 @@ const findByIdWithUser = async (
     select: {
       ...publicPersonaSelect,
       user: true,
-      knowledgeBase: true,
     },
   });
 };
 
-const findByIdWithKnowledgeBase = async (
-  id: number,
-  prisma: PrismaClient = defaultPrisma
-): Promise<PublicPersonaWithKnowledgeBase | null> => {
-  return prisma.persona.findUnique({
-    where: { id },
-    select: {
-      ...publicPersonaSelect,
-      knowledgeBase: {
-        select: {
-          id: true,
-          userId: true,
-          title: true,
-          description: true,
-          metadata: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-          // Explicitly exclude vectorStoreId
-          fileKnowledgeBases: {
-            where: { file: { deletedAt: null } },
-            include: {
-              file: {
-                select: {
-                  id: true,
-                  filename: true,
-                  originalName: true,
-                  mimeType: true,
-                  size: true,
-                  url: true,
-                  createdAt: true,
-                  updatedAt: true,
-                  // Explicitly exclude openaiFileId
-                },
-              },
-            },
-          },
-          personas: {
-            where: { deletedAt: null },
-            select: publicPersonaSelect,
-          },
-        },
-      },
-    },
-  }) as any;
-};
+
 
 const updatePersona = async (
   id: number,
@@ -209,7 +124,6 @@ const updatePersona = async (
       ...(data.instructions && { instructions: data.instructions }),
       ...(data.tags && { tags: data.tags }),
       ...(data.logo !== undefined && { logo: data.logo }),
-      ...(data.knowledgeBaseId !== undefined && { knowledgeBaseId: data.knowledgeBaseId }),
       updatedAt: new Date(),
     },
   });
@@ -277,11 +191,11 @@ export {
   findActiveByUserIdWithFiles,
   findById,
   findByIdInternal,
-  findByIdWithKnowledgeBase,
   findByIdWithUser,
   findPersonaByUserAndId,
   findPersonaByUserAndIdInternal,
   restorePersona,
   softDeletePersona,
-  updatePersona,
+  updatePersona
 };
+

@@ -46,6 +46,10 @@ export async function generatePresignedUrl(
     Bucket: bucketName,
     Key: key,
     ContentType: fileType,
+    // Add CORS headers for browser uploads
+    Metadata: {
+      'upload-purpose': uploadPurpose,
+    },
   });
 
   try {

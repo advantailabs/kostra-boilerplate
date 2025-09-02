@@ -1,10 +1,7 @@
 import {
   RiChat1Line,
   RiCloseLine,
-  RiDatabase2Line,
-  RiFileLine,
   RiMenuLine,
-  RiSearchLine,
   RiUserLine,
 } from '@remixicon/react';
 import Link from 'next/link';
@@ -22,16 +19,8 @@ import {
 import { cx, focusRing } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Search', href: siteConfig.baseLinks.home, icon: RiSearchLine, section: 'Search' },
   { name: 'Chat', href: '/app/chat', icon: RiChat1Line, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
-  {
-    name: 'Knowledge Bases',
-    href: '/app/knowledge-bases',
-    icon: RiDatabase2Line,
-    section: 'Knowledge',
-  },
-  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Knowledge' },
 ] as const;
 
 export default function MobileSidebar() {
@@ -66,33 +55,6 @@ export default function MobileSidebar() {
         </div>
         <DrawerBody>
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
-            {/* Search Section */}
-            <div>
-              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">Search</span>
-              <ul role="list" className="space-y-1.5">
-                {navigation
-                  .filter(item => item.section === 'Search')
-                  .map(item => (
-                    <li key={item.name}>
-                      <DrawerClose asChild>
-                        <Link
-                          href={item.href}
-                          className={cx(
-                            isActive(item.href)
-                              ? 'text-indigo-600 dark:text-indigo-400'
-                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                            focusRing
-                          )}
-                        >
-                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
-                          Find and search
-                        </Link>
-                      </DrawerClose>
-                    </li>
-                  ))}
-              </ul>
-            </div>
             {/* Persona Section */}
             <div>
               <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
@@ -101,35 +63,6 @@ export default function MobileSidebar() {
               <ul role="list" className="space-y-1.5">
                 {navigation
                   .filter(item => item.section === 'Persona')
-                  .map(item => (
-                    <li key={item.name}>
-                      <DrawerClose asChild>
-                        <Link
-                          href={item.href}
-                          className={cx(
-                            isActive(item.href)
-                              ? 'text-indigo-600 dark:text-indigo-400'
-                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                            focusRing
-                          )}
-                        >
-                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
-                          {item.name}
-                        </Link>
-                      </DrawerClose>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-            {/* Knowledge Section */}
-            <div>
-              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
-                Knowledge
-              </span>
-              <ul role="list" className="space-y-1.5">
-                {navigation
-                  .filter(item => item.section === 'Knowledge')
                   .map(item => (
                     <li key={item.name}>
                       <DrawerClose asChild>
