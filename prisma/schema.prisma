@@ -60,7 +60,6 @@ model Persona {
 model File {
   id                 Int                 @id @default(autoincrement())
   userId             Int?
-  openaiFileId       String?             @unique
   filename           String
   originalName       String
   mimeType           String
