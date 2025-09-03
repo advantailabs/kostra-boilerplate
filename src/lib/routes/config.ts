@@ -9,6 +9,8 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/', isPublic: true },
   { path: '/sitemap.xml', isPublic: true },
   { path: '/robots.txt', isPublic: true },
+  { path: '/privacy-policy', isPublic: true },
+  { path: '/terms-of-services', isPublic: true },
 
 
   // Static files and assets (should be handled by Next.js but included for safety)
