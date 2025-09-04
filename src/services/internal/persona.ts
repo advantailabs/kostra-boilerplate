@@ -1,19 +1,15 @@
 import { Persona, PrismaClient } from '@prisma/client';
 
 import {
-    createPersona,
-    findActiveByUserIdWithFiles,
-    findById,
-    findPersonaByUserAndId,
-    findPersonaByUserAndIdInternal,
-    softDeletePersona,
-    updatePersona,
+  createPersona,
+  findActiveByUserIdWithFiles,
+  findById,
+  findPersonaByUserAndId,
+  findPersonaByUserAndIdInternal,
+  softDeletePersona,
+  updatePersona,
 } from '@/services/repositories/persona';
-import {
-    CreatePersonaData,
-    PublicPersona,
-    UpdatePersonaData,
-} from '@/types/chat';
+import { CreatePersonaData, PublicPersona, UpdatePersonaData } from '@/types/chat';
 
 export interface PersonaServiceResult<T> {
   success: boolean;
@@ -173,10 +169,9 @@ const deactivatePersonaService = async (
 };
 
 export {
-    createPersonaService,
-    deactivatePersonaService,
-    getPersonaByIdService,
-    getUserPersonasService,
-    updatePersonaService
+  createPersonaService,
+  deactivatePersonaService,
+  getPersonaByIdService,
+  getUserPersonasService,
+  updatePersonaService,
 };
-

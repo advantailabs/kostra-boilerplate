@@ -75,7 +75,6 @@ export async function POST(request: NextRequest) {
       if (personaCount >= FREE_LIMITS.personas) {
         return errorResponse('Free plan limit reached: You can only create 1 persona.', 403);
       }
-
     }
 
     // Create persona

@@ -39,7 +39,7 @@ Below is a breakdown of what’s already safe, what’s vulnerable, and the prio
 ### Smart Search
 
 - `POST /api/search/smart`  
-  → Authenticated, validates KB ownership before accessing vector store.
+  → Authenticated, validates KB ownership before accessing.
 
 ### Users / Credits / Billing
 
@@ -60,7 +60,7 @@ Below is a breakdown of what’s already safe, what’s vulnerable, and the prio
 - **Problem:**
   - `GET /api/knowledge-bases/[id]/files`: no ownership check.
   - `POST/DELETE /api/knowledge-bases/[id]/files`: no ownership checks on KB or File.
-- **Impact:** Data disclosure and poisoning of vector stores across tenants.
+- **Impact:** Data disclosure and poisoning across tenants.
 
 ### File Upload → KB Link IDOR
 

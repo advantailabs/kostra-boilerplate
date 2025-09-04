@@ -13,10 +13,10 @@ import {
   findFileById,
   findFileByIdInternal,
   findFilesByUserId,
-  PublicFileWithKnowledgeBases,
   updateFile,
-  UpdateFileData
+  UpdateFileData,
 } from '@/services/repositories/file';
+import type { File as FileType } from '@/types/file';
 
 import { UploadPurpose } from '@/types/file-upload';
 
@@ -55,14 +55,12 @@ export interface UploadFileData {
 }
 
 export interface FileListResult {
-  files: PublicFileWithKnowledgeBases[];
+  files: FileType[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
 }
-
-
 
 const getUserFilesService = async (
   userId: number,
@@ -139,7 +137,6 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
     // Create file record in database
     const fileData: CreateFileData = {
       userId: data.userId,
-      openaiFileId: openaiFileResult.data!.id,
       filename: data.s3Key,
       originalName: data.file.name,
       mimeType: data.file.type,
@@ -149,6 +146,7 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
         uploadedAt: new Date().toISOString(),
         originalFile: data.file.name,
         uploadPurpose: data.uploadPurpose || inferUploadPurposeFromKey(data.s3Key),
+        openaiFileId: openaiFileResult.data!.id, // Store OpenAI file ID in metadata
       },
     };
 
@@ -163,8 +161,6 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
       };
     }
 
-
-
     return {
       success: true,
       data: createResult.data,
@@ -178,9 +174,7 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
   }
 };
 
-const getFileByIdService = async (
-  id: number
-): Promise<FileServiceResult<PublicFileWithKnowledgeBases | null>> => {
+const getFileByIdService = async (id: number): Promise<FileServiceResult<FileType | null>> => {
   try {
     const result = await findFileById(id);
 
@@ -245,10 +239,15 @@ const deleteFileService = async (id: number): Promise<FileServiceResult<void>> =
 
     const file = fileResult.data;
 
-    // Delete from OpenAI if we have an OpenAI file ID
-    if (file.openaiFileId) {
+    // Delete from OpenAI if we have an OpenAI file ID in metadata
+    const openaiFileId =
+      file.metadata && typeof file.metadata === 'object' && 'openaiFileId' in file.metadata
+        ? (file.metadata as any).openaiFileId
+        : null;
+
+    if (openaiFileId) {
       try {
-        const deleteResult = await deleteOpenAIFile(file.openaiFileId);
+        const deleteResult = await deleteOpenAIFile(openaiFileId);
         if (!deleteResult.success) {
           console.warn('Failed to delete OpenAI file:', deleteResult.error);
           // Don't fail the operation if OpenAI deletion fails
@@ -258,7 +257,6 @@ const deleteFileService = async (id: number): Promise<FileServiceResult<void>> =
         // Don't fail the operation if OpenAI deletion fails
       }
     }
-
 
     // Soft delete from database
     const result = await deleteFile(id);
@@ -287,6 +285,5 @@ export {
   getFileByIdService,
   getUserFilesService,
   updateFileService,
-  uploadFileService
+  uploadFileService,
 };
-

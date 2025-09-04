@@ -171,20 +171,17 @@ We welcome contributions! Please follow these steps:
 ### Adding New Features
 
 1. **New Pages**
-
    - Create new routes in `src/app`
    - Follow the existing layout patterns
    - Add necessary components in `src/components`
 
 2. **New Components**
-
    - Create components in `src/components`
    - Use Radix UI primitives for accessibility
    - Follow the existing component patterns
    - Add TypeScript types in `src/types`
 
 3. **New API Routes**
-
    - Add API routes in `src/app/api`
    - Use the existing service patterns
    - Add proper error handling

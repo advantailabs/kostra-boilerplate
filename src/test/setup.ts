@@ -64,8 +64,6 @@ export async function createTestUser(overrides: Partial<any> = {}) {
   });
 }
 
-
-
 export async function createTestPersona(userId: number, overrides: Partial<any> = {}) {
   return testPrisma.persona.create({
     data: {
@@ -79,10 +77,6 @@ export async function createTestPersona(userId: number, overrides: Partial<any> 
     },
   });
 }
-
-
-
-
 
 export async function createTestFile(userId: number, overrides: Partial<any> = {}) {
   return testPrisma.file.create({

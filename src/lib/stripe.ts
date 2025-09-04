@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 
-export const stripe = new Stripe(stripeSecretKey);
+export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 
 export const getStripeWebhookSecret = () => process.env.STRIPE_WEBHOOK_SECRET || '';
 

@@ -12,10 +12,6 @@ export const getFilesSchema = z.object({
   search: z.string().optional(),
   sortBy: z.enum(['name', 'createdAt', 'size', 'mimeType']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
-  personaId: z
-    .string()
-    .optional()
-    .transform(val => (val ? parseInt(val, 10) : undefined)),
   mimeType: z.string().optional(),
 });
 

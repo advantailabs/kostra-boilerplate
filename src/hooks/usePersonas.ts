@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
 // Utility function to extract file information from a persona
-export const getPersonaFileInfo = (persona: PublicPersona) => {
+export const getPersonaFileInfo = (_persona: PublicPersona) => {
   // Since knowledgeBase is removed, return empty file info
   const fileCount = 0;
   const fileTypes: string[] = [];

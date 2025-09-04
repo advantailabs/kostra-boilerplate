@@ -1,9 +1,4 @@
-import {
-  RiCloseLine,
-  RiHomeLine,
-  RiMenuLine,
-  RiUserLine,
-} from '@remixicon/react';
+import { RiCloseLine, RiFileLine, RiHomeLine, RiMenuLine, RiUserLine } from '@remixicon/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -21,6 +16,7 @@ import { cx, focusRing } from '@/lib/utils';
 const navigation = [
   { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
+  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
 ] as const;
 
 export default function MobileSidebar() {
