@@ -322,7 +322,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
             onChange={e => setFormData({ ...formData, instructions: e.target.value })}
             placeholder="Detailed instructions for the AI assistant"
             required
-            className="mt-2 h-32 w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
+            className="mt-2 h-32 w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50"
           />
           {(serverFieldErrors.instructions || formErrors.instructions) && (
             <p className="mt-1 text-xs text-red-500">

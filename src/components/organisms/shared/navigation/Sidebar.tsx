@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  RiChat1Line,
+  RiHomeLine,
   RiUserLine,
   RiVipCrownLine,
 } from '@remixicon/react';
@@ -23,7 +23,7 @@ import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
 const navigation = [
-  { name: 'Chat', href: '/app/chat', icon: RiChat1Line, section: 'Persona' },
+  { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
 ] as const;
 
