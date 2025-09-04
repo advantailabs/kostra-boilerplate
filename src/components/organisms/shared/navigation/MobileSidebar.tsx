@@ -1,6 +1,6 @@
 import {
-  RiChat1Line,
   RiCloseLine,
+  RiHomeLine,
   RiMenuLine,
   RiUserLine,
 } from '@remixicon/react';
@@ -19,7 +19,7 @@ import {
 import { cx, focusRing } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Chat', href: '/app/chat', icon: RiChat1Line, section: 'Persona' },
+  { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
 ] as const;
 
