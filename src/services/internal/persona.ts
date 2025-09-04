@@ -1,23 +1,18 @@
 import { Persona, PrismaClient } from '@prisma/client';
 
-import { createAssistant, updateAssistant } from '@/services/external/openai/assistant';
-import { createVectorStore } from '@/services/external/openai/vector-store';
-import { createKnowledgeBase } from '@/services/repositories/knowledge-base';
 import {
-  createPersona,
-  findActiveByUserIdWithFiles,
-  findById,
-  findPersonaByUserAndId,
-  findPersonaByUserAndIdInternal,
-  softDeletePersona,
-  updatePersona,
+    createPersona,
+    findActiveByUserIdWithFiles,
+    findById,
+    findPersonaByUserAndId,
+    findPersonaByUserAndIdInternal,
+    softDeletePersona,
+    updatePersona,
 } from '@/services/repositories/persona';
 import {
-  CreateKnowledgeBaseData,
-  CreatePersonaData,
-  PublicPersona,
-  PublicPersonaWithKnowledgeBase,
-  UpdatePersonaData,
+    CreatePersonaData,
+    PublicPersona,
+    UpdatePersonaData,
 } from '@/types/chat';
 
 export interface PersonaServiceResult<T> {
@@ -32,61 +27,7 @@ const createPersonaService = async (
   prisma?: PrismaClient
 ): Promise<PersonaServiceResult<Persona>> => {
   try {
-    // Create vector store first
-    const vectorStoreResult = await createVectorStore({
-      name: `${data.name.trim()} Knowledge Base`,
-    });
-
-    if (!vectorStoreResult.success || !vectorStoreResult.data) {
-      return {
-        success: false,
-        error: `Failed to create vector store: ${vectorStoreResult.error}`,
-      };
-    }
-
-    // Create knowledge base
-    const knowledgeBaseData: CreateKnowledgeBaseData = {
-      userId,
-      title: `${data.name.trim()} Knowledge Base`,
-      description: `Knowledge base for ${data.name.trim()} persona`,
-      metadata: {
-        personaName: data.name.trim(),
-        personaDescription: data.description.trim(),
-      },
-      vectorStoreId: vectorStoreResult.data.id,
-    };
-
-    const knowledgeBaseResult = await createKnowledgeBase(knowledgeBaseData);
-
-    if (!knowledgeBaseResult.success || !knowledgeBaseResult.data) {
-      return {
-        success: false,
-        error: `Failed to create knowledge base: ${knowledgeBaseResult.error}`,
-      };
-    }
-
-    // Create OpenAI assistant with file_search tool and vector store
-    const assistantResult = await createAssistant({
-      name: data.name.trim(),
-      description: data.description.trim(),
-      instructions: data.instructions.trim(),
-      temperature: 0.3,
-      tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
-      tool_resources: {
-        file_search: {
-          vector_store_ids: [vectorStoreResult.data.id],
-        },
-      },
-    });
-
-    if (!assistantResult.success || !assistantResult.data) {
-      return {
-        success: false,
-        error: `Failed to create OpenAI assistant: ${assistantResult.error}`,
-      };
-    }
-
-    // Create persona with assistant ID and knowledge base ID
+    // Create persona
     const persona = await createPersona(
       {
         userId,
@@ -95,8 +36,6 @@ const createPersonaService = async (
         instructions: data.instructions.trim(),
         tags: data.tags?.map(tag => tag.trim()) || [],
         logo: data.logo,
-        openaiAssistantId: assistantResult.data.id,
-        knowledgeBaseId: knowledgeBaseResult.data.id,
       },
       prisma
     );
@@ -117,7 +56,7 @@ const createPersonaService = async (
 const getUserPersonasService = async (
   userId: number,
   prisma?: PrismaClient
-): Promise<PersonaServiceResult<PublicPersonaWithKnowledgeBase[]>> => {
+): Promise<PersonaServiceResult<PublicPersona[]>> => {
   try {
     const personas = await findActiveByUserIdWithFiles(userId, prisma);
     return {
@@ -165,7 +104,7 @@ const updatePersonaService = async (
   prisma?: PrismaClient
 ): Promise<PersonaServiceResult<PublicPersona>> => {
   try {
-    // Check if persona exists and belongs to user (using internal function to get OpenAI fields)
+    // Check if persona exists and belongs to user
     const existingPersona = await findPersonaByUserAndIdInternal(userId, personaId, prisma);
 
     if (!existingPersona) {
@@ -173,27 +112,6 @@ const updatePersonaService = async (
         success: false,
         error: 'Persona not found or access denied',
       };
-    }
-
-    // Update OpenAI assistant if it exists
-    if (existingPersona.openaiAssistantId) {
-      const assistantUpdateData: any = {};
-      if (data.name !== undefined) assistantUpdateData.name = data.name.trim();
-      if (data.description !== undefined) assistantUpdateData.description = data.description.trim();
-      if (data.instructions !== undefined)
-        assistantUpdateData.instructions = data.instructions.trim();
-
-      if (Object.keys(assistantUpdateData).length > 0) {
-        const assistantResult = await updateAssistant({
-          assistantId: existingPersona.openaiAssistantId,
-          ...assistantUpdateData,
-        });
-
-        if (!assistantResult.success) {
-          console.error('Failed to update OpenAI assistant:', assistantResult.error);
-          // Continue with persona update even if assistant update fails
-        }
-      }
     }
 
     await updatePersona(
@@ -204,12 +122,11 @@ const updatePersonaService = async (
         instructions: data.instructions?.trim(),
         tags: data.tags?.map(tag => tag.trim()),
         logo: data.logo,
-        knowledgeBaseId: data.knowledgeBaseId,
       },
       prisma
     );
 
-    // Fetch the updated persona using public function (excludes OpenAI fields)
+    // Fetch the updated persona
     const updatedPersona = await findById(personaId, prisma);
 
     return {
@@ -256,9 +173,10 @@ const deactivatePersonaService = async (
 };
 
 export {
-  createPersonaService,
-  deactivatePersonaService,
-  getPersonaByIdService,
-  getUserPersonasService,
-  updatePersonaService,
+    createPersonaService,
+    deactivatePersonaService,
+    getPersonaByIdService,
+    getUserPersonasService,
+    updatePersonaService
 };
+

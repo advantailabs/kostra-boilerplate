@@ -43,43 +43,12 @@ export interface UpdateFileData {
   metadata?: any;
 }
 
-export interface FileWithKnowledgeBases extends File {
-  fileKnowledgeBases: {
-    knowledgeBase: {
-      id: number;
-      title: string;
-      description: string;
-      personas: {
-        id: number;
-        name: string;
-        description: string;
-        logo: string | null;
-      }[];
-    };
-  }[];
-}
-
-export interface PublicFileWithKnowledgeBases extends PublicFile {
-  fileKnowledgeBases: {
-    knowledgeBase: {
-      id: number;
-      title: string;
-      description: string;
-      personas: {
-        id: number;
-        name: string;
-        description: string;
-        logo: string | null;
-      }[];
-    };
-  }[];
-}
+export type PublicFileWithKnowledgeBases = PublicFile;
 
 export interface FileFilters {
   search?: string;
   sortBy?: 'name' | 'createdAt' | 'size' | 'mimeType';
   sortOrder?: 'asc' | 'desc';
-  knowledgeBaseId?: number;
   personaId?: number;
   mimeType?: string;
 }
@@ -109,28 +78,10 @@ export async function createFile(data: CreateFileData): Promise<RepositoryResult
 // Internal function that includes OpenAI fields for backend operations
 export async function findFileByIdInternal(
   id: number
-): Promise<RepositoryResult<FileWithKnowledgeBases | null>> {
+): Promise<RepositoryResult<File | null>> {
   try {
     const file = await prisma.file.findFirst({
       where: { id, deletedAt: null },
-      include: {
-        fileKnowledgeBases: {
-          include: {
-            knowledgeBase: {
-              include: {
-                personas: {
-                  select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    logo: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
     });
 
     return { success: true, data: file };
@@ -147,26 +98,7 @@ export async function findFileById(
   try {
     const file = await prisma.file.findFirst({
       where: { id, deletedAt: null },
-      select: {
-        ...publicFileSelect,
-        fileKnowledgeBases: {
-          include: {
-            knowledgeBase: {
-              include: {
-                personas: {
-                  select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    logo: true,
-                    // Explicitly exclude openaiAssistantId
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+      select: publicFileSelect,
     });
 
     return { success: true, data: file };
@@ -206,25 +138,19 @@ export async function findFilesByUserId(
       whereClause.mimeType = filters.mimeType;
     }
 
-    // Handle knowledge base and persona filtering
-    if (filters?.knowledgeBaseId || filters?.personaId) {
+    // Handle persona filtering
+    if (filters?.personaId) {
       const fileKnowledgeBasesCondition: any = {
-        some: {},
-      };
-
-      if (filters?.knowledgeBaseId) {
-        fileKnowledgeBasesCondition.some.knowledgeBaseId = filters.knowledgeBaseId;
-      }
-
-      if (filters?.personaId) {
-        fileKnowledgeBasesCondition.some.knowledgeBase = {
-          personas: {
-            some: {
-              id: filters.personaId,
+        some: {
+          knowledgeBase: {
+            personas: {
+              some: {
+                id: filters.personaId,
+              },
             },
           },
-        };
-      }
+        },
+      };
 
       whereClause.fileKnowledgeBases = fileKnowledgeBasesCondition;
     }
@@ -238,26 +164,7 @@ export async function findFilesByUserId(
     const [files, total] = await Promise.all([
       prisma.file.findMany({
         where: whereClause,
-        select: {
-          ...publicFileSelect,
-          fileKnowledgeBases: {
-            include: {
-              knowledgeBase: {
-                include: {
-                  personas: {
-                    select: {
-                      id: true,
-                      name: true,
-                      description: true,
-                      logo: true,
-                      // Explicitly exclude openaiAssistantId
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+        select: publicFileSelect,
         orderBy,
         skip,
         take: limit,
@@ -306,70 +213,14 @@ export async function deleteFile(id: number): Promise<RepositoryResult<void>> {
   }
 }
 
-export async function addFileToKnowledgeBase(
-  fileId: number,
-  knowledgeBaseId: number
-): Promise<RepositoryResult<void>> {
-  try {
-    await prisma.fileKnowledgeBase.create({
-      data: {
-        fileId,
-        knowledgeBaseId,
-      },
-    });
 
-    return { success: true };
-  } catch (error) {
-    console.error('Error adding file to knowledge base:', error);
-    return { success: false, error: 'Failed to add file to knowledge base' };
-  }
-}
-
-export async function removeFileFromKnowledgeBase(
-  fileId: number,
-  knowledgeBaseId: number
-): Promise<RepositoryResult<void>> {
-  try {
-    await prisma.fileKnowledgeBase.delete({
-      where: {
-        fileId_knowledgeBaseId: {
-          fileId,
-          knowledgeBaseId,
-        },
-      },
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error removing file from knowledge base:', error);
-    return { success: false, error: 'Failed to remove file from knowledge base' };
-  }
-}
 
 export async function findFileByOpenaiFileId(
   openaiFileId: string
-): Promise<RepositoryResult<FileWithKnowledgeBases | null>> {
+): Promise<RepositoryResult<File | null>> {
   try {
     const file = await prisma.file.findFirst({
       where: { openaiFileId, deletedAt: null },
-      include: {
-        fileKnowledgeBases: {
-          include: {
-            knowledgeBase: {
-              include: {
-                personas: {
-                  select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    logo: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
     });
 
     return { success: true, data: file };

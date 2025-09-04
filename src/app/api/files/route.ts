@@ -2,13 +2,11 @@ import { FREE_LIMITS } from '@/data/config/plans';
 import {
   errorResponse,
   internalServerErrorResponse,
-  notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
-import { getKnowledgeBaseByIdPublicService } from '@/services/internal/knowledge-base';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
@@ -61,7 +59,7 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse('Invalid query parameters', errors);
     }
 
-    const { page, limit, search, sortBy, sortOrder, knowledgeBaseId, personaId, mimeType } =
+    const { page, limit, search, sortBy, sortOrder, personaId, mimeType } =
       validationResult.data;
 
     // Get files
@@ -69,7 +67,6 @@ export async function GET(request: NextRequest) {
       search,
       sortBy,
       sortOrder,
-      knowledgeBaseId,
       personaId,
       mimeType,
     });
@@ -96,7 +93,7 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    // Enforce Free plan total file limit for uploads (user files + KB files)
+    // Enforce Free plan total file limit for uploads
     if (user.plan === 'FREE') {
       const totalFiles = await getTotalFilesCount(user.id);
       if (!totalFiles.success) {
@@ -119,18 +116,6 @@ export async function POST(request: NextRequest) {
     const validationResult = uploadFilesSchema.safeParse(body);
 
     if (!validationResult.success) {
-      // Check if this is an image file validation error
-      const imageValidationError = validationResult.error.issues.find(
-        (err: any) => err.path.includes('files') && err.message.includes('Image files')
-      );
-
-      if (imageValidationError) {
-        return errorResponse(
-          'Image files (JPG, PNG, SVG, WebP, etc.) cannot be uploaded to knowledge bases.',
-          400
-        );
-      }
-
       const errors = validationResult.error.issues.map((err: any) => ({
         field: err.path.join('.'),
         message: err.message,
@@ -138,20 +123,7 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse('Invalid input data', errors);
     }
 
-    const { files, knowledgeBaseIds } = validationResult.data;
-
-    // If KB IDs are provided, ensure all belong to current user
-    if (knowledgeBaseIds && knowledgeBaseIds.length > 0) {
-      const ownershipChecks = await Promise.all(
-        knowledgeBaseIds.map(async id => {
-          const kb = await getKnowledgeBaseByIdPublicService(id);
-          return kb.success && kb.data && kb.data.userId === user.id;
-        })
-      );
-      if (!ownershipChecks.every(Boolean)) {
-        return notFoundResponse('Knowledge base not found');
-      }
-    }
+    const { files } = validationResult.data;
 
     // Process files in parallel using Promise.all
     const uploadPromises = files.map(async fileData => {
@@ -164,7 +136,6 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         file: mockFile,
         s3Key: fileData.s3Key,
-        knowledgeBaseIds,
         uploadPurpose: fileData.uploadPurpose || 'UserDocument',
       });
 

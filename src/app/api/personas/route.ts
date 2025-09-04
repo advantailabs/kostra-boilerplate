@@ -75,13 +75,7 @@ export async function POST(request: NextRequest) {
       if (personaCount >= FREE_LIMITS.personas) {
         return errorResponse('Free plan limit reached: You can only create 1 persona.', 403);
       }
-      // Also ensure KB limit isn't exceeded since persona creation creates a KB
-      const kbCount = await prisma.knowledgeBase.count({
-        where: { userId: user.id, deletedAt: null },
-      });
-      if (kbCount >= FREE_LIMITS.knowledgeBases) {
-        return errorResponse('Free plan limit reached: You can only have 1 knowledge base.', 403);
-      }
+
     }
 
     // Create persona

@@ -29,12 +29,9 @@ export async function cleanupDatabase() {
   try {
     // Clean up in reverse order of dependencies with explicit transaction
     await testPrisma.$transaction(async tx => {
-      await tx.message.deleteMany({});
-      await tx.fileKnowledgeBase.deleteMany({});
+      await tx.creditHistory.deleteMany({});
       await tx.file.deleteMany({});
-      await tx.thread.deleteMany({});
       await tx.persona.deleteMany({});
-      await tx.knowledgeBase.deleteMany({});
       await tx.user.deleteMany({});
     });
 
@@ -67,18 +64,7 @@ export async function createTestUser(overrides: Partial<any> = {}) {
   });
 }
 
-export async function createTestKnowledgeBase(userId: number, overrides: Partial<any> = {}) {
-  return testPrisma.knowledgeBase.create({
-    data: {
-      userId,
-      title: 'Test Knowledge Base',
-      description: 'A test knowledge base',
-      metadata: {},
-      vectorStoreId: 'vs_test123',
-      ...overrides,
-    },
-  });
-}
+
 
 export async function createTestPersona(userId: number, overrides: Partial<any> = {}) {
   return testPrisma.persona.create({
@@ -89,37 +75,14 @@ export async function createTestPersona(userId: number, overrides: Partial<any> 
       instructions: 'You are a helpful test assistant.',
       tags: ['test', 'assistant'],
       logo: null,
-      openaiAssistantId: 'asst_test123',
       ...overrides,
     },
   });
 }
 
-export async function createTestThread(
-  userId: number,
-  personaId: number,
-  overrides: Partial<any> = {}
-) {
-  return testPrisma.thread.create({
-    data: {
-      user: { connect: { id: userId } },
-      persona: { connect: { id: personaId } },
-      title: 'Test Thread',
-      ...overrides,
-    },
-  });
-}
 
-export async function createTestMessage(threadId: number, overrides: Partial<any> = {}) {
-  return testPrisma.message.create({
-    data: {
-      thread: { connect: { id: threadId } },
-      role: 'user',
-      content: 'Test message content',
-      ...overrides,
-    },
-  });
-}
+
+
 
 export async function createTestFile(userId: number, overrides: Partial<any> = {}) {
   return testPrisma.file.create({

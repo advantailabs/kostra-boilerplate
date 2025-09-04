@@ -7,11 +7,11 @@ import { ADMIN, RouteConfig, USER } from './types';
 export const ALL_ROUTES: RouteConfig[] = [
   // Public landing pages
   { path: '/', isPublic: true },
-  { path: '/privacy-policy', isPublic: true },
   { path: '/sitemap.xml', isPublic: true },
   { path: '/robots.txt', isPublic: true },
+  { path: '/privacy-policy', isPublic: true },
   { path: '/terms-of-services', isPublic: true },
-  { path: '/customizations', isPublic: true },
+
 
   // Static files and assets (should be handled by Next.js but included for safety)
   { path: '/favicon.ico', isPublic: true },
@@ -30,14 +30,10 @@ export const ALL_ROUTES: RouteConfig[] = [
   // Protected app pages - require authentication
   { path: '/onboarding', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/chat', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/chat/[threadId]', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/knowledge-bases', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/knowledge-bases/[id]', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/search', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/search/results', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -61,37 +57,6 @@ export const ALL_ROUTES: RouteConfig[] = [
       GET: [USER, ADMIN],
       PUT: [USER, ADMIN],
       DELETE: [USER, ADMIN],
-    },
-  },
-
-  // API routes - threads
-  {
-    path: '/api/threads',
-    isPublic: false,
-    accessTo: {
-      GET: [USER, ADMIN],
-    },
-  },
-  {
-    path: '/api/threads/[id]',
-    isPublic: false,
-    accessTo: {
-      GET: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
-    },
-  },
-  {
-    path: '/api/threads/[id]/messages/stream',
-    isPublic: false,
-    accessTo: {
-      POST: [USER, ADMIN],
-    },
-  },
-  {
-    path: '/api/threads/stream',
-    isPublic: false,
-    accessTo: {
-      POST: [USER, ADMIN],
     },
   },
 
@@ -130,42 +95,9 @@ export const ALL_ROUTES: RouteConfig[] = [
     },
   },
 
-  // API routes - knowledge bases
-  {
-    path: '/api/knowledge-bases',
-    isPublic: false,
-    accessTo: {
-      GET: [USER, ADMIN],
-      POST: [USER, ADMIN],
-    },
-  },
-  {
-    path: '/api/knowledge-bases/[id]',
-    isPublic: false,
-    accessTo: {
-      GET: [USER, ADMIN],
-      PUT: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
-    },
-  },
-  {
-    path: '/api/knowledge-bases/[id]/files',
-    isPublic: false,
-    accessTo: {
-      GET: [USER, ADMIN],
-      POST: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
-    },
-  },
 
-  // API routes - search
-  {
-    path: '/api/search/smart',
-    isPublic: false,
-    accessTo: {
-      POST: [USER, ADMIN],
-    },
-  },
+
+
 
   // API routes - auth
   {

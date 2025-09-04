@@ -3,11 +3,11 @@ import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
 import { getPersonaFileInfo } from '@/hooks/usePersonas';
 import { getFileTypeCategoryIcon } from '@/lib/file-utils';
-import { PersonaWithKnowledgeBase } from '@/types/chat';
+import { PublicPersona } from '@/types/chat';
 import { Edit, FileText, Trash2 } from 'lucide-react';
 
 interface PersonaCardProps {
-  persona: PersonaWithKnowledgeBase;
+  persona: PublicPersona;
   onEdit?: () => void;
   onDelete?: () => void;
   className?: string;
@@ -27,9 +27,8 @@ export function PersonaCard({
 
   return (
     <Card
-      className={`group flex h-[180px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${
-        isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
-      }`}
+      className={`group flex h-[180px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
+        }`}
       onClick={onClick}
     >
       {/* Header */}
@@ -84,7 +83,7 @@ export function PersonaCard({
           {persona.description && persona.description.length > 50
             ? `${persona.description.substring(0, 50)}...`
             : persona.description ||
-              'You are a professional assistant specialized in content creation, strategies, and optimization. I help users with their tasks efficiently and effectively.'}
+            'You are a professional assistant specialized in content creation, strategies, and optimization. I help users with their tasks efficiently and effectively.'}
         </p>
       </div>
 

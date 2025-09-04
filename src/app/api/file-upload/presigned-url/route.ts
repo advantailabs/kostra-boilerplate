@@ -70,8 +70,11 @@ export async function POST(request: NextRequest) {
             { field: 'objectId', message: 'Persona ID must be a number' },
           ]);
         }
-        const persona = await findPersonaByUserAndId(user.id, personaId);
-        if (!persona) return notFoundResponse('Persona not found');
+        // Allow upload for new personas (objectId = 0) or existing personas
+        if (personaId !== 0) {
+          const persona = await findPersonaByUserAndId(user.id, personaId);
+          if (!persona) return notFoundResponse('Persona not found');
+        }
         break;
       }
       case 'UserAvatar': {

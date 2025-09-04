@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { CREDIT_COSTS } from '@/lib/constants/credits';
+// import { CREDIT_COSTS } from '@/lib/constants/credits'; // Removed as only INITIAL_CREDITS is supported
 import { getCreditHistory, getUserCredits, type CreditHistoryItem } from '@/services/api/credits';
 import { useAuthStore } from '@/store/auth';
 
@@ -22,11 +22,12 @@ export function useCredits(limit = 100) {
     staleTime: 30_000,
   });
 
-  const hasInsufficientCredits = (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA') => {
-    const cost = CREDIT_COSTS[operation];
-    const currentCredits = creditsQuery.data ?? user?.credits ?? 0;
-    return currentCredits < cost;
-  };
+  // Note: hasInsufficientCredits removed as only INITIAL_CREDITS operation is supported
+  // const hasInsufficientCredits = (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA') => {
+  //   const cost = CREDIT_COSTS[operation];
+  //   const currentCredits = creditsQuery.data ?? user?.credits ?? 0;
+  //   return currentCredits < cost;
+  // };
 
   const totals = useMemo(() => {
     const items = historyQuery.data ?? [];
@@ -50,7 +51,7 @@ export function useCredits(limit = 100) {
     totals,
 
     // helpers
-    hasInsufficientCredits,
+    // hasInsufficientCredits, // Removed as only INITIAL_CREDITS operation is supported
 
     // combined loading flags for convenience
     isLoading: creditsQuery.isLoading || historyQuery.isLoading,
