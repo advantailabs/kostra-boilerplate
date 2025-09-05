@@ -12,16 +12,11 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    if (!stripe) {
-      return successResponse({ error: 'Stripe not configured' }, 503);
-    }
-
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();
     }
-
     // Ensure Stripe customer exists
     let customerId = user.stripeCustomerId || '';
     if (!customerId) {

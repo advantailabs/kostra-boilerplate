@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 
 import { PLANS_CONFIG } from '@/data/config/plans';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { stripe } from '@/lib/stripe';
 import {
   errorResponse,
   internalServerErrorResponse,
@@ -9,12 +10,10 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
-import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
   try {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
