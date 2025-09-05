@@ -2,7 +2,7 @@ import axiosInstance from '@/lib/axios';
 
 export interface FileFilters {
   search?: string;
-  sortBy?: 'name' | 'createdAt' | 'size' | 'mimeType';
+  sortBy?: 'originalName' | 'createdAt' | 'size' | 'mimeType';
   sortOrder?: 'asc' | 'desc';
   mimeType?: string;
 }

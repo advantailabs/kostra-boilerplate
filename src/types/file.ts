@@ -7,7 +7,6 @@ export interface File {
   size: number;
   url: string | null;
   metadata: any;
-  openaiFileId: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

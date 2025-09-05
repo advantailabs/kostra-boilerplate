@@ -146,7 +146,7 @@ export function FileFilterModal({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="createdAt">Date Created</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="originalName">Name</SelectItem>
                 <SelectItem value="size">Size</SelectItem>
                 <SelectItem value="mimeType">Type</SelectItem>
               </SelectContent>

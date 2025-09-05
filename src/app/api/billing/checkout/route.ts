@@ -2,22 +2,20 @@ import { NextRequest } from 'next/server';
 
 import { PLANS_CONFIG } from '@/data/config/plans';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { stripe } from '@/lib/stripe';
 import {
+  errorResponse,
   internalServerErrorResponse,
   successResponse,
   unauthorizedResponse,
 } from '@/lib/utils/response';
 import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
+import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
   try {
-    if (!stripe) {
-      return successResponse({ error: 'Stripe not configured' }, 503);
-    }
-
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
 
@@ -35,7 +33,7 @@ export async function POST(request: NextRequest) {
           ? process.env.STRIPE_CREDIT_PACK_PRICE_ID
           : undefined;
     if (!priceId) {
-      return successResponse({ error: 'Invalid plan selected' }, 400);
+      return errorResponse('Invalid plan selected');
     }
 
     // Ensure Stripe customer exists

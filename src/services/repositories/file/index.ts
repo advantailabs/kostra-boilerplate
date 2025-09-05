@@ -15,7 +15,6 @@ const publicFileSelect = {
   size: true,
   url: true,
   metadata: true,
-  openaiFileId: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
@@ -42,7 +41,7 @@ export interface UpdateFileData {
 
 export interface FileFilters {
   search?: string;
-  sortBy?: 'name' | 'createdAt' | 'size' | 'mimeType';
+  sortBy?: 'originalName' | 'createdAt' | 'size' | 'mimeType';
   sortOrder?: 'asc' | 'desc';
   mimeType?: string;
 }
@@ -68,7 +67,7 @@ export async function createFile(data: CreateFileData): Promise<RepositoryResult
   }
 }
 
-// Internal function that includes OpenAI fields for backend operations
+// Internal function for backend operations
 export async function findFileByIdInternal(id: number): Promise<RepositoryResult<File | null>> {
   try {
     const file = await prisma.file.findFirst({
@@ -82,7 +81,7 @@ export async function findFileByIdInternal(id: number): Promise<RepositoryResult
   }
 }
 
-// Public function that excludes OpenAI fields from responses
+// Public function for client responses
 export async function findFileById(id: number): Promise<RepositoryResult<FileType | null>> {
   try {
     const file = await prisma.file.findFirst({
