@@ -9,10 +9,6 @@ import { UserPlan } from '@prisma/client';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  if (!stripe) {
-    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
-  }
-
   const sig = (await headers()).get('stripe-signature') || '';
   const webhookSecret = getStripeWebhookSecret();
 
