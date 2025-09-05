@@ -4,6 +4,7 @@ import { PLANS_CONFIG } from '@/data/config/plans';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { stripe } from '@/lib/stripe';
 import {
+  errorResponse,
   internalServerErrorResponse,
   successResponse,
   unauthorizedResponse,
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
           ? process.env.STRIPE_CREDIT_PACK_PRICE_ID
           : undefined;
     if (!priceId) {
-      return successResponse({ error: 'Invalid plan selected' }, 400);
+      return errorResponse('Invalid plan selected');
     }
 
     // Ensure Stripe customer exists

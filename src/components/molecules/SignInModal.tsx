@@ -39,8 +39,15 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
           onClose();
         }
       }}
+      onKeyDown={e => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      }}
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md"
       aria-label="Close modal backdrop"
+      role="button"
+      tabIndex={0}
     >
       <div
         role="dialog"

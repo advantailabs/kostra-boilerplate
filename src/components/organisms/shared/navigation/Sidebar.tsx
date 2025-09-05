@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  RiHomeLine,
-  RiUserLine,
-  RiVipCrownLine,
-} from '@remixicon/react';
+import { RiFileLine, RiHomeLine, RiUserLine, RiVipCrownLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,6 +21,7 @@ import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 const navigation = [
   { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
+  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
 ] as const;
 
 export function Sidebar() {

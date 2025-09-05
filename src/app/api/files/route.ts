@@ -59,15 +59,13 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse('Invalid query parameters', errors);
     }
 
-    const { page, limit, search, sortBy, sortOrder, personaId, mimeType } =
-      validationResult.data;
+    const { page, limit, search, sortBy, sortOrder, mimeType } = validationResult.data;
 
     // Get files
     const result = await getUserFilesService(user.id, page, limit, {
       search,
       sortBy,
       sortOrder,
-      personaId,
       mimeType,
     });
 

@@ -1,6 +1,3 @@
-import { createAssistant } from '@/services/external/openai/assistant';
-import { createVectorStore } from '@/services/external/openai/vector-store';
-
 import {
   createPersonaService,
   deactivatePersonaService,
@@ -29,28 +26,6 @@ jest.mock('../../repositories/persona', () => ({
   softDeletePersona: jest.fn(),
 }));
 
-// Mock the external OpenAI services
-jest.mock('@/services/external/openai/assistant', () => ({
-  createAssistant: jest.fn(),
-  updateAssistant: jest.fn(),
-}));
-
-jest.mock('@/services/external/openai/vector-store', () => ({
-  createVectorStore: jest.fn(),
-}));
-
-// Mock the KnowledgeBase repository functions
-jest.mock('../../repositories/knowledge-base', () => ({
-  createKnowledgeBase: jest.fn(),
-  findKnowledgeBaseById: jest.fn(),
-  findKnowledgeBasesByUserId: jest.fn(),
-  updateKnowledgeBase: jest.fn(),
-  deleteKnowledgeBase: jest.fn(),
-  addFileToKnowledgeBase: jest.fn(),
-  removeFileFromKnowledgeBase: jest.fn(),
-  getKnowledgeBaseFiles: jest.fn(),
-}));
-
 const mockCreatePersona = createPersona as jest.MockedFunction<typeof createPersona>;
 const mockFindActiveByUserIdWithFiles = findActiveByUserIdWithFiles as jest.MockedFunction<
   typeof findActiveByUserIdWithFiles
@@ -64,9 +39,6 @@ const mockFindPersonaByUserAndIdInternal = findPersonaByUserAndIdInternal as jes
 >;
 const mockUpdatePersona = updatePersona as jest.MockedFunction<typeof updatePersona>;
 const mockSoftDeletePersona = softDeletePersona as jest.MockedFunction<typeof softDeletePersona>;
-
-const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof createAssistant>;
-const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
 
 describe('Persona Service', () => {
   beforeEach(() => {
@@ -98,52 +70,10 @@ describe('Persona Service', () => {
         deletedAt: null,
       };
 
-      // Mock external services
-      mockCreateVectorStore.mockResolvedValue({
-        success: true,
-        data: { id: 'vs_test123' },
-      });
-
-      // Mock knowledge base creation
-      const { createKnowledgeBase } = await import('../../repositories/knowledge-base');
-      (createKnowledgeBase as jest.Mock).mockResolvedValue({
-        success: true,
-        data: { id: 1 },
-      });
-
-      mockCreateAssistant.mockResolvedValue({
-        success: true,
-        data: {
-          id: 'asst_test123',
-          created_at: new Date().getTime(),
-          description: 'Test Description',
-          instructions: 'Test Instructions',
-          metadata: {},
-          model: 'gpt-4',
-          name: 'Test Persona',
-          object: 'assistant',
-          tools: [],
-        },
-      });
       mockCreatePersona.mockResolvedValue(mockCreatedPersona);
 
       const result = await createPersonaService(1, mockInputData);
 
-      expect(mockCreateVectorStore).toHaveBeenCalledWith({
-        name: 'Test Persona Knowledge Base',
-      });
-      expect(mockCreateAssistant).toHaveBeenCalledWith({
-        name: 'Test Persona',
-        description: 'Test Description',
-        instructions: 'Test Instructions',
-        temperature: 0.3,
-        tools: [{ type: 'code_interpreter' }, { type: 'file_search' }],
-        tool_resources: {
-          file_search: {
-            vector_store_ids: ['vs_test123'],
-          },
-        },
-      });
       expect(mockCreatePersona).toHaveBeenCalledWith(
         {
           userId: 1,
@@ -171,17 +101,12 @@ describe('Persona Service', () => {
       };
 
       // Mock external services to fail
-      mockCreateVectorStore.mockResolvedValue({
-        success: false,
-        error: '401 Incorrect API key provided: sk-proj-**********************',
-      });
+      mockCreatePersona.mockRejectedValue(new Error('Database error'));
 
       const result = await createPersonaService(1, mockInputData);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe(
-        'Failed to create vector store: 401 Incorrect API key provided: sk-proj-**********************'
-      );
+      expect(result.error).toBe('Failed to create persona');
     });
   });
 

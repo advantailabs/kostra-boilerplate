@@ -47,7 +47,9 @@ export function CreditDisplay({
   };
 
   return (
-    <div className={`text-gray-700 dark:text-muted-foreground flex items-center gap-1.5 ${className}`}>
+    <div
+      className={`dark:text-muted-foreground flex items-center gap-1.5 text-gray-700 ${className}`}
+    >
       {showIcon && (
         <RiCoinLine
           className={`${iconSizeClasses[size]} shrink-0 text-yellow-500`}

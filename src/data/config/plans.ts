@@ -56,7 +56,6 @@ export const CREDIT_THRESHOLDS = {
 
 export const FREE_LIMITS = {
   personas: 1,
-  knowledgeBases: 1,
   filesTotal: 50,
 } as const;
 

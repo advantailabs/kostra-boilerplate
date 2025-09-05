@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { GoogleSignInButton } from '@/components/molecules/common/GoogleSignInButton';
 import { useAuthStore } from '@/store/auth';
-import UserProfile from './UserProfile';
+import UserProfile from './userProfile';
 
 export function Navigation() {
   const { user } = useAuthStore();

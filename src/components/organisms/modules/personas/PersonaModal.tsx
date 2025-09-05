@@ -214,8 +214,9 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
           </Label>
           <div className="relative">
             <div
-              className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${isUploading ? 'opacity-50' : ''
-                } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
+              className={`hover:border-primary relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+                isUploading ? 'opacity-50' : ''
+              } ${uploadError ? 'border-red-300' : 'border-gray-300'}`}
               onClick={handleLogoClick}
               role="button"
               tabIndex={0}
@@ -285,9 +286,7 @@ export function PersonaModal({ isOpen, onClose, onSubmit, persona, mode }: Perso
             required
           />
           {(serverFieldErrors.name || formErrors.name) && (
-            <p className="mt-1 text-xs text-red-500">
-              {serverFieldErrors.name || formErrors.name}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{serverFieldErrors.name || formErrors.name}</p>
           )}
         </div>
 

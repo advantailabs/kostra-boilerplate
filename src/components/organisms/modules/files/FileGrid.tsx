@@ -1,11 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { FileCard } from '@/components/molecules/files/FileCard';
-import { KnowledgeBaseSelectionModal } from '@/components/molecules/files/KnowledgeBaseSelectionModal';
 import { useFileDownload } from '@/hooks/useFiles';
-import { useAddFileToKnowledgeBase, useKnowledgeBases } from '@/hooks/useKnowledgeBases';
 
 interface FileGridProps {
   files: any[];
@@ -18,16 +16,6 @@ interface FileGridProps {
 export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }: FileGridProps) {
   const observerRef = useRef<HTMLDivElement>(null);
   const downloadFileMutation = useFileDownload();
-  const addFileToKBMutation = useAddFileToKnowledgeBase();
-
-  // Knowledge base selection modal state
-  const [showKnowledgeBaseModal, setShowKnowledgeBaseModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [processingKnowledgeBaseId, setProcessingKnowledgeBaseId] = useState<number | null>(null);
-
-  // Fetch knowledge bases for the selection modal
-  const { data: knowledgeBasesData, refetch: refetchKnowledgeBases } = useKnowledgeBases(1, 100);
-  const knowledgeBases = knowledgeBasesData?.knowledgeBases || [];
 
   // Intersection Observer for infinite scrolling
   useEffect(() => {
@@ -69,41 +57,6 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
     [downloadFileMutation]
   );
 
-  const handleAddToKnowledgeBase = useCallback((file: any) => {
-    setSelectedFile(file);
-    setShowKnowledgeBaseModal(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setShowKnowledgeBaseModal(false);
-    setProcessingKnowledgeBaseId(null);
-    setSelectedFile(null);
-  }, []);
-
-  const handleSelectKnowledgeBase = useCallback(
-    async (knowledgeBaseId: number) => {
-      if (!selectedFile) return;
-
-      try {
-        setProcessingKnowledgeBaseId(knowledgeBaseId);
-        await addFileToKBMutation.mutateAsync({
-          knowledgeBaseId,
-          fileId: selectedFile.id,
-        });
-        // Refresh both the files list and knowledge bases data to update counts
-        onFileDeleted();
-        refetchKnowledgeBases();
-        // Close the modal after successful operation
-        handleCloseModal();
-      } catch (error) {
-        console.error('Error adding file to knowledge base:', error);
-        // Reset processing state on error
-        setProcessingKnowledgeBaseId(null);
-      }
-    },
-    [selectedFile, addFileToKBMutation, onFileDeleted, refetchKnowledgeBases, handleCloseModal]
-  );
-
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
@@ -114,7 +67,6 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
             onDelete={() => handleDelete(file)}
             onView={() => handleView(file)}
             onDownload={() => handleDownload(file)}
-            onAddToKnowledgeBase={() => handleAddToKnowledgeBase(file)}
             isDownloading={
               downloadFileMutation.isPending && downloadFileMutation.variables === file.id
             }
@@ -131,17 +83,6 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Loading more files...</p>
         </div>
       )}
-
-      {/* Knowledge Base Selection Modal */}
-      <KnowledgeBaseSelectionModal
-        isOpen={showKnowledgeBaseModal}
-        knowledgeBases={knowledgeBases}
-        onClose={handleCloseModal}
-        onSelectKnowledgeBase={handleSelectKnowledgeBase}
-        isLoading={processingKnowledgeBaseId !== null}
-        processingKnowledgeBaseId={processingKnowledgeBaseId}
-        selectedFile={selectedFile}
-      />
     </>
   );
 }

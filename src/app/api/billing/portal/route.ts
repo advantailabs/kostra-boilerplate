@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return unauthorizedResponse();
     }
-
     // Ensure Stripe customer exists
     let customerId = user.stripeCustomerId || '';
     if (!customerId) {

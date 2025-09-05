@@ -115,7 +115,7 @@ export async function POST(request: Request) {
             data: {
               userId: user.id,
               type: 'CREDIT',
-              operation: 'CREDIT_PURCHASE',
+              operation: 'INITIAL_CREDITS',
               amount: proCreditsToAdd + packCreditsToAdd,
               balanceAfter: newBalance,
               objectId: invoiceId,

@@ -10,12 +10,8 @@ export const getFilesSchema = z.object({
     .optional()
     .transform(val => parseInt(val || '20', 10)),
   search: z.string().optional(),
-  sortBy: z.enum(['name', 'createdAt', 'size', 'mimeType']).optional(),
+  sortBy: z.enum(['originalName', 'createdAt', 'size', 'mimeType']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
-  personaId: z
-    .string()
-    .optional()
-    .transform(val => (val ? parseInt(val, 10) : undefined)),
   mimeType: z.string().optional(),
 });
 

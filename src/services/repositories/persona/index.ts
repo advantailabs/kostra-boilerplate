@@ -109,8 +109,6 @@ const findByIdWithUser = async (
   });
 };
 
-
-
 const updatePersona = async (
   id: number,
   data: UpdatePersonaData,
@@ -196,6 +194,5 @@ export {
   findPersonaByUserAndIdInternal,
   restorePersona,
   softDeletePersona,
-  updatePersona
+  updatePersona,
 };
-

@@ -1,9 +1,4 @@
 import { inferUploadPurposeFromKey } from '@/lib/file-utils';
-import { generateDownloadUrl } from '@/lib/s3';
-import {
-  createFile as createOpenAIFile,
-  deleteFile as deleteOpenAIFile,
-} from '@/services/external/openai/files';
 
 import {
   createFile,
@@ -13,10 +8,10 @@ import {
   findFileById,
   findFileByIdInternal,
   findFilesByUserId,
-  PublicFileWithKnowledgeBases,
   updateFile,
-  UpdateFileData
+  UpdateFileData,
 } from '@/services/repositories/file';
+import type { File as FileType } from '@/types/file';
 
 import { UploadPurpose } from '@/types/file-upload';
 
@@ -55,14 +50,12 @@ export interface UploadFileData {
 }
 
 export interface FileListResult {
-  files: PublicFileWithKnowledgeBases[];
+  files: FileType[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
 }
-
-
 
 const getUserFilesService = async (
   userId: number,
@@ -103,43 +96,9 @@ const getUserFilesService = async (
 
 const uploadFileService = async (data: UploadFileData): Promise<FileServiceResult<any>> => {
   try {
-    // Get presigned URL for file download from S3
-    const downloadUrlResult = await generateDownloadUrl(
-      process.env.R2_PRIVATE_BUCKET_NAME || 'peon-data-private',
-      data.s3Key,
-      data.file.name
-    );
-
-    // Create a readable stream from the presigned URL
-    const response = await fetch(downloadUrlResult.downloadUrl);
-    if (!response.ok) {
-      throw new Error('Failed to fetch file from S3');
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Create a file-like object that OpenAI can use
-    // In Node.js environment, we can create a File object from Buffer
-    const openaiFile = new File([buffer], data.file.name, { type: data.file.type });
-
-    // Upload file to OpenAI with 'assistants' purpose
-    const openaiFileResult = await createOpenAIFile({
-      file: openaiFile,
-      purpose: 'assistants',
-    });
-
-    if (!openaiFileResult.success) {
-      return {
-        success: false,
-        error: openaiFileResult.error,
-      };
-    }
-
     // Create file record in database
     const fileData: CreateFileData = {
       userId: data.userId,
-      openaiFileId: openaiFileResult.data!.id,
       filename: data.s3Key,
       originalName: data.file.name,
       mimeType: data.file.type,
@@ -155,15 +114,11 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
     const createResult = await createFile(fileData);
 
     if (!createResult.success) {
-      // If database creation fails, delete the OpenAI file
-      await deleteOpenAIFile(openaiFileResult.data!.id);
       return {
         success: false,
         error: createResult.error,
       };
     }
-
-
 
     return {
       success: true,
@@ -178,9 +133,7 @@ const uploadFileService = async (data: UploadFileData): Promise<FileServiceResul
   }
 };
 
-const getFileByIdService = async (
-  id: number
-): Promise<FileServiceResult<PublicFileWithKnowledgeBases | null>> => {
+const getFileByIdService = async (id: number): Promise<FileServiceResult<FileType | null>> => {
   try {
     const result = await findFileById(id);
 
@@ -233,7 +186,7 @@ const updateFileService = async (
 
 const deleteFileService = async (id: number): Promise<FileServiceResult<void>> => {
   try {
-    // First, get the file to check if it exists and get its OpenAI file ID
+    // Check if file exists
     const fileResult = await findFileByIdInternal(id);
 
     if (!fileResult.success || !fileResult.data) {
@@ -242,23 +195,6 @@ const deleteFileService = async (id: number): Promise<FileServiceResult<void>> =
         error: 'File not found',
       };
     }
-
-    const file = fileResult.data;
-
-    // Delete from OpenAI if we have an OpenAI file ID
-    if (file.openaiFileId) {
-      try {
-        const deleteResult = await deleteOpenAIFile(file.openaiFileId);
-        if (!deleteResult.success) {
-          console.warn('Failed to delete OpenAI file:', deleteResult.error);
-          // Don't fail the operation if OpenAI deletion fails
-        }
-      } catch (openaiError) {
-        console.warn('Failed to delete OpenAI file:', openaiError);
-        // Don't fail the operation if OpenAI deletion fails
-      }
-    }
-
 
     // Soft delete from database
     const result = await deleteFile(id);
@@ -287,6 +223,5 @@ export {
   getFileByIdService,
   getUserFilesService,
   updateFileService,
-  uploadFileService
+  uploadFileService,
 };
-

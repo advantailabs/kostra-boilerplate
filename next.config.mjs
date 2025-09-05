@@ -22,6 +22,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'pub-e93e4a1737574e22a77941480819d550.r2.dev',
+      },
+      {
+        protocol: 'https',
         hostname: 'peon.sh',
       },
       {

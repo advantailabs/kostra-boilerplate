@@ -95,7 +95,6 @@ export interface MockResponseContext {
 
 // Citation types
 export interface CitationFile {
-  openaiFileId: string;
   fileId: number;
   originalName: string;
   filename: string;
@@ -107,7 +106,6 @@ export interface CitationFile {
 }
 
 export interface StoredCitation {
-  openaiFileId: string;
   fileId: number;
   originalName: string;
   filename: string;
@@ -149,4 +147,3 @@ export interface StreamMessageResponse {
   citations?: PublicCitationFile[];
   error?: string;
 }
-

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { SignInButton } from '@/components/atom/SignInButton';
 import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { useAuthStore } from '@/store/auth';
-import UserProfile from './UserProfile';
+import UserProfile from './userProfile';
 
 export function ModernNavigation() {
   const { user } = useAuthStore();

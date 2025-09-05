@@ -2,10 +2,8 @@ import axiosInstance from '@/lib/axios';
 
 export interface FileFilters {
   search?: string;
-  sortBy?: 'name' | 'createdAt' | 'size' | 'mimeType';
+  sortBy?: 'originalName' | 'createdAt' | 'size' | 'mimeType';
   sortOrder?: 'asc' | 'desc';
-  knowledgeBaseId?: number;
-  personaId?: number;
   mimeType?: string;
 }
 
@@ -26,12 +24,10 @@ export interface UploadFilesRequest {
     s3Key: string;
     uploadPurpose?: 'PersonaLogo' | 'UserAvatar' | 'MessageAttachment' | 'UserDocument';
   }>;
-  knowledgeBaseIds?: number[];
 }
 
 export interface UpdateFileRequest {
   originalName?: string;
-  knowledgeBaseIds?: number[];
 }
 
 interface FilesApiClient {
@@ -52,9 +48,6 @@ export const filesApi: FilesApiClient = {
     if (_filters?.search) params.append('search', _filters.search);
     if (_filters?.sortBy) params.append('sortBy', _filters.sortBy);
     if (_filters?.sortOrder) params.append('sortOrder', _filters.sortOrder);
-    if (_filters?.knowledgeBaseId)
-      params.append('knowledgeBaseId', _filters.knowledgeBaseId.toString());
-    if (_filters?.personaId) params.append('personaId', _filters.personaId.toString());
     if (_filters?.mimeType) params.append('mimeType', _filters.mimeType);
 
     const response = await axiosInstance.get(`/files?${params.toString()}`);

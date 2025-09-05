@@ -1,10 +1,8 @@
 import { Avatar } from '@/components/atom/Avatar';
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
-import { getPersonaFileInfo } from '@/hooks/usePersonas';
-import { getFileTypeCategoryIcon } from '@/lib/file-utils';
 import { PublicPersona } from '@/types/chat';
-import { Edit, FileText, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface PersonaCardProps {
   persona: PublicPersona;
@@ -23,12 +21,11 @@ export function PersonaCard({
   isSelected,
   onClick,
 }: PersonaCardProps) {
-  const { fileCount, fileTypes } = getPersonaFileInfo(persona);
-
   return (
     <Card
-      className={`group flex h-[180px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
-        }`}
+      className={`group flex h-[180px] w-full cursor-pointer flex-col transition-all duration-200 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 ${className} ${
+        isSelected ? 'ring-primary ring-2 ring-offset-2' : ''
+      }`}
       onClick={onClick}
     >
       {/* Header */}
@@ -83,34 +80,8 @@ export function PersonaCard({
           {persona.description && persona.description.length > 50
             ? `${persona.description.substring(0, 50)}...`
             : persona.description ||
-            'You are a professional assistant specialized in content creation, strategies, and optimization. I help users with their tasks efficiently and effectively.'}
+              'You are a professional assistant specialized in content creation, strategies, and optimization. I help users with their tasks efficiently and effectively.'}
         </p>
-      </div>
-
-      {/* Footer */}
-      <div className="flex flex-shrink-0 items-center justify-between border-t border-gray-100 px-3 py-2 sm:px-4 sm:py-3 dark:border-gray-800">
-        <div className="flex items-center gap-1.5 text-xs text-gray-500 sm:gap-2 dark:text-gray-400">
-          <FileText className="h-3 w-3 flex-shrink-0 sm:h-3.5 sm:w-3.5" />
-          <span>{fileCount} files</span>
-        </div>
-        <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
-          {fileTypes.slice(0, 3).map((type, index) => {
-            const { icon: IconComponent, color } = getFileTypeCategoryIcon(type);
-            return (
-              <div
-                key={index}
-                className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium sm:h-5 sm:w-5 ${color}`}
-              >
-                <IconComponent className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              </div>
-            );
-          })}
-          {fileTypes.length > 3 && (
-            <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-gray-500 text-xs font-medium text-white sm:h-5 sm:w-5">
-              +{fileTypes.length - 3}
-            </div>
-          )}
-        </div>
       </div>
     </Card>
   );

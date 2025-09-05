@@ -1,6 +1,3 @@
-import { createAssistant, updateAssistant } from '@/services/external/openai/assistant';
-import { createVectorStore } from '@/services/external/openai/vector-store';
-
 import {
   cleanupDatabase,
   createTestPersona,
@@ -15,47 +12,6 @@ import {
   updatePersonaService,
 } from '../persona';
 
-// Mock the external OpenAI services
-jest.mock('@/services/external/openai/assistant', () => ({
-  createAssistant: jest.fn(),
-  updateAssistant: jest.fn(),
-}));
-
-jest.mock('@/services/external/openai/vector-store', () => ({
-  createVectorStore: jest.fn(),
-}));
-
-// Mock the KnowledgeBase repository functions
-jest.mock('@/services/repositories/knowledge-base', () => ({
-  createKnowledgeBase: jest.fn().mockImplementation(async data => {
-    // Actually create a knowledge base record in the test database
-    const knowledgeBase = await testPrisma.knowledgeBase.create({
-      data: {
-        userId: data.userId,
-        title: data.title,
-        description: data.description,
-        metadata: data.metadata || {},
-        vectorStoreId: data.vectorStoreId,
-      },
-    });
-    return {
-      success: true,
-      data: knowledgeBase,
-    };
-  }),
-  findKnowledgeBaseById: jest.fn(),
-  findKnowledgeBasesByUserId: jest.fn(),
-  updateKnowledgeBase: jest.fn(),
-  deleteKnowledgeBase: jest.fn(),
-  addFileToKnowledgeBase: jest.fn(),
-  removeFileFromKnowledgeBase: jest.fn(),
-  getKnowledgeBaseFiles: jest.fn(),
-}));
-
-const mockCreateAssistant = createAssistant as jest.MockedFunction<typeof createAssistant>;
-const mockCreateVectorStore = createVectorStore as jest.MockedFunction<typeof createVectorStore>;
-const mockUpdateAssistant = updateAssistant as jest.MockedFunction<typeof updateAssistant>;
-
 const maybeDescribe = process.env.SKIP_DB_SETUP === '1' ? describe.skip : describe;
 
 maybeDescribe('Persona Service - End-to-End Tests', () => {
@@ -66,38 +22,6 @@ maybeDescribe('Persona Service - End-to-End Tests', () => {
     testUser = await createTestUser();
 
     // Setup mocks for external services
-    mockCreateVectorStore.mockResolvedValue({
-      success: true,
-      data: { id: 'vs_test123' },
-    });
-    mockCreateAssistant.mockResolvedValue({
-      success: true,
-      data: {
-        id: 'asst_test123',
-        created_at: new Date().getTime(),
-        description: 'Test Description',
-        instructions: 'Test Instructions',
-        metadata: {},
-        model: 'gpt-4',
-        name: 'Test Persona',
-        object: 'assistant',
-        tools: [],
-      },
-    });
-    mockUpdateAssistant.mockResolvedValue({
-      success: true,
-      data: {
-        id: 'asst_test123',
-        created_at: new Date().getTime(),
-        description: 'Updated Description',
-        instructions: 'Updated Instructions',
-        metadata: {},
-        model: 'gpt-4',
-        name: 'Updated Name',
-        object: 'assistant',
-        tools: [],
-      },
-    });
   });
 
   describe('createPersonaService', () => {

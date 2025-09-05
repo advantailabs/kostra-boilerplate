@@ -139,7 +139,7 @@ export const getFileTypeIconWithColor = (mimeType: string) => {
 
 /**
  * Returns icon and color for file type categories (not mime types)
- * Used in KnowledgeBaseCard and PersonaCard
+ * Used in PersonaCard
  */
 export const getFileTypeCategoryIcon = (type: string) => {
   const fileTypeConfig: Record<string, { icon: any; color: string }> = {
