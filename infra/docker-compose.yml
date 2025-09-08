@@ -10,7 +10,7 @@ services:
     ports:
       - '5434:5432'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./data/pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -d peon']
       interval: 5s
@@ -27,7 +27,7 @@ services:
     ports:
       - '5433:5432'
     volumes:
-      - pgdata_test:/var/lib/postgresql/data
+      - ./data/pgdata_test:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -d peon_test']
       interval: 5s
@@ -55,7 +55,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -lc "npm run generate && npm run migrate && npm run dev"
+    command: sh -lc "npm run generate && npm run migrate:prod && npm run dev"
 
   app-test:
     build:
@@ -68,13 +68,15 @@ services:
       - POSTGRES_URL=postgresql://postgres:postgres@postgres-test:5432/peon_test?schema=public
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
+    ports:
+      - '3001:3000'
     volumes:
       - ..:/app
       - /app/node_modules
     depends_on:
       postgres-test:
         condition: service_healthy
-    command: sh -lc "npx prisma migrate reset --force --skip-seed && npm run migrate && npm run dev"
+    command: sh -lc "npx prisma migrate reset --force --skip-seed && npm run migrate:prod && npm run dev"
 
 volumes:
   pgdata:
