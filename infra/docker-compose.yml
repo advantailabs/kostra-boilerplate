@@ -37,7 +37,7 @@ services:
   app:
     build:
       context: ..
-      dockerfile: Dockerfile-local.dockerfile
+      dockerfile: infra/Dockerfile-local.dockerfile
     container_name: peon-app
     environment:
       - NODE_ENV=development
@@ -60,7 +60,7 @@ services:
   app-test:
     build:
       context: ..
-      dockerfile: Dockerfile-local.dockerfile
+      dockerfile: infra/Dockerfile-local.dockerfile
     container_name: peon-app-test
     environment:
       - NODE_ENV=test
