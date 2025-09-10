@@ -25,8 +25,7 @@ export async function verifyJWT(token: string) {
  * Extracts and validates user role from request headers
  */
 export async function checkUserRoleStatus(request: NextRequest): Promise<UserRole | null> {
-  const authHeader = request.headers.get('x-custom-token');
-  const token = authHeader?.replace('Bearer ', '');
+  const token = request.cookies.get('auth-token')?.value;
   if (token) {
     const decoded = await verifyJWT(token);
     if (decoded && typeof decoded.role === 'string') {

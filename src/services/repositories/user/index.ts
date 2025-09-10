@@ -2,11 +2,13 @@ import { prisma } from '@/lib/prisma';
 import { UserPlan, UserRole } from '@prisma/client';
 
 export interface GoogleUserUpdate {
-  googleId: string;
+  googleId?: string;
   name: string;
   email: string;
   profilePicture?: string;
   isOnboarded?: boolean;
+  password?: string;
+  role?: UserRole;
 }
 
 const upsertUser = async (user: GoogleUserUpdate) => {
@@ -27,8 +29,9 @@ const createUser = async (user: GoogleUserUpdate) => {
       name: user.name,
       googleId: user.googleId,
       profilePicture: user.profilePicture,
-      role: UserRole.USER,
-      isOnboarded: true,
+      password: user.password,
+      role: user.role || UserRole.USER,
+      isOnboarded: user.isOnboarded ?? true,
       credits: 100,
       plan: UserPlan.FREE,
       isOverDue: false,
@@ -51,7 +54,10 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
     roles = [role];
   }
   return prisma.user.findMany({
-    where: { role: { in: roles } },
+    where: {
+      role: { in: roles },
+      deletedAt: null,
+    },
   });
 };
 

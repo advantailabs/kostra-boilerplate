@@ -9,6 +9,10 @@ export const siteConfig = {
       general: '/app/settings/general',
       billing: '/app/settings/billing',
     },
+    admin: {
+      dashboard: '/app/admin',
+      users: '/app/admin/users',
+    },
     onboarding: '/onboarding',
     privacy: '/privacy-policy',
     terms: '/terms-of-services',
