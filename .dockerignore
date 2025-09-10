@@ -1,0 +1,21 @@
+# Ignore node modules and build outputs
+node_modules
+.next
+out
+coverage
+
+# OS/editor files
+.DS_Store
+.vscode
+.idea
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
