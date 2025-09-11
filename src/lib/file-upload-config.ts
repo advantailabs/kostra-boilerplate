@@ -102,6 +102,12 @@ export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
       maxFileSize: 100 * 1024 * 1024, // 100MB
       keyPrefix: 'users/documents',
     },
+    BlogImage: {
+      bucket: 'public',
+      allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png'],
+      maxFileSize: 5 * 1024 * 1024, // 5MB
+      keyPrefix: 'blogs/images',
+    },
   },
   buckets: {
     public: process.env.R2_PUBLIC_BUCKET_NAME || 'peon-data-public',

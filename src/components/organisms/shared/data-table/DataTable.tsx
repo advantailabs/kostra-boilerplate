@@ -25,14 +25,36 @@ import { DataTableBulkEditor } from './DataTableBulkEditor';
 import { Filterbar } from './DataTableFilterbar';
 import { DataTablePagination } from './DataTablePagination';
 
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  totalCount: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
+  showFilterbar?: boolean;
+  pagination?: PaginationInfo;
+  onPageChange?: (page: number) => void;
 }
 
-export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
-  const pageSize = 20;
+export function DataTable<TData>({
+  columns,
+  data,
+  showFilterbar = true,
+  pagination,
+  onPageChange,
+}: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = React.useState({});
+
+  // Use external pagination if provided, otherwise use internal pagination
+  const isExternalPagination = !!pagination;
+  const pageSize = pagination?.limit || 20;
+
   const table = useReactTable({
     data,
     columns,
@@ -41,34 +63,37 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
     },
     initialState: {
       pagination: {
-        pageIndex: 0,
+        pageIndex: isExternalPagination ? (pagination?.page || 1) - 1 : 0,
         pageSize,
       },
     },
     enableRowSelection: true,
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: isExternalPagination ? undefined : getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    manualPagination: isExternalPagination,
+    pageCount: isExternalPagination ? pagination?.totalPages : undefined,
   });
 
   return (
     <div className="space-y-3">
-      <Filterbar table={table} />
+      {showFilterbar && <Filterbar table={table} />}
       <div className="relative overflow-hidden overflow-x-auto">
         <Table>
           <TableHead>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="border-y border-gray-200 dark:border-gray-800"
+                className="border border-gray-200 dark:border-gray-800"
+                style={{ backgroundColor: '#0A0F1D' }}
               >
                 {headerGroup.headers.map(header => (
                   <TableHeaderCell
                     key={header.id}
                     className={cx(
-                      'whitespace-nowrap py-1 text-sm sm:text-xs',
+                      'whitespace-nowrap py-3 text-base font-semibold text-white',
                       header.column.columnDef.meta?.className
                     )}
                   >
@@ -114,7 +139,12 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
         </Table>
         <DataTableBulkEditor table={table} rowSelection={rowSelection} />
       </div>
-      <DataTablePagination table={table} pageSize={pageSize} />
+      <DataTablePagination
+        table={table}
+        pageSize={pageSize}
+        pagination={pagination}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 }

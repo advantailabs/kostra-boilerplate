@@ -94,6 +94,18 @@ export async function POST(request: NextRequest) {
         if (Number.isNaN(userId) || userId !== user.id) return notFoundResponse('User not found');
         break;
       }
+      case 'BlogImage': {
+        // Allow upload for new blogs (objectId = 0) or existing blogs
+        const blogId = Number(objectId);
+        if (Number.isNaN(blogId)) {
+          return validationErrorResponse('Invalid input data', [
+            { field: 'objectId', message: 'Blog ID must be a number' },
+          ]);
+        }
+        // For now, allow any authenticated user to upload blog images
+        // You can add blog ownership validation here if needed
+        break;
+      }
       default:
         break;
     }

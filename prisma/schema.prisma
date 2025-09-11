@@ -38,6 +38,7 @@ model User {
   personas       Persona[]
   files          File[]
   creditHistory  CreditHistory[]
+  blogs          Blog[]
 }
 
 
@@ -95,4 +96,39 @@ enum CreditTransactionType {
 
 enum CreditOperation {
   INITIAL_CREDITS
+}
+
+model Blog {
+  id           Int      @id @default(autoincrement())
+  title        String
+  slug         String   @unique
+  content      String
+  tags         String[] // Tags stored as array
+  blogImageUrl String?  @db.VarChar(255)
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  authorId     Int // References User
+
+  author     User           @relation(fields: [authorId], references: [id])
+  categories BlogCategory[]
+}
+
+model Category {
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  slug      String         @unique
+  createdAt DateTime       @default(now()) @db.Timestamptz()
+  updatedAt DateTime       @default(now()) @db.Timestamptz()
+  blogs     BlogCategory[]
+}
+
+model BlogCategory {
+  blogId     Int
+  categoryId Int
+
+  blog     Blog     @relation(fields: [blogId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@id([blogId, categoryId])
 }

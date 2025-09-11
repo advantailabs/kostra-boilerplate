@@ -1,8 +1,8 @@
 'use client';
 
 import { Toaster } from '@/components/atom/Toast';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useState } from 'react';
 
 import { AuthProvider } from './AuthProvider';

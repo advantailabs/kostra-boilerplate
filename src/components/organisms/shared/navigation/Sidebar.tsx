@@ -1,6 +1,13 @@
 'use client';
 
-import { RiFileLine, RiHomeLine, RiUserLine, RiVipCrownLine } from '@remixicon/react';
+import {
+  RiFileLine,
+  RiHomeLine,
+  RiUserLine,
+  RiVipCrownLine,
+  RiArticleLine,
+  RiListCheck,
+} from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,6 +29,11 @@ const navigation = [
   { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
   { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
+] as const;
+
+const marketingNavigation = [
+  { name: 'Blogs', href: '/app/blogs', icon: RiArticleLine, section: 'Marketing' },
+  { name: 'Categories', href: '/app/categories', icon: RiListCheck, section: 'Marketing' },
 ] as const;
 
 export function Sidebar() {
@@ -57,6 +69,32 @@ export function Sidebar() {
               <ul role="list" className="space-y-0.5">
                 {navigation
                   .filter(item => item.section === 'Persona')
+                  .map(item => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={cx(
+                          isActive(item.href)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                          focusRing
+                        )}
+                      >
+                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Marketing Section */}
+            <div>
+              <span className="text-xs font-medium leading-6 text-gray-500">Marketing</span>
+              <ul role="list" className="space-y-0.5">
+                {marketingNavigation
+                  .filter(item => item.section === 'Marketing')
                   .map(item => (
                     <li key={item.name}>
                       <Link

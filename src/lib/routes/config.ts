@@ -32,6 +32,8 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+  { path: '/app/blogs', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+  { path: '/app/categories', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -51,6 +53,51 @@ export const ALL_ROUTES: RouteConfig[] = [
   },
   {
     path: '/api/personas/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
+      PUT: [USER, ADMIN],
+      DELETE: [USER, ADMIN],
+    },
+  },
+
+  // API routes - blogs
+  {
+    path: '/api/blogs',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
+      POST: [USER, ADMIN],
+    },
+  },
+  {
+    path: '/api/blogs/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
+      PUT: [USER, ADMIN],
+      DELETE: [USER, ADMIN],
+    },
+  },
+  {
+    path: '/api/blogs/convert-markdown',
+    isPublic: false,
+    accessTo: {
+      POST: [USER, ADMIN],
+    },
+  },
+
+  // API routes - categories
+  {
+    path: '/api/categories',
+    isPublic: false,
+    accessTo: {
+      GET: [USER, ADMIN],
+      POST: [USER, ADMIN],
+    },
+  },
+  {
+    path: '/api/categories/[id]',
     isPublic: false,
     accessTo: {
       GET: [USER, ADMIN],

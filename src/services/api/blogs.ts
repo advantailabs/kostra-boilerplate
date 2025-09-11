@@ -1,0 +1,86 @@
+import axiosInstance from '@/lib/axios';
+
+export interface Blog {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  tags: string[];
+  blogImageUrl?: string;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+  authorId: number;
+  author: {
+    id: number;
+    name: string;
+  };
+  categories: {
+    category: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+  }[];
+}
+
+export interface BlogFilters {
+  title?: string;
+  published?: boolean;
+  categoryId?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export const blogsApi = {
+  getBlogs: async (filters?: BlogFilters): Promise<Blog[]> => {
+    const params = new URLSearchParams();
+
+    if (filters?.title) params.append('title', filters.title);
+    if (filters?.published !== undefined) params.append('published', filters.published.toString());
+    if (filters?.categoryId) params.append('categoryId', filters.categoryId.toString());
+    if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+    if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
+
+    const response = await axiosInstance.get(`/blogs?${params.toString()}`);
+    return response.data.data || response.data;
+  },
+
+  getBlog: async (id: number): Promise<Blog> => {
+    const response = await axiosInstance.get(`/blogs/${id}`);
+    return response.data.data || response.data;
+  },
+
+  createBlog: async (data: FormData): Promise<Blog> => {
+    const response = await axiosInstance.post('/blogs', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data || response.data;
+  },
+
+  updateBlog: async (id: number, data: FormData): Promise<Blog> => {
+    const response = await axiosInstance.patch(`/blogs/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data || response.data;
+  },
+
+  deleteBlog: async (id: number): Promise<void> => {
+    await axiosInstance.delete(`/blogs/${id}`);
+  },
+
+  convertMarkdown: async (): Promise<{
+    message: string;
+    totalBlogs: number;
+    convertedCount: number;
+    errorCount: number;
+    errors?: string[];
+  }> => {
+    const response = await axiosInstance.post('/blogs/convert-markdown');
+    return response.data.data || response.data;
+  },
+};

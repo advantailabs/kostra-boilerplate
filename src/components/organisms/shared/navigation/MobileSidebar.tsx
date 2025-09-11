@@ -1,4 +1,12 @@
-import { RiCloseLine, RiFileLine, RiHomeLine, RiMenuLine, RiUserLine } from '@remixicon/react';
+import {
+  RiCloseLine,
+  RiFileLine,
+  RiHomeLine,
+  RiMenuLine,
+  RiUserLine,
+  RiArticleLine,
+  RiListCheck,
+} from '@remixicon/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -17,6 +25,11 @@ const navigation = [
   { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
   { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
   { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
+] as const;
+
+const marketingNavigation = [
+  { name: 'Blogs', href: '/app/blogs', icon: RiArticleLine, section: 'Marketing' },
+  { name: 'Categories', href: '/app/categories', icon: RiListCheck, section: 'Marketing' },
 ] as const;
 
 export default function MobileSidebar() {
@@ -59,6 +72,36 @@ export default function MobileSidebar() {
               <ul role="list" className="space-y-1.5">
                 {navigation
                   .filter(item => item.section === 'Persona')
+                  .map(item => (
+                    <li key={item.name}>
+                      <DrawerClose asChild>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </DrawerClose>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Marketing Section */}
+            <div>
+              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
+                Marketing
+              </span>
+              <ul role="list" className="space-y-1.5">
+                {marketingNavigation
+                  .filter(item => item.section === 'Marketing')
                   .map(item => (
                     <li key={item.name}>
                       <DrawerClose asChild>
