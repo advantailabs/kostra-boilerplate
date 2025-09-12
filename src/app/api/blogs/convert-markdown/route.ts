@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma';
-import { getAllBlogs } from '@/services/repositories/blogs';
-import { errorResponse, successResponse, unauthorizedResponse } from '@/lib/utils/response';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { prisma } from '@/lib/prisma';
+import { errorResponse, successResponse, unauthorizedResponse } from '@/lib/utils/response';
+import { getAllBlogs } from '@/services/repositories/blogs';
 import { decode } from 'html-entities';
 import { marked } from 'marked';
 import { NextRequest } from 'next/server';
@@ -50,11 +50,10 @@ export async function POST(_request: NextRequest) {
           },
         });
 
-        console.log(`Converted blog: "${blog.title}" (ID: ${blog.id})`);
-        convertedCount++;
+        convertedCount += 1;
       } catch (blogError) {
         console.error(`Error converting blog "${blog.title}" (ID: ${blog.id}):`, blogError);
-        errorCount++;
+        errorCount += 1;
         errors.push(`Blog "${blog.title}" (ID: ${blog.id}): ${blogError}`);
       }
     }
@@ -70,4 +69,3 @@ export async function POST(_request: NextRequest) {
     return errorResponse('Failed to convert markdown to HTML');
   }
 }
-

@@ -49,8 +49,8 @@ export const blogFiltersSchema = z.object({
   title: z.string().optional(),
   published: z.string().optional(),
   categoryId: z.string().optional(),
-  sortBy: z.enum(['title', 'createdAt', 'updatedAt']).optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export type CreateBlogInput = z.infer<typeof createBlogSchema>;

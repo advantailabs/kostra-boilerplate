@@ -1,11 +1,11 @@
-import { UpdateBlogInput, blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
-import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import {
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { UpdateBlogInput, blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
+import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -26,7 +26,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
       return validationErrorResponse('Invalid blog ID', errors);
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
     const blog = await getBlogById(id);
 
     if (!blog) {
@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return validationErrorResponse('Invalid blog ID', errors);
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
 
     // Check if blog exists
     const existingBlog = await getBlogById(id);
@@ -142,7 +142,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
       return validationErrorResponse('Invalid blog ID', errors);
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
 
     // Check if the blog exists
     const existingBlog = await getBlogById(id);

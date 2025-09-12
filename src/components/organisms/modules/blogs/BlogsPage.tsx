@@ -3,6 +3,7 @@
 import { DataTable } from '@/components/organisms/shared/data-table/DataTable';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useCategories } from '@/hooks/useCategories';
+import { useAuthStore } from '@/store/auth';
 import { useCallback, useState } from 'react';
 import { BlogModal } from './BlogModal';
 import { DeleteBlogDialog } from './DeleteBlogDialog';
@@ -14,17 +15,16 @@ interface BlogsPageProps {
 }
 
 export function BlogsPage({ className }: BlogsPageProps) {
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+
   // State to store filter values for the API
   const [apiFilters, setApiFilters] = useState<{
     title?: string;
     published?: boolean;
     categoryId?: number;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-  }>({
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-  });
+  }>({});
 
   // State to control the visibility of the blog modal
   const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
@@ -42,11 +42,19 @@ export function BlogsPage({ className }: BlogsPageProps) {
   // State to store the title of the blog being deleted
   const [deletingBlogTitle, setDeletingBlogTitle] = useState<string>('');
 
-  // Fetch blogs with current filters
-  const { blogs, refetchBlogs, createBlog, updateBlog } = useBlogs(apiFilters);
+  // Get current user from auth store
+  const { user } = useAuthStore();
+
+  // Fetch blogs with current filters and pagination
+  const { blogs, pagination, refetchBlogs, createBlog, updateBlog, deleteBlog, isDeleting } =
+    useBlogs({
+      ...apiFilters,
+      page: currentPage,
+      limit: pageSize,
+    });
 
   // Fetch filter data once when component mounts
-  const { categories } = useCategories();
+  const { categories: _categories } = useCategories();
 
   /**
    * Handles editing a blog
@@ -81,16 +89,20 @@ export function BlogsPage({ className }: BlogsPageProps) {
    * Callback when a blog is successfully created or updated
    */
   const handleBlogSuccess = useCallback(
-    (data: any) => {
-      if (modalMode === 'create') {
-        createBlog(data);
-      } else if (modalMode === 'edit' && editingBlogId) {
-        updateBlog({ id: editingBlogId, data });
+    async (data: any) => {
+      try {
+        if (modalMode === 'create') {
+          await createBlog(data);
+        } else if (modalMode === 'edit' && editingBlogId) {
+          await updateBlog({ id: editingBlogId, data });
+        }
+        handleBlogModalClose();
+      } catch (error) {
+        console.error('Error in blog operation:', error);
+        // Don't close modal on error, let user retry
       }
-      refetchBlogs();
-      handleBlogModalClose();
     },
-    [modalMode, editingBlogId, createBlog, updateBlog, refetchBlogs, handleBlogModalClose]
+    [modalMode, editingBlogId, createBlog, updateBlog, handleBlogModalClose]
   );
 
   /**
@@ -123,6 +135,13 @@ export function BlogsPage({ className }: BlogsPageProps) {
   }, [refetchBlogs]);
 
   /**
+   * Handles page changes for pagination
+   */
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+
+  /**
    * Handles direct filter changes (like from the FilterBar)
    */
   const handleDirectFilterChange = useCallback((column: string, value: any) => {
@@ -139,13 +158,16 @@ export function BlogsPage({ className }: BlogsPageProps) {
         [column]: value,
       };
     });
+    // Reset to first page when filters change
+    setCurrentPage(1);
   }, []);
 
   const columns = createColumns(
     handleEditBlog,
     handleDeleteBlog, // onDelete
     true, // canUpdate
-    true // canDelete
+    true, // canDelete
+    user ? parseInt(user.id, 10) : undefined // currentUserId
   );
 
   // Find the blog being edited
@@ -172,21 +194,26 @@ export function BlogsPage({ className }: BlogsPageProps) {
             blogId={deletingBlogId}
             blogTitle={deletingBlogTitle}
             onSuccess={handleDeleteBlogSuccess}
+            deleteBlog={deleteBlog}
+            isDeleting={isDeleting}
           />
 
           <FilterBar
             onAdd={handleAddBlog}
             onView={() => {
               // TODO: Implement view functionality
-              console.log('View button clicked');
             }}
             onFilterChange={handleDirectFilterChange}
             searchValue={apiFilters.title || ''}
-            sortBy={apiFilters.sortBy || 'createdAt'}
-            sortOrder={apiFilters.sortOrder || 'desc'}
           />
 
-          <DataTable columns={columns} data={blogs || []} showFilterbar={false} />
+          <DataTable
+            columns={columns}
+            data={blogs || []}
+            showFilterbar={false}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

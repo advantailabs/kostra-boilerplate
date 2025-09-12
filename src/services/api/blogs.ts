@@ -30,10 +30,24 @@ export interface BlogFilters {
   categoryId?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
 }
 
 export const blogsApi = {
-  getBlogs: async (filters?: BlogFilters): Promise<Blog[]> => {
+  getBlogs: async (filters?: BlogFilters): Promise<PaginatedResponse<Blog>> => {
     const params = new URLSearchParams();
 
     if (filters?.title) params.append('title', filters.title);
@@ -41,6 +55,8 @@ export const blogsApi = {
     if (filters?.categoryId) params.append('categoryId', filters.categoryId.toString());
     if (filters?.sortBy) params.append('sortBy', filters.sortBy);
     if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
+    if (filters?.page) params.append('page', filters.page.toString());
+    if (filters?.limit) params.append('limit', filters.limit.toString());
 
     const response = await axiosInstance.get(`/blogs?${params.toString()}`);
     return response.data.data || response.data;

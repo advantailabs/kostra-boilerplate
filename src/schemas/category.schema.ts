@@ -17,8 +17,6 @@ export const categoryIdSchema = z.object({
 export const categoryFiltersSchema = z.object({
   name: z.string().optional(),
   slug: z.string().optional(),
-  sortBy: z.enum(['name', 'createdAt']).optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.string().optional(),
   limit: z.string().optional(),
   offset: z.string().optional(),

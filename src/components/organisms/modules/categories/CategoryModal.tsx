@@ -58,15 +58,12 @@ export function CategoryModal({ isOpen, onClose, onSubmit, category, mode }: Cat
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    console.log('🚀 handleSubmit called', { mode, isLoading, formData });
-
     if (e) {
       e.preventDefault();
     }
 
     // Prevent double submission
     if (isLoading) {
-      console.log('❌ Already submitting, ignoring duplicate request');
       return;
     }
 
@@ -85,14 +82,12 @@ export function CategoryModal({ isOpen, onClose, onSubmit, category, mode }: Cat
 
     try {
       if (mode === 'create') {
-        console.log('📝 Creating category with data:', formData);
         createCategory(formData);
         // The useApiMutation hook will handle success/error states and show toasts
         // We'll close the modal immediately since the mutation is async
         handleClose();
         onSubmit(formData);
       } else if (mode === 'edit' && category) {
-        console.log('✏️ Updating category with data:', formData);
         updateCategory({ id: category.id, data: formData });
         // The useApiMutation hook will handle success/error states and show toasts
         // We'll close the modal immediately since the mutation is async

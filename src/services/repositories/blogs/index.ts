@@ -45,47 +45,80 @@ export const getAllBlogs = async (filters?: {
   title?: string;
   published?: boolean;
   categoryId?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
 }) => {
-  const where = {
-    ...(filters?.title && {
-      title: {
-        contains: filters.title,
-        mode: 'insensitive' as const,
-      },
-    }),
-    ...(filters?.published !== undefined && {
-      published: filters.published,
-    }),
-    ...(filters?.categoryId && {
-      categories: {
-        some: {
-          categoryId: filters.categoryId,
+  try {
+    const where = {
+      ...(filters?.title && {
+        title: {
+          contains: filters.title,
+          mode: 'insensitive' as const,
         },
-      },
-    }),
-  };
+      }),
+      ...(filters?.published !== undefined && {
+        published: filters.published,
+      }),
+      ...(filters?.categoryId && {
+        categories: {
+          some: {
+            categoryId: filters.categoryId,
+          },
+        },
+      }),
+    };
 
-  return prisma.blog.findMany({
-    where,
-    include: {
-      categories: {
-        include: {
-          category: true,
+    // Parse pagination parameters
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 10;
+    const offset = (page - 1) * limit;
+
+    // Get total count for pagination metadata
+    const totalCount = await prisma.blog.count({ where });
+
+    // Get paginated results
+    const blogs = await prisma.blog.findMany({
+      where,
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
-      author: {
-        select: {
-          id: true,
-          name: true,
-        },
+      orderBy: {
+        createdAt: 'desc',
       },
-    },
-    orderBy: {
-      [filters?.sortBy || 'createdAt']: filters?.sortOrder || 'desc',
-    },
-  });
+      skip: offset,
+      take: limit,
+    });
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+      data: blogs,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    };
+  } catch (error) {
+    console.error('Error in getAllBlogs:', error);
+    throw error;
+  }
 };
 
 export const updateBlogById = async (id: number, data: UpdateBlogInput) => {
@@ -188,4 +221,3 @@ export const updateBlogImageUrl = async (blogId: number, blogImageUrl: string) =
     },
   });
 };
-

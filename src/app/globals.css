@@ -90,6 +90,60 @@
 }
 
 @layer components {
+  /* TipTap Editor Styles */
+  .ProseMirror {
+    outline: none !important;
+    cursor: text;
+    caret-color: currentColor;
+    min-height: inherit;
+  }
+
+  .ProseMirror p {
+    margin: 0.5rem 0;
+  }
+
+  .ProseMirror p:first-child {
+    margin-top: 0;
+  }
+
+  .ProseMirror p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ProseMirror-focused {
+    outline: none !important;
+    cursor: text;
+  }
+
+  .ProseMirror .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    height: 0;
+  }
+
+  .dark .ProseMirror .is-editor-empty:first-child::before {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Ensure editor content is clickable and focusable */
+  .tiptap-editor-content {
+    cursor: text;
+    min-height: 200px;
+    width: 100%;
+    pointer-events: auto;
+  }
+
+  .tiptap-editor-content .ProseMirror {
+    padding: 0.5rem;
+    min-height: inherit;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0;
+  }
+
   /* Focus styles for accessibility */
   .focus-visible:focus {
     outline: 2px solid white;

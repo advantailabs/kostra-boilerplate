@@ -16,8 +16,6 @@ export const createNewCategory = async (categoryData: CreateCategoryInput) => {
     const normalizedName = categoryData.name.trim();
     const normalizedSlug = categoryData.slug.trim();
 
-    console.log('Creating category with name:', normalizedName, 'and slug:', normalizedSlug);
-
     // Check for name conflicts (case-insensitive)
     const existingCategoryByName = await prisma.category.findFirst({
       where: {
@@ -35,9 +33,6 @@ export const createNewCategory = async (categoryData: CreateCategoryInput) => {
       },
     });
 
-    console.log('Existing category by name:', existingCategoryByName);
-    console.log('Existing category by slug:', existingCategoryBySlug);
-
     // Resolve conflicts by appending a unique suffix
     let finalName = normalizedName;
     let finalSlug = normalizedSlug;
@@ -45,13 +40,11 @@ export const createNewCategory = async (categoryData: CreateCategoryInput) => {
     if (existingCategoryByName) {
       const uniqueSuffix = generateUniqueSuffix();
       finalName = `${normalizedName}-${uniqueSuffix}`;
-      console.log('Name conflict resolved, new name:', finalName);
     }
 
     if (existingCategoryBySlug) {
       const uniqueSuffix = generateUniqueSuffix();
       finalSlug = `${normalizedSlug}-${uniqueSuffix}`;
-      console.log('Slug conflict resolved, new slug:', finalSlug);
     }
 
     // Create the category with resolved names/slugs
@@ -69,7 +62,6 @@ export const createNewCategory = async (categoryData: CreateCategoryInput) => {
       },
     });
 
-    console.log('Category created successfully:', newCategory);
     return newCategory;
   } catch (error) {
     console.error('Error in createNewCategory:', error);
@@ -80,8 +72,6 @@ export const createNewCategory = async (categoryData: CreateCategoryInput) => {
 export const getAllCategories = async (filters?: {
   name?: string;
   slug?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
   page?: string;
   limit?: string;
   offset?: string;
@@ -114,7 +104,7 @@ export const getAllCategories = async (filters?: {
     const categories = await prisma.category.findMany({
       where,
       orderBy: {
-        [filters?.sortBy || 'name']: filters?.sortOrder || 'asc',
+        name: 'asc',
       },
       include: {
         _count: {
@@ -182,15 +172,6 @@ export const updateCategoryById = async (id: number, data: UpdateCategoryInput) 
     const normalizedName = data.name?.trim();
     const normalizedSlug = data.slug?.trim();
 
-    console.log(
-      'Updating category with ID:',
-      id,
-      'new name:',
-      normalizedName,
-      'new slug:',
-      normalizedSlug
-    );
-
     let finalName = normalizedName;
     let finalSlug = normalizedSlug;
 
@@ -211,7 +192,6 @@ export const updateCategoryById = async (id: number, data: UpdateCategoryInput) 
       if (existingCategoryByName) {
         const uniqueSuffix = generateUniqueSuffix();
         finalName = `${normalizedName}-${uniqueSuffix}`;
-        console.log('Name conflict resolved, new name:', finalName);
       }
     }
 
@@ -229,7 +209,6 @@ export const updateCategoryById = async (id: number, data: UpdateCategoryInput) 
       if (existingCategoryBySlug) {
         const uniqueSuffix = generateUniqueSuffix();
         finalSlug = `${normalizedSlug}-${uniqueSuffix}`;
-        console.log('Slug conflict resolved, new slug:', finalSlug);
       }
     }
 
@@ -237,8 +216,6 @@ export const updateCategoryById = async (id: number, data: UpdateCategoryInput) 
     const updateData: Partial<UpdateCategoryInput> = {};
     if (finalName !== undefined) updateData.name = finalName;
     if (finalSlug !== undefined) updateData.slug = finalSlug;
-
-    console.log('Final update data:', updateData);
 
     return prisma.category.update({
       where: { id },

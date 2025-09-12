@@ -1,6 +1,3 @@
-import { CreateBlogInput, createBlogSchema, blogFiltersSchema } from '@/schemas/blog.schema';
-import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
-import { getUserById } from '@/services/repositories/user';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { prisma } from '@/lib/prisma';
 import {
@@ -9,6 +6,9 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { blogFiltersSchema, CreateBlogInput, createBlogSchema } from '@/schemas/blog.schema';
+import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
+import { getUserById } from '@/services/repositories/user';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -134,13 +134,15 @@ export async function GET(request: NextRequest) {
             ? false
             : undefined,
       categoryId: validatedFilters.categoryId ? parseInt(validatedFilters.categoryId) : undefined,
+      page: validatedFilters.page ? parseInt(validatedFilters.page) : undefined,
+      limit: validatedFilters.limit ? parseInt(validatedFilters.limit) : undefined,
     };
 
-    // Get all blogs
-    const blogs = await getAllBlogs(processedFilters);
+    // Get all blogs with pagination
+    const result = await getAllBlogs(processedFilters);
 
     // Return success response
-    return successResponse(blogs);
+    return successResponse(result);
   } catch (error) {
     console.error('Error fetching blogs:', error);
     return internalServerErrorResponse('Failed to fetch blogs');

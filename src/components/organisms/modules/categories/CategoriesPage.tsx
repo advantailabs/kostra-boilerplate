@@ -28,17 +28,9 @@ export function CategoriesPage({ className }: CategoriesPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
 
-  // Filter state
-  const [filters, setFilters] = useState({
-    sortBy: 'createdAt',
-    sortOrder: 'desc' as 'asc' | 'desc',
-  });
-
   const { categories, pagination } = useCategories({
     page: currentPage,
     limit: pageSize,
-    sortBy: filters.sortBy,
-    sortOrder: filters.sortOrder,
   });
 
   const handleEditCategory = useCallback((categoryId: number) => {
@@ -98,10 +90,6 @@ export function CategoriesPage({ className }: CategoriesPageProps) {
    * Handles direct filter changes (like from the FilterBar)
    */
   const handleDirectFilterChange = useCallback((column: string, value: any) => {
-    setFilters(prev => ({
-      ...prev,
-      [column]: value,
-    }));
     // Reset to first page when filters change
     setCurrentPage(1);
   }, []);
@@ -152,12 +140,9 @@ export function CategoriesPage({ className }: CategoriesPageProps) {
             onAdd={handleAddCategory}
             onView={() => {
               // TODO: Implement view functionality
-              console.log('View button clicked');
             }}
             onFilterChange={handleDirectFilterChange}
             searchValue=""
-            sortBy={filters.sortBy}
-            sortOrder={filters.sortOrder}
           />
 
           <DataTable

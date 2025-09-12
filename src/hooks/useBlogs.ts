@@ -1,16 +1,10 @@
-import { blogsApi } from '@/services/api/blogs';
+import { blogsApi, type BlogFilters } from '@/services/api/blogs';
 import { useQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
-export function useBlogs(filters?: {
-  title?: string;
-  published?: boolean;
-  categoryId?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}) {
+export function useBlogs(filters?: BlogFilters) {
   const {
-    data: blogs = [],
+    data: response,
     isLoading,
     error,
     refetch,
@@ -18,6 +12,9 @@ export function useBlogs(filters?: {
     queryKey: ['blogs', filters],
     queryFn: () => blogsApi.getBlogs(filters),
   });
+
+  const blogs = response?.data || [];
+  const pagination = response?.pagination;
 
   const createBlogMutation = useApiMutation({
     mutationFn: (data: FormData) => blogsApi.createBlog(data),
@@ -45,12 +42,13 @@ export function useBlogs(filters?: {
 
   return {
     blogs,
+    pagination,
     isBlogsLoading: isLoading,
     error,
     refetchBlogs: refetch,
-    createBlog: createBlogMutation.mutate,
-    updateBlog: updateBlogMutation.mutate,
-    deleteBlog: deleteBlogMutation.mutate,
+    createBlog: createBlogMutation.mutateAsync,
+    updateBlog: updateBlogMutation.mutateAsync,
+    deleteBlog: deleteBlogMutation.mutateAsync,
     convertMarkdown: convertMarkdownMutation.mutate,
     isCreating: createBlogMutation.isPending,
     isUpdating: updateBlogMutation.isPending,

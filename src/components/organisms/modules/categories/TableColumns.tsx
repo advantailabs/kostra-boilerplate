@@ -3,12 +3,13 @@
 import { Button } from '@/components/atom/Button';
 import { Checkbox } from '@/components/atom/Checkbox';
 import { CategoryResponseType } from '@/types/blog.type';
+import { RiDeleteBinLine, RiEditLine, RiMoreLine } from '@remixicon/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { RiEditLine, RiDeleteBinLine, RiMoreLine } from '@remixicon/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 // Three-dot menu component
-const ActionsMenu = ({
+function ActionsMenu({
   onEdit,
   onDelete,
   canEdit,
@@ -18,51 +19,94 @@ const ActionsMenu = ({
   onDelete?: () => void;
   canEdit?: boolean;
   canDelete?: boolean;
-}) => {
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<{ top: number; right: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY + 4,
+        right: window.innerWidth - rect.right - window.scrollX,
+      });
+    } else {
+      setPosition(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && !buttonRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
   return (
     <div className="relative">
-      <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setIsOpen(!isOpen)}>
+      <Button
+        ref={buttonRef}
+        variant="ghost"
+        className="h-8 w-8 p-0"
+        onClick={e => {
+          e.stopPropagation(); // Prevent row selection
+          setIsOpen(!isOpen);
+        }}
+      >
         <RiMoreLine className="h-4 w-4" />
       </Button>
 
-      {isOpen && (
-        <div className="absolute right-0 top-8 z-10 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-950">
-          <div className="py-1">
-            {canEdit && (
-              <button
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 hover:dark:bg-gray-800"
-                onClick={() => {
-                  onEdit?.();
-                  setIsOpen(false);
-                }}
-              >
-                <RiEditLine className="h-4 w-4" />
-                Edit Category
-              </button>
-            )}
-            {canDelete && (
-              <button
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 hover:dark:bg-gray-800"
-                onClick={() => {
-                  onDelete?.();
-                  setIsOpen(false);
-                }}
-              >
-                <RiDeleteBinLine className="h-4 w-4" />
-                Delete Category
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Overlay to close menu when clicking outside */}
-      {isOpen && <div className="fixed inset-0 z-0" onClick={() => setIsOpen(false)} />}
+      {isOpen &&
+        position &&
+        createPortal(
+          <div
+            className="fixed z-50 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-950"
+            style={{
+              top: position.top,
+              right: position.right,
+            }}
+          >
+            <div className="py-1">
+              {canEdit && (
+                <button
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 hover:dark:bg-gray-800"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onEdit?.();
+                    setIsOpen(false);
+                  }}
+                >
+                  <RiEditLine className="h-4 w-4" />
+                  Edit Category
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 hover:dark:bg-gray-800"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onDelete?.();
+                    setIsOpen(false);
+                  }}
+                >
+                  <RiDeleteBinLine className="h-4 w-4" />
+                  Delete Category
+                </button>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
-};
+}
 
 export const createColumns = (
   onEdit?: (_categoryId: number) => void,
@@ -115,7 +159,7 @@ export const createColumns = (
   },
   {
     id: 'actions',
-    header: 'Actions',
+    header: () => <div className="flex justify-end">Actions</div>,
     cell: ({ row }) => {
       return (
         <div className="flex justify-end">
@@ -132,5 +176,3 @@ export const createColumns = (
     enableHiding: false,
   },
 ];
-
-
