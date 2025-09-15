@@ -11,6 +11,18 @@ export interface GoogleUserUpdate {
   role?: UserRole;
 }
 
+// Interface for updating user by ID (admin operations)
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  profilePicture?: string;
+  isOnboarded?: boolean;
+  credits?: number;
+  plan?: UserPlan;
+  isOverDue?: boolean;
+}
+
 const upsertUser = async (user: GoogleUserUpdate) => {
   return prisma.user.upsert({
     where: { googleId: user.googleId },
@@ -23,19 +35,25 @@ const upsertUser = async (user: GoogleUserUpdate) => {
 };
 
 const createUser = async (user: GoogleUserUpdate) => {
+  const userData: any = {
+    email: user.email,
+    name: user.name,
+    googleId: user.googleId,
+    profilePicture: user.profilePicture,
+    role: user.role || UserRole.USER,
+    isOnboarded: user.isOnboarded ?? true,
+    credits: 100,
+    plan: UserPlan.FREE,
+    isOverDue: false,
+  };
+
+  // Only add password if it exists
+  if (user.password) {
+    userData.password = user.password;
+  }
+
   return prisma.user.create({
-    data: {
-      email: user.email,
-      name: user.name,
-      googleId: user.googleId,
-      profilePicture: user.profilePicture,
-      password: user.password,
-      role: user.role || UserRole.USER,
-      isOnboarded: user.isOnboarded ?? true,
-      credits: 100,
-      plan: UserPlan.FREE,
-      isOverDue: false,
-    },
+    data: userData,
   });
 };
 
@@ -122,9 +140,26 @@ const updateUserGoogleId = async (userId: number, googleId: string) => {
   });
 };
 
+// Update user by ID (for admin operations)
+const updateUserById = async (userId: number, userData: UpdateUserData) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: userData,
+  });
+};
+
+// Soft delete user by ID (for admin operations)
+const deleteUserById = async (userId: number) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { deletedAt: new Date() },
+  });
+};
+
 export {
   createUser,
   deleteUser,
+  deleteUserById,
   getUserByEmail,
   getUserByGoogleId,
   getUserByGoogleIdOrEmail,
@@ -133,6 +168,7 @@ export {
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,
+  updateUserById,
   updateUserGoogleId,
   upsertUser,
 };

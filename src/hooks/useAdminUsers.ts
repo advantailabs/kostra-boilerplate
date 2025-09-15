@@ -1,4 +1,5 @@
 import axios from '@/lib/axios';
+import { UserRole } from '@/lib/constants/admin';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -7,7 +8,7 @@ interface User {
   name: string;
   email: string;
   profilePicture?: string;
-  role: 'ADMIN' | 'USER';
+  role: UserRole;
   isOnboarded: boolean;
   credits: number;
   plan: 'FREE' | 'PRO';
@@ -18,13 +19,13 @@ interface User {
 interface CreateUserData {
   email: string;
   password: string;
-  role: 'ADMIN' | 'USER';
+  role: UserRole;
 }
 
 interface UpdateUserData {
   name?: string;
   email?: string;
-  role?: 'ADMIN' | 'USER';
+  role?: UserRole;
 }
 
 export const useAdminUsers = () => {
@@ -39,7 +40,7 @@ export const useAdminUsers = () => {
     queryKey: ['admin-users'],
     queryFn: async () => {
       const response = await axios.get('/admin/users');
-      return response.data.users;
+      return response.data.data.users;
     },
   });
 
@@ -47,7 +48,7 @@ export const useAdminUsers = () => {
   const createUserMutation = useMutation({
     mutationFn: async (userData: CreateUserData) => {
       const response = await axios.post('/admin/users', userData);
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
@@ -62,7 +63,7 @@ export const useAdminUsers = () => {
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, userData }: { userId: number; userData: UpdateUserData }) => {
       const response = await axios.put(`/admin/users/${userId}`, userData);
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
@@ -77,7 +78,7 @@ export const useAdminUsers = () => {
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
       const response = await axios.delete(`/admin/users/${userId}`);
-      return response.data;
+      return response.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });

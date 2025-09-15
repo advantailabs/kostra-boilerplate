@@ -11,17 +11,7 @@ import {
   SelectValue,
 } from '@/components/molecules/common/Select';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
-// Admin-specific roles (simplified to Admin/User only)
-const adminRoles = [
-  {
-    value: 'admin',
-    label: 'Admin',
-  },
-  {
-    value: 'user',
-    label: 'User',
-  },
-];
+import { ADMIN_ROLES, UserRole } from '@/lib/constants/admin';
 
 export type ModalAddUserProps = {
   isOpen: boolean;
@@ -31,7 +21,7 @@ export type ModalAddUserProps = {
 export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<string>('');
+  const [role, setRole] = useState<UserRole | ''>('');
   const [errors, setErrors] = useState<string[]>([]);
   const { createUser, isCreating } = useAdminUsers();
 
@@ -47,7 +37,7 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
       await createUser({
         email: email.trim(),
         password: password.trim(),
-        role,
+        role: role as UserRole,
       });
       setEmail('');
       setPassword('');
@@ -68,6 +58,10 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
     setRole('');
     setErrors([]);
     onClose();
+  };
+
+  const handleRoleChange = (value: string) => {
+    setRole(value as UserRole);
   };
 
   return (
@@ -134,12 +128,12 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
           <Label htmlFor="role" className="font-medium">
             Role
           </Label>
-          <Select value={role} onValueChange={setRole}>
+          <Select value={role} onValueChange={handleRoleChange}>
             <SelectTrigger id="role" className="mt-2">
               <SelectValue placeholder="Select a role..." />
             </SelectTrigger>
             <SelectContent>
-              {adminRoles.map(roleOption => (
+              {ADMIN_ROLES.map(roleOption => (
                 <SelectItem key={roleOption.value} value={roleOption.value}>
                   {roleOption.label}
                 </SelectItem>

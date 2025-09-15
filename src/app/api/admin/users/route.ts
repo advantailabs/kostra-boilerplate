@@ -1,21 +1,20 @@
-import { getAuthUser } from '@/lib/auth/jwt';
-import { hashPassword, validatePassword } from '@/lib/utils/password';
-import { internalServerErrorResponse, unauthorizedResponse } from '@/lib/utils/response';
+import { hashPassword } from '@/lib/utils/password';
+import {
+  badRequestResponse,
+  internalServerErrorResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
 import { createUser, getUserByEmail, getUserByRole } from '@/services/repositories/user';
+import { createUserSchema } from '@/validations/admin';
 import { UserRole } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser || authUser.role !== 'ADMIN') {
-      return unauthorizedResponse();
-    }
-
     // Get all users (excluding soft deleted)
     const users = await getUserByRole(UserRole.USER, true);
 
@@ -34,7 +33,7 @@ export async function GET(request: NextRequest) {
       })),
     };
 
-    return NextResponse.json(response);
+    return successResponse(response);
   } catch (error) {
     console.error('Error getting users', error);
     return internalServerErrorResponse();
@@ -43,41 +42,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-
-    if (!authUser || authUser.role !== 'ADMIN') {
-      return unauthorizedResponse();
-    }
-
+    // Parse and validate request body
     const body = await request.json();
-    const { email, password, role } = body;
+    console.log('body', body);
+    const validationResult = createUserSchema.safeParse(body);
 
-    if (!email || !password || !role) {
-      return NextResponse.json(
-        { error: 'Email, password, and role are required' },
-        { status: 400 }
-      );
+    if (!validationResult.success) {
+      const errors = validationResult.error.issues.map((err: any) => ({
+        field: err.path.join('.'),
+        message: err.message,
+      }));
+      return validationErrorResponse('Invalid input data', errors);
     }
 
-    // Validate password
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-      return NextResponse.json(
-        {
-          error: 'Invalid password',
-          details: passwordValidation.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    // Map role to database role
-    const dbRole = role === 'admin' ? UserRole.ADMIN : UserRole.USER;
+    const { email, password, role: dbRole } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
-      return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
+      return badRequestResponse('User with this email already exists', 409);
     }
 
     // Hash password
@@ -108,7 +91,7 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    return NextResponse.json(response, { status: 201 });
+    return successResponse(response, 201);
   } catch (error) {
     console.error('Error creating user', error);
     return internalServerErrorResponse();

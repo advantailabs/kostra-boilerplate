@@ -3,13 +3,15 @@
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
+import { siteConfig } from '@/app/siteConfig';
+
 export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isAdminDashboard = pathname === '/app/admin';
+  const isAdminDashboard = pathname === siteConfig.baseLinks.admin.dashboard;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">

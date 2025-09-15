@@ -20,25 +20,15 @@ import {
 import { ModalAddUser } from '@/components/organisms/modules/admin/ModalAddUser';
 import { ModalDeleteUser } from '@/components/organisms/modules/admin/ModalDeleteUser';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
+import { ADMIN_ROLES, ROLES, UserRole } from '@/lib/constants/admin';
 import { useAuthStore } from '@/store/auth';
-// Admin-specific roles (simplified to Admin/User only)
-const adminRoles = [
-  {
-    value: 'admin',
-    label: 'Admin',
-  },
-  {
-    value: 'user',
-    label: 'User',
-  },
-];
 
 interface User {
   id: number;
   name: string;
   email: string;
   profilePicture?: string;
-  role: 'ADMIN' | 'USER';
+  role: UserRole;
   isOnboarded: boolean;
   credits: number;
   plan: 'FREE' | 'PRO';
@@ -65,17 +55,15 @@ export default function AdminUsersPage() {
 
   const handleRoleChange = async (userId: number, newRole: string) => {
     try {
-      // Map lowercase role to uppercase for the API
-      const mappedRole = newRole === 'admin' ? 'ADMIN' : 'USER';
-      await updateUser({ userId, userData: { role: mappedRole } });
+      await updateUser({ userId, userData: { role: newRole as UserRole } });
     } catch (error) {
       // Error handling is done in the hook
     }
   };
 
-  // Map user role to lowercase for display
+  // Map user role to display format
   const getUserRoleForDisplay = (role: string) => {
-    return role === 'ADMIN' ? 'admin' : 'user';
+    return role === ROLES.ADMIN ? ROLES.ADMIN : ROLES.USER;
   };
 
   // Check if user is the current user
@@ -87,7 +75,7 @@ export default function AdminUsersPage() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
           <p className="mt-2 text-sm text-gray-500">Loading users...</p>
         </div>
       </div>
@@ -149,7 +137,7 @@ export default function AdminUsersPage() {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent align="end">
-                    {adminRoles.map(role => (
+                    {ADMIN_ROLES.map(role => (
                       <SelectItem key={role.value} value={role.value}>
                         {role.label}
                       </SelectItem>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { siteConfig } from '@/app/siteConfig';
 import { Button } from '@/components/atom/Button';
 
 export default function AdminPage() {
@@ -13,7 +14,7 @@ export default function AdminPage() {
           <p className="mt-2 text-sm text-gray-500">Manage users, roles, and permissions.</p>
           <div className="mt-4">
             <Button asChild variant="secondary">
-              <Link href="/app/admin/users">Manage Users</Link>
+              <Link href={siteConfig.baseLinks.admin.users}>Manage Users</Link>
             </Button>
           </div>
         </div>

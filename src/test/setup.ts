@@ -97,7 +97,7 @@ export function mockGoogleAuth(userId: number, googleId: string) {
   const mockAuthUser = jest.fn().mockResolvedValue({
     userId,
     email: 'test@example.com',
-    role: 'USER',
+    role: 'USER' as const,
     name: 'Test User',
     profilePicture: undefined,
     isOnboarded: true,
