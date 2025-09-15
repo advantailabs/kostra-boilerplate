@@ -5,6 +5,7 @@ import {
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { createUser, getUserByEmail, getUserByRole } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
 import { UserRole } from '@prisma/client';
@@ -44,15 +45,10 @@ export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body
     const body = await request.json();
-    console.log('body', body);
     const validationResult = createUserSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     const { email, password, role: dbRole } = validationResult.data;

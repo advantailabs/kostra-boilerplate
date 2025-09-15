@@ -7,6 +7,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
 import { getUserById } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
@@ -89,11 +90,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const validationResult = updateFileSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     // Update file

@@ -6,6 +6,7 @@ import {
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { deleteUserById, getUserById, updateUserById } from '@/services/repositories/user';
 import { updateUserSchema, userIdParamSchema } from '@/validations/admin';
 import { NextRequest } from 'next/server';
@@ -73,11 +74,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const validationResult = updateUserSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     const { name, email, role } = validationResult.data;

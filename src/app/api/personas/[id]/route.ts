@@ -8,6 +8,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { NextRequest } from 'next/server';
 
 import { CREDIT_THRESHOLDS } from '@/data/config/plans';
@@ -86,11 +87,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const validationResult = updatePersonaSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     // Enforce credit threshold for update
