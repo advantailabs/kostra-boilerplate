@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+import { siteConfig } from '@/app/siteConfig';
 import { GoogleSignInButton } from '@/components/molecules/common/GoogleSignInButton';
 import { useAuthStore } from '@/store/auth';
 import UserProfile from './userProfile';
@@ -19,7 +20,7 @@ export function Navigation() {
     >
       <nav className="container mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900">
+          <Link href={siteConfig.baseLinks.landing} className="text-xl font-bold text-gray-900">
             Peon
           </Link>
 
