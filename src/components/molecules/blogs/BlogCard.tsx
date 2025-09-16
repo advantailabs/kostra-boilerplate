@@ -74,7 +74,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
 
   return (
     <div
-      className={`group relative h-64 w-full cursor-pointer overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-gray-900/25 dark:hover:shadow-gray-900/50 ${className}`}
+      className={`group relative h-48 w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/20 dark:hover:shadow-gray-900/40 ${className}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       role="button"
@@ -88,30 +88,30 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
             src={imageUrl}
             alt={blog.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            className="object-cover"
             onError={() => setImageError(true)}
           />
         ) : (
           <div className={`h-full w-full bg-gradient-to-br ${gradientClass}`} />
         )}
 
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/30" />
+        {/* Bottom gradient overlay for text readability on light images */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent" />
       </div>
 
       {/* Published Status - Top Left */}
       <div className="absolute left-2 top-2">
         <span
-          className={`rounded-full px-2 py-1 text-xs font-medium backdrop-blur-sm ${
-            blog.published ? 'bg-green-500/20 text-green-200' : 'bg-yellow-500/20 text-yellow-200'
+          className={`rounded-full px-1.5 py-0.5 text-xs font-medium backdrop-blur-sm ${
+            blog.published ? 'bg-green-500/20 text-green-200' : 'bg-yellow-500 text-black'
           }`}
         >
           {blog.published ? 'Published' : 'Draft'}
         </span>
       </div>
 
-      {/* Action Buttons - Show on hover */}
-      <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      {/* Action Buttons */}
+      <div className="absolute right-2 top-2 flex gap-1">
         {onEdit && (
           <Button
             variant="ghost"
@@ -119,9 +119,9 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onEdit(blog);
             }}
-            className="h-7 w-7 bg-white/20 p-0 text-white backdrop-blur-sm hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30"
+            className="h-6 w-6 bg-white/20 p-0 text-white backdrop-blur-sm hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30"
           >
-            <Edit className="h-3.5 w-3.5" aria-label="Edit blog" />
+            <Edit className="h-3 w-3" aria-label="Edit blog" />
           </Button>
         )}
         {onDelete && (
@@ -131,44 +131,44 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onDelete(blog);
             }}
-            className="h-7 w-7 bg-red-500/20 p-0 text-white backdrop-blur-sm hover:bg-red-500/30 dark:bg-red-600/20 dark:hover:bg-red-600/30"
+            className="h-6 w-6 bg-red-500/20 p-0 text-white backdrop-blur-sm hover:bg-red-500/30 dark:bg-red-600/20 dark:hover:bg-red-600/30"
           >
-            <Trash2 className="h-3.5 w-3.5" aria-label="Delete blog" />
+            <Trash2 className="h-3 w-3" aria-label="Delete blog" />
           </Button>
         )}
       </div>
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-        {/* Title */}
-        <h3 className="mb-1 line-clamp-2 text-base font-bold leading-tight group-hover:text-white/90">
-          {blog.title}
-        </h3>
+      <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
+        {/* Title and Tags */}
+        <div className="mb-1 flex items-start justify-between gap-2">
+          <h3 className="line-clamp-2 flex-1 text-sm font-semibold leading-tight group-hover:text-white/90">
+            {blog.title}
+          </h3>
+          {blog.tags && blog.tags.length > 0 && (
+            <div className="flex flex-shrink-0 flex-wrap gap-1">
+              {blog.tags.slice(0, 1).map((tag, index) => (
+                <span
+                  key={index}
+                  className="rounded-full bg-white/20 px-1 py-0.5 text-xs font-medium backdrop-blur-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+              {blog.tags.length > 1 && (
+                <span className="rounded-full bg-white/20 px-1 py-0.5 text-xs font-medium backdrop-blur-sm">
+                  +{blog.tags.length - 1}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Author and Date */}
         <div className="flex items-center justify-between text-xs text-white/80">
           <span className="font-medium">{blog.author?.name || 'Unknown Author'}</span>
           <span className="text-white/70">{formatDate(blog.createdAt)}</span>
         </div>
-
-        {/* Tags */}
-        {blog.tags && blog.tags.length > 0 && (
-          <div className="mt-1 flex flex-wrap gap-1">
-            {blog.tags.slice(0, 2).map((tag, index) => (
-              <span
-                key={index}
-                className="rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-medium backdrop-blur-sm"
-              >
-                {tag}
-              </span>
-            ))}
-            {blog.tags.length > 2 && (
-              <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-medium backdrop-blur-sm">
-                +{blog.tags.length - 2}
-              </span>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

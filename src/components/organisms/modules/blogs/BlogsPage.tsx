@@ -1,11 +1,13 @@
 'use client';
 
+import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { BlogGrid } from '@/components/molecules/blogs/BlogGrid';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
 import { useBlogs } from '@/hooks/useBlogs';
 import { useCallback, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { BlogModal } from './BlogModal';
 import { DeleteBlogDialog } from './DeleteBlogDialog';
 
@@ -18,8 +20,14 @@ export function BlogsPage({ className }: BlogsPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(9);
 
-  // State to store filter values for the API
-  const [apiFilters, setApiFilters] = useState<{
+  // State for search input (immediate UI updates)
+  const [searchInput, setSearchInput] = useState('');
+
+  // Debounced search value (used for API calls)
+  const [debouncedSearch] = useDebounce(searchInput, 400);
+
+  // State to store filter values for the API (currently only used for non-search filters)
+  const [apiFilters] = useState<{
     title?: string;
     published?: boolean;
     categoryId?: number;
@@ -45,6 +53,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
   const {
     blogs,
     pagination,
+    isBlogsLoading,
     createBlog,
     updateBlog,
     deleteBlog,
@@ -53,6 +62,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
     isUpdating,
   } = useBlogs({
     ...apiFilters,
+    title: debouncedSearch || undefined,
     page: currentPage,
     limit: pageSize,
   });
@@ -142,23 +152,11 @@ export function BlogsPage({ className }: BlogsPageProps) {
   }, []);
 
   /**
-   * Handles direct filter changes (like from the FilterBar)
+   * Handles search input changes
    */
-  const handleDirectFilterChange = useCallback((column: string, value: any) => {
-    setApiFilters(prev => {
-      // If value is empty or undefined, remove the filter
-      if (value === '' || value === undefined || value === null) {
-        const newFilters: any = { ...prev };
-        delete newFilters[column];
-        return newFilters;
-      }
-
-      return {
-        ...prev,
-        [column]: value,
-      };
-    });
-    // Reset to first page when filters change
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchInput(value);
+    // Reset to first page when search changes
     setCurrentPage(1);
   }, []);
 
@@ -172,6 +170,11 @@ export function BlogsPage({ className }: BlogsPageProps) {
 
   // Find the blog being edited
   const editingBlog = editingBlogId ? blogs?.find(blog => blog.id === editingBlogId) : null;
+
+  // Show loading screen while fetching blogs
+  if (isBlogsLoading) {
+    return <LoadingScreen message="Loading blogs..." />;
+  }
 
   return (
     <div className={`min-h-screen bg-white dark:bg-gray-950 ${className || ''}`}>
@@ -205,8 +208,8 @@ export function BlogsPage({ className }: BlogsPageProps) {
       <div className="h-full p-4 max-sm:p-3">
         <UnifiedSearchBar
           placeholder="Search by title..."
-          value={apiFilters.title || ''}
-          onChange={(value: string) => handleDirectFilterChange('title', value)}
+          value={searchInput}
+          onChange={handleSearchChange}
         />
 
         <BlogGrid
@@ -214,7 +217,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
           onEdit={handleEditBlog}
           onDelete={handleDeleteBlog}
           onBlogClick={handleBlogClick}
-          className="mt-6"
+          className="mt-2"
         />
 
         {pagination && (

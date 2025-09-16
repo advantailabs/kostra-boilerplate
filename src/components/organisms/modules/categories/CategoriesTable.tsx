@@ -59,7 +59,7 @@ export function CategoriesTable({
     }
   }, [page, onPageChange]);
 
-  if (isLoading && !categories) {
+  if (isLoading) {
     return <LoadingScreen message="Loading categories..." />;
   }
 
@@ -77,14 +77,23 @@ export function CategoriesTable({
           placeholder="Search by name or slug..."
           value={searchInput}
           onChange={setSearchInput}
-          className="mb-3"
+          className="mb-2"
         />
 
         {/* Table */}
         <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
           <Table className="border-0">
             <TableBody>
-              {categories.length === 0 ? (
+              {isLoading && searchInput !== debouncedSearch ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+                      <span className="text-sm text-gray-500">Searching...</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : categories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="h-24 text-center">
                     No categories found.

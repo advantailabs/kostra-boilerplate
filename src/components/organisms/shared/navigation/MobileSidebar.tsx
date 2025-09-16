@@ -5,6 +5,7 @@ import {
   RiHomeLine,
   RiListCheck,
   RiMenuLine,
+  RiTeamLine,
   RiUserLine,
 } from '@remixicon/react';
 import Link from 'next/link';
@@ -33,6 +34,12 @@ const adminNavigation = [
     name: 'Categories',
     href: siteConfig.baseLinks.categories,
     icon: RiListCheck,
+    section: 'Admin',
+  },
+  {
+    name: 'Users',
+    href: siteConfig.baseLinks.admin.users,
+    icon: RiTeamLine,
     section: 'Admin',
   },
 ] as const;

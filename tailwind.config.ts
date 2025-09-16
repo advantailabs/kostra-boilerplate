@@ -1,5 +1,6 @@
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import scrollbar from 'tailwind-scrollbar';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
@@ -56,6 +57,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [forms, typography],
+  plugins: [forms, typography, scrollbar({ nocompatible: true })],
 };
 export default config;
