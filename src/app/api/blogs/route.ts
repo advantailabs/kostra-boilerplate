@@ -1,15 +1,15 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { prisma } from '@/lib/prisma';
 import {
+  errorResponse,
   internalServerErrorResponse,
   successResponse,
-  unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { blogFiltersSchema, CreateBlogInput, createBlogSchema } from '@/schemas/blog.schema';
-import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
+import { createNewBlog, getAllBlogs, updateBlogImageUrl } from '@/services/repositories/blogs';
 import { getUserById } from '@/services/repositories/user';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -19,16 +19,12 @@ export async function POST(request: NextRequest) {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
 
-    if (!user) {
-      return unauthorizedResponse();
-    }
-
     let formData: FormData;
     try {
       formData = await request.formData();
     } catch (error) {
       console.error('Error parsing FormData:', error);
-      return NextResponse.json({ error: 'Invalid form data format' }, { status: 400 });
+      return errorResponse('Invalid form data format');
     }
 
     const blogImageFile = formData.get('imageFile') as File | null;
@@ -59,11 +55,7 @@ export async function POST(request: NextRequest) {
     const validationResult = createBlogSchema.safeParse(cleanedData);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     const finalBlogData = {
@@ -80,11 +72,8 @@ export async function POST(request: NextRequest) {
         // For now, we'll use the blogImageUrl from the form data if it was uploaded via the frontend
         // The frontend should handle the upload and provide the URL
         if (finalBlogData.blogImageUrl) {
-          // Update the blog with the image URL
-          await prisma.blog.update({
-            where: { id: newBlog.id },
-            data: { blogImageUrl: finalBlogData.blogImageUrl },
-          });
+          // Update the blog with the image URL using the dedicated repository method
+          await updateBlogImageUrl(newBlog.id, finalBlogData.blogImageUrl);
           newBlog.blogImageUrl = finalBlogData.blogImageUrl;
         }
       } catch (uploadError) {
@@ -94,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Return success response with 201 status
-    return NextResponse.json({ success: true, data: newBlog }, { status: 201 });
+    return successResponse({ data: newBlog }, 201);
   } catch (error) {
     console.error('Error creating blog:', error);
     return internalServerErrorResponse('Failed to create blog');
@@ -115,27 +104,28 @@ export async function GET(request: NextRequest) {
     const validationResult = blogFiltersSchema.safeParse(filters);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid query parameters', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     const validatedFilters = validationResult.data;
+    let publishedStatus;
+    if (validatedFilters.published === 'true') {
+      publishedStatus = true;
+    } else if (validatedFilters.published === 'false') {
+      publishedStatus = false;
+    } else {
+      publishedStatus = undefined;
+    }
 
     // Convert string values to appropriate types
     const processedFilters = {
       ...validatedFilters,
-      published:
-        validatedFilters.published === 'true'
-          ? true
-          : validatedFilters.published === 'false'
-            ? false
-            : undefined,
-      categoryId: validatedFilters.categoryId ? parseInt(validatedFilters.categoryId) : undefined,
-      page: validatedFilters.page ? parseInt(validatedFilters.page) : undefined,
-      limit: validatedFilters.limit ? parseInt(validatedFilters.limit) : undefined,
+      published: publishedStatus,
+      categoryId: validatedFilters.categoryId
+        ? parseInt(validatedFilters.categoryId, 10)
+        : undefined,
+      page: validatedFilters.page ? parseInt(validatedFilters.page, 10) : undefined,
+      limit: validatedFilters.limit ? parseInt(validatedFilters.limit, 10) : undefined,
     };
 
     // Get all blogs with pagination

@@ -4,6 +4,8 @@ export const siteConfig = {
   description: 'Your Personal AI Peon',
   baseLinks: {
     home: '/app',
+    blogs: '/app/blogs',
+    categories: '/app/categories',
     settings: {
       users: '/app/settings/users',
       general: '/app/settings/general',

@@ -1,12 +1,12 @@
 'use client';
 
 import {
+  RiArticleLine,
   RiFileLine,
   RiHomeLine,
+  RiListCheck,
   RiUserLine,
   RiVipCrownLine,
-  RiArticleLine,
-  RiListCheck,
 } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -32,8 +32,13 @@ const navigation = [
 ] as const;
 
 const marketingNavigation = [
-  { name: 'Blogs', href: '/app/blogs', icon: RiArticleLine, section: 'Marketing' },
-  { name: 'Categories', href: '/app/categories', icon: RiListCheck, section: 'Marketing' },
+  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Marketing' },
+  {
+    name: 'Categories',
+    href: siteConfig.baseLinks.categories,
+    icon: RiListCheck,
+    section: 'Marketing',
+  },
 ] as const;
 
 export function Sidebar() {

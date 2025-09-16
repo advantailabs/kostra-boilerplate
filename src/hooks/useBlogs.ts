@@ -34,12 +34,6 @@ export function useBlogs(filters?: BlogFilters) {
     invalidateQueries: [['blogs']],
   });
 
-  const convertMarkdownMutation = useApiMutation({
-    mutationFn: () => blogsApi.convertMarkdown(),
-    successMessage: 'Markdown conversion completed!',
-    invalidateQueries: [['blogs']],
-  });
-
   return {
     blogs,
     pagination,
@@ -49,30 +43,8 @@ export function useBlogs(filters?: BlogFilters) {
     createBlog: createBlogMutation.mutateAsync,
     updateBlog: updateBlogMutation.mutateAsync,
     deleteBlog: deleteBlogMutation.mutateAsync,
-    convertMarkdown: convertMarkdownMutation.mutate,
     isCreating: createBlogMutation.isPending,
     isUpdating: updateBlogMutation.isPending,
     isDeleting: deleteBlogMutation.isPending,
-    isConverting: convertMarkdownMutation.isPending,
-  };
-}
-
-export function useBlog(id: number) {
-  const {
-    data: blog,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['blog', id],
-    queryFn: () => blogsApi.getBlog(id),
-    enabled: !!id,
-  });
-
-  return {
-    blog,
-    isLoading,
-    error,
-    refetch,
   };
 }

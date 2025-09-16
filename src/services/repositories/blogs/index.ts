@@ -8,7 +8,7 @@ export const createNewBlog = async (blogData: CreateBlogInput & { authorId: numb
     data: {
       title: blogData.title,
       published: blogData.published,
-      slug: slug,
+      slug,
       content: blogData.content,
       tags: Array.isArray(blogData.tags) ? blogData.tags : [],
       authorId: blogData.authorId,
@@ -16,7 +16,7 @@ export const createNewBlog = async (blogData: CreateBlogInput & { authorId: numb
         create: blogData.categories.map(categoryId => ({
           category: {
             connect: {
-              id: parseInt(categoryId),
+              id: parseInt(categoryId, 10),
             },
           },
         })),
@@ -155,7 +155,7 @@ export const updateBlogById = async (id: number, data: UpdateBlogInput) => {
         // Then create new ones
         create: data.categories.map(categoryId => ({
           category: {
-            connect: { id: parseInt(categoryId) },
+            connect: { id: parseInt(categoryId, 10) },
           },
         })),
       },

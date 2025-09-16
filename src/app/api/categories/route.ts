@@ -3,13 +3,14 @@ import {
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import {
   categoryFiltersSchema,
   createCategorySchema,
   type CreateCategoryInput,
 } from '@/schemas/category.schema';
 import { createNewCategory, getAllCategories } from '@/services/repositories/categories';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
@@ -64,17 +65,13 @@ export async function POST(request: NextRequest) {
     const validationResult = createCategorySchema.safeParse(categoryData);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     // Create new category with validated data
     const newCategory = await createNewCategory(validationResult.data as CreateCategoryInput);
 
-    return NextResponse.json({ success: true, data: newCategory }, { status: 201 });
+    return successResponse({ data: newCategory }, 201);
   } catch (error) {
     console.error('Error creating category:', error);
     return internalServerErrorResponse('Failed to create category');

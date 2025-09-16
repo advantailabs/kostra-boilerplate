@@ -3,14 +3,24 @@ import { useQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
 export function useCategories(filters?: CategoryFilters) {
+  // Normalize filters to create a stable query key
+  const normalizedFilters = {
+    page: filters?.page || 1,
+    limit: filters?.limit || 10,
+    ...(filters?.name && { name: filters.name }),
+    ...(filters?.slug && { slug: filters.slug }),
+    ...(filters?.sortBy && { sortBy: filters.sortBy }),
+    ...(filters?.sortOrder && { sortOrder: filters.sortOrder }),
+  };
+
   const {
     data: response,
     isLoading,
     error,
     refetch,
   } = useQuery({
-    queryKey: ['categories', filters],
-    queryFn: () => categoriesApi.getCategories(filters),
+    queryKey: ['categories', normalizedFilters],
+    queryFn: () => categoriesApi.getCategories(normalizedFilters),
   });
 
   const categories = response?.data || [];
@@ -32,7 +42,10 @@ export function useCategories(filters?: CategoryFilters) {
   const deleteCategoryMutation = useApiMutation({
     mutationFn: (id: number) => categoriesApi.deleteCategory(id),
     successMessage: 'Category deleted successfully!',
-    invalidateQueries: [['categories']],
+    onSuccess: () => {
+      // Refetch the current query directly instead of invalidating
+      refetch();
+    },
   });
 
   return {
@@ -47,25 +60,5 @@ export function useCategories(filters?: CategoryFilters) {
     isCreating: createCategoryMutation.isPending,
     isUpdating: updateCategoryMutation.isPending,
     isDeleting: deleteCategoryMutation.isPending,
-  };
-}
-
-export function useCategory(id: number) {
-  const {
-    data: category,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['category', id],
-    queryFn: () => categoriesApi.getCategory(id),
-    enabled: !!id,
-  });
-
-  return {
-    category,
-    isLoading,
-    error,
-    refetch,
   };
 }

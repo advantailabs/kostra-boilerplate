@@ -1,4 +1,11 @@
 import {
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
+import {
   UpdateCategoryInput,
   categoryIdSchema,
   updateCategorySchema,
@@ -8,12 +15,6 @@ import {
   getCategoryById,
   updateCategoryById,
 } from '@/services/repositories/categories';
-import {
-  internalServerErrorResponse,
-  notFoundResponse,
-  successResponse,
-  validationErrorResponse,
-} from '@/lib/utils/response';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -27,14 +28,10 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid category ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
     const category = await getCategoryById(id);
 
     if (!category) {
@@ -56,14 +53,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid category ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
 
     // Check if category exists
     const existingCategory = await getCategoryById(id);
@@ -77,11 +70,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const updateValidationResult = updateCategorySchema.safeParse(categoryData);
 
     if (!updateValidationResult.success) {
-      const errors = updateValidationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse(
+        'Validation failed',
+        formatZodError(updateValidationResult.error)
+      );
     }
 
     // Update category with validated data
@@ -105,14 +97,10 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid category ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
-    const id = validationResult.data.id;
+    const { id } = validationResult.data;
 
     // Check if the category exists
     const existingCategory = await getCategoryById(id);

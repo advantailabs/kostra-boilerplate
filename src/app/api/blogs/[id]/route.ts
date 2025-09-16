@@ -4,6 +4,7 @@ import {
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { UpdateBlogInput, blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
 import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import { NextRequest } from 'next/server';
@@ -19,11 +20,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid blog ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     const { id } = validationResult.data;
@@ -48,11 +45,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid blog ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     const { id } = validationResult.data;
@@ -76,6 +69,15 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
     });
 
+    let publishedStatus;
+
+    if (blogData.published === 'true') {
+      publishedStatus = true;
+    } else if (blogData.published === 'false') {
+      publishedStatus = false;
+    } else {
+      publishedStatus = undefined;
+    }
     // Prepare data for validation
     const cleanedData = {
       ...blogData,
@@ -85,21 +87,19 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       tags: blogData.tags ? JSON.parse(blogData.tags as string) : undefined,
       categories: blogData.categories ? JSON.parse(blogData.categories as string) : undefined,
       // Handle boolean fields
-      published:
-        blogData.published === 'true' ? true : blogData.published === 'false' ? false : undefined,
+      published: publishedStatus,
       // Handle authorId - ensure it's a number
-      authorId: blogData.authorId ? parseInt(blogData.authorId) : undefined,
+      authorId: blogData.authorId ? parseInt(blogData.authorId, 10) : undefined,
     };
 
     // Validate blog data using Zod
     const updateValidationResult = updateBlogSchema.safeParse(cleanedData);
 
     if (!updateValidationResult.success) {
-      const errors = updateValidationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse(
+        'Validation failed',
+        formatZodError(updateValidationResult.error)
+      );
     }
 
     // Handle image upload with Cloudflare R2
@@ -135,11 +135,7 @@ export async function DELETE(_request: NextRequest, { params }: { params: { id: 
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid blog ID', errors);
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
     const { id } = validationResult.data;

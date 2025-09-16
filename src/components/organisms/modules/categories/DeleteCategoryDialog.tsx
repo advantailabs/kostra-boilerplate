@@ -9,6 +9,9 @@ interface DeleteCategoryDialogProps {
   categoryId: number | null;
   categoryName: string;
   onSuccess: () => void;
+  currentPage?: number;
+  currentLimit?: number;
+  currentSearch?: string;
 }
 
 export function DeleteCategoryDialog({
@@ -17,8 +20,15 @@ export function DeleteCategoryDialog({
   categoryId,
   categoryName,
   onSuccess,
+  currentPage = 1,
+  currentLimit = 10,
+  currentSearch,
 }: DeleteCategoryDialogProps) {
-  const { deleteCategory, isDeleting } = useCategories();
+  const { deleteCategory, isDeleting } = useCategories({
+    page: currentPage,
+    limit: currentLimit,
+    name: currentSearch,
+  });
 
   // Handle category deletion
   const handleDelete = () => {

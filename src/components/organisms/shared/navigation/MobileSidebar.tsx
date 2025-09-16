@@ -1,11 +1,11 @@
 import {
+  RiArticleLine,
   RiCloseLine,
   RiFileLine,
   RiHomeLine,
+  RiListCheck,
   RiMenuLine,
   RiUserLine,
-  RiArticleLine,
-  RiListCheck,
 } from '@remixicon/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,8 +28,13 @@ const navigation = [
 ] as const;
 
 const marketingNavigation = [
-  { name: 'Blogs', href: '/app/blogs', icon: RiArticleLine, section: 'Marketing' },
-  { name: 'Categories', href: '/app/categories', icon: RiListCheck, section: 'Marketing' },
+  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Marketing' },
+  {
+    name: 'Categories',
+    href: siteConfig.baseLinks.categories,
+    icon: RiListCheck,
+    section: 'Marketing',
+  },
 ] as const;
 
 export default function MobileSidebar() {

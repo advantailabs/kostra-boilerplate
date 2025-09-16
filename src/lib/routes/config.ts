@@ -79,13 +79,6 @@ export const ALL_ROUTES: RouteConfig[] = [
       DELETE: [USER, ADMIN],
     },
   },
-  {
-    path: '/api/blogs/convert-markdown',
-    isPublic: false,
-    accessTo: {
-      POST: [USER, ADMIN],
-    },
-  },
 
   // API routes - categories
   {

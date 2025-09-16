@@ -88,15 +88,4 @@ export const blogsApi = {
   deleteBlog: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/blogs/${id}`);
   },
-
-  convertMarkdown: async (): Promise<{
-    message: string;
-    totalBlogs: number;
-    convertedCount: number;
-    errorCount: number;
-    errors?: string[];
-  }> => {
-    const response = await axiosInstance.post('/blogs/convert-markdown');
-    return response.data.data || response.data;
-  },
 };

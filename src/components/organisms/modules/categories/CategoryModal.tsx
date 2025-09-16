@@ -13,9 +13,21 @@ interface CategoryModalProps {
   onSubmit: (_data: { name: string; slug: string }) => void;
   category?: CategoryResponseType | null;
   mode: 'create' | 'edit';
+  currentPage?: number;
+  currentLimit?: number;
+  currentSearch?: string;
 }
 
-export function CategoryModal({ isOpen, onClose, onSubmit, category, mode }: CategoryModalProps) {
+export function CategoryModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  category,
+  mode,
+  currentPage = 1,
+  currentLimit = 10,
+  currentSearch,
+}: CategoryModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -23,7 +35,11 @@ export function CategoryModal({ isOpen, onClose, onSubmit, category, mode }: Cat
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const { createCategory, updateCategory, isCreating, isUpdating } = useCategories();
+  const { createCategory, updateCategory, isCreating, isUpdating } = useCategories({
+    page: currentPage,
+    limit: currentLimit,
+    name: currentSearch,
+  });
   const isLoading = mode === 'create' ? isCreating : isUpdating;
 
   useEffect(() => {
@@ -82,17 +98,28 @@ export function CategoryModal({ isOpen, onClose, onSubmit, category, mode }: Cat
 
     try {
       if (mode === 'create') {
-        createCategory(formData);
-        // The useApiMutation hook will handle success/error states and show toasts
-        // We'll close the modal immediately since the mutation is async
-        handleClose();
-        onSubmit(formData);
+        createCategory(formData, {
+          onSuccess: () => {
+            handleClose();
+            onSubmit(formData);
+          },
+          onError: () => {
+            setServerError('Failed to create category. Please try again.');
+          },
+        });
       } else if (mode === 'edit' && category) {
-        updateCategory({ id: category.id, data: formData });
-        // The useApiMutation hook will handle success/error states and show toasts
-        // We'll close the modal immediately since the mutation is async
-        handleClose();
-        onSubmit(formData);
+        updateCategory(
+          { id: category.id, data: formData },
+          {
+            onSuccess: () => {
+              handleClose();
+              onSubmit(formData);
+            },
+            onError: () => {
+              setServerError('Failed to update category. Please try again.');
+            },
+          }
+        );
       }
     } catch (error) {
       console.error('Error saving category:', error);

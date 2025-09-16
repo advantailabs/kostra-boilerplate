@@ -33,26 +33,6 @@ export interface CategoryResponseType {
   };
 }
 
-export interface CreateBlogRequest {
-  title: string;
-  content: string;
-  tags: string[];
-  categories: string[];
-  blogImageUrl?: string;
-  published?: boolean;
-  imageFile?: File;
-}
-
-export interface UpdateBlogRequest {
-  title: string;
-  content: string;
-  tags: string[];
-  categories: string[];
-  blogImageUrl?: string;
-  published?: boolean;
-  imageFile?: File;
-}
-
 export interface CreateCategoryRequest {
   name: string;
   slug: string;
@@ -62,4 +42,3 @@ export interface UpdateCategoryRequest {
   name: string;
   slug: string;
 }
-
