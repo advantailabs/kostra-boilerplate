@@ -10,6 +10,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
 import { getUserById } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';
@@ -58,11 +59,7 @@ export async function POST(request: NextRequest) {
     const validationResult = createPersonaSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     const { name, description, instructions, tags, logo } = validationResult.data;

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { siteConfig } from '@/app/siteConfig';
 import { SignInButton } from '@/components/atom/SignInButton';
 import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { useAuthStore } from '@/store/auth';
@@ -119,7 +120,7 @@ export function ModernNavigation() {
                 window.history.pushState(null, '', '/');
               } else {
                 // If on different page, navigate to homepage
-                router.push('/');
+                router.push(siteConfig.baseLinks.landing);
               }
             }}
             className="flex items-center gap-2 sm:gap-3"
@@ -220,14 +221,14 @@ export function ModernNavigation() {
               {/* Legal Links */}
               <div className="flex flex-col gap-1 border-t border-white/10 px-4 pt-4">
                 <Link
-                  href="/privacy-policy"
+                  href={siteConfig.baseLinks.privacy}
                   className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Privacy Policy
                 </Link>
                 <Link
-                  href="/terms-of-services"
+                  href={siteConfig.baseLinks.terms}
                   className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

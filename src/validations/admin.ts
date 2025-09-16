@@ -1,0 +1,58 @@
+import { z } from 'zod';
+
+import { ROLES } from '@/lib/constants/admin';
+
+// Schema for creating a new user (admin operation)
+export const createUserSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email format')
+    .max(255, 'Email must be 255 characters or less'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password must be 128 characters or less')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    ),
+  role: z
+    .enum([ROLES.ADMIN, ROLES.USER], {
+      errorMap: () => ({ message: 'Role must be either "admin" or "user"' }),
+    })
+    .transform(val => (val === 'ADMIN' ? ROLES.ADMIN : ROLES.USER)),
+});
+
+// Schema for updating a user (admin operation)
+export const updateUserSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be 100 characters or less')
+    .optional(),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email format')
+    .max(255, 'Email must be 255 characters or less')
+    .optional(),
+  role: z
+    .enum([ROLES.ADMIN, ROLES.USER], {
+      errorMap: () => ({ message: `Role must be either "${ROLES.ADMIN}" or "${ROLES.USER}"` }),
+    })
+    .optional(),
+});
+
+// Schema for validating user ID parameter
+export const userIdParamSchema = z.object({
+  id: z
+    .string()
+    .min(1, 'User ID is required')
+    .regex(/^\d+$/, 'User ID must be a valid number')
+    .transform(val => parseInt(val, 10)),
+});
+
+export type CreateUserRequest = z.infer<typeof createUserSchema>;
+export type UpdateUserRequest = z.infer<typeof updateUserSchema>;
+export type UserIdParam = z.infer<typeof userIdParamSchema>;

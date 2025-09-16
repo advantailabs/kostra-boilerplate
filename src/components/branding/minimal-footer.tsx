@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { siteConfig } from '@/app/siteConfig';
 import { useAuthStore } from '@/store/auth';
 
 type FooterLink = {
@@ -191,13 +192,13 @@ export function MinimalFooter() {
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 sm:gap-6 sm:text-sm">
             <span>© {new Date().getFullYear()} Peon. All rights reserved.</span>
             <Link
-              href="/privacy-policy"
+              href={siteConfig.baseLinks.privacy}
               className="font-medium text-gray-300 underline transition-colors hover:text-white"
             >
               Privacy Policy
             </Link>
             <Link
-              href="/terms-of-services"
+              href={siteConfig.baseLinks.terms}
               className="font-medium text-gray-300 underline transition-colors hover:text-white"
             >
               Terms of Service

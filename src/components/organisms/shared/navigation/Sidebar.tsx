@@ -19,9 +19,9 @@ import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
 const navigation = [
-  { name: 'Home', href: '/app', icon: RiHomeLine, section: 'Persona' },
-  { name: 'Personas', href: '/app/personas', icon: RiUserLine, section: 'Persona' },
-  { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
+  { name: 'Home', href: siteConfig.baseLinks.home, icon: RiHomeLine, section: 'Persona' },
+  { name: 'Personas', href: siteConfig.baseLinks.personas, icon: RiUserLine, section: 'Persona' },
+  { name: 'Files', href: siteConfig.baseLinks.files, icon: RiFileLine, section: 'Persona' },
 ] as const;
 
 export function Sidebar() {

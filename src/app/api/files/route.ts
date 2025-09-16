@@ -6,6 +6,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
 import { getUserFilesService, uploadFileService } from '@/services/internal/file';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
@@ -52,11 +53,10 @@ export async function GET(request: NextRequest) {
     const validationResult = getFilesSchema.safeParse(queryParams);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid query parameters', errors);
+      return validationErrorResponse(
+        'Invalid query parameters',
+        formatZodError(validationResult.error)
+      );
     }
 
     const { page, limit, search, sortBy, sortOrder, mimeType } = validationResult.data;
@@ -114,11 +114,7 @@ export async function POST(request: NextRequest) {
     const validationResult = uploadFilesSchema.safeParse(body);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
-        field: err.path.join('.'),
-        message: err.message,
-      }));
-      return validationErrorResponse('Invalid input data', errors);
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
     const { files } = validationResult.data;
