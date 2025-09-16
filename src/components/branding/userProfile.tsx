@@ -1,5 +1,6 @@
 'use client';
 
+import { siteConfig } from '@/app/siteConfig';
 import { useLogout } from '@/hooks/useLogout';
 import { useAuthStore } from '@/store/auth';
 import { googleLogout } from '@react-oauth/google';
@@ -32,7 +33,7 @@ function UserProfile() {
   const handleSignOutClick = async () => {
     try {
       await logoutMutation.mutateAsync();
-      router.push('/');
+      router.push(siteConfig.baseLinks.landing);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -70,7 +71,7 @@ function UserProfile() {
           </div>
           <div className="py-1">
             <Link
-              href="/app"
+              href={siteConfig.baseLinks.home}
               className="flex items-center rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               onClick={() => setIsOpen(false)}
             >

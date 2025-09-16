@@ -24,6 +24,7 @@ model User {
   googleId       String?         @unique
   name           String
   email          String          @unique
+  password       String?         // Hashed password for non-Google users
   profilePicture String? // URL to the profile picture
   role           UserRole        @default(USER)
   isOnboarded    Boolean         @default(false)

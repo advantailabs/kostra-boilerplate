@@ -42,6 +42,10 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/settings/billing', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings/users', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
 
+  // Admin pages - require admin role
+  { path: '/app/admin', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/admin/users', isPublic: false, accessTo: { GET: [ADMIN] } },
+
   // API routes - personas
   {
     path: '/api/personas',
@@ -179,6 +183,25 @@ export const ALL_ROUTES: RouteConfig[] = [
     isPublic: false,
     accessTo: {
       POST: [USER, ADMIN],
+    },
+  },
+
+  // API routes - admin
+  {
+    path: '/api/admin/users',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/admin/users/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
     },
   },
 

@@ -15,6 +15,7 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import * as React from 'react';
 
+import { siteConfig } from '@/app/siteConfig';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +52,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
     try {
       // Call logout API to clear server-side session
       await logoutMutation.mutateAsync();
-      router.push('/');
+      router.push(siteConfig.baseLinks.landing);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -59,7 +60,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
       googleLogout();
       clearAuth();
       // Redirect to home page
-      router.push('/');
+      router.push(siteConfig.baseLinks.landing);
     }
   };
 
@@ -92,7 +93,10 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
           </DropdownMenuItem>
 
           <DropdownMenuItem>
-            <Link href="/app/credit-history" className="flex w-full items-center gap-2">
+            <Link
+              href={siteConfig.baseLinks.creditHistory}
+              className="flex w-full items-center gap-2"
+            >
               <RiCoinLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
               Credit history
             </Link>

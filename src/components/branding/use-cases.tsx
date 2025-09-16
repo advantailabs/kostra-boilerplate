@@ -1,5 +1,6 @@
 'use client';
 
+import { siteConfig } from '@/app/siteConfig';
 import { motion } from 'framer-motion';
 
 const useCases = [
@@ -174,7 +175,7 @@ export function UseCases() {
             Ready to transform your team's knowledge management?
           </p>
           <a
-            href="/app"
+            href={siteConfig.baseLinks.home}
             className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-4 text-lg font-semibold text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-violet-700"
           >
             Start Your Free Trial

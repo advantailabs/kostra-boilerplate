@@ -3,14 +3,32 @@ export const siteConfig = {
   url: 'https://peon.sh',
   description: 'Your Personal AI Peon',
   baseLinks: {
+    // Public routes
+    landing: '/',
+
+    // App routes
     home: '/app',
     blogs: '/app/blogs',
     categories: '/app/categories',
+    personas: '/app/personas',
+    files: '/app/files',
+    chat: '/app/chat',
+    creditHistory: '/app/credit-history',
+
+    // Settings routes
     settings: {
       users: '/app/settings/users',
       general: '/app/settings/general',
       billing: '/app/settings/billing',
     },
+
+    // Admin routes
+    admin: {
+      dashboard: '/app/admin',
+      users: '/app/admin/users',
+    },
+
+    // Other routes
     onboarding: '/onboarding',
     privacy: '/privacy-policy',
     terms: '/terms-of-services',

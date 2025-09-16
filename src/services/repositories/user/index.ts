@@ -2,11 +2,25 @@ import { prisma } from '@/lib/prisma';
 import { UserPlan, UserRole } from '@prisma/client';
 
 export interface GoogleUserUpdate {
-  googleId: string;
+  googleId?: string;
   name: string;
   email: string;
   profilePicture?: string;
   isOnboarded?: boolean;
+  password?: string;
+  role?: UserRole;
+}
+
+// Interface for updating user by ID (admin operations)
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  profilePicture?: string;
+  isOnboarded?: boolean;
+  credits?: number;
+  plan?: UserPlan;
+  isOverDue?: boolean;
 }
 
 const upsertUser = async (user: GoogleUserUpdate) => {
@@ -21,18 +35,25 @@ const upsertUser = async (user: GoogleUserUpdate) => {
 };
 
 const createUser = async (user: GoogleUserUpdate) => {
+  const userData: any = {
+    email: user.email,
+    name: user.name,
+    googleId: user.googleId,
+    profilePicture: user.profilePicture,
+    role: user.role || UserRole.USER,
+    isOnboarded: user.isOnboarded ?? true,
+    credits: 100,
+    plan: UserPlan.FREE,
+    isOverDue: false,
+  };
+
+  // Only add password if it exists
+  if (user.password) {
+    userData.password = user.password;
+  }
+
   return prisma.user.create({
-    data: {
-      email: user.email,
-      name: user.name,
-      googleId: user.googleId,
-      profilePicture: user.profilePicture,
-      role: UserRole.USER,
-      isOnboarded: true,
-      credits: 100,
-      plan: UserPlan.FREE,
-      isOverDue: false,
-    },
+    data: userData,
   });
 };
 
@@ -51,7 +72,10 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
     roles = [role];
   }
   return prisma.user.findMany({
-    where: { role: { in: roles } },
+    where: {
+      role: { in: roles },
+      deletedAt: null,
+    },
   });
 };
 
@@ -116,9 +140,26 @@ const updateUserGoogleId = async (userId: number, googleId: string) => {
   });
 };
 
+// Update user by ID (for admin operations)
+const updateUserById = async (userId: number, userData: UpdateUserData) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: userData,
+  });
+};
+
+// Soft delete user by ID (for admin operations)
+const deleteUserById = async (userId: number) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { deletedAt: new Date() },
+  });
+};
+
 export {
   createUser,
   deleteUser,
+  deleteUserById,
   getUserByEmail,
   getUserByGoogleId,
   getUserByGoogleIdOrEmail,
@@ -127,6 +168,7 @@ export {
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,
+  updateUserById,
   updateUserGoogleId,
   upsertUser,
 };

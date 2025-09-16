@@ -1,3 +1,5 @@
+import { siteConfig } from '@/app/siteConfig';
+
 export function Footer() {
   return (
     <footer className="bg-gray-50">
@@ -70,12 +72,18 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-gray-900">Legal</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="/privacy-policy" className="text-sm text-gray-700 hover:text-gray-900">
+                <a
+                  href={siteConfig.baseLinks.privacy}
+                  className="text-sm text-gray-700 hover:text-gray-900"
+                >
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms-of-services" className="text-sm text-gray-700 hover:text-gray-900">
+                <a
+                  href={siteConfig.baseLinks.terms}
+                  className="text-sm text-gray-700 hover:text-gray-900"
+                >
                   Terms of Service
                 </a>
               </li>

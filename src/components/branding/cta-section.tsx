@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+import { siteConfig } from '@/app/siteConfig';
 import { SignInButton } from '@/components/atom/SignInButton';
 import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { useAuthStore } from '@/store/auth';
@@ -34,7 +35,7 @@ export function CTASection() {
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
               {user ? (
-                <Link href="/app">
+                <Link href={siteConfig.baseLinks.home}>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}

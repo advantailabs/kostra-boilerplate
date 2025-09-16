@@ -1,5 +1,6 @@
 'use client';
 
+import { siteConfig } from '@/app/siteConfig';
 import { motion } from 'framer-motion';
 
 export function HeroSection() {
@@ -68,7 +69,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <a
-              href="/app"
+              href={siteConfig.baseLinks.home}
               className="group relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-4 text-lg font-semibold text-white transition-all hover:scale-105 hover:from-blue-700 hover:to-violet-700"
             >
               <span className="relative z-10">Start Free Trial</span>

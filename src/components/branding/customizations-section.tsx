@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
 
+import { siteConfig } from '@/app/siteConfig';
 import AmazonWebServices from '@/components/icons/AmazonWebServices';
 import Dropbox from '@/components/icons/Dropbox';
 import GoogleDrive from '@/components/icons/GoogleDrive';
@@ -118,7 +119,7 @@ export function CustomizationsSection() {
               comprehensive customizations hub.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
-              <Link href="/customizations">
+              <Link href={siteConfig.baseLinks.customizations}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
