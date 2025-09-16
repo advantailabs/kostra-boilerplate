@@ -32,13 +32,3 @@ export interface CategoryResponseType {
     blogs: number;
   };
 }
-
-export interface CreateCategoryRequest {
-  name: string;
-  slug: string;
-}
-
-export interface UpdateCategoryRequest {
-  name: string;
-  slug: string;
-}

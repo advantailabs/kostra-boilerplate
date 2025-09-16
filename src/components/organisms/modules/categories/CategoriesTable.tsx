@@ -1,15 +1,16 @@
 'use client';
 
-import { RiAddLine, RiDeleteBinLine, RiEditLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiEditLine } from '@remixicon/react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
-import { Input } from '@/components/atom/Input';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
-import { PageHeader } from '@/components/molecules/common/PageHeader';
+import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
+import { Pagination } from '@/components/molecules/common/Pagination';
 import { Table, TableBody, TableCell, TableRow } from '@/components/molecules/common/Table';
+import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
 import { useCategories } from '@/hooks/useCategories';
 
 interface CategoriesTableProps {
@@ -64,32 +65,20 @@ export function CategoriesTable({
 
   return (
     <div className={`min-h-screen bg-white dark:bg-gray-950 ${className || ''}`}>
-      <div className="flex items-center justify-between border-b border-gray-200 max-sm:flex-col max-sm:items-start max-sm:gap-3 dark:border-gray-700">
-        <PageHeader title="Categories" description="Manage blog categories" />
-        <div className="px-4 py-3 max-sm:hidden">
-          <Button
-            onClick={onAdd}
-            className="max-sm:w-auto max-sm:justify-center max-sm:px-2 max-sm:py-2"
-          >
-            <RiAddLine className="h-4 w-4" /> New
-          </Button>
-        </div>
-      </div>
+      <PageHeaderWithAction
+        title="Categories"
+        description="Manage blog categories"
+        onAdd={onAdd}
+        addButtonText="New"
+      />
 
       <div className="h-full p-4 max-sm:p-3">
-        {/* Search */}
-        <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-center">
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-            <div className="sm:w-64">
-              <Input
-                placeholder="Search by name or slug..."
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                inputClassName="h-8 py-1 text-xs"
-              />
-            </div>
-          </div>
-        </div>
+        <UnifiedSearchBar
+          placeholder="Search by name or slug..."
+          value={searchInput}
+          onChange={setSearchInput}
+          className="mb-3"
+        />
 
         {/* Table */}
         <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
@@ -161,27 +150,15 @@ export function CategoriesTable({
 
         {/* Pagination */}
         {categories.length > 0 && (
-          <div className="mt-3 flex items-center justify-between">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Page {page} of {totalPages} • {total} total
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                disabled={page <= 1}
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="secondary"
-                disabled={page >= totalPages}
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            pagination={{
+              page,
+              limit,
+              totalCount: total,
+              totalPages,
+            }}
+            onPageChange={setPage}
+          />
         )}
       </div>
     </div>

@@ -62,11 +62,6 @@ export const blogsApi = {
     return response.data.data || response.data;
   },
 
-  getBlog: async (id: number): Promise<Blog> => {
-    const response = await axiosInstance.get(`/blogs/${id}`);
-    return response.data.data || response.data;
-  },
-
   createBlog: async (data: FormData): Promise<Blog> => {
     const response = await axiosInstance.post('/blogs', data, {
       headers: {

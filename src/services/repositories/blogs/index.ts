@@ -1,8 +1,36 @@
 import { prisma } from '@/lib/prisma';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 
+// Helper function to generate a unique slug
+const generateUniqueSlug = async (title: string, excludeId?: number): Promise<string> => {
+  const baseSlug = title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .split(/\s+/)
+    .join('-');
+  let slug = baseSlug;
+  let counter = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const existingBlog = await prisma.blog.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+
+    // If no existing blog found, or if it's the same blog we're updating, the slug is available
+    if (!existingBlog || (excludeId && existingBlog.id === excludeId)) {
+      return slug;
+    }
+
+    slug = `${baseSlug}-${counter}`;
+    counter += 1;
+  }
+};
+
 export const createNewBlog = async (blogData: CreateBlogInput & { authorId: number }) => {
-  const slug = blogData.title.trim().toLowerCase().split(' ').join('-');
+  const slug = await generateUniqueSlug(blogData.title);
 
   const newBlog = await prisma.blog.create({
     data: {
@@ -136,8 +164,8 @@ export const updateBlogById = async (id: number, data: UpdateBlogInput) => {
   // Generate a new slug if the title has changed
   const slug =
     data.title !== existingBlog.title
-      ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      : existingBlog.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      ? await generateUniqueSlug(data.title, id)
+      : existingBlog.slug;
 
   // Update the blog with proper category handling
   return prisma.blog.update({

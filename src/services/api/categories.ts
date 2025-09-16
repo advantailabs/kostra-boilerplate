@@ -47,11 +47,6 @@ export const categoriesApi = {
     return response.data.data || response.data;
   },
 
-  getCategory: async (id: number): Promise<Category> => {
-    const response = await axiosInstance.get(`/categories/${id}`);
-    return response.data.data || response.data;
-  },
-
   createCategory: async (data: { name: string; slug: string }): Promise<Category> => {
     const response = await axiosInstance.post('/categories', data);
     return response.data.data || response.data;

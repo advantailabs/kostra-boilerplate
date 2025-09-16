@@ -32,8 +32,8 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/blogs', isPublic: false, accessTo: { GET: [USER, ADMIN] } }, // Change to Admin only
-  { path: '/app/categories', isPublic: false, accessTo: { GET: [USER, ADMIN] } }, // Change to Admin only
+  { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } }, // Change to Admin only
+  { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } }, // Change to Admin only
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },

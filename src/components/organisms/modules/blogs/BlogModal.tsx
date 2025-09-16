@@ -30,9 +30,19 @@ interface BlogModalProps {
   onSubmit: (_data: any) => void;
   blog?: BlogResponseType | null;
   mode: 'create' | 'edit';
+  isCreating?: boolean;
+  isUpdating?: boolean;
 }
 
-export function BlogModal({ isOpen, onClose, onSubmit, blog, mode }: BlogModalProps) {
+export function BlogModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  blog,
+  mode,
+  isCreating = false,
+  isUpdating = false,
+}: BlogModalProps) {
   const [blogImageUrl, setBlogImageUrl] = useState<string | null>(null);
   const [formInitialized, setFormInitialized] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -730,7 +740,9 @@ export function BlogModal({ isOpen, onClose, onSubmit, blog, mode }: BlogModalPr
                 <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button type="submit">{mode === 'create' ? 'Create Blog' : 'Update Blog'}</Button>
+                <Button type="submit" disabled={mode === 'create' ? isCreating : isUpdating}>
+                  {mode === 'create' ? 'Create Blog' : 'Update Blog'}
+                </Button>
               </div>
             </form>
           </div>

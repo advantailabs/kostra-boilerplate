@@ -31,13 +31,13 @@ const navigation = [
   { name: 'Files', href: '/app/files', icon: RiFileLine, section: 'Persona' },
 ] as const;
 
-const marketingNavigation = [
-  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Marketing' },
+const adminNavigation = [
+  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Admin' },
   {
     name: 'Categories',
     href: siteConfig.baseLinks.categories,
     icon: RiListCheck,
-    section: 'Marketing',
+    section: 'Admin',
   },
 ] as const;
 
@@ -94,12 +94,12 @@ export function Sidebar() {
               </ul>
             </div>
 
-            {/* Marketing Section */}
+            {/* Admin Section */}
             <div>
-              <span className="text-xs font-medium leading-6 text-gray-500">Marketing</span>
+              <span className="text-xs font-medium leading-6 text-gray-500">Admin</span>
               <ul role="list" className="space-y-0.5">
-                {marketingNavigation
-                  .filter(item => item.section === 'Marketing')
+                {adminNavigation
+                  .filter(item => item.section === 'Admin')
                   .map(item => (
                     <li key={item.name}>
                       <Link
