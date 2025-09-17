@@ -6,6 +6,6 @@ import { useRouteProtection } from '@/hooks/useRouteProtection';
 export default function AdminUsersPage() {
   // Protect this admin-only page
   useRouteProtection();
-  
+
   return <UsersPage />;
 }
