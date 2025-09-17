@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  RiArticleLine,
-  RiFileLine,
-  RiHomeLine,
-  RiListCheck,
-  RiTeamLine,
-  RiUserLine,
-  RiVipCrownLine,
-} from '@remixicon/react';
+import { RiVipCrownLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,6 +11,8 @@ import { siteConfig } from '@/app/siteConfig';
 // import { Button } from '@/components/atom/Button';
 import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import { GradientCtaButton } from '@/components/molecules/common/GradientCtaButton';
+import { NAVIGATION_ICON_MAP } from '@/lib/constants/navigation-icons';
+import { getNavigationBySection } from '@/lib/routes/role-mapping';
 import { cx, focusRing } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { useUiModalsStore } from '@/store/ui/modals';
@@ -26,32 +20,14 @@ import { useUiModalsStore } from '@/store/ui/modals';
 import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
-const navigation = [
-  { name: 'Home', href: siteConfig.baseLinks.home, icon: RiHomeLine, section: 'Persona' },
-  { name: 'Personas', href: siteConfig.baseLinks.personas, icon: RiUserLine, section: 'Persona' },
-  { name: 'Files', href: siteConfig.baseLinks.files, icon: RiFileLine, section: 'Persona' },
-] as const;
-
-const adminNavigation = [
-  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Admin' },
-  {
-    name: 'Categories',
-    href: siteConfig.baseLinks.categories,
-    icon: RiListCheck,
-    section: 'Admin',
-  },
-  {
-    name: 'Users',
-    href: siteConfig.baseLinks.admin.users,
-    icon: RiTeamLine,
-    section: 'Admin',
-  },
-] as const;
-
 export function Sidebar() {
   const pathname = usePathname();
   const { theme, resolvedTheme } = useTheme();
   const openCreditPurchase = useUiModalsStore(state => state.openCreditPurchase);
+  const { user } = useAuthStore();
+
+  // Get role-based navigation
+  const navigationBySection = getNavigationBySection(user?.role as any);
   const handleOpenPurchase = useCallback(() => openCreditPurchase(), [openCreditPurchase]);
   const userPlan = useAuthStore(state => state.user?.plan);
 
@@ -75,57 +51,37 @@ export function Sidebar() {
             <Image src={logoSrc} alt="Peon Logo" width={120} height={32} className="h-8 w-auto" />
           </div>
           <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
-            {/* Persona Section */}
-            <div>
-              <span className="text-xs font-medium leading-6 text-gray-500">Persona</span>
-              <ul role="list" className="space-y-0.5">
-                {navigation
-                  .filter(item => item.section === 'Persona')
-                  .map(item => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={cx(
-                          isActive(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
-                          focusRing
-                        )}
-                      >
-                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-
-            {/* Admin Section */}
-            <div>
-              <span className="text-xs font-medium leading-6 text-gray-500">Admin</span>
-              <ul role="list" className="space-y-0.5">
-                {adminNavigation
-                  .filter(item => item.section === 'Admin')
-                  .map(item => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={cx(
-                          isActive(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
-                          focusRing
-                        )}
-                      >
-                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-            </div>
+            {/* Render navigation sections based on user role */}
+            {Object.entries(navigationBySection).map(([sectionName, items]) => (
+              <div key={sectionName}>
+                <span className="text-xs font-medium leading-6 text-gray-500">{sectionName}</span>
+                <ul role="list" className="space-y-0.5">
+                  {items.map(item => {
+                    const IconComponent =
+                      NAVIGATION_ICON_MAP[item.name as keyof typeof NAVIGATION_ICON_MAP];
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          {IconComponent && (
+                            <IconComponent className="size-4 shrink-0" aria-hidden="true" />
+                          )}
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
           </nav>
           <div className="mt-auto">
             {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}

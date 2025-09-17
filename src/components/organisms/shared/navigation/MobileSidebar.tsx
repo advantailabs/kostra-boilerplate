@@ -1,13 +1,4 @@
-import {
-  RiArticleLine,
-  RiCloseLine,
-  RiFileLine,
-  RiHomeLine,
-  RiListCheck,
-  RiMenuLine,
-  RiTeamLine,
-  RiUserLine,
-} from '@remixicon/react';
+import { RiCloseLine, RiMenuLine } from '@remixicon/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -20,32 +11,18 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from '@/components/molecules/common/Drawer';
+import { NAVIGATION_ICON_MAP } from '@/lib/constants/navigation-icons';
+import { getNavigationBySection } from '@/lib/routes/role-mapping';
 import { cx, focusRing } from '@/lib/utils';
-
-const navigation = [
-  { name: 'Home', href: siteConfig.baseLinks.home, icon: RiHomeLine, section: 'Persona' },
-  { name: 'Personas', href: siteConfig.baseLinks.personas, icon: RiUserLine, section: 'Persona' },
-  { name: 'Files', href: siteConfig.baseLinks.files, icon: RiFileLine, section: 'Persona' },
-] as const;
-
-const adminNavigation = [
-  { name: 'Blogs', href: siteConfig.baseLinks.blogs, icon: RiArticleLine, section: 'Admin' },
-  {
-    name: 'Categories',
-    href: siteConfig.baseLinks.categories,
-    icon: RiListCheck,
-    section: 'Admin',
-  },
-  {
-    name: 'Users',
-    href: siteConfig.baseLinks.admin.users,
-    icon: RiTeamLine,
-    section: 'Admin',
-  },
-] as const;
+import { useAuthStore } from '@/store/auth';
 
 export default function MobileSidebar() {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+
+  // Get role-based navigation
+  const navigationBySection = getNavigationBySection(user?.role as any);
+
   const isActive = (itemHref: string) => {
     // Exact match for home route to avoid highlighting when on sub-routes
     if (itemHref === siteConfig.baseLinks.home) {
@@ -60,7 +37,7 @@ export default function MobileSidebar() {
         <Button
           variant="ghost"
           aria-label="open sidebar"
-          className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10"
+          className="group flex items-center rounded-md p-2 text-sm font-medium data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:bg-gray-100 hover:dark:bg-gray-400/10"
         >
           <RiMenuLine className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
         </Button>
@@ -76,63 +53,41 @@ export default function MobileSidebar() {
         </div>
         <DrawerBody>
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
-            {/* Persona Section */}
-            <div>
-              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
-                Persona
-              </span>
-              <ul role="list" className="space-y-1.5">
-                {navigation
-                  .filter(item => item.section === 'Persona')
-                  .map(item => (
-                    <li key={item.name}>
-                      <DrawerClose asChild>
-                        <Link
-                          href={item.href}
-                          className={cx(
-                            isActive(item.href)
-                              ? 'text-indigo-600 dark:text-indigo-400'
-                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                            focusRing
-                          )}
-                        >
-                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
-                          {item.name}
-                        </Link>
-                      </DrawerClose>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-
-            {/* Admin Section */}
-            <div>
-              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">Admin</span>
-              <ul role="list" className="space-y-1.5">
-                {adminNavigation
-                  .filter(item => item.section === 'Admin')
-                  .map(item => (
-                    <li key={item.name}>
-                      <DrawerClose asChild>
-                        <Link
-                          href={item.href}
-                          className={cx(
-                            isActive(item.href)
-                              ? 'text-indigo-600 dark:text-indigo-400'
-                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                            focusRing
-                          )}
-                        >
-                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
-                          {item.name}
-                        </Link>
-                      </DrawerClose>
-                    </li>
-                  ))}
-              </ul>
-            </div>
+            {/* Render navigation sections based on user role */}
+            {Object.entries(navigationBySection).map(([sectionName, items]) => (
+              <div key={sectionName}>
+                <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
+                  {sectionName}
+                </span>
+                <ul role="list" className="space-y-1.5">
+                  {items.map(item => {
+                    const IconComponent =
+                      NAVIGATION_ICON_MAP[item.name as keyof typeof NAVIGATION_ICON_MAP];
+                    return (
+                      <li key={item.name}>
+                        <DrawerClose asChild>
+                          <Link
+                            href={item.href}
+                            className={cx(
+                              isActive(item.href)
+                                ? 'text-indigo-600 dark:text-indigo-400'
+                                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                              'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                              focusRing
+                            )}
+                          >
+                            {IconComponent && (
+                              <IconComponent className="size-5 shrink-0" aria-hidden="true" />
+                            )}
+                            {item.name}
+                          </Link>
+                        </DrawerClose>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
           </nav>
         </DrawerBody>
       </DrawerContent>
