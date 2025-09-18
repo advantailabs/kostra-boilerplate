@@ -31,10 +31,9 @@ export function FormTagInput({
         rules={{ required: required ? `${label} is required` : false }}
         render={({ field: { onChange, value } }) => (
           <TagInput
-            id={name}
             placeholder={placeholder}
             tags={Array.isArray(value) ? value : []}
-            setTags={newTags => {
+            onChange={(newTags: string[]) => {
               const updatedTags = Array.isArray(newTags) ? newTags : [];
               onChange(updatedTags);
             }}
@@ -48,4 +47,3 @@ export function FormTagInput({
     </>
   );
 }
-

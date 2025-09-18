@@ -14,7 +14,7 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Get all users (excluding soft deleted)
     const users = await getUserByRole(UserRole.USER, true);

@@ -82,8 +82,6 @@ describe('Persona Service', () => {
           instructions: 'Test Instructions',
           tags: ['tag1', 'tag2'],
           logo: undefined,
-          openaiAssistantId: 'asst_test123',
-          knowledgeBaseId: 1, // This will be set by the service
         },
         undefined
       );

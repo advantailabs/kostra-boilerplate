@@ -14,7 +14,7 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
@@ -130,7 +130,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { id: targetUserId } = paramValidation.data;
 
     // Prevent admin from deleting themselves
-    if (targetUserId === authUser.userId) {
+    if (targetUserId === authUser?.userId) {
       return badRequestResponse('Cannot delete your own account');
     }
 

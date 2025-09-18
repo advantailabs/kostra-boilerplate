@@ -93,9 +93,6 @@ export function DataTablePagination<TData>({
   const totalRows = isExternalPagination
     ? pagination?.totalCount || 0
     : table.getFilteredRowModel().rows.length;
-  const currentPage = isExternalPagination
-    ? pagination?.page || 1
-    : table.getState().pagination.pageIndex + 1;
   const firstRowIndex = isExternalPagination
     ? ((pagination?.page || 1) - 1) * (pagination?.limit || pageSize) + 1
     : table.getState().pagination.pageIndex * pageSize + 1;

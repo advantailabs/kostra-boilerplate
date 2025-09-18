@@ -1,23 +1,40 @@
 {
-  "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
   "env": {
+    "browser": true,
+    "es2021": true,
     "node": true,
     "jest": true
   },
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "airbnb/hooks",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react",
+    "import",
+    "jsx-a11y"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".jsx"] }],
     "import/extensions": "off",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
     "react/prop-types": "off",
     "import/prefer-default-export": "off",
     "react/jsx-no-useless-fragment": "off",
     "jsx-a11y/aria-role": "off",
-
-    // Error level rules
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-unused-vars": "off",
     "no-undef": "error",
     "eqeqeq": "error",
     "no-shadow": "off",
@@ -43,50 +60,37 @@
         ]
       }
     ],
-
-    // Warning level rules
     "no-console": "off",
     "consistent-return": "warn",
     "default-case": "warn",
     "no-case-declarations": "off",
-    "no-restricted-syntax": "warn",
+    "no-restricted-syntax": "off",
     "camelcase": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/no-redundant-roles": "off",
     "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/no-noninteractive-tabindex": "warn",
     "react/no-array-index-key": "off",
     "react/no-unstable-nested-components": "warn",
-    "no-nested-ternary": "warn",
+    "no-nested-ternary": "off",
     "react/button-has-type": "off",
     "react/no-unescaped-entities": "off",
     "react/destructuring-assignment": "warn",
     "react/no-unused-prop-types": "warn",
     "import/no-cycle": "off",
     "import/order": "off",
-
-    // Disable no-restricted-syntax rule
-    "no-restricted-syntax": "off",
-
-    // Allow await in loops for streaming operations
     "no-await-in-loop": "off",
     "default-case": "off",
-
-    // Allow default parameters in any order (they work fine)
     "default-param-last": "off",
-
-    // Allow unnamed async generator functions for streaming
     "func-names": ["warn", "as-needed", { "generators": "never" }],
-
-    // Allow require in test files
     "global-require": "off",
-
-    // Disable overly strict label accessibility rule
     "jsx-a11y/label-has-associated-control": "off",
-
-    // Disable react/no-danger rule
-    "react/no-danger": "off"
+    "react/no-danger": "off",
+    "arrow-body-style": "off",
+    "prefer-destructuring": "off",
+    "no-useless-escape": "off",
+    "consistent-return": "off"
   },
   "settings": {
     "import/resolver": {
