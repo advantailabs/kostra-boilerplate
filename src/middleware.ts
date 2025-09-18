@@ -2,15 +2,14 @@ import { getAuthUser } from '@/lib/auth/jwt';
 import {
   applyCorsHeaders,
   checkAccess,
-  checkUserRoleStatus,
   findMatchingRoute,
-  getEffectiveUserRole,
   handleCorsPreflightRequest,
   isPublicRoute,
   isRouteConfigured,
   requiresRoleAccess,
 } from '@/lib/routes';
 import { NextRequest, NextResponse } from 'next/server';
+import { forbiddenResponse } from './lib/utils/response';
 
 // Main middleware
 const middleware = async (request: NextRequest) => {
@@ -18,8 +17,19 @@ const middleware = async (request: NextRequest) => {
   if (preflightResponse) return preflightResponse;
 
   const { pathname: path } = new URL(request.url);
-  const userRole = await checkUserRoleStatus(request);
   const { method } = request;
+
+  let authUser: any = null;
+  let userRole: any = null;
+
+  try {
+    authUser = await getAuthUser(request);
+    if (authUser) {
+      userRole = authUser.role.toUpperCase();
+    }
+  } catch (error) {
+    console.error('Auth error:', error);
+  }
 
   // Check if route is configured
   const isConfigured = isRouteConfigured(path);
@@ -35,44 +45,67 @@ const middleware = async (request: NextRequest) => {
   const matchedRoute = findMatchingRoute(path);
   const needsRoleAccess = requiresRoleAccess(matchedRoute, method);
 
-  let authUser: any = null;
-
-  // Get authenticated user if available (for both public and protected routes)
-  try {
-    authUser = await getAuthUser(request);
-  } catch (error) {
-    // Ignore auth errors for public routes
-    if (!isPublic) {
-      const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-      return applyCorsHeaders(request, response);
-    }
-  }
-
-  // Only protect non-public routes
+  // Only protect non-public routes, but check if method allows public access
   if (!isPublic && !authUser) {
-    const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    return applyCorsHeaders(request, response);
+    // Check if this method allows public access (empty array in accessTo)
+    const methodAccess =
+      matchedRoute?.accessTo?.[
+        method as Exclude<'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', null>
+      ];
+    const isPublicMethod = methodAccess && methodAccess.length === 0;
+
+    // If method is not public, return appropriate response
+    if (!isPublicMethod) {
+      // For API routes, return JSON error instead of redirect
+      if (path.startsWith('/api/')) {
+        const response = forbiddenResponse();
+        response.cookies.delete('auth-token');
+        return applyCorsHeaders(request, response);
+      }
+      // For page routes, redirect to login
+      const response = NextResponse.redirect(new URL('/', request.url));
+      response.cookies.delete('auth-token');
+      return response;
+    }
   }
 
-  if (needsRoleAccess) {
-    // Ensure the user is authenticated for role-gated routes
-    if (!authUser) {
-      const response = NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-      return applyCorsHeaders(request, response);
+  // For non-public routes, check role access
+  if (!isPublic && needsRoleAccess) {
+    // Check if this method allows public access (empty array in accessTo)
+    const methodAccess =
+      matchedRoute?.accessTo?.[
+        method as Exclude<'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', null>
+      ];
+    const isPublicMethod = methodAccess && methodAccess.length === 0;
+
+    // If method is not public, ensure the user is authenticated
+    if (!isPublicMethod && !authUser) {
+      // For API routes, return JSON error instead of redirect
+      if (path.startsWith('/api/')) {
+        const response = forbiddenResponse();
+        response.cookies.delete('auth-token');
+        return applyCorsHeaders(request, response);
+      }
+      // For page routes, redirect to login
+      const response = NextResponse.redirect(new URL('/', request.url));
+      response.cookies.delete('auth-token');
+      return response;
     }
 
-    // Default to USER role if no custom token provided
-    const effectiveRole = getEffectiveUserRole(userRole);
-    const hasAccess = checkAccess(path, method, effectiveRole);
+    // If method requires authentication, check role access
+    if (!isPublicMethod && authUser) {
+      const effectiveRole = userRole || 'USER';
+      const hasAccess = checkAccess(path, method, effectiveRole);
 
-    if (!hasAccess) {
-      const response = NextResponse.json(
-        {
-          error: 'You do not have sufficient privileges to perform this action',
-        },
-        { status: 403 }
-      );
-      return applyCorsHeaders(request, response);
+      if (!hasAccess) {
+        if (path.startsWith('/api/')) {
+          const response = forbiddenResponse();
+          return applyCorsHeaders(request, response);
+        }
+
+        const response = NextResponse.redirect(new URL('/', request.url));
+        return response;
+      }
     }
   }
 

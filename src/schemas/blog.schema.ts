@@ -1,44 +1,22 @@
 import { z } from 'zod';
 
-const validateImageFile = (file: File) => {
-  const maxSize = 5 * 1024 * 1024; // 5MB
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-
-  return allowedTypes.includes(file?.type) && file.size <= maxSize;
-};
-
 export const createBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
-  tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
-  categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),
+  tags: z.string().min(1, { message: 'Tags are required' }),
+  categories: z.string().min(1, { message: 'Categories are required' }),
   blogImageUrl: z.string().optional(),
-  published: z.boolean().optional(),
-});
-
-export const createBlogSchemaFrontend = createBlogSchema.extend({
-  imageFile: z.optional(z.any()),
+  published: z.string().optional(),
 });
 
 export const updateBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
-  tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
-  categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),
+  tags: z.string().min(1, { message: 'Tags are required' }),
+  categories: z.string().min(1, { message: 'Categories are required' }),
   blogImageUrl: z.string().optional(),
-  published: z.boolean().optional(),
-});
-
-export const updateBlogSchemaFrontend = updateBlogSchema.extend({
-  imageFile: z
-    .any()
-    .optional()
-    .refine(file => file === undefined || file === null || file instanceof File, {
-      message: 'Invalid file format',
-    })
-    .refine(file => file === undefined || file === null || validateImageFile(file), {
-      message: 'File must be JPG or PNG format and under 5MB',
-    }),
+  published: z.string().optional(),
+  authorId: z.string().optional(),
 });
 
 export const blogIdSchema = z.object({

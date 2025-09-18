@@ -3,12 +3,18 @@ import { Label } from '@/components/atom/Label';
 import { Switch } from '@/components/atom/Switch';
 import { BlogImageUpload } from '@/components/molecules/form/BlogImageUpload';
 import { TagInput } from '@/components/molecules/form/TagInput';
-import { createBlogSchemaFrontend } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { z } from 'zod';
 
-type BlogFormData = z.infer<typeof createBlogSchemaFrontend>;
+// Type for the form data (before transformation)
+type BlogFormData = {
+  title: string;
+  content: string;
+  tags: string;
+  categories: string;
+  blogImageUrl?: string;
+  published?: string;
+};
 
 interface CategoryOption {
   value: string;
@@ -20,16 +26,9 @@ interface BlogFormFieldsProps {
   errors: FieldErrors<BlogFormData>;
   categoryOptions: CategoryOption[];
   blog?: BlogResponseType | null;
-  onImageFileChange: (file: File | undefined) => void;
 }
 
-export function BlogFormFields({
-  control,
-  errors,
-  categoryOptions,
-  blog,
-  onImageFileChange,
-}: BlogFormFieldsProps) {
+export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogFormFieldsProps) {
   return (
     <>
       {/* Title */}
@@ -76,13 +75,24 @@ export function BlogFormFields({
                   <input
                     type="checkbox"
                     id={`category-${option.value}`}
-                    checked={(field.value as string[])?.includes(option.value) || false}
+                    checked={(() => {
+                      try {
+                        const currentValue = JSON.parse(field.value || '[]');
+                        return Array.isArray(currentValue) && currentValue.includes(option.value);
+                      } catch {
+                        return false;
+                      }
+                    })()}
                     onChange={e => {
-                      const currentValue = (field.value as string[]) || [];
-                      const newValue = e.target.checked
-                        ? [...currentValue, option.value]
-                        : currentValue.filter(val => val !== option.value);
-                      field.onChange(newValue);
+                      try {
+                        const currentValue = JSON.parse(field.value || '[]');
+                        const newValue = e.target.checked
+                          ? [...currentValue, option.value]
+                          : currentValue.filter((val: string) => val !== option.value);
+                        field.onChange(JSON.stringify(newValue));
+                      } catch {
+                        field.onChange(JSON.stringify([option.value]));
+                      }
                     }}
                     className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-0 focus:ring-offset-0"
                   />
@@ -110,16 +120,15 @@ export function BlogFormFields({
           <BlogImageUpload
             value={field.value || ''}
             onChange={field.onChange}
-            onFileChange={onImageFileChange}
             label="Blog Image"
-            required={true}
+            required
             objectId={blog?.id || 0}
           />
         )}
       />
 
       {/* Separator */}
-      <div className="-mx-4 border-t border-gray-200 dark:border-gray-700"></div>
+      <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
 
       {/* Tags */}
       <div>
@@ -134,8 +143,15 @@ export function BlogFormFields({
           name="tags"
           render={({ field }) => (
             <TagInput
-              tags={field.value || []}
-              onChange={field.onChange}
+              tags={(() => {
+                try {
+                  const parsed = JSON.parse(field.value || '[]');
+                  return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                  return [];
+                }
+              })()}
+              onChange={tags => field.onChange(JSON.stringify(tags))}
               placeholder="Add tags..."
               maxTags={10}
             />
@@ -159,8 +175,8 @@ export function BlogFormFields({
             render={({ field }) => (
               <Switch
                 id="published"
-                checked={Boolean(field.value)}
-                onCheckedChange={field.onChange}
+                checked={field.value === 'true'}
+                onCheckedChange={checked => field.onChange(checked ? 'true' : 'false')}
               />
             )}
           />

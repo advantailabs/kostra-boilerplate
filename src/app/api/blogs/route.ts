@@ -6,8 +6,8 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { formatZodError } from '@/lib/utils/validation';
-import { blogFiltersSchema, CreateBlogInput, createBlogSchema } from '@/schemas/blog.schema';
-import { createNewBlog, getAllBlogs, updateBlogImageUrl } from '@/services/repositories/blogs';
+import { blogFiltersSchema, createBlogSchema } from '@/schemas/blog.schema';
+import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
 import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
@@ -27,60 +27,34 @@ export async function POST(request: NextRequest) {
       return errorResponse('Invalid form data format');
     }
 
-    const blogImageFile = formData.get('imageFile') as File | null;
-
     // Extract blog data from form data
     const blogData: Record<string, any> = {};
     formData.forEach((value, key) => {
-      if (key !== 'imageFile') {
-        blogData[key] = value;
-      }
+      blogData[key] = value;
     });
 
-    // Prepare data for validation
-    // Convert empty strings to undefined for optional fields
-    const cleanedData = {
-      ...blogData,
-      // Handle optional URL fields - convert empty strings to undefined
-      blogImageUrl: blogData.blogImageUrl?.trim() || undefined,
-      // Handle array fields if they exist as strings
-      tags: blogData.tags ? JSON.parse(blogData.tags as string) : [],
-      categories: blogData.categories ? JSON.parse(blogData.categories as string) : [],
-      // Handle boolean fields
-      published: blogData.published === 'true',
-      // Add the authenticated user's ID
-    };
-
-    // Validate blog data using Zod
-    const validationResult = createBlogSchema.safeParse(cleanedData);
+    // Validate FormData using the schema
+    const validationResult = createBlogSchema.safeParse(blogData);
 
     if (!validationResult.success) {
       return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
 
+    const validatedData = validationResult.data;
+
+    // Transform validated data for database
     const finalBlogData = {
-      ...validationResult.data,
+      title: validatedData.title,
+      content: validatedData.content,
+      tags: JSON.parse(validatedData.tags),
+      categories: JSON.parse(validatedData.categories),
+      blogImageUrl: validatedData.blogImageUrl?.trim() || undefined,
+      published: validatedData.published === 'true',
       authorId: user.id,
     };
 
-    // Create new blog with validated data
-    const newBlog = await createNewBlog(finalBlogData as CreateBlogInput & { authorId: number });
-
-    // Handle image upload with Cloudflare R2
-    if (blogImageFile && newBlog.id) {
-      try {
-        // For now, we'll use the blogImageUrl from the form data if it was uploaded via the frontend
-        // The frontend should handle the upload and provide the URL
-        if (finalBlogData.blogImageUrl) {
-          // Update the blog with the image URL using the dedicated repository method
-          await updateBlogImageUrl(newBlog.id, finalBlogData.blogImageUrl);
-          newBlog.blogImageUrl = finalBlogData.blogImageUrl;
-        }
-      } catch (uploadError) {
-        console.error('Error updating blog image URL:', uploadError);
-        // Continue with blog creation even if image URL update fails
-      }
-    }
+    // Create new blog with validated data (including blogImageUrl if provided)
+    const newBlog = await createNewBlog(finalBlogData as any & { authorId: number });
 
     // Return success response with 201 status
     return successResponse({ data: newBlog }, 201);

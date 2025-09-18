@@ -5,7 +5,7 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { formatZodError } from '@/lib/utils/validation';
-import { UpdateBlogInput, blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
+import { blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
 import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import { NextRequest } from 'next/server';
 
@@ -56,44 +56,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return notFoundResponse('Blog not found');
     }
 
-    // We'll try to parse the request as FormData regardless of the Content-Type
-    // and handle any errors in the catch block
+    // Parse the request as FormData
     const formData = await request.formData();
-    const blogImageFile = formData.get('blogImageFile') as File | null;
 
     // Extract blog data from form data
     const blogData: Record<string, any> = {};
     formData.forEach((value, key) => {
-      if (key !== 'blogImageFile') {
-        blogData[key] = value;
-      }
+      blogData[key] = value;
     });
 
-    let publishedStatus;
-
-    if (blogData.published === 'true') {
-      publishedStatus = true;
-    } else if (blogData.published === 'false') {
-      publishedStatus = false;
-    } else {
-      publishedStatus = undefined;
-    }
-    // Prepare data for validation
-    const cleanedData = {
-      ...blogData,
-      // Handle optional URL fields - convert empty strings to undefined
-      blogImageUrl: blogData.blogImageUrl?.trim() || undefined,
-      // Handle array fields if they exist as strings
-      tags: blogData.tags ? JSON.parse(blogData.tags as string) : undefined,
-      categories: blogData.categories ? JSON.parse(blogData.categories as string) : undefined,
-      // Handle boolean fields
-      published: publishedStatus,
-      // Handle authorId - ensure it's a number
-      authorId: blogData.authorId ? parseInt(blogData.authorId, 10) : undefined,
-    };
-
-    // Validate blog data using Zod
-    const updateValidationResult = updateBlogSchema.safeParse(cleanedData);
+    // Validate FormData using the schema
+    const updateValidationResult = updateBlogSchema.safeParse(blogData);
 
     if (!updateValidationResult.success) {
       return validationErrorResponse(
@@ -102,23 +75,21 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       );
     }
 
-    // Handle image upload with Cloudflare R2
-    if (blogImageFile) {
-      try {
-        // For now, we'll use the blogImageUrl from the form data if it was uploaded via the frontend
-        // The frontend should handle the upload and provide the URL
-        if (updateValidationResult.data?.blogImageUrl) {
-          // The image URL is already in the validated data, so it will be updated with the blog
-          console.log('Blog image URL updated:', updateValidationResult.data.blogImageUrl);
-        }
-      } catch (uploadError) {
-        console.error('Error handling blog image:', uploadError);
-        // Continue with blog update even if image handling fails
-      }
-    }
+    const validatedData = updateValidationResult.data;
 
-    // Update blog with validated data
-    const updatedBlog = await updateBlogById(id, updateValidationResult.data as UpdateBlogInput);
+    // Transform validated data for database
+    const finalUpdateData = {
+      title: validatedData.title,
+      content: validatedData.content,
+      tags: JSON.parse(validatedData.tags),
+      categories: JSON.parse(validatedData.categories),
+      blogImageUrl: validatedData.blogImageUrl?.trim() || undefined,
+      published: validatedData.published === 'true',
+      authorId: validatedData.authorId ? parseInt(validatedData.authorId, 10) : undefined,
+    };
+
+    // Update blog with validated data (including blogImageUrl if provided)
+    const updatedBlog = await updateBlogById(id, finalUpdateData as any);
 
     return successResponse(updatedBlog);
   } catch (error) {

@@ -11,17 +11,14 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from '@/components/molecules/common/Drawer';
-import { NAVIGATION_ICON_MAP } from '@/lib/constants/navigation-icons';
-import { getNavigationBySection } from '@/lib/routes/role-mapping';
+import { NAVIGATION_ITEMS } from '@/lib/constants/sidebar-navigation';
 import { cx, focusRing } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 
 export default function MobileSidebar() {
   const pathname = usePathname();
   const { user } = useAuthStore();
-
-  // Get role-based navigation
-  const navigationBySection = getNavigationBySection(user?.role as any);
+  const userRole = user?.role;
 
   const isActive = (itemHref: string) => {
     // Exact match for home route to avoid highlighting when on sub-routes
@@ -53,41 +50,66 @@ export default function MobileSidebar() {
         </div>
         <DrawerBody>
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
-            {/* Render navigation sections based on user role */}
-            {Object.entries(navigationBySection).map(([sectionName, items]) => (
-              <div key={sectionName}>
-                <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs">
-                  {sectionName}
+            {/* Persona Section */}
+            <div>
+              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs dark:text-gray-500">
+                Persona
+              </span>
+              <ul role="list" className="space-y-1.5">
+                {NAVIGATION_ITEMS.filter(
+                  item => item.section === 'Persona' && item.roles.includes(userRole as any)
+                ).map(item => (
+                  <li key={item.name}>
+                    <DrawerClose asChild>
+                      <Link
+                        href={item.href}
+                        className={cx(
+                          isActive(item.href)
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                          focusRing
+                        )}
+                      >
+                        <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </DrawerClose>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Admin Section */}
+            {userRole === 'ADMIN' && (
+              <div>
+                <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs dark:text-gray-500">
+                  Admin
                 </span>
                 <ul role="list" className="space-y-1.5">
-                  {items.map(item => {
-                    const IconComponent =
-                      NAVIGATION_ICON_MAP[item.name as keyof typeof NAVIGATION_ICON_MAP];
-                    return (
-                      <li key={item.name}>
-                        <DrawerClose asChild>
-                          <Link
-                            href={item.href}
-                            className={cx(
-                              isActive(item.href)
-                                ? 'text-indigo-600 dark:text-indigo-400'
-                                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                              'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
-                              focusRing
-                            )}
-                          >
-                            {IconComponent && (
-                              <IconComponent className="size-5 shrink-0" aria-hidden="true" />
-                            )}
-                            {item.name}
-                          </Link>
-                        </DrawerClose>
-                      </li>
-                    );
-                  })}
+                  {NAVIGATION_ITEMS.filter(
+                    item => item.section === 'Admin' && item.roles.includes(userRole as any)
+                  ).map(item => (
+                    <li key={item.name}>
+                      <DrawerClose asChild>
+                        <Link
+                          href={item.href}
+                          className={cx(
+                            isActive(item.href)
+                              ? 'text-indigo-600 dark:text-indigo-400'
+                              : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                            'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                            focusRing
+                          )}
+                        >
+                          <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </DrawerClose>
+                    </li>
+                  ))}
                 </ul>
               </div>
-            ))}
+            )}
           </nav>
         </DrawerBody>
       </DrawerContent>

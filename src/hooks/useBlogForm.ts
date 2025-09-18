@@ -1,34 +1,40 @@
-import { createBlogSchemaFrontend, updateBlogSchemaFrontend } from '@/schemas/blog.schema';
+import { createBlogSchema, updateBlogSchema } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
-type BlogFormData = z.infer<typeof createBlogSchemaFrontend>;
+// Type for the form data (before transformation)
+type BlogFormData = {
+  title: string;
+  content: string;
+  tags: string;
+  categories: string;
+  blogImageUrl?: string;
+  published?: string;
+};
 
 interface UseBlogFormProps {
   blog?: BlogResponseType | null;
   mode: 'create' | 'edit';
   isOpen: boolean;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (_data: FormData) => void;
 }
 
 export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) {
   const [formInitialized, setFormInitialized] = useState(false);
 
-  const schema = mode === 'create' ? createBlogSchemaFrontend : updateBlogSchemaFrontend;
+  const schema = mode === 'create' ? createBlogSchema : updateBlogSchema;
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: '',
       content: '',
-      tags: [],
+      tags: '[]',
       blogImageUrl: '',
-      imageFile: undefined,
-      categories: [],
-      published: false,
+      categories: '[]',
+      published: 'false',
     },
   });
 
@@ -40,18 +46,26 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
     }
   }, [isOpen, form]);
 
-  // Populate form with blog data when it's loaded (for edit mode)
+  // Handle form initialization based on mode and blog data
   useEffect(() => {
-    if (blog && isOpen && mode === 'edit' && !formInitialized) {
+    if (!isOpen) return;
+
+    // Reset form and initialization state when mode changes
+    form.reset();
+    setFormInitialized(false);
+
+    // If in edit mode and we have blog data, populate the form
+    if (mode === 'edit' && blog) {
       form.reset(
         {
           title: blog.title || '',
           content: blog.content || '',
-          tags: Array.isArray(blog.tags) ? blog.tags : [],
+          tags: Array.isArray(blog.tags) ? JSON.stringify(blog.tags) : '[]',
           blogImageUrl: blog.blogImageUrl || '',
-          imageFile: undefined,
-          published: blog.published || false,
-          categories: blog.categories?.map(cat => cat?.category?.id.toString()) || [],
+          published: blog.published ? 'true' : 'false',
+          categories: blog.categories?.map(cat => cat?.category?.id.toString())
+            ? JSON.stringify(blog.categories.map(cat => cat?.category?.id.toString()))
+            : '[]',
         },
         {
           keepDirty: false,
@@ -59,31 +73,30 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
         }
       );
       setFormInitialized(true);
+    } else if (mode === 'create') {
+      // For create mode, just reset to default values
+      form.reset({
+        title: '',
+        content: '',
+        tags: '[]',
+        blogImageUrl: '',
+        categories: '[]',
+        published: 'false',
+      });
+      setFormInitialized(true);
     }
-  }, [blog, form, isOpen, mode, formInitialized]);
+  }, [mode, blog, isOpen, form]);
 
   const handleSubmit = async (data: BlogFormData) => {
     try {
       const formData = new FormData();
 
-      // Add all form fields to FormData
+      // Add all form fields to FormData (data already contains string values)
       Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && key !== 'imageFile') {
-          if (Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value));
-          } else if (typeof value === 'boolean') {
-            formData.append(key, value.toString());
-          } else {
-            formData.append(key, value.toString());
-          }
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
         }
       });
-
-      // Add image file if available
-      if (data.imageFile) {
-        const fileKey = mode === 'create' ? 'imageFile' : 'blogImageFile';
-        formData.append(fileKey, data.imageFile);
-      }
 
       onSubmit(formData);
     } catch (error) {

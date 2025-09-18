@@ -18,7 +18,7 @@ interface BlogsPageProps {
 export function BlogsPage({ className }: BlogsPageProps) {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(9);
+  const [pageSize] = useState(10);
 
   // State for search input (immediate UI updates)
   const [searchInput, setSearchInput] = useState('');
@@ -93,6 +93,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
     setIsBlogModalOpen(false);
     setTimeout(() => {
       setEditingBlogId(null);
+      setModalMode('create'); // Reset to create mode when modal is closed
     }, 300);
   }, []);
 

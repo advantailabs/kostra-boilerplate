@@ -5,11 +5,8 @@ import Link from 'next/link';
 import { siteConfig } from '@/app/siteConfig';
 import { Button } from '@/components/atom/Button';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
-import { useRouteProtection } from '@/hooks/useRouteProtection';
 
 export default function AdminPage() {
-  // Protect this admin-only page
-  useRouteProtection();
   return (
     <>
       <PageHeaderWithAction

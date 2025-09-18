@@ -32,8 +32,8 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } }, // Change to Admin only
-  { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } }, // Change to Admin only
+  { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -70,17 +70,17 @@ export const ALL_ROUTES: RouteConfig[] = [
     path: '/api/blogs',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      POST: [USER, ADMIN],
+      GET: [ADMIN],
+      POST: [ADMIN],
     },
   },
   {
     path: '/api/blogs/[id]',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      PUT: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
     },
   },
 
@@ -89,17 +89,17 @@ export const ALL_ROUTES: RouteConfig[] = [
     path: '/api/categories',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      POST: [USER, ADMIN],
+      GET: [ADMIN],
+      POST: [ADMIN],
     },
   },
   {
     path: '/api/categories/[id]',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      PUT: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
     },
   },
 

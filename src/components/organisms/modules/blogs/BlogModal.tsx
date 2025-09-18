@@ -19,7 +19,7 @@ import { RiCloseLine } from '@remixicon/react';
 interface BlogModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (_data: FormData) => void;
   blog?: BlogResponseType | null;
   mode: 'create' | 'edit';
   isCreating?: boolean;
@@ -94,7 +94,6 @@ export function BlogModal({
                     errors={form.formState.errors}
                     categoryOptions={categoryOptions}
                     blog={blog}
-                    onImageFileChange={file => form.setValue('imageFile', file)}
                   />
                 </div>
 
