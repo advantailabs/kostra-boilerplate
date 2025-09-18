@@ -12,39 +12,39 @@ import { motion } from 'framer-motion';
 
 const features = [
   {
-    title: 'AI Personas & Knowledge Bases',
+    title: 'Modern Authentication',
     description:
-      'Create custom AI personas and attach specialized knowledge bases for department-specific expertise.',
+      'Built-in authentication system with Google OAuth, email/password, and secure session management.',
     icon: RiUser3Fill,
   },
   {
-    title: 'Universal File Management',
+    title: 'File Management',
     description:
-      'Upload and manage files from S3, SharePoint, Google Drive, and other cloud platforms in one place.',
+      'Complete file upload system with S3 integration, drag-and-drop interface, and file organization.',
     icon: RiFolder2Fill,
   },
   {
-    title: 'Intelligent Search',
+    title: 'Advanced Search',
     description:
-      'Search files efficiently across your entire organization with AI-powered semantic search.',
+      'Powerful search functionality with filtering, sorting, and real-time search capabilities.',
     icon: RiSearchEyeFill,
   },
   {
-    title: 'Access Control',
+    title: 'User Management',
     description:
-      'Manage user permissions and access control for different users and organizational levels.',
+      'Comprehensive user management system with roles, permissions, and admin controls.',
     icon: RiShieldUserFill,
   },
   {
-    title: 'AI-Powered Q&A',
+    title: 'Dashboard & Analytics',
     description:
-      'Ask deep questions to AI personas and get comprehensive answers with source citations.',
+      'Beautiful dashboard with analytics, charts, and insights to track your application usage.',
     icon: RiQuestionnaireFill,
   },
   {
-    title: 'Analytical Reports',
+    title: 'Responsive Design',
     description:
-      'Create detailed analytical reports using Peon Agents for business intelligence and insights.',
+      'Fully responsive design that works perfectly on desktop, tablet, and mobile devices.',
     icon: RiBarChartFill,
   },
 ];
@@ -64,11 +64,11 @@ export function MinimalFeatures() {
           className="mb-16 text-center sm:mb-20"
         >
           <h2 className="mb-4 text-3xl font-light text-white sm:mb-6 sm:text-4xl md:text-5xl">
-            Beyond Question Answering
+            Everything You Need
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-400 sm:text-xl">
-            Get deep research and analysis done. Ask complex questions like "What invoices are
-            overdue next month?" or "What was revenue generated in the last 3 months?"
+            A complete SaaS boilerplate with all the essential features to get your application up
+            and running quickly. Focus on your business logic, not the infrastructure.
           </p>
         </motion.div>
 

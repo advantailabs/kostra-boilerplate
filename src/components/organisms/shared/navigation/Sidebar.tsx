@@ -46,7 +46,13 @@ export function Sidebar() {
       <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
         <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
           <div className="flex h-8 items-center px-2">
-            <Image src={logoSrc} alt="Peon Logo" width={120} height={32} className="h-8 w-auto" />
+            <Image
+              src={logoSrc}
+              alt="SaaS Boilerplate Logo"
+              width={120}
+              height={32}
+              className="h-8 w-auto"
+            />
           </div>
           <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
             {/* Persona Section */}

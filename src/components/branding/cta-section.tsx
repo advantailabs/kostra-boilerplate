@@ -29,8 +29,7 @@ export function CTASection() {
               Ready to get started?
             </h3>
             <p className="mb-8 text-lg text-gray-400 sm:mb-10 sm:text-xl">
-              Join hundreds of organizations already transforming their knowledge management with
-              Peon.
+              Join developers who are building faster with our comprehensive SaaS boilerplate.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
@@ -56,7 +55,7 @@ export function CTASection() {
             </div>
 
             <p className="mt-4 text-xs text-gray-500 sm:mt-6 sm:text-sm">
-              No credit card required • 100 Free Credits • Setup in minutes
+              No credit card required • Free plan available • Setup in minutes
             </p>
           </div>
         </motion.div>

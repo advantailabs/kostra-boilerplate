@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: 'Peon',
-  url: 'https://peon.sh',
-  description: 'Your Personal AI Peon',
+  name: 'SaaS Boilerplate',
+  url: 'https://your-domain.com',
+  description: 'Modern SaaS Application Boilerplate',
   baseLinks: {
     // Public routes
     landing: '/',
@@ -32,7 +32,6 @@ export const siteConfig = {
     onboarding: '/onboarding',
     privacy: '/privacy-policy',
     terms: '/terms-of-services',
-    customizations: '/customizations',
   },
   sitemap: {
     // URL priorities for sitemap generation

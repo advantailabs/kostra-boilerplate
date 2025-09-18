@@ -33,11 +33,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: YEARLY,
       priority: MEDIUM_PRIORITY,
     },
-    {
-      url: `${baseUrl}/customizations`,
-      lastModified: currentDate,
-      changeFrequency: MONTHLY,
-      priority: MEDIUM_PRIORITY,
-    },
   ];
 }
