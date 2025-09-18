@@ -1,3 +1,4 @@
+import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 import { blogsApi, type BlogFilters } from '@/services/api/blogs';
 import { useQuery } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
@@ -17,13 +18,14 @@ export function useBlogs(filters?: BlogFilters) {
   const pagination = response?.pagination;
 
   const createBlogMutation = useApiMutation({
-    mutationFn: (data: FormData) => blogsApi.createBlog(data),
+    mutationFn: (data: CreateBlogInput) => blogsApi.createBlog(data),
     successMessage: 'Blog created successfully!',
     invalidateQueries: [['blogs']],
   });
 
   const updateBlogMutation = useApiMutation({
-    mutationFn: ({ id, data }: { id: number; data: FormData }) => blogsApi.updateBlog(id, data),
+    mutationFn: ({ id, data }: { id: number; data: UpdateBlogInput }) =>
+      blogsApi.updateBlog(id, data),
     successMessage: 'Blog updated successfully!',
     invalidateQueries: [['blogs']],
   });

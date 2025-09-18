@@ -13,13 +13,14 @@ import Editor from '@/components/molecules/editor/Editor';
 import { BlogFormFields } from '@/components/molecules/form/BlogFormFields';
 import { useBlogForm } from '@/hooks/useBlogForm';
 import { useCategories } from '@/hooks/useCategories';
+import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
 import { RiCloseLine } from '@remixicon/react';
 
 interface BlogModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (_data: CreateBlogInput | UpdateBlogInput) => void;
   blog?: BlogResponseType | null;
   mode: 'create' | 'edit';
   isCreating?: boolean;
@@ -94,7 +95,6 @@ export function BlogModal({
                     errors={form.formState.errors}
                     categoryOptions={categoryOptions}
                     blog={blog}
-                    onImageFileChange={file => form.setValue('imageFile', file)}
                   />
                 </div>
 
