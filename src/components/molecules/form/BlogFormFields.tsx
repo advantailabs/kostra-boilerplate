@@ -6,14 +6,14 @@ import { TagInput } from '@/components/molecules/form/TagInput';
 import { BlogResponseType } from '@/types/blog.type';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
-// Type for the form data (before transformation)
+// Type for the form data (proper types)
 type BlogFormData = {
   title: string;
   content: string;
-  tags: string;
-  categories: string;
+  tags: string[];
+  categories: string[];
   blogImageUrl?: string;
-  published?: string;
+  published?: boolean;
 };
 
 interface CategoryOption {
@@ -75,24 +75,13 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                   <input
                     type="checkbox"
                     id={`category-${option.value}`}
-                    checked={(() => {
-                      try {
-                        const currentValue = JSON.parse(field.value || '[]');
-                        return Array.isArray(currentValue) && currentValue.includes(option.value);
-                      } catch {
-                        return false;
-                      }
-                    })()}
+                    checked={field.value?.includes(option.value) || false}
                     onChange={e => {
-                      try {
-                        const currentValue = JSON.parse(field.value || '[]');
-                        const newValue = e.target.checked
-                          ? [...currentValue, option.value]
-                          : currentValue.filter((val: string) => val !== option.value);
-                        field.onChange(JSON.stringify(newValue));
-                      } catch {
-                        field.onChange(JSON.stringify([option.value]));
-                      }
+                      const currentValue = field.value || [];
+                      const newValue = e.target.checked
+                        ? [...currentValue, option.value]
+                        : currentValue.filter((val: string) => val !== option.value);
+                      field.onChange(newValue);
                     }}
                     className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-0 focus:ring-offset-0"
                   />
@@ -143,15 +132,8 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
           name="tags"
           render={({ field }) => (
             <TagInput
-              tags={(() => {
-                try {
-                  const parsed = JSON.parse(field.value || '[]');
-                  return Array.isArray(parsed) ? parsed : [];
-                } catch {
-                  return [];
-                }
-              })()}
-              onChange={tags => field.onChange(JSON.stringify(tags))}
+              tags={field.value || []}
+              onChange={tags => field.onChange(tags)}
               placeholder="Add tags..."
               maxTags={10}
             />
@@ -175,8 +157,8 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
             render={({ field }) => (
               <Switch
                 id="published"
-                checked={field.value === 'true'}
-                onCheckedChange={checked => field.onChange(checked ? 'true' : 'false')}
+                checked={field.value || false}
+                onCheckedChange={checked => field.onChange(checked)}
               />
             )}
           />

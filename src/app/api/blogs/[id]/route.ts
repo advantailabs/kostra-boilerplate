@@ -5,7 +5,7 @@ import {
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { formatZodError } from '@/lib/utils/validation';
-import { blogIdSchema, updateBlogSchema } from '@/schemas/blog.schema';
+import { blogIdSchema, UpdateBlogInput, updateBlogSchema } from '@/schemas/blog.schema';
 import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import { NextRequest } from 'next/server';
 
@@ -56,16 +56,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return notFoundResponse('Blog not found');
     }
 
-    // Parse the request as FormData
-    const formData = await request.formData();
+    // Parse JSON body
+    const blogData = await request.json();
 
-    // Extract blog data from form data
-    const blogData: Record<string, any> = {};
-    formData.forEach((value, key) => {
-      blogData[key] = value;
-    });
-
-    // Validate FormData using the schema
+    // Validate data using the schema
     const updateValidationResult = updateBlogSchema.safeParse(blogData);
 
     if (!updateValidationResult.success) {
@@ -77,19 +71,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const validatedData = updateValidationResult.data;
 
-    // Transform validated data for database
-    const finalUpdateData = {
-      title: validatedData.title,
-      content: validatedData.content,
-      tags: JSON.parse(validatedData.tags),
-      categories: JSON.parse(validatedData.categories),
+    // Prepare data for database
+    const finalUpdateData: UpdateBlogInput = {
+      ...validatedData,
       blogImageUrl: validatedData.blogImageUrl?.trim() || undefined,
-      published: validatedData.published === 'true',
-      authorId: validatedData.authorId ? parseInt(validatedData.authorId, 10) : undefined,
     };
 
-    // Update blog with validated data (including blogImageUrl if provided)
-    const updatedBlog = await updateBlogById(id, finalUpdateData as any);
+    // Update blog with validated data
+    const updatedBlog = await updateBlogById(id, finalUpdateData);
 
     return successResponse(updatedBlog);
   } catch (error) {

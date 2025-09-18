@@ -3,20 +3,20 @@ import { z } from 'zod';
 export const createBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
-  tags: z.string().min(1, { message: 'Tags are required' }),
-  categories: z.string().min(1, { message: 'Categories are required' }),
+  tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
+  categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),
   blogImageUrl: z.string().optional(),
-  published: z.string().optional(),
+  published: z.boolean().optional(),
 });
 
 export const updateBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
-  tags: z.string().min(1, { message: 'Tags are required' }),
-  categories: z.string().min(1, { message: 'Categories are required' }),
+  tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
+  categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),
   blogImageUrl: z.string().optional(),
-  published: z.string().optional(),
-  authorId: z.string().optional(),
+  published: z.boolean().optional(),
+  authorId: z.number().optional(),
 });
 
 export const blogIdSchema = z.object({

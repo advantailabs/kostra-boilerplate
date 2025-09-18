@@ -1,24 +1,29 @@
-import { createBlogSchema, updateBlogSchema } from '@/schemas/blog.schema';
+import {
+  CreateBlogInput,
+  createBlogSchema,
+  UpdateBlogInput,
+  updateBlogSchema,
+} from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-// Type for the form data (before transformation)
+// Type for the form data (proper types)
 type BlogFormData = {
   title: string;
   content: string;
-  tags: string;
-  categories: string;
+  tags: string[];
+  categories: string[];
   blogImageUrl?: string;
-  published?: string;
+  published?: boolean;
 };
 
 interface UseBlogFormProps {
   blog?: BlogResponseType | null;
   mode: 'create' | 'edit';
   isOpen: boolean;
-  onSubmit: (_data: FormData) => void;
+  onSubmit: (_data: CreateBlogInput | UpdateBlogInput) => void;
 }
 
 export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) {
@@ -31,10 +36,10 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
     defaultValues: {
       title: '',
       content: '',
-      tags: '[]',
+      tags: [],
       blogImageUrl: '',
-      categories: '[]',
-      published: 'false',
+      categories: [],
+      published: false,
     },
   });
 
@@ -60,12 +65,10 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
         {
           title: blog.title || '',
           content: blog.content || '',
-          tags: Array.isArray(blog.tags) ? JSON.stringify(blog.tags) : '[]',
+          tags: Array.isArray(blog.tags) ? blog.tags : [],
           blogImageUrl: blog.blogImageUrl || '',
-          published: blog.published ? 'true' : 'false',
-          categories: blog.categories?.map(cat => cat?.category?.id.toString())
-            ? JSON.stringify(blog.categories.map(cat => cat?.category?.id.toString()))
-            : '[]',
+          published: blog.published || false,
+          categories: blog.categories?.map(cat => cat?.category?.id.toString()) || [],
         },
         {
           keepDirty: false,
@@ -78,10 +81,10 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
       form.reset({
         title: '',
         content: '',
-        tags: '[]',
+        tags: [],
         blogImageUrl: '',
-        categories: '[]',
-        published: 'false',
+        categories: [],
+        published: false,
       });
       setFormInitialized(true);
     }
@@ -89,16 +92,13 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
 
   const handleSubmit = async (data: BlogFormData) => {
     try {
-      const formData = new FormData();
+      // Prepare data for API (already in correct format)
+      const apiData = {
+        ...data,
+        blogImageUrl: data.blogImageUrl?.trim() || undefined,
+      };
 
-      // Add all form fields to FormData (data already contains string values)
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, value.toString());
-        }
-      });
-
-      onSubmit(formData);
+      onSubmit(apiData);
     } catch (error) {
       console.error('Error in form submission:', error);
     }

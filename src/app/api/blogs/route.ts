@@ -1,12 +1,12 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
-  errorResponse,
   internalServerErrorResponse,
+  notFoundResponse,
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils/response';
 import { formatZodError } from '@/lib/utils/validation';
-import { blogFiltersSchema, createBlogSchema } from '@/schemas/blog.schema';
+import { blogFiltersSchema, CreateBlogInput, createBlogSchema } from '@/schemas/blog.schema';
 import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
 import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
@@ -19,21 +19,14 @@ export async function POST(request: NextRequest) {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
 
-    let formData: FormData;
-    try {
-      formData = await request.formData();
-    } catch (error) {
-      console.error('Error parsing FormData:', error);
-      return errorResponse('Invalid form data format');
+    if (!user) {
+      return notFoundResponse('User not found');
     }
 
-    // Extract blog data from form data
-    const blogData: Record<string, any> = {};
-    formData.forEach((value, key) => {
-      blogData[key] = value;
-    });
+    // Parse JSON body
+    const blogData = await request.json();
 
-    // Validate FormData using the schema
+    // Validate data using the schema
     const validationResult = createBlogSchema.safeParse(blogData);
 
     if (!validationResult.success) {
@@ -42,19 +35,15 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validationResult.data;
 
-    // Transform validated data for database
-    const finalBlogData = {
-      title: validatedData.title,
-      content: validatedData.content,
-      tags: JSON.parse(validatedData.tags),
-      categories: JSON.parse(validatedData.categories),
+    // Prepare data for database
+    const finalBlogData: CreateBlogInput & { authorId: number } = {
+      ...validatedData,
       blogImageUrl: validatedData.blogImageUrl?.trim() || undefined,
-      published: validatedData.published === 'true',
       authorId: user.id,
     };
 
-    // Create new blog with validated data (including blogImageUrl if provided)
-    const newBlog = await createNewBlog(finalBlogData as any & { authorId: number });
+    // Create new blog with validated data
+    const newBlog = await createNewBlog(finalBlogData);
 
     // Return success response with 201 status
     return successResponse({ data: newBlog }, 201);

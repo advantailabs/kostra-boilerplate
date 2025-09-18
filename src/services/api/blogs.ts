@@ -1,4 +1,5 @@
 import axiosInstance from '@/lib/axios';
+import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 
 export interface Blog {
   id: number;
@@ -62,19 +63,19 @@ export const blogsApi = {
     return response.data.data || response.data;
   },
 
-  createBlog: async (data: FormData): Promise<Blog> => {
+  createBlog: async (data: CreateBlogInput): Promise<Blog> => {
     const response = await axiosInstance.post('/blogs', data, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     return response.data.data || response.data;
   },
 
-  updateBlog: async (id: number, data: FormData): Promise<Blog> => {
+  updateBlog: async (id: number, data: UpdateBlogInput): Promise<Blog> => {
     const response = await axiosInstance.patch(`/blogs/${id}`, data, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     return response.data.data || response.data;
