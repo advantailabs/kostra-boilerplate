@@ -22,21 +22,11 @@ import {
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, ROLES, UserRole } from '@/lib/constants/admin';
 import { useAuthStore } from '@/store/auth';
+import { User } from '@/types/user';
 import { ModalAddUser } from './ModalAddUser';
 import { ModalDeleteUser } from './ModalDeleteUser';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  profilePicture?: string;
-  role: UserRole;
-  isOnboarded: boolean;
-  credits: number;
-  plan: 'FREE' | 'PRO';
-  createdAt: string;
-  updatedAt: string;
-}
+import { ModalEditUser } from './ModalEditUser';
+import { ModalUserDetails } from './ModalUserDetails';
 
 interface UsersPageProps {
   className?: string;
@@ -47,6 +37,8 @@ export function UsersPage({ className }: UsersPageProps) {
   const { user: currentUser } = useAuthStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const handleDeleteUser = (user: User) => {
@@ -54,8 +46,28 @@ export function UsersPage({ className }: UsersPageProps) {
     setIsDeleteModalOpen(true);
   };
 
+  const handleViewUserDetails = (user: User) => {
+    setSelectedUser(user);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
     setSelectedUser(null);
   };
 
@@ -150,7 +162,10 @@ export function UsersPage({ className }: UsersPageProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-36">
-                    <DropdownMenuItem>View details</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleViewUserDetails(user)}>
+                      View details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEditUser(user)}>Edit</DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600 dark:text-red-500"
                       disabled={isCurrentUser(user)}
@@ -172,6 +187,12 @@ export function UsersPage({ className }: UsersPageProps) {
         onClose={handleCloseDeleteModal}
         user={selectedUser}
       />
+      <ModalUserDetails
+        isOpen={isDetailsModalOpen}
+        onClose={handleCloseDetailsModal}
+        user={selectedUser}
+      />
+      <ModalEditUser isOpen={isEditModalOpen} onClose={handleCloseEditModal} user={selectedUser} />
     </div>
   );
 }

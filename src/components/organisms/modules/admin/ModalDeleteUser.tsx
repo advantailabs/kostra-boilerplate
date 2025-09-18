@@ -1,15 +1,6 @@
 import { Modal } from '@/components/molecules/common/Modal';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
-
-export type ModalDeleteUserProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  } | null;
-};
+import { ModalDeleteUserProps } from '@/types/user';
 
 export function ModalDeleteUser({ isOpen, onClose, user }: ModalDeleteUserProps) {
   const { deleteUser, isDeleting } = useAdminUsers();

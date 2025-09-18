@@ -21,6 +21,9 @@ export interface UpdateUserData {
   credits?: number;
   plan?: UserPlan;
   isOverDue?: boolean;
+  stripeCustomerId?: string;
+  planExpiringAt?: string;
+  password?: string;
 }
 
 const upsertUser = async (user: GoogleUserUpdate) => {
