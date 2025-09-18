@@ -1,3 +1,5 @@
+import { getUploadPurposeConfig } from '@/lib/file-upload-config';
+import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { fileUploadApi } from '@/services/api/file-upload';
 import { UploadPurpose } from '@/types/file-upload';
 import { useCallback, useState } from 'react';
@@ -47,7 +49,18 @@ export function useFileUpload(options: UseFileUploadOptions): UseFileUploadRetur
         throw new Error(`Upload failed with status: ${response.status}`);
       }
 
-      const fileUrl = key;
+      // Construct the full URL based on the upload purpose
+      const purposeConfig = getUploadPurposeConfig(options.uploadPurpose);
+      let fileUrl: string;
+
+      if (purposeConfig?.bucket === 'public' && S3_PUBLIC_BASE_URL) {
+        // For public uploads, construct the full public URL
+        fileUrl = `${S3_PUBLIC_BASE_URL}/${key}`;
+      } else {
+        // For private uploads, return just the key (will need signed URL for access)
+        fileUrl = key;
+      }
+
       options.onSuccess?.(fileUrl);
       return fileUrl;
     } catch (err) {

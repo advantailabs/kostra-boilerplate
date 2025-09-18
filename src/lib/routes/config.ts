@@ -32,6 +32,8 @@ export const ALL_ROUTES: RouteConfig[] = [
 
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+  { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -60,6 +62,44 @@ export const ALL_ROUTES: RouteConfig[] = [
       GET: [USER, ADMIN],
       PUT: [USER, ADMIN],
       DELETE: [USER, ADMIN],
+    },
+  },
+
+  // API routes - blogs
+  {
+    path: '/api/blogs',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/blogs/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
+    },
+  },
+
+  // API routes - categories
+  {
+    path: '/api/categories',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/categories/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
     },
   },
 

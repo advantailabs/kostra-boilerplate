@@ -8,6 +8,8 @@ export const siteConfig = {
 
     // App routes
     home: '/app',
+    blogs: '/app/blogs',
+    categories: '/app/categories',
     personas: '/app/personas',
     files: '/app/files',
     chat: '/app/chat',

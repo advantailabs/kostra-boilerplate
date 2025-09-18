@@ -9,47 +9,99 @@ import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/atom/Button';
 import { cx } from '@/lib/utils';
 
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  totalCount: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   pageSize: number;
+  pagination?: PaginationInfo;
+  onPageChange?: (page: number) => void;
 }
 
-export function DataTablePagination<TData>({ table, pageSize }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({
+  table,
+  pageSize,
+  pagination,
+  onPageChange,
+}: DataTablePaginationProps<TData>) {
+  // Use external pagination if provided, otherwise use internal pagination
+  const isExternalPagination = !!pagination;
+
   const paginationButtons = [
     {
       icon: RiArrowLeftDoubleLine,
-      onClick: () => table.setPageIndex(0),
-      disabled: !table.getCanPreviousPage(),
+      onClick: () => {
+        if (isExternalPagination && onPageChange) {
+          onPageChange(1);
+        } else {
+          table.setPageIndex(0);
+        }
+      },
+      disabled: isExternalPagination ? !pagination?.hasPreviousPage : !table.getCanPreviousPage(),
       srText: 'First page',
       mobileView: 'hidden sm:block',
     },
     {
       icon: RiArrowLeftSLine,
-      onClick: () => table.previousPage(),
-      disabled: !table.getCanPreviousPage(),
+      onClick: () => {
+        if (isExternalPagination && onPageChange && pagination) {
+          onPageChange(pagination.page - 1);
+        } else {
+          table.previousPage();
+        }
+      },
+      disabled: isExternalPagination ? !pagination?.hasPreviousPage : !table.getCanPreviousPage(),
       srText: 'Previous page',
       mobileView: '',
     },
     {
       icon: RiArrowRightSLine,
-      onClick: () => table.nextPage(),
-      disabled: !table.getCanNextPage(),
+      onClick: () => {
+        if (isExternalPagination && onPageChange && pagination) {
+          onPageChange(pagination.page + 1);
+        } else {
+          table.nextPage();
+        }
+      },
+      disabled: isExternalPagination ? !pagination?.hasNextPage : !table.getCanNextPage(),
       srText: 'Next page',
       mobileView: '',
     },
     {
       icon: RiArrowRightDoubleLine,
-      onClick: () => table.setPageIndex(table.getPageCount() - 1),
-      disabled: !table.getCanNextPage(),
+      onClick: () => {
+        if (isExternalPagination && onPageChange && pagination) {
+          onPageChange(pagination.totalPages);
+        } else {
+          table.setPageIndex(table.getPageCount() - 1);
+        }
+      },
+      disabled: isExternalPagination ? !pagination?.hasNextPage : !table.getCanNextPage(),
       srText: 'Last page',
       mobileView: 'hidden sm:block',
     },
   ];
 
-  const totalRows = table.getFilteredRowModel().rows.length;
-  const currentPage = table.getState().pagination.pageIndex;
-  const firstRowIndex = currentPage * pageSize + 1;
-  const lastRowIndex = Math.min(totalRows, firstRowIndex + pageSize - 1);
+  // Calculate display values based on pagination type
+  const totalRows = isExternalPagination
+    ? pagination?.totalCount || 0
+    : table.getFilteredRowModel().rows.length;
+  const currentPage = isExternalPagination
+    ? pagination?.page || 1
+    : table.getState().pagination.pageIndex + 1;
+  const firstRowIndex = isExternalPagination
+    ? ((pagination?.page || 1) - 1) * (pagination?.limit || pageSize) + 1
+    : table.getState().pagination.pageIndex * pageSize + 1;
+  const lastRowIndex = isExternalPagination
+    ? Math.min(totalRows, firstRowIndex + (pagination?.limit || pageSize) - 1)
+    : Math.min(totalRows, firstRowIndex + pageSize - 1);
 
   return (
     <div className="flex items-center justify-between">
@@ -72,7 +124,9 @@ export function DataTablePagination<TData>({ table, pageSize }: DataTablePaginat
               className={cx(button.mobileView, 'p-1.5')}
               onClick={() => {
                 button.onClick();
-                table.resetRowSelection();
+                if (!isExternalPagination) {
+                  table.resetRowSelection();
+                }
               }}
               disabled={button.disabled}
             >

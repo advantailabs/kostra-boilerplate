@@ -1,6 +1,6 @@
 'use client';
 
-import { RiFileLine, RiHomeLine, RiUserLine, RiVipCrownLine } from '@remixicon/react';
+import { RiVipCrownLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,6 +11,7 @@ import { siteConfig } from '@/app/siteConfig';
 // import { Button } from '@/components/atom/Button';
 import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import { GradientCtaButton } from '@/components/molecules/common/GradientCtaButton';
+import { NAVIGATION_ITEMS } from '@/lib/constants/sidebar-navigation';
 import { cx, focusRing } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { useUiModalsStore } from '@/store/ui/modals';
@@ -18,18 +19,15 @@ import { useUiModalsStore } from '@/store/ui/modals';
 import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
-const navigation = [
-  { name: 'Home', href: siteConfig.baseLinks.home, icon: RiHomeLine, section: 'Persona' },
-  { name: 'Personas', href: siteConfig.baseLinks.personas, icon: RiUserLine, section: 'Persona' },
-  { name: 'Files', href: siteConfig.baseLinks.files, icon: RiFileLine, section: 'Persona' },
-] as const;
-
 export function Sidebar() {
   const pathname = usePathname();
   const { theme, resolvedTheme } = useTheme();
   const openCreditPurchase = useUiModalsStore(state => state.openCreditPurchase);
   const handleOpenPurchase = useCallback(() => openCreditPurchase(), [openCreditPurchase]);
   const userPlan = useAuthStore(state => state.user?.plan);
+
+  const { user } = useAuthStore();
+  const userRole = user?.role;
 
   const isActive = (itemHref: string) => {
     // Exact match for home route to avoid highlighting when on sub-routes
@@ -53,11 +51,41 @@ export function Sidebar() {
           <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
             {/* Persona Section */}
             <div>
-              <span className="text-xs font-medium leading-6 text-gray-500">Persona</span>
+              <span className="text-xs font-medium leading-6 text-gray-500 dark:text-gray-500">
+                Persona
+              </span>
               <ul role="list" className="space-y-0.5">
-                {navigation
-                  .filter(item => item.section === 'Persona')
-                  .map(item => (
+                {NAVIGATION_ITEMS.filter(
+                  item => item.section === 'Persona' && item.roles.includes(userRole as any)
+                ).map(item => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className={cx(
+                        isActive(item.href)
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
+                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                        focusRing
+                      )}
+                    >
+                      <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Admin Section */}
+            {userRole === 'ADMIN' && (
+              <div>
+                <span className="text-xs font-medium leading-6 text-gray-500 dark:text-gray-500">
+                  Admin
+                </span>
+                <ul role="list" className="space-y-0.5">
+                  {NAVIGATION_ITEMS.filter(
+                    item => item.section === 'Admin' && item.roles.includes(userRole as any)
+                  ).map(item => (
                     <li key={item.name}>
                       <Link
                         href={item.href}
@@ -74,8 +102,9 @@ export function Sidebar() {
                       </Link>
                     </li>
                   ))}
-              </ul>
-            </div>
+                </ul>
+              </div>
+            )}
           </nav>
           <div className="mt-auto">
             {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}

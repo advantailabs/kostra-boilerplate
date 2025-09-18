@@ -8,11 +8,7 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Add optional integrations for additional features
-  integrations: [
-    Sentry.replayIntegration(),
-    Sentry.browserTracingIntegration(),
-    Sentry.feedbackIntegration(),
-  ],
+  integrations: [Sentry.replayIntegration(), Sentry.browserTracingIntegration()],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,

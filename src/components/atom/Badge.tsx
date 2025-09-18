@@ -31,6 +31,14 @@ const badgeVariants = tv({
         'bg-yellow-50 text-yellow-800 ring-yellow-600/30',
         'dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20',
       ],
+      info: [
+        'bg-cyan-50 text-cyan-800 ring-cyan-600/30',
+        'dark:bg-cyan-400/10 dark:text-cyan-400 dark:ring-cyan-400/20',
+      ],
+      primary: [
+        'bg-purple-50 text-purple-800 ring-purple-600/30',
+        'dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/20',
+      ],
     },
   },
   defaultVariants: {

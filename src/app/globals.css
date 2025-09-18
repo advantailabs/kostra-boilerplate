@@ -2,6 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TipTap Editor Styles */
+@layer components {
+  /* Base spacing for all editor content */
+  .tiptap-editor-content {
+    @apply space-y-4 text-gray-900 dark:text-white;
+  }
+
+  /* Headings spacing */
+  .tiptap-editor-content h1 {
+    @apply mb-6 mt-8 text-2xl font-bold leading-tight;
+  }
+
+  .tiptap-editor-content h2 {
+    @apply mb-5 mt-7 text-xl font-bold leading-tight;
+  }
+
+  .tiptap-editor-content h3 {
+    @apply mb-4 mt-6 text-lg font-bold leading-tight;
+  }
+
+  .tiptap-editor-content h4 {
+    @apply mb-3 mt-5 text-base font-bold leading-tight;
+  }
+
+  .tiptap-editor-content h5 {
+    @apply mb-3 mt-4 text-sm font-bold leading-tight;
+  }
+
+  .tiptap-editor-content h6 {
+    @apply mb-2 mt-4 text-xs font-bold leading-tight;
+  }
+
+  /* Paragraph spacing */
+  .tiptap-editor-content p {
+    @apply mb-4 text-sm leading-relaxed;
+  }
+
+  /* List spacing */
+  .tiptap-editor-content ul,
+  .tiptap-editor-content ol {
+    @apply mb-4 ml-6 space-y-0;
+  }
+
+  .tiptap-editor-content li {
+    @apply my-0 text-sm leading-relaxed;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Force remove any spacing from TipTap list items */
+  .tiptap-editor-content ul li,
+  .tiptap-editor-content ol li {
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Remove margins from paragraphs inside list items */
+  .tiptap-editor-content ul li p,
+  .tiptap-editor-content ol li p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Blockquote spacing */
+  .tiptap-editor-content blockquote {
+    @apply mb-4 ml-4 border-l-4 border-gray-300 pl-4 italic text-gray-600 dark:border-gray-600 dark:text-gray-400;
+  }
+
+  /* Code block spacing */
+  .tiptap-editor-content pre {
+    @apply mb-4 overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800;
+  }
+
+  .tiptap-editor-content code {
+    @apply rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-gray-800;
+  }
+
+  /* Image styles */
+  .tiptap-editor-content img {
+    @apply block h-auto max-w-full cursor-pointer rounded-md border border-gray-200 p-1 transition-opacity hover:opacity-80 dark:border-gray-700;
+    display: block !important;
+    float: none !important;
+  }
+
+  .tiptap-editor-content img:hover {
+    @apply border-blue-300 dark:border-blue-600;
+  }
+
+  .tiptap-editor-content img.ProseMirror-selectednode {
+    @apply border-blue-500 shadow-lg dark:border-blue-400;
+  }
+
+  /* Image alignment styles */
+  .tiptap-editor-content img[align='left'] {
+    @apply mb-6 block w-fit;
+    margin-right: auto;
+    margin-left: 0;
+    clear: both;
+  }
+
+  .tiptap-editor-content img[align='center'] {
+    @apply mx-auto mb-6 block w-fit;
+    clear: both;
+  }
+
+  .tiptap-editor-content img[align='right'] {
+    @apply mb-6 block w-fit;
+    margin-left: auto;
+    margin-right: 0;
+    clear: both;
+  }
+
+  /* Task list spacing */
+  .tiptap-editor-content ul[data-type='taskList'] {
+    @apply list-none space-y-2;
+  }
+
+  .tiptap-editor-content li[data-type='taskItem'] {
+    @apply flex items-start gap-2;
+  }
+
+  /* Horizontal rule spacing */
+  .tiptap-editor-content hr {
+    @apply my-8 border-gray-300 dark:border-gray-600;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -12,9 +140,82 @@
       'rlig' 1,
       'calt' 1;
   }
+
+  /* Global scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 4px 0;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background-clip: content-box;
+    transition: all 0.2s ease;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.5);
+    transform: scaleX(1.2);
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+
+  /* Light theme global scrollbar */
+  @media (prefers-color-scheme: light) {
+    * {
+      scrollbar-color: rgba(107, 114, 128, 0.3) transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: rgba(107, 114, 128, 0.3);
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(107, 114, 128, 0.5);
+    }
+
+    *::-webkit-scrollbar-thumb:active {
+      background-color: rgba(107, 114, 128, 0.7);
+    }
+  }
 }
 
 @layer utilities {
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
   /* Grid background pattern */
   .bg-grid-white\/\[0\.02\] {
     background-image:
@@ -90,6 +291,60 @@
 }
 
 @layer components {
+  /* TipTap Editor Styles */
+  .ProseMirror {
+    outline: none !important;
+    cursor: text;
+    caret-color: currentColor;
+    min-height: inherit;
+  }
+
+  .ProseMirror p {
+    margin: 0.5rem 0;
+  }
+
+  .ProseMirror p:first-child {
+    margin-top: 0;
+  }
+
+  .ProseMirror p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ProseMirror-focused {
+    outline: none !important;
+    cursor: text;
+  }
+
+  .ProseMirror .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    height: 0;
+  }
+
+  .dark .ProseMirror .is-editor-empty:first-child::before {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Ensure editor content is clickable and focusable */
+  .tiptap-editor-content {
+    cursor: text;
+    height: 100%;
+    width: 100%;
+    pointer-events: auto;
+  }
+
+  .tiptap-editor-content .ProseMirror {
+    padding: 0.5rem;
+    height: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-variant-ligatures: none;
+    font-feature-settings: 'liga' 0;
+  }
+
   /* Focus styles for accessibility */
   .focus-visible:focus {
     outline: 2px solid white;

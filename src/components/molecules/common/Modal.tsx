@@ -73,6 +73,11 @@ export interface ModalProps {
   isPrimaryActionLoading?: boolean;
 
   /**
+   * Variant for the primary action button
+   */
+  primaryActionVariant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+
+  /**
    * Additional class name for the content wrapper
    */
   contentClassName?: string;
@@ -96,6 +101,7 @@ export function Modal({
   onPrimaryAction,
   isPrimaryActionDisabled = false,
   isPrimaryActionLoading = false,
+  primaryActionVariant = 'primary',
   contentClassName = '',
   removePadding = false,
 }: ModalProps) {
@@ -103,12 +109,19 @@ export function Modal({
   const defaultFooter = (primaryActionText || secondaryActionText) && !footer && (
     <div className="flex items-center justify-end gap-2">
       {secondaryActionText && (
-        <Button variant="secondary" onClick={onClose} disabled={isPrimaryActionLoading}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onClose}
+          disabled={isPrimaryActionLoading}
+        >
           {secondaryActionText}
         </Button>
       )}
       {primaryActionText && (
         <Button
+          type="button"
+          variant={primaryActionVariant}
           onClick={onPrimaryAction}
           disabled={isPrimaryActionDisabled || isPrimaryActionLoading}
         >
