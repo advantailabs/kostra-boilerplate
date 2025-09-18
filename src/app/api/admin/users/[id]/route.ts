@@ -1,4 +1,5 @@
 import { getAuthUser } from '@/lib/auth/jwt';
+import { hashPassword } from '@/lib/utils/password';
 import {
   badRequestResponse,
   internalServerErrorResponse,
@@ -77,19 +78,51 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
     }
 
-    const { name, email, role } = validationResult.data;
+    const {
+      name,
+      email,
+      role,
+      isOnboarded,
+      credits,
+      stripeCustomerId,
+      plan,
+      isOverDue,
+      planExpiringAt,
+      password,
+    } = validationResult.data;
 
     const user = await getUserById(targetUserId);
     if (!user) {
       return notFoundResponse('User not found');
     }
 
-    // Update user
-    const updatedUser = await updateUserById(targetUserId, {
-      ...(name && { name }),
-      ...(email && { email }),
-      ...(role && { role }),
+    // Prepare update data
+    const updateData: Record<string, any> = {};
+
+    // Add fields to updateData if defined
+    Object.entries({
+      name,
+      email,
+      role,
+      isOnboarded,
+      credits,
+      stripeCustomerId,
+      plan,
+      isOverDue,
+      planExpiringAt,
+    }).forEach(([key, value]) => {
+      if (value !== undefined) {
+        updateData[key] = value;
+      }
     });
+
+    // Handle password separately as it needs hashing
+    if (password !== undefined) {
+      updateData.password = await hashPassword(password);
+    }
+
+    // Update user
+    const updatedUser = await updateUserById(targetUserId, updateData);
 
     const response = {
       user: {

@@ -26,6 +26,13 @@ interface UpdateUserData {
   name?: string;
   email?: string;
   role?: UserRole;
+  isOnboarded?: boolean;
+  credits?: number;
+  stripeCustomerId?: string;
+  plan?: 'FREE' | 'PRO';
+  isOverDue?: boolean;
+  planExpiringAt?: string;
+  password?: string;
 }
 
 export const useAdminUsers = () => {

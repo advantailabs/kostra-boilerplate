@@ -42,6 +42,20 @@ export const updateUserSchema = z.object({
       errorMap: () => ({ message: `Role must be either "${ROLES.ADMIN}" or "${ROLES.USER}"` }),
     })
     .optional(),
+  isOnboarded: z.boolean().optional(),
+  credits: z.number().min(0, 'Credits cannot be negative').optional(),
+  stripeCustomerId: z
+    .string()
+    .max(255, 'Stripe Customer ID must be 255 characters or less')
+    .optional(),
+  plan: z.enum(['FREE', 'PRO']).optional(),
+  isOverDue: z.boolean().optional(),
+  planExpiringAt: z.string().datetime().optional(),
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .max(128, 'Password must be 128 characters or less')
+    .optional(),
 });
 
 // Schema for validating user ID parameter
