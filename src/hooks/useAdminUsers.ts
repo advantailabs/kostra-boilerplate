@@ -12,6 +12,9 @@ interface User {
   isOnboarded: boolean;
   credits: number;
   plan: 'FREE' | 'PRO';
+  stripeCustomerId?: string;
+  isOverDue?: boolean;
+  planExpiringAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,8 +38,13 @@ interface UpdateUserData {
   password?: string;
 }
 
-export const useAdminUsers = () => {
+interface UseAdminUsersOptions {
+  search?: string;
+}
+
+export const useAdminUsers = (options?: UseAdminUsersOptions) => {
   const queryClient = useQueryClient();
+  const { search = '' } = options || {};
 
   // Get all users
   const {
@@ -44,9 +52,13 @@ export const useAdminUsers = () => {
     isLoading,
     error,
   } = useQuery<User[]>({
-    queryKey: ['admin-users'],
+    queryKey: ['admin-users', search],
     queryFn: async () => {
-      const response = await axios.get('/admin/users');
+      const params = new URLSearchParams();
+      if (search) {
+        params.append('search', search);
+      }
+      const response = await axios.get(`/admin/users?${params.toString()}`);
       return response.data.data.users;
     },
   });
