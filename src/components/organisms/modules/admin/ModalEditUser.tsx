@@ -41,11 +41,11 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         name: user.name || '',
         email: user.email || '',
         role: user.role || 'USER',
-        isOnboarded: user.isOnboarded || false,
+        isOnboarded: user.isOnboarded ?? false,
         credits: user.credits || 0,
         stripeCustomerId: user.stripeCustomerId || '',
         plan: user.plan || 'FREE',
-        isOverDue: user.isOverDue || false,
+        isOverDue: user.isOverDue ?? false,
         planExpiringAt: user.planExpiringAt || '',
         password: '',
       });

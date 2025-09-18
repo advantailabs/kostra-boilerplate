@@ -14,13 +14,25 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search') || '';
+
     // Get all users (excluding soft deleted)
     const users = await getUserByRole(UserRole.USER, true);
 
+    // Filter users based on search term
+    const filteredUsers = search
+      ? users.filter(
+          user =>
+            user.name.toLowerCase().includes(search.toLowerCase()) ||
+            user.email.toLowerCase().includes(search.toLowerCase())
+        )
+      : users;
+
     const response = {
-      users: users.map(user => ({
+      users: filteredUsers.map(user => ({
         id: user.id,
         name: user.name,
         email: user.email,
@@ -29,6 +41,9 @@ export async function GET(_request: NextRequest) {
         isOnboarded: user.isOnboarded,
         credits: user.credits,
         plan: user.plan,
+        stripeCustomerId: user.stripeCustomerId,
+        isOverDue: user.isOverDue,
+        planExpiringAt: user.planExpiringAt?.toISOString(),
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),

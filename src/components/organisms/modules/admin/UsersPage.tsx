@@ -1,7 +1,9 @@
 'use client';
 
 import { RiMore2Fill } from '@remixicon/react';
+import Image from 'next/image';
 import { useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
@@ -19,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/molecules/common/Select';
+import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, ROLES, UserRole } from '@/lib/constants/admin';
 import { useAuthStore } from '@/store/auth';
@@ -33,7 +36,10 @@ interface UsersPageProps {
 }
 
 export function UsersPage({ className }: UsersPageProps) {
-  const { users, isLoading, updateUser } = useAdminUsers();
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch] = useDebounce(searchInput, 400);
+
+  const { users, isLoading, updateUser } = useAdminUsers({ search: debouncedSearch });
   const { user: currentUser } = useAuthStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -93,7 +99,118 @@ export function UsersPage({ className }: UsersPageProps) {
     setIsAddModalOpen(true);
   };
 
-  if (isLoading || !currentUser) {
+  const renderUserList = () => {
+    // Show loading state only during search, not initial load
+    if (isLoading && searchInput !== debouncedSearch) {
+      return (
+        <li className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+            <span className="text-sm text-gray-500">Searching...</span>
+          </div>
+        </li>
+      );
+    }
+
+    // Show loading state for initial data load
+    if (isLoading && !searchInput) {
+      return (
+        <li className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+            <span className="text-sm text-gray-500">Loading users...</span>
+          </div>
+        </li>
+      );
+    }
+
+    if (users.length === 0) {
+      return (
+        <li className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              {searchInput ? 'No users found matching your search.' : 'No users found.'}
+            </p>
+          </div>
+        </li>
+      );
+    }
+
+    return users.map(user => (
+      <li key={user.id} className="flex items-center justify-between gap-x-6 py-2.5">
+        <div className="flex items-center gap-x-4 truncate">
+          {user.profilePicture ? (
+            <Image
+              src={user.profilePicture}
+              alt={user.name}
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-full border border-gray-300 object-cover dark:border-gray-800"
+            />
+          ) : (
+            <span
+              className="hidden size-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 sm:flex dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300"
+              aria-hidden="true"
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </span>
+          )}
+          <div className="truncate">
+            <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">
+              {user.name}
+            </p>
+            <p className="truncate text-xs text-gray-500">{user.email}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Select
+            defaultValue={getUserRoleForDisplay(user.role)}
+            disabled={isCurrentUser(user)}
+            onValueChange={value => handleRoleChange(user.id, value)}
+          >
+            <SelectTrigger className="h-8 w-32">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {ADMIN_ROLES.map(role => (
+                <SelectItem key={role.value} value={role.value}>
+                  {role.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="group size-8 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:border hover:border-gray-300 hover:bg-gray-50 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+              >
+                <RiMore2Fill
+                  className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-hover:dark:text-gray-400"
+                  aria-hidden="true"
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem onClick={() => handleViewUserDetails(user)}>
+                View details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleEditUser(user)}>Edit</DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-600 dark:text-red-500"
+                disabled={isCurrentUser(user)}
+                onClick={() => handleDeleteUser(user)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </li>
+    ));
+  };
+
+  if (!currentUser) {
     return <LoadingScreen message="Loading users..." />;
   }
 
@@ -107,77 +224,15 @@ export function UsersPage({ className }: UsersPageProps) {
       />
 
       <div className="h-full p-4 max-sm:p-3">
+        <UnifiedSearchBar
+          placeholder="Search by name or email..."
+          value={searchInput}
+          onChange={setSearchInput}
+          className="mb-4"
+        />
+
         <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-800">
-          {users.map(user => (
-            <li key={user.id} className="flex items-center justify-between gap-x-6 py-2.5">
-              <div className="flex items-center gap-x-4 truncate">
-                {user.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt={user.name}
-                    className="size-9 shrink-0 rounded-full border border-gray-300 object-cover dark:border-gray-800"
-                  />
-                ) : (
-                  <span
-                    className="hidden size-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 sm:flex dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300"
-                    aria-hidden="true"
-                  >
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
-                <div className="truncate">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">
-                    {user.name}
-                  </p>
-                  <p className="truncate text-xs text-gray-500">{user.email}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Select
-                  defaultValue={getUserRoleForDisplay(user.role)}
-                  disabled={isCurrentUser(user)}
-                  onValueChange={value => handleRoleChange(user.id, value)}
-                >
-                  <SelectTrigger className="h-8 w-32">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent align="end">
-                    {ADMIN_ROLES.map(role => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="group size-8 hover:border hover:border-gray-300 hover:bg-gray-50 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 hover:dark:bg-gray-900 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
-                    >
-                      <RiMore2Fill
-                        className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-hover:dark:text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-36">
-                    <DropdownMenuItem onClick={() => handleViewUserDetails(user)}>
-                      View details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleEditUser(user)}>Edit</DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-red-600 dark:text-red-500"
-                      disabled={isCurrentUser(user)}
-                      onClick={() => handleDeleteUser(user)}
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </li>
-          ))}
+          {renderUserList()}
         </ul>
       </div>
 

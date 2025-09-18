@@ -40,7 +40,7 @@ export function UserDetailsList({ user, className }: UserDetailsListProps) {
       <DetailItem label="Full Name" value={name} />
       <DetailItem label="Email Address" value={email} />
       <DetailItem label="Role" value={getRoleDisplayName(role)} />
-      <DetailItem label="Status" value={isOnboarded ? 'Onboarded' : 'Pending Onboarding'} />
+      <DetailItem label="Status" value={isOnboarded ? 'Onboarded' : 'Onboarding Pending'} />
       <DetailItem label="Credits" value={credits.toLocaleString()} />
       <DetailItem label="Plan" value={plan} />
       <DetailItem label="Member Since" value={createdDate} />
