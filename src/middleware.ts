@@ -1,4 +1,4 @@
-import { getAuthUser } from '@/lib/auth/jwt';
+import { getAuthUser, JWT_KEY } from '@/lib/auth/jwt';
 import {
   applyCorsHeaders,
   checkAccess,
@@ -59,12 +59,12 @@ const middleware = async (request: NextRequest) => {
       // For API routes, return JSON error instead of redirect
       if (path.startsWith('/api/')) {
         const response = forbiddenResponse();
-        response.cookies.delete('auth-token');
+        response.cookies.delete(JWT_KEY || 'auth-token');
         return applyCorsHeaders(request, response);
       }
       // For page routes, redirect to login
       const response = NextResponse.redirect(new URL('/', request.url));
-      response.cookies.delete('auth-token');
+      response.cookies.delete(JWT_KEY || 'auth-token');
       return response;
     }
   }
@@ -83,12 +83,12 @@ const middleware = async (request: NextRequest) => {
       // For API routes, return JSON error instead of redirect
       if (path.startsWith('/api/')) {
         const response = forbiddenResponse();
-        response.cookies.delete('auth-token');
+        response.cookies.delete(JWT_KEY || 'auth-token');
         return applyCorsHeaders(request, response);
       }
       // For page routes, redirect to login
       const response = NextResponse.redirect(new URL('/', request.url));
-      response.cookies.delete('auth-token');
+      response.cookies.delete(JWT_KEY || 'auth-token');
       return response;
     }
 

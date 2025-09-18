@@ -51,7 +51,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
   const credits = useCreditStore(state => state.credits);
 
   const footer = (
-    <div className="flex w-full items-center justify-between gap-2">
+    <div className="flex w-full items-center justify-between gap-2 px-4">
       <div className="flex items-center gap-2">
         <p className="text-sm text-gray-600 dark:text-gray-300">
           Contact{' '}

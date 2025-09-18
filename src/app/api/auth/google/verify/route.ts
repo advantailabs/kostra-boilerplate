@@ -1,4 +1,4 @@
-import { generateJWT } from '@/lib/auth/jwt';
+import { generateJWT, JWT_KEY } from '@/lib/auth/jwt';
 import {
   badRequestResponse,
   internalServerErrorResponse,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     const token = await generateJWT(jwtPayload);
 
     // Set the token in an HTTP-only cookie
-    cookies().set('auth-token', token, {
+    cookies().set(JWT_KEY || 'auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

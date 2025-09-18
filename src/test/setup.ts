@@ -1,3 +1,4 @@
+import { JWT_KEY } from '@/lib/auth/jwt';
 import { PrismaClient } from '@prisma/client';
 
 /* eslint-disable no-var, vars-on-top, no-underscore-dangle */
@@ -118,7 +119,7 @@ export function createMockRequest(body: any = {}, params: any = {}, headers: any
     headers: new Map(Object.entries(headers)),
     cookies: {
       get: jest.fn().mockImplementation((name: string) => {
-        if (name === 'auth-token') {
+        if (name === (JWT_KEY || 'auth-token')) {
           return { value: 'mock-jwt-token' };
         }
         return undefined;

@@ -18,6 +18,8 @@ export interface JWTPayload {
 
 const JWT_ALGORITHM = 'HS256';
 const JWT_SECRET_RAW = process.env.JWT_SECRET;
+export const JWT_KEY = process.env.JWT_KEY;
+
 if (!JWT_SECRET_RAW) {
   throw new Error('JWT_SECRET must be set');
 }
@@ -44,7 +46,7 @@ export const verifyJWT = async (token: string): Promise<JWTPayload> => {
 };
 
 export const extractTokenFromRequest = (request: NextRequest): string | null => {
-  const token = request.cookies.get('auth-token')?.value;
+  const token = request.cookies.get(JWT_KEY || 'auth-token')?.value;
   return token || null;
 };
 

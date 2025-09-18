@@ -2,6 +2,7 @@
  * Permission and authentication logic
  */
 
+import { JWT_KEY } from '@/lib/auth/jwt';
 import { jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 import { HttpMethod, ROLES_LIST, USER, UserRole } from './types';
@@ -25,7 +26,7 @@ export async function verifyJWT(token: string) {
  * Extracts and validates user role from request headers
  */
 export async function checkUserRoleStatus(request: NextRequest): Promise<UserRole | null> {
-  const token = request.cookies.get('auth-token')?.value;
+  const token = request.cookies.get(JWT_KEY || 'auth-token')?.value;
   if (token) {
     const decoded = await verifyJWT(token);
     if (decoded && typeof decoded.role === 'string') {

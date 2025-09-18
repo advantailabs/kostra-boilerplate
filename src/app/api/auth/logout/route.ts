@@ -1,3 +1,4 @@
+import { JWT_KEY } from '@/lib/auth/jwt';
 import { internalServerErrorResponse, successResponse } from '@/lib/utils/response';
 import { cookies } from 'next/headers';
 
@@ -6,7 +7,7 @@ export async function POST() {
     const cookieStore = cookies();
 
     // Clear the auth token cookie
-    cookieStore.delete('auth-token');
+    cookieStore.delete(JWT_KEY || 'auth-token');
 
     return successResponse({ success: true, message: 'Logged out successfully' });
   } catch (error) {
