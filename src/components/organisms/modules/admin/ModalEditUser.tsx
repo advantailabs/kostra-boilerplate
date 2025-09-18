@@ -118,7 +118,6 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
       isOpen={isOpen}
       onClose={onClose}
       title="Edit User"
-      description="Update user information and settings"
       maxWidth="max-w-2xl"
       primaryActionText="Save changes"
       secondaryActionText="Close"

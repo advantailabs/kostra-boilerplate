@@ -69,7 +69,6 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
       isOpen={isOpen}
       onClose={handleClose}
       title="Add New User"
-      description="Create a new user account with email and password authentication."
       maxWidth="max-w-md"
       primaryActionText="Add User"
       secondaryActionText="Cancel"
