@@ -144,7 +144,7 @@ export function Modal({
         <DialogHeader className="relative border-b border-gray-200 p-4 max-sm:p-3 dark:border-gray-700">
           <DialogTitle className="text-base max-sm:pr-12">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="mt-1 text-sm max-sm:pr-12">
+            <DialogDescription className="-mt-1 text-sm max-sm:pr-12">
               {description}
             </DialogDescription>
           )}
