@@ -97,18 +97,27 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Prepare update data
-    const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
-    if (email !== undefined) updateData.email = email;
-    if (role !== undefined) updateData.role = role;
-    if (isOnboarded !== undefined) updateData.isOnboarded = isOnboarded;
-    if (credits !== undefined) updateData.credits = credits;
-    if (stripeCustomerId !== undefined) updateData.stripeCustomerId = stripeCustomerId;
-    if (plan !== undefined) updateData.plan = plan;
-    if (isOverDue !== undefined) updateData.isOverDue = isOverDue;
-    if (planExpiringAt !== undefined) updateData.planExpiringAt = planExpiringAt;
+    const updateData: Record<string, any> = {};
+
+    // Add fields to updateData if defined
+    Object.entries({
+      name,
+      email,
+      role,
+      isOnboarded,
+      credits,
+      stripeCustomerId,
+      plan,
+      isOverDue,
+      planExpiringAt,
+    }).forEach(([key, value]) => {
+      if (value !== undefined) {
+        updateData[key] = value;
+      }
+    });
+
+    // Handle password separately as it needs hashing
     if (password !== undefined) {
-      // Hash the password before storing
       updateData.password = await hashPassword(password);
     }
 
