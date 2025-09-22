@@ -71,10 +71,10 @@ export function InnovativeHero() {
             className="mb-6 sm:mb-8"
           >
             <h1 className="text-4xl font-light leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-              Let your{' '}
+              Build your{' '}
               <span className="relative">
                 <span className="bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
-                  Peon
+                  SaaS
                 </span>
                 <motion.div
                   className="absolute -right-1 top-0 h-full w-0.5 bg-white"
@@ -83,7 +83,7 @@ export function InnovativeHero() {
                 />
               </span>
               <br />
-              manage your files
+              application faster
             </h1>
           </motion.div>
 
@@ -94,8 +94,8 @@ export function InnovativeHero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-gray-400 sm:mb-12 sm:text-xl md:text-2xl"
           >
-            <span className="text-white">Convert your knowledge into intelligence</span> with
-            AI-powered research and analysis that goes beyond simple question answering
+            <span className="text-white">A comprehensive boilerplate</span> with modern features,
+            authentication, and scalable architecture to accelerate your development
           </motion.p>
 
           {/* Interactive CTA */}
@@ -166,9 +166,9 @@ export function InnovativeHero() {
             className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-6 sm:mt-20 sm:gap-8 md:grid-cols-3"
           >
             {[
-              { value: '100k+', label: 'Documents processed' },
-              { value: '50+', label: 'Enterprises' },
-              { value: '70%', label: 'Time saved' },
+              { value: '100+', label: 'Components included' },
+              { value: '50+', label: 'Features ready' },
+              { value: '90%', label: 'Time saved' },
             ].map((metric, index) => (
               <div key={index} className="text-center">
                 <div className="mb-2 text-2xl font-light text-white sm:text-3xl md:text-4xl">

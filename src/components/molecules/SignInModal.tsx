@@ -201,7 +201,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
               <span className="text-xs text-gray-500">
                 Secured by{' '}
                 <Image
-                  src="/logos/dark-full-logo.svg"
+                  src="/logos/dark-logo.svg"
                   alt="Peon Logo"
                   width={50}
                   height={50}

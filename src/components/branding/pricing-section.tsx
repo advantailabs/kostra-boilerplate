@@ -28,8 +28,7 @@ export function PricingSection() {
             Simple, Transparent Pricing
           </h2>
           <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-600 dark:text-gray-300">
-            Choose the plan that fits your organization's needs. Start free, upgrade when you're
-            ready.
+            Choose the plan that fits your needs. Start free and upgrade as you grow.
           </p>
         </motion.div>
 
@@ -133,7 +132,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">No Credit Card Required</h4>
-              <p className="text-gray-400">Start with 100 free credits instantly</p>
+              <p className="text-gray-400">Start with free plan instantly</p>
             </div>
 
             <div className="text-center">

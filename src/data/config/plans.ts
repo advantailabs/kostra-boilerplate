@@ -11,25 +11,30 @@ export type Plan = {
 export const PLANS: Plan[] = [
   {
     id: 'free',
-    name: 'Free Mode',
+    name: 'Starter',
     price: '$0',
     description:
-      'Best to try Peon. Free users can have 1 persona, 1 knowledge base, and up to 50 total files. 50 credits are available to start with.',
-    features: ['1 persona', '1 knowledge base', 'Up to 50 total files', 'Basic Chat & Search'],
-    badge: 'Limited',
+      'Perfect for getting started. Includes basic features and limited usage to explore the platform.',
+    features: [
+      'Basic authentication',
+      'File uploads (up to 100)',
+      'Dashboard access',
+      'Community support',
+    ],
+    badge: 'Free',
   },
   {
     id: 'pro',
-    name: 'Pro Mode',
-    price: '$15',
+    name: 'Professional',
+    price: '$29',
     period: 'month',
-    description: 'Monthly subscription. Unlimited creation features and higher limits each month.',
+    description: 'Full access to all features with higher limits and priority support.',
     features: [
-      '10,000 credits per month',
-      'Unlimited personas & knowledge bases',
-      'Up to 10,000 file uploads',
-      '5 GB file storage included',
+      'Unlimited file uploads',
+      'Advanced analytics',
       'Priority support',
+      'Custom integrations',
+      'Team collaboration',
     ],
     badge: 'Popular',
   },
@@ -37,13 +42,13 @@ export const PLANS: Plan[] = [
     id: 'enterprise',
     name: 'Enterprise',
     price: 'Custom',
-    description: 'Tailored deployment, security and support for your organization.',
+    description: 'Tailored solution for large organizations with custom requirements.',
     features: [
-      'Your cloud and infra',
-      'Your LLM infra',
-      'Custom file storage limits',
-      'SSO',
-      '24/7 support & maintenance',
+      'Custom deployment',
+      'Dedicated support',
+      'SSO integration',
+      'Custom branding',
+      'SLA guarantee',
     ],
   },
 ];
@@ -61,13 +66,13 @@ export const FREE_LIMITS = {
 
 export const PLANS_CONFIG = {
   pro: {
-    name: 'Pro Mode',
-    price: '15',
-    credits: 10000,
+    name: 'Professional',
+    price: '29',
+    features: ['unlimited_files', 'advanced_analytics', 'priority_support'],
   },
-  creditPack: {
-    name: 'Credit Pack',
-    price: '10',
-    credits: 1000,
+  enterprise: {
+    name: 'Enterprise',
+    price: 'custom',
+    features: ['custom_deployment', 'dedicated_support', 'sso'],
   },
 };

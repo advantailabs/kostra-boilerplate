@@ -39,7 +39,7 @@ export function ModernNavigation() {
 
       // Only track sections when on landing page and after initialization
       if (pathname === '/' && hasInitialized) {
-        const sections = ['home', 'product', 'features', 'security', 'integrations', 'cta'];
+        const sections = ['home', 'product', 'features', 'security', 'pricing', 'cta'];
         const scrollPosition = window.scrollY + 100; // Offset for fixed header
 
         let currentSection = '';
@@ -83,13 +83,9 @@ export function ModernNavigation() {
     { name: 'Product', href: '/#product', section: 'product' },
     { name: 'Features', href: '/#features', section: 'features' },
     { name: 'Security', href: '/#security', section: 'security' },
-    { name: 'Customizations', href: '/customizations', section: 'customizations' },
   ];
 
   const isActive = (item: { href: string; section: string }) => {
-    if (item.href === '/customizations') {
-      return pathname === '/customizations';
-    }
     // For anchor links on landing page, check if this section is currently in view
     if (pathname === '/' && item.section) {
       return activeSection === item.section;
@@ -130,7 +126,7 @@ export function ModernNavigation() {
             <div className="h-6 w-6 sm:h-8 sm:w-8">
               <Image
                 src="/logos/light-logo.svg"
-                alt="Peon Logo"
+                alt="SaaS Boilerplate Logo"
                 width={32}
                 height={32}
                 className="h-full w-full object-contain"

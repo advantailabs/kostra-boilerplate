@@ -1,5 +1,4 @@
 import { CTASection } from '@/components/branding/cta-section';
-import { CustomizationsSection } from '@/components/branding/customizations-section';
 import { InnovativeHero } from '@/components/branding/innovative-hero';
 import { MinimalFeatures } from '@/components/branding/minimal-features';
 import { PricingSection } from '@/components/branding/pricing-section';
@@ -8,35 +7,35 @@ import { SecuritySection } from '@/components/branding/security-section';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Peon - Your Personal AI Assistant',
+  title: 'SaaS Boilerplate - Modern Web Application',
   description:
-    'Transform scattered information into actionable intelligence with AI-powered knowledge assistants. Trusted by hundreds of organizations worldwide.',
+    'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture. Perfect for building your next web application.',
   keywords:
-    'knowledge management, AI assistants, document organization, enterprise search, intelligent automation',
+    'saas boilerplate, web application, authentication, modern ui, scalable architecture, next.js',
   openGraph: {
-    title: 'Peon - Your Personal AI Assistant',
+    title: 'SaaS Boilerplate - Modern Web Application',
     description:
-      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
+      'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
     type: 'website',
-    url: 'https://peon.sh',
+    url: 'https://your-domain.com',
     images: [
       {
-        url: '/screenshots/search.png',
+        url: '/screenshots/dashboard.png',
         width: 1200,
         height: 630,
-        alt: 'Peon AI Chat Interface',
+        alt: 'SaaS Application Dashboard',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Peon - Your Personal AI Assistant',
+    title: 'SaaS Boilerplate - Modern Web Application',
     description:
-      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
-    images: ['/screenshots/search.png'],
+      'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+    images: ['/screenshots/dashboard.png'],
   },
   alternates: {
-    canonical: 'https://peon.sh',
+    canonical: 'https://your-domain.com',
   },
   robots: {
     index: true,
@@ -61,35 +60,38 @@ export default function HomePage() {
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: 'Peon - Your Personal AI Assistant',
+              name: 'SaaS Boilerplate - Modern Web Application',
               description:
-                'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
-              url: 'https://peon.sh',
-              sameAs: ['https://peon.sh/privacy-policy', 'https://peon.sh/terms-of-services'],
+                'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+              url: 'https://your-domain.com',
+              sameAs: [
+                'https://your-domain.com/privacy-policy',
+                'https://your-domain.com/terms-of-services',
+              ],
               mainEntity: {
                 '@type': 'SoftwareApplication',
-                name: 'Peon',
+                name: 'SaaS Boilerplate',
                 applicationCategory: 'BusinessApplication',
                 description:
-                  'AI-powered knowledge assistants for enterprise document organization and intelligent automation.',
+                  'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
                 operatingSystem: 'Web Browser',
                 offers: {
                   '@type': 'Offer',
                   price: '0',
                   priceCurrency: 'USD',
-                  description: 'Free tier available with 100 credits',
+                  description: 'Free tier available',
                 },
               },
               publisher: {
                 '@type': 'Organization',
-                name: 'Peon',
-                url: 'https://peon.sh',
+                name: 'SaaS Boilerplate',
+                url: 'https://your-domain.com',
               },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://peon.sh/app?q={search_term_string}',
+                  urlTemplate: 'https://your-domain.com/app?q={search_term_string}',
                 },
                 'query-input': 'required name=search_term_string',
               },
@@ -109,19 +111,19 @@ export default function HomePage() {
                   '@type': 'ListItem',
                   position: 1,
                   name: 'Home',
-                  item: 'https://peon.sh',
+                  item: 'https://your-domain.com',
                 },
                 {
                   '@type': 'ListItem',
                   position: 2,
                   name: 'Privacy Policy',
-                  item: 'https://peon.sh/privacy-policy',
+                  item: 'https://your-domain.com/privacy-policy',
                 },
                 {
                   '@type': 'ListItem',
                   position: 3,
                   name: 'Terms of Service',
-                  item: 'https://peon.sh/terms-of-services',
+                  item: 'https://your-domain.com/terms-of-services',
                 },
               ],
             }),
@@ -142,10 +144,6 @@ export default function HomePage() {
 
         <section id="security">
           <SecuritySection />
-        </section>
-
-        <section id="integrations">
-          <CustomizationsSection />
         </section>
 
         <section id="pricing">

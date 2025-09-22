@@ -24,8 +24,8 @@ const footerSections: FooterSection[] = [
     title: 'Product',
     links: [
       { name: 'Features', href: '#features' },
-      { name: 'Integrations', href: '#integrations' },
       { name: 'Pricing', href: '#pricing' },
+      { name: 'Security', href: '#security' },
     ],
   },
   {
@@ -67,8 +67,8 @@ export function MinimalFooter() {
                 <div className="mb-4 flex items-center sm:mb-6">
                   <div className="h-6 w-6 sm:h-8 sm:w-8">
                     <Image
-                      src="/logos/light-full-logo.svg"
-                      alt="Peon Logo"
+                      src="/logos/light-logo.svg"
+                      alt="SaaS Boilerplate Logo"
                       width={80}
                       height={20}
                       className="h-full w-full object-contain"
@@ -77,8 +77,8 @@ export function MinimalFooter() {
                 </div>
 
                 <p className="mb-6 max-w-md leading-relaxed text-gray-400 sm:mb-8 sm:text-sm">
-                  Transform scattered information into actionable intelligence with AI-powered
-                  knowledge assistants.
+                  A comprehensive SaaS boilerplate with modern features, authentication, and
+                  scalable architecture.
                 </p>
 
                 {/* Social links */}
@@ -190,7 +190,7 @@ export function MinimalFooter() {
           viewport={{ once: true }}
         >
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 sm:gap-6 sm:text-sm">
-            <span>© {new Date().getFullYear()} Peon. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} SaaS Boilerplate. All rights reserved.</span>
             <Link
               href={siteConfig.baseLinks.privacy}
               className="font-medium text-gray-300 underline transition-colors hover:text-white"
