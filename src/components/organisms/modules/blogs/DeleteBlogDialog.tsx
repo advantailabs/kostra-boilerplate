@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal } from '@/components/molecules/common/Modal';
+import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 
 interface DeleteBlogDialogProps {
   isOpen: boolean;
@@ -21,38 +21,21 @@ export function DeleteBlogDialog({
   deleteBlog,
   isDeleting,
 }: DeleteBlogDialogProps) {
-  // Handle blog deletion
   const handleDelete = async () => {
     if (!blogId) return;
-    try {
-      await deleteBlog(blogId);
-      onClose();
-      onSuccess();
-    } catch (error) {
-      console.error('Error deleting blog:', error);
-      // Error is already handled by the mutation hook
-    }
+    await deleteBlog(blogId);
   };
 
   return (
-    <Modal
+    <DeleteDialog
       isOpen={isOpen}
       onClose={onClose}
-      maxWidth="max-w-md"
+      onConfirm={handleDelete}
       title="Delete Blog"
-      primaryActionText={isDeleting ? 'Deleting...' : 'Delete'}
-      secondaryActionText="Cancel"
-      onPrimaryAction={handleDelete}
-      isPrimaryActionDisabled={isDeleting || !blogId}
-      isPrimaryActionLoading={isDeleting}
-      primaryActionVariant="destructive"
-    >
-      <div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Are you sure you want to delete the blog <strong>{blogTitle}</strong>? This action cannot
-          be undone.
-        </p>
-      </div>
-    </Modal>
+      itemName={blogTitle}
+      itemType="blog"
+      isLoading={isDeleting}
+      onSuccess={onSuccess}
+    />
   );
 }

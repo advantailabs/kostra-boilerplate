@@ -1,4 +1,4 @@
-import { Modal } from '@/components/molecules/common/Modal';
+import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ModalDeleteUserProps } from '@/types/user';
 
@@ -7,51 +7,35 @@ export function ModalDeleteUser({ isOpen, onClose, user }: ModalDeleteUserProps)
 
   const handleDelete = async () => {
     if (!user) return;
-
-    try {
-      await deleteUser(user.id);
-      onClose();
-    } catch (error) {
-      // Error handling is done in the hook
-    }
+    await deleteUser(user.id);
   };
 
   if (!user) return null;
 
+  const additionalInfo = (
+    <div className="space-y-2">
+      <div>
+        <span className="font-medium text-gray-900 dark:text-gray-50">Name:</span>
+        <span className="ml-2 text-gray-700 dark:text-gray-300">{user.name}</span>
+      </div>
+      <div>
+        <span className="font-medium text-gray-900 dark:text-gray-50">Email:</span>
+        <span className="ml-2 text-gray-700 dark:text-gray-300">{user.email}</span>
+      </div>
+    </div>
+  );
+
   return (
-    <Modal
+    <DeleteDialog
       isOpen={isOpen}
       onClose={onClose}
+      onConfirm={handleDelete}
       title="Delete User"
-      description={`Are you sure you want to delete ${user.name}? This action cannot be undone.`}
-      maxWidth="max-w-md"
-      primaryActionText="Delete User"
-      secondaryActionText="Cancel"
-      onPrimaryAction={handleDelete}
-      isPrimaryActionLoading={isDeleting}
-      isPrimaryActionDisabled={isDeleting}
-    >
-      <div className="space-y-4">
-        <div className="rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
-          <div className="text-sm text-yellow-800 dark:text-yellow-200">
-            <p>
-              <strong>Warning:</strong> This will permanently delete the user account and all
-              associated data.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div>
-            <span className="font-medium text-gray-900 dark:text-gray-50">Name:</span>
-            <span className="ml-2 text-gray-700 dark:text-gray-300">{user.name}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-900 dark:text-gray-50">Email:</span>
-            <span className="ml-2 text-gray-700 dark:text-gray-300">{user.email}</span>
-          </div>
-        </div>
-      </div>
-    </Modal>
+      itemName={user.name}
+      itemType="user"
+      isLoading={isDeleting}
+      warningMessage="This will permanently delete the user account and all associated data."
+      additionalInfo={additionalInfo}
+    />
   );
 }

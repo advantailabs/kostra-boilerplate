@@ -1,4 +1,5 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getBucketName } from '@/lib/file-upload-config';
 import { generateDownloadUrl } from '@/lib/s3';
 import {
   errorResponse,
@@ -41,9 +42,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return forbiddenResponse('Access denied');
     }
 
-    // Use the filename as the S3 key and default to private bucket
+    // Use the filename as the storage key and get the correct private bucket name
     const key = file.url || file.filename;
-    const bucket = process.env.R2_PRIVATE_BUCKET_NAME || 'peon-data-private';
+    const bucket = getBucketName('private');
 
     // Generate download URL
     const { downloadUrl, expiresAt } = await generateDownloadUrl(bucket, key, file.originalName);

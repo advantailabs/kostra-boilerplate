@@ -34,3 +34,57 @@ export const logout = async () => {
   const response = await axios.post('/auth/logout');
   return response.data;
 };
+
+export const login = async (data: { email: string; password: string }): Promise<AuthResponse> => {
+  const response = await axios.post('/auth/login', data);
+  return (response.data as any).data as AuthResponse;
+};
+
+export const signup = async (data: { email: string }): Promise<{ message: string }> => {
+  const response = await axios.post('/auth/signup', data);
+  return (response.data as any).data as { message: string };
+};
+
+export const verifySignup = async (data: {
+  email: string;
+  name: string;
+  password: string;
+  otp: string;
+}): Promise<AuthResponse> => {
+  const response = await axios.post('/auth/verify-signup', data);
+  return (response.data as any).data as AuthResponse;
+};
+
+export const resendOTP = async (data: {
+  email: string;
+  purpose: 'SIGNUP' | 'PASSWORD_RESET';
+}): Promise<{ message: string }> => {
+  const response = await axios.post('/auth/resend-otp', data);
+  return (response.data as any).data as { message: string };
+};
+
+export const forgotPassword = async (data: { email: string }): Promise<{ message: string }> => {
+  const response = await axios.post('/auth/forgot-password', data);
+  return (response.data as any).data as { message: string };
+};
+
+export const resetPassword = async (data: {
+  email: string;
+  newPassword: string;
+  otp: string;
+}): Promise<{ message: string }> => {
+  const response = await axios.post('/auth/reset-password', data);
+  return (response.data as any).data as { message: string };
+};
+
+export const authApi = {
+  getAuth,
+  googleSignIn,
+  logout,
+  login,
+  signup,
+  verifySignup,
+  resendOTP,
+  forgotPassword,
+  resetPassword,
+};

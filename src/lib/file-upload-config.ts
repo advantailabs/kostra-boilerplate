@@ -110,8 +110,14 @@ export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
     },
   },
   buckets: {
-    public: process.env.R2_PUBLIC_BUCKET_NAME || 'peon-data-public',
-    private: process.env.R2_PRIVATE_BUCKET_NAME || 'peon-data-private',
+    public:
+      process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER === 's3'
+        ? process.env.S3_PUBLIC_BUCKET_NAME || 'peon-data-public'
+        : process.env.R2_PUBLIC_BUCKET_NAME || 'peon-data-public',
+    private:
+      process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER === 's3'
+        ? process.env.S3_PRIVATE_BUCKET_NAME || 'peon-data-private'
+        : process.env.R2_PRIVATE_BUCKET_NAME || 'peon-data-private',
   },
 };
 

@@ -5,10 +5,32 @@ import { randomUUID } from 'crypto';
 import { getBucketName, getUploadPurposeConfig } from './file-upload-config';
 
 // Client-side environment variables (available in browser)
-export const S3_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
+export const S3_PUBLIC_BASE_URL =
+  process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER === 's3'
+    ? process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL
+    : process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
 
 function createS3Client() {
-  // Server-side environment variables validation
+  const driver = process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER || 'r2';
+
+  if (driver === 's3') {
+    // S3 Configuration
+    const { AWS_ACCESS_KEY_ID } = process.env;
+    const { AWS_SECRET_ACCESS_KEY } = process.env;
+    const { AWS_REGION } = process.env;
+
+    if (!AWS_ACCESS_KEY_ID) throw new Error('AWS_ACCESS_KEY_ID is required');
+    if (!AWS_SECRET_ACCESS_KEY) throw new Error('AWS_SECRET_ACCESS_KEY is required');
+
+    return new S3Client({
+      region: AWS_REGION || 'us-east-1',
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      },
+    });
+  }
+  // R2 Configuration (default)
   const { R2_ACCESS_KEY_ID } = process.env;
   const { R2_SECRET_ACCESS_KEY } = process.env;
   const { R2_ACCOUNT_ID } = process.env;
