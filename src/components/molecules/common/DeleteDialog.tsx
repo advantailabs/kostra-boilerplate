@@ -71,8 +71,6 @@ export function DeleteDialog({
     }
   };
 
-  const defaultWarningMessage = `Are you sure you want to delete the ${itemType} <strong>${itemName}</strong>? This action cannot be undone.`;
-
   return (
     <Modal
       isOpen={isOpen}
@@ -97,10 +95,10 @@ export function DeleteDialog({
           </div>
         )}
 
-        <p
-          className="text-sm text-gray-600 dark:text-gray-400"
-          dangerouslySetInnerHTML={{ __html: warningMessage || defaultWarningMessage }}
-        />
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Are you sure you want to delete the {itemType} <strong>{itemName}</strong>? This action
+          cannot be undone.
+        </p>
 
         {additionalInfo && <div className="mt-4 space-y-2">{additionalInfo}</div>}
       </div>

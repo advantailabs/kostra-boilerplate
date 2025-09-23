@@ -1,5 +1,4 @@
 import {
-  badRequestResponse,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
@@ -26,7 +25,7 @@ export async function POST(request: NextRequest) {
     const result = await AuthService.initiatePasswordReset(email);
 
     if (!result.success) {
-      return badRequestResponse(result.message);
+      return internalServerErrorResponse();
     }
 
     return successResponse({

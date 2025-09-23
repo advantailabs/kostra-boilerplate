@@ -1,6 +1,7 @@
 import { generateJWT } from '@/lib/auth/jwt';
 import { comparePassword, hashPassword, validatePassword } from '@/lib/utils/password';
 import { OtpPurpose, UserRole } from '@prisma/client';
+import { emailOTPRepository } from '../repositories/email-otp';
 import { createUser, getUserByEmail, updateUserByEmail } from '../repositories/user';
 import { OTPService } from './otp';
 
@@ -311,6 +312,9 @@ export class AuthService {
 
       // Update user password
       await updateUserByEmail(email, { password: hashedPassword });
+
+      // Purge all remaining PASSWORD_RESET OTPs for this email
+      await emailOTPRepository.deleteAllOTPsForEmail(email, OtpPurpose.PASSWORD_RESET);
 
       return {
         success: true,

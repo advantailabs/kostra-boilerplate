@@ -20,7 +20,9 @@ export function DeleteFileDialog({
   isDeleting,
 }: DeleteFileDialogProps) {
   const handleDelete = async () => {
-    if (!fileId) return;
+    if (!fileId) {
+      throw new Error('Missing file id');
+    }
     await deleteFile({ id: fileId });
   };
 
