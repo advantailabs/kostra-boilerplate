@@ -48,6 +48,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'peon-data.s3.amazonaws.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'peon-data-public.s3.amazonaws.com',
+      },
     ],
   },
 
