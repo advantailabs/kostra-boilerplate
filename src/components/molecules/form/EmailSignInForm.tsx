@@ -97,13 +97,14 @@ export function EmailSignInForm({
 
       {/* Forgot Password Link */}
       <div className="flex justify-end">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={onForgotPassword}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="!h-auto !min-w-0 !border-0 !bg-transparent !p-0 text-sm !text-blue-600 !shadow-none hover:!bg-transparent hover:!text-blue-800 focus:!bg-transparent"
         >
           Forgot Password?
-        </button>
+        </Button>
       </div>
 
       {/* Sign In Button */}
