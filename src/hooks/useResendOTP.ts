@@ -8,7 +8,7 @@ interface ResendOTPData {
 }
 
 export function useResendOTP() {
-  return useApiMutation({
+  const mutation = useApiMutation({
     mutationFn: async (data: ResendOTPData) => {
       const response = await authApi.resendOTP(data);
       return response;
@@ -20,4 +20,14 @@ export function useResendOTP() {
       toast.error(error?.response?.data?.message || 'Failed to resend verification code');
     },
   });
+
+  const resendOTP = async (data: ResendOTPData) => {
+    return mutation.mutateAsync(data);
+  };
+
+  return {
+    resendOTP,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+  };
 }

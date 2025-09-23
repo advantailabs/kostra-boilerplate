@@ -20,7 +20,7 @@ interface ForgotPasswordFormProps {
 }
 
 export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPasswordFormProps) {
-  const forgotPasswordMutation = useForgotPassword();
+  const { forgotPassword, isLoading } = useForgotPassword();
 
   const form = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -31,10 +31,10 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      await forgotPasswordMutation.mutateAsync(data);
+      await forgotPassword(data);
       onSuccess(data.email);
     } catch (error) {
-      // Error is handled by the mutation
+      // Error is handled by the hook
     }
   };
 
@@ -60,10 +60,10 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={forgotPasswordMutation.isPending}
+        disabled={isLoading}
         className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
       >
-        {forgotPasswordMutation.isPending ? 'Sending...' : 'Send Reset Code'}
+        {isLoading ? 'Sending...' : 'Send Reset Code'}
       </Button>
 
       {/* Back to Sign In */}

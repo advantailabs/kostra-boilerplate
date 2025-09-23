@@ -7,7 +7,7 @@ interface ForgotPasswordData {
 }
 
 export function useForgotPassword() {
-  return useApiMutation({
+  const mutation = useApiMutation({
     mutationFn: async (data: ForgotPasswordData) => {
       const response = await authApi.forgotPassword(data);
       return response;
@@ -19,4 +19,14 @@ export function useForgotPassword() {
       toast.error(error?.response?.data?.message || 'Failed to send password reset code');
     },
   });
+
+  const forgotPassword = async (data: ForgotPasswordData) => {
+    return mutation.mutateAsync(data);
+  };
+
+  return {
+    forgotPassword,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+  };
 }

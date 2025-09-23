@@ -42,7 +42,7 @@ export function OTPVerificationForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const otpVerificationMutation = useOTPVerification();
-  const resendOTPMutation = useResendOTP();
+  const { resendOTP, isLoading: isResending } = useResendOTP();
 
   const form = useForm<OTPVerificationFormData>({
     resolver: zodResolver(otpVerificationSchema),
@@ -292,14 +292,18 @@ export function OTPVerificationForm({
         <span className="text-sm text-gray-600 dark:text-gray-400">Didn't receive the code? </span>
         <button
           type="button"
-          onClick={() => {
-            resendOTPMutation.mutate({ email, purpose: 'SIGNUP' });
-            onResendOTP();
+          onClick={async () => {
+            try {
+              await resendOTP({ email, purpose: 'SIGNUP' });
+              onResendOTP();
+            } catch (error) {
+              // Error is handled by the hook
+            }
           }}
-          disabled={resendOTPMutation.isPending}
+          disabled={isResending}
           className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          {resendOTPMutation.isPending ? 'Sending...' : 'Resend'}
+          {isResending ? 'Sending...' : 'Resend'}
         </button>
       </div>
     </form>

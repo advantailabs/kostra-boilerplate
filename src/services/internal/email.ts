@@ -2,6 +2,13 @@ import { getEmailDriver } from '@/lib/email/factory';
 import { getOTPEmailTemplate } from '@/lib/email/templates';
 import { OtpPurpose } from '@prisma/client';
 
+export interface SendEmailData {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+}
+
 export interface SendOTPEmailData {
   email: string;
   otp: string;
@@ -9,6 +16,24 @@ export interface SendOTPEmailData {
 }
 
 export class EmailService {
+  /**
+   * Send email using the configured email driver
+   */
+  static async sendEmail(data: SendEmailData): Promise<void> {
+    const emailDriver = getEmailDriver();
+
+    const fromEmail = process.env.FROM_EMAIL || 'noreply@peon.app';
+    const fromEmailName = process.env.FROM_EMAIL_NAME || 'Peon';
+
+    await emailDriver.send({
+      to: data.to,
+      from: `${fromEmailName} <${fromEmail}>`,
+      subject: data.subject,
+      html: data.html,
+      text: data.text,
+    });
+  }
+
   /**
    * Send OTP verification email
    */
@@ -25,12 +50,8 @@ export class EmailService {
 
     const { subject, html, text } = getOTPEmailTemplate(templateData);
 
-    const emailDriver = getEmailDriver();
-
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@peon.app';
-    await emailDriver.send({
+    await this.sendEmail({
       to: email,
-      from: `Peon <${fromEmail}>`,
       subject,
       html,
       text,

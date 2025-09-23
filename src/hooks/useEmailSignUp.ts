@@ -7,7 +7,7 @@ interface EmailSignUpData {
 }
 
 export function useEmailSignUp() {
-  return useApiMutation({
+  const mutation = useApiMutation({
     mutationFn: async (data: EmailSignUpData) => {
       const response = await authApi.signup(data);
       return response;
@@ -19,4 +19,14 @@ export function useEmailSignUp() {
       toast.error(error?.response?.data?.message || 'Failed to send verification code');
     },
   });
+
+  const signUp = async (data: EmailSignUpData) => {
+    return mutation.mutateAsync(data);
+  };
+
+  return {
+    signUp,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+  };
 }

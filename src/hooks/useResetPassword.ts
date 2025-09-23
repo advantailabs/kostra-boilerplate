@@ -12,7 +12,7 @@ interface ResetPasswordData {
 export function useResetPassword() {
   const { closeModal } = useSignInModalContext();
 
-  return useApiMutation({
+  const mutation = useApiMutation({
     mutationFn: async (data: ResetPasswordData) => {
       const response = await authApi.resetPassword(data);
       return response;
@@ -25,4 +25,14 @@ export function useResetPassword() {
       toast.error(error?.response?.data?.message || 'Failed to reset password');
     },
   });
+
+  const resetPassword = async (data: ResetPasswordData) => {
+    return mutation.mutateAsync(data);
+  };
+
+  return {
+    resetPassword,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+  };
 }

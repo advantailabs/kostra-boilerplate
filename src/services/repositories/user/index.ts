@@ -151,6 +151,13 @@ const updateUserById = async (userId: number, userData: UpdateUserData) => {
   });
 };
 
+const updateUserByEmail = async (email: string, userData: UpdateUserData) => {
+  return prisma.user.update({
+    where: { email },
+    data: userData,
+  });
+};
+
 // Soft delete user by ID (for admin operations)
 const deleteUserById = async (userId: number) => {
   return prisma.user.update({
@@ -171,6 +178,7 @@ export {
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,
+  updateUserByEmail,
   updateUserById,
   updateUserGoogleId,
   upsertUser,

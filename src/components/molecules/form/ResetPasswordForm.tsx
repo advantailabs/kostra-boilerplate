@@ -3,6 +3,8 @@
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
+import { EyeIcon } from '@/components/icons/EyeIcon';
+import { EyeSlashIcon } from '@/components/icons/EyeSlashIcon';
 import { useResendOTP } from '@/hooks/useResendOTP';
 import { useResetPassword } from '@/hooks/useResetPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,8 +37,8 @@ interface ResetPasswordFormProps {
 export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPasswordFormProps) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const resetPasswordMutation = useResetPassword();
-  const resendOTPMutation = useResendOTP();
+  const { resetPassword, isLoading: isResetting } = useResetPassword();
+  const { resendOTP, isLoading: isResending } = useResendOTP();
 
   const form = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -125,14 +127,14 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
       const otp = `${data.otp0}${data.otp1}${data.otp2}${data.otp3}`;
-      await resetPasswordMutation.mutateAsync({
+      await resetPassword({
         email,
         newPassword: data.newPassword,
         otp,
       });
       onSuccess();
     } catch (error) {
-      // Error is handled by the mutation
+      // Error is handled by the hook
     }
   };
 
@@ -182,37 +184,18 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
             {...form.register('newPassword')}
             inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 pr-12 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 !text-gray-600 shadow-none hover:bg-gray-100 hover:!text-gray-800"
           >
             {showNewPassword ? (
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                />
-              </svg>
+              <EyeSlashIcon className="h-4 w-4" />
             ) : (
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
+              <EyeIcon className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
         {form.formState.errors.newPassword && (
           <span className="text-sm text-red-500">{form.formState.errors.newPassword.message}</span>
@@ -232,37 +215,18 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
             {...form.register('confirmPassword')}
             inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 pr-12 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 !text-gray-600 shadow-none hover:bg-gray-100 hover:!text-gray-800"
           >
             {showConfirmPassword ? (
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
-                />
-              </svg>
+              <EyeSlashIcon className="h-4 w-4" />
             ) : (
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
+              <EyeIcon className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
         {form.formState.errors.confirmPassword && (
           <span className="text-sm text-red-500">
@@ -274,10 +238,10 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
       {/* Reset Password Button */}
       <Button
         type="submit"
-        disabled={resetPasswordMutation.isPending}
+        disabled={isResetting}
         className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
       >
-        {resetPasswordMutation.isPending ? 'Resetting Password...' : 'Reset Password'}
+        {isResetting ? 'Resetting Password...' : 'Reset Password'}
       </Button>
 
       {/* Resend OTP */}
@@ -285,13 +249,17 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
         <span className="text-sm text-gray-600 dark:text-gray-400">Didn't receive the code? </span>
         <button
           type="button"
-          onClick={() => {
-            resendOTPMutation.mutate({ email, purpose: 'PASSWORD_RESET' });
+          onClick={async () => {
+            try {
+              await resendOTP({ email, purpose: 'PASSWORD_RESET' });
+            } catch (error) {
+              // Error is handled by the hook
+            }
           }}
-          disabled={resendOTPMutation.isPending}
+          disabled={isResending}
           className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          {resendOTPMutation.isPending ? 'Sending...' : 'Resend'}
+          {isResending ? 'Sending...' : 'Resend'}
         </button>
       </div>
 

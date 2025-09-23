@@ -13,7 +13,7 @@ export function useEmailSignIn() {
   const { setAuth } = useAuthStore();
   const { closeModal } = useSignInModalContext();
 
-  return useApiMutation({
+  const mutation = useApiMutation({
     mutationFn: async (data: EmailSignInData) => {
       const response = await authApi.login(data);
       return response;
@@ -31,4 +31,14 @@ export function useEmailSignIn() {
       toast.error(error?.response?.data?.message || 'Failed to sign in');
     },
   });
+
+  const signIn = async (data: EmailSignInData) => {
+    return mutation.mutateAsync(data);
+  };
+
+  return {
+    signIn,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+  };
 }

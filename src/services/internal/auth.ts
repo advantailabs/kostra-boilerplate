@@ -1,7 +1,7 @@
 import { generateJWT } from '@/lib/auth/jwt';
-import { prisma } from '@/lib/prisma';
 import { comparePassword, hashPassword, validatePassword } from '@/lib/utils/password';
 import { OtpPurpose, UserRole } from '@prisma/client';
+import { createUser, getUserByEmail, updateUserByEmail } from '../repositories/user';
 import { OTPService } from './otp';
 
 export interface SignupData {
@@ -41,9 +41,7 @@ export class AuthService {
 
     try {
       // Check if user already exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
+      const existingUser = await getUserByEmail(email);
 
       if (existingUser) {
         return {
@@ -117,14 +115,12 @@ export class AuthService {
       const hashedPassword = await hashPassword(password);
 
       // Create user
-      const user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-          role: UserRole.USER,
-          isOnboarded: true,
-        },
+      const user = await createUser({
+        email,
+        name,
+        password: hashedPassword,
+        role: UserRole.USER,
+        isOnboarded: true,
       });
 
       // Generate JWT token
@@ -173,9 +169,7 @@ export class AuthService {
 
     try {
       // Find user
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+      const user = await getUserByEmail(email);
 
       if (!user) {
         return {
@@ -245,9 +239,7 @@ export class AuthService {
   static async initiatePasswordReset(email: string): Promise<AuthResult> {
     try {
       // Check if user exists
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+      const user = await getUserByEmail(email);
 
       if (!user) {
         return {
@@ -318,10 +310,7 @@ export class AuthService {
       const hashedPassword = await hashPassword(newPassword);
 
       // Update user password
-      await prisma.user.update({
-        where: { email },
-        data: { password: hashedPassword },
-      });
+      await updateUserByEmail(email, { password: hashedPassword });
 
       return {
         success: true,

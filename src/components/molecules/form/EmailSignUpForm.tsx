@@ -21,7 +21,7 @@ interface EmailSignUpFormProps {
 }
 
 export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpFormProps) {
-  const emailSignUpMutation = useEmailSignUp();
+  const { signUp, isLoading } = useEmailSignUp();
 
   const form = useForm<EmailSignUpFormData>({
     resolver: zodResolver(emailSignUpSchema),
@@ -34,10 +34,10 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
   const onSubmit = async (data: EmailSignUpFormData) => {
     try {
       // Only send email to the API, but keep name for the next step
-      await emailSignUpMutation.mutateAsync({ email: data.email });
+      await signUp({ email: data.email });
       onSuccess(data); // Pass full data (including name) to onSuccess
     } catch (error) {
-      // Error is handled by the mutation
+      // Error is handled by the hook
     }
   };
 
@@ -80,10 +80,10 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
       {/* Send Verification Code Button */}
       <Button
         type="submit"
-        disabled={emailSignUpMutation.isPending}
+        disabled={isLoading}
         className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
       >
-        {emailSignUpMutation.isPending ? 'Sending...' : 'Send Verification Code'}
+        {isLoading ? 'Sending...' : 'Send Verification Code'}
       </Button>
 
       {/* Switch to Sign In */}
