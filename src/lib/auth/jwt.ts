@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 
 export interface JWTPayload {
@@ -66,4 +67,18 @@ export const getAuthUser = async (request: NextRequest): Promise<JWTPayload | nu
 export const getUserIdFromHeaders = (request: NextRequest): string | null => {
   const userId = request.headers.get('x-user-id');
   return userId;
+};
+
+/**
+ * Sets the JWT token as an HTTP-only cookie
+ * @param token - The JWT token to set
+ */
+export const setAuthCookie = (token: string): void => {
+  cookies().set(JWT_KEY || 'auth-token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 24 * 60 * 60, // 24 hours
+  });
 };

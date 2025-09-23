@@ -19,6 +19,11 @@ enum UserPlan {
   PRO
 }
 
+enum OtpPurpose {
+  SIGNUP
+  PASSWORD_RESET
+}
+
 model User {
   id             Int             @id @default(autoincrement())
   googleId       String?         @unique
@@ -132,4 +137,17 @@ model BlogCategory {
   category Category @relation(fields: [categoryId], references: [id])
 
   @@id([blogId, categoryId])
+}
+
+model EmailOTP {
+  id         Int        @id @default(autoincrement())
+  email      String
+  otp        String
+  purpose    OtpPurpose
+  expiringAt DateTime
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([email, purpose])
+  @@index([expiringAt])
 }

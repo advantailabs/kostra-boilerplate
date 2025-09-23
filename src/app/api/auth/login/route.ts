@@ -1,0 +1,50 @@
+import { setAuthCookie } from '@/lib/auth/jwt';
+import {
+  badRequestResponse,
+  internalServerErrorResponse,
+  successResponse,
+  validationErrorResponse,
+} from '@/lib/utils/response';
+import { formatZodError } from '@/lib/utils/validation';
+import { loginSchema } from '@/schemas/auth.schema';
+import { AuthService } from '@/services/internal/auth';
+import { NextRequest } from 'next/server';
+
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const validationResult = loginSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return validationErrorResponse('Invalid input data', formatZodError(validationResult.error));
+    }
+
+    const { email, password } = validationResult.data;
+
+    const result = await AuthService.login({
+      email,
+      password,
+    });
+
+    if (!result.success) {
+      return badRequestResponse(result.message);
+    }
+
+    // Set the token in an HTTP-only cookie (same as Google login)
+    if (result.data?.token) {
+      setAuthCookie(result.data.token);
+    }
+
+    return successResponse({
+      message: result.message,
+      user: result.data?.user,
+      token: result.data?.token,
+    });
+  } catch (error) {
+    console.error('Login API error:', error);
+    return internalServerErrorResponse();
+  }
+}

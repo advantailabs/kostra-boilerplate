@@ -25,6 +25,12 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/api/auth/logout', isPublic: true },
   { path: '/api/auth', isPublic: true },
   { path: '/api/auth/google/verify', isPublic: true },
+  { path: '/api/auth/login', isPublic: true },
+  { path: '/api/auth/signup', isPublic: true },
+  { path: '/api/auth/verify-signup', isPublic: true },
+  { path: '/api/auth/forgot-password', isPublic: true },
+  { path: '/api/auth/reset-password', isPublic: true },
+  { path: '/api/auth/resend-otp', isPublic: true },
 
   // Protected app pages - require authentication
   { path: '/onboarding', isPublic: false, accessTo: { GET: [USER, ADMIN] } },

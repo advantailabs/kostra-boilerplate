@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal } from '@/components/molecules/common/Modal';
+import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { useCategories } from '@/hooks/useCategories';
 
 interface DeleteCategoryDialogProps {
@@ -30,7 +30,6 @@ export function DeleteCategoryDialog({
     name: currentSearch,
   });
 
-  // Handle category deletion
   const handleDelete = () => {
     if (!categoryId) return;
     deleteCategory(categoryId, {
@@ -42,23 +41,15 @@ export function DeleteCategoryDialog({
   };
 
   return (
-    <Modal
+    <DeleteDialog
       isOpen={isOpen}
       onClose={onClose}
-      maxWidth="max-w-md"
+      onConfirm={handleDelete}
       title="Delete Category"
-      primaryActionText={isDeleting ? 'Deleting...' : 'Delete'}
-      secondaryActionText="Cancel"
-      onPrimaryAction={handleDelete}
-      isPrimaryActionDisabled={isDeleting || !categoryId}
-      isPrimaryActionLoading={isDeleting}
-      primaryActionVariant="destructive"
-    >
-      <p className="text-sm text-gray-600 dark:text-gray-400">
-        Are you sure you want to delete the category{' '}
-        <strong className="text-gray-900 dark:text-gray-100">{categoryName}</strong>? This action
-        cannot be undone.
-      </p>
-    </Modal>
+      itemName={categoryName}
+      itemType="category"
+      isLoading={isDeleting}
+      onSuccess={onSuccess}
+    />
   );
 }

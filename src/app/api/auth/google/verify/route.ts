@@ -1,4 +1,4 @@
-import { generateJWT, JWT_KEY } from '@/lib/auth/jwt';
+import { generateJWT, setAuthCookie } from '@/lib/auth/jwt';
 import {
   badRequestResponse,
   internalServerErrorResponse,
@@ -14,7 +14,6 @@ import {
   getUserByGoogleIdOrEmail,
   updateUserGoogleId,
 } from '@/services/repositories/user';
-import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -75,13 +74,7 @@ export async function POST(request: NextRequest) {
     const token = await generateJWT(jwtPayload);
 
     // Set the token in an HTTP-only cookie
-    cookies().set(JWT_KEY || 'auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 24 * 60 * 60, // 24 hours
-    });
+    setAuthCookie(token);
 
     return successResponse({
       user: {

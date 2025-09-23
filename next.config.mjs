@@ -44,6 +44,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pub-9289de1e12e7471b88dd293bc200f4f0.r2.dev',
       },
+      {
+        protocol: 'https',
+        hostname: 'peon-data.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'peon-data-public.s3.amazonaws.com',
+      },
     ],
   },
 

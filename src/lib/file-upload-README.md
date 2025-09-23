@@ -85,14 +85,35 @@ function MyComponent() {
 
 ### Environment Variables
 
+The file upload system supports both AWS S3 and Cloudflare R2 storage. Configure the driver using the `NEXT_PUBLIC_FILE_STORAGE_DRIVER` environment variable.
+
+#### File Storage Driver Configuration
+
+```env
+# File Storage Driver (s3 or r2)
+NEXT_PUBLIC_FILE_STORAGE_DRIVER=r2
+```
+
+#### R2 Configuration (Default)
+
 ```env
 # R2 Configuration
 R2_ACCESS_KEY_ID=your_access_key
 R2_SECRET_ACCESS_KEY=your_secret_key
 R2_ACCOUNT_ID=your_account_id
-R2_PUBLIC_BUCKET_NAME=peon-data-public
-R2_PRIVATE_BUCKET_NAME=peon-data-private
 NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://your-public-bucket.your-subdomain.r2.cloudflarestorage.com
+```
+
+#### S3 Configuration
+
+```env
+# S3 Configuration
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+S3_PUBLIC_BUCKET_NAME=peon-data-public
+S3_PRIVATE_BUCKET_NAME=peon-data-private
+NEXT_PUBLIC_S3_PUBLIC_BASE_URL=https://your-public-bucket.s3.amazonaws.com
 ```
 
 ### Bucket Configuration

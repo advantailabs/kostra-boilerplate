@@ -3,8 +3,8 @@
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PersonaCard } from '@/components/molecules/chat/PersonaCard';
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import { PageHeader } from '@/components/molecules/common/PageHeader';
+import { DeletePersonaDialog } from '@/components/organisms/modules/personas/DeletePersonaDialog';
 import { ModalAddPersona } from '@/components/organisms/modules/personas/ModalAddPersona';
 import { ModalEditPersona } from '@/components/organisms/modules/personas/ModalEditPersona';
 import { usePersonas } from '@/hooks/usePersonas';
@@ -13,7 +13,8 @@ import { RiAddLine } from '@remixicon/react';
 import { useState } from 'react';
 
 export default function PersonasPage() {
-  const { personas, isLoading, createPersona, updatePersona, deletePersona } = usePersonas();
+  const { personas, isLoading, createPersona, updatePersona, deletePersona, isDeleting } =
+    usePersonas();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -39,18 +40,6 @@ export default function PersonasPage() {
       setEditingPersona(null);
     } catch (error) {
       console.error('Failed to update persona:', error);
-    }
-  };
-
-  const handleDeletePersona = async () => {
-    if (!deletingPersona) return;
-
-    try {
-      await deletePersona(deletingPersona.id);
-      setShowDeleteModal(false);
-      setDeletingPersona(null);
-    } catch (error) {
-      console.error('Failed to delete persona:', error);
     }
   };
 
@@ -157,16 +146,16 @@ export default function PersonasPage() {
         />
       )}
 
-      <DeleteDialog
+      <DeletePersonaDialog
         isOpen={showDeleteModal}
         onClose={() => {
           setShowDeleteModal(false);
           setDeletingPersona(null);
         }}
-        onConfirm={handleDeletePersona}
-        title="Delete Persona"
-        itemName={deletingPersona?.name}
-        confirmText="Delete Persona"
+        personaId={deletingPersona?.id || null}
+        personaName={deletingPersona?.name || ''}
+        deletePersona={deletePersona}
+        isDeleting={isDeleting}
       />
     </div>
   );

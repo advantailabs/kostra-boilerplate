@@ -1,9 +1,16 @@
 'use client';
 
 import { Button } from '@/components/atom/Button';
+import { EmailSignInForm } from '@/components/molecules/form/EmailSignInForm';
+import { EmailSignUpForm } from '@/components/molecules/form/EmailSignUpForm';
+import { ForgotPasswordForm } from '@/components/molecules/form/ForgotPasswordForm';
+import { OTPVerificationForm } from '@/components/molecules/form/OTPVerificationForm';
+import { ResetPasswordForm } from '@/components/molecules/form/ResetPasswordForm';
 import Image from 'next/image';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { GoogleSignInButton } from './common/GoogleSignInButton';
+
+type AuthMode = 'signin' | 'signup' | 'otp-verification' | 'forgot-password' | 'reset-password';
 
 interface SignInModalProps {
   isOpen: boolean;
@@ -11,8 +18,12 @@ interface SignInModalProps {
 }
 
 function SignInModal({ isOpen, onClose }: SignInModalProps) {
+  const [authMode, setAuthMode] = useState<AuthMode>('signin');
+  const [signupData, setSignupData] = useState<{ name: string; email: string } | null>(null);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>('');
+
   // Handle escape key to close modal
-  React.useEffect(() => {
+  useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
@@ -29,6 +40,15 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
+
+  // Reset modal state when closed
+  useEffect(() => {
+    if (!isOpen) {
+      setAuthMode('signin');
+      setSignupData(null);
+      setForgotPasswordEmail('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -59,16 +79,16 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
         <Button
           onClick={onClose}
           variant="ghost"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-gray-900 transition-colors hover:bg-gray-100 hover:text-gray-900"
           aria-label="Close modal"
         >
           <svg
-            width="16"
-            height="16"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
           >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -88,14 +108,80 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
               />
             </div>
             <h1 id="modal-title" className="mb-2 text-2xl font-bold text-gray-900">
-              Welcome to Peon
+              {authMode === 'signin' && 'Welcome to Peon'}
+              {authMode === 'signup' && 'Sign Up'}
+              {authMode === 'otp-verification' && 'Verify Your Email'}
+              {authMode === 'forgot-password' && 'Reset Password'}
+              {authMode === 'reset-password' && 'Enter New Password'}
             </h1>
             <p className="text-center text-xs text-gray-500">
-              Join thousands of teams already using Peon
+              {authMode === 'signin' && 'Join thousands of teams already using Peon'}
+              {authMode === 'signup' && 'Start your journey with us'}
+              {authMode === 'otp-verification' && 'Complete your account setup'}
+              {authMode === 'forgot-password' && 'Enter your email to receive a reset code'}
+              {authMode === 'reset-password' && 'Enter the code and your new password'}
             </p>
           </div>
 
-          <GoogleSignInButton className="w-full" />
+          {/* Render appropriate form based on auth mode */}
+          {authMode === 'signin' && (
+            <>
+              <EmailSignInForm
+                onSuccess={() => onClose()}
+                onSwitchToSignUp={() => setAuthMode('signup')}
+                onForgotPassword={() => setAuthMode('forgot-password')}
+              />
+
+              <div className="mt-3 flex items-center justify-center gap-2">
+                <div className="h-px flex-1 bg-gray-200" />
+                <span className="text-sm text-gray-500">or</span>
+                <div className="h-px flex-1 bg-gray-200" />
+              </div>
+
+              <div className="mt-3">
+                <GoogleSignInButton className="w-full" />
+              </div>
+            </>
+          )}
+
+          {authMode === 'signup' && (
+            <EmailSignUpForm
+              onSuccess={data => {
+                setSignupData(data);
+                setAuthMode('otp-verification');
+              }}
+              onSwitchToSignIn={() => setAuthMode('signin')}
+            />
+          )}
+
+          {authMode === 'otp-verification' && signupData && (
+            <OTPVerificationForm
+              email={signupData.email}
+              name={signupData.name}
+              onSuccess={() => onClose()}
+              onResendOTP={() => {
+                // Resend OTP is handled by the OTPVerificationForm component
+              }}
+            />
+          )}
+
+          {authMode === 'forgot-password' && (
+            <ForgotPasswordForm
+              onSuccess={email => {
+                setForgotPasswordEmail(email);
+                setAuthMode('reset-password');
+              }}
+              onBackToSignIn={() => setAuthMode('signin')}
+            />
+          )}
+
+          {authMode === 'reset-password' && forgotPasswordEmail && (
+            <ResetPasswordForm
+              email={forgotPasswordEmail}
+              onSuccess={() => onClose()}
+              onBackToSignIn={() => setAuthMode('signin')}
+            />
+          )}
 
           <div className="mt-6 flex items-center justify-center gap-2 border-t border-gray-100 pt-6 text-center">
             <div className="flex items-center justify-center gap-1">

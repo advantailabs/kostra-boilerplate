@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { Card } from '@/components/atom/Card';
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/molecules/common/Dropdown';
 import { FileDetailsModal } from '@/components/molecules/files/FileDetailsModal';
+import { DeleteFileDialog } from '@/components/organisms/modules/files/DeleteFileDialog';
 import { useDeleteFile } from '@/hooks/useFiles';
 import { formatFileSize, formatMimeType, getFileTypeIconWithColor } from '@/lib/file-utils';
 
@@ -54,14 +54,9 @@ export function FileCard({
     setShowDeleteDialog(true);
   };
 
-  const confirmDeleteFile = async () => {
-    try {
-      await deleteFileMutation.mutateAsync({ id: file.id });
-      onDelete();
-      setShowDeleteDialog(false);
-    } catch (error) {
-      console.error('Error deleting file:', error);
-    }
+  const handleDeleteFileSuccess = () => {
+    onDelete();
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -174,14 +169,14 @@ export function FileCard({
       />
 
       {/* Delete File Confirmation Dialog */}
-      <DeleteDialog
+      <DeleteFileDialog
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
-        onConfirm={confirmDeleteFile}
-        title="Delete File"
-        description={`Are you sure you want to permanently delete "${file?.originalName}"? This will delete the file from storage. This action cannot be undone.`}
-        confirmText="Delete File"
-        isLoading={deleteFileMutation.isPending}
+        fileId={file?.id || null}
+        fileName={file?.originalName || ''}
+        onSuccess={handleDeleteFileSuccess}
+        deleteFile={deleteFileMutation.mutateAsync}
+        isDeleting={deleteFileMutation.isPending}
       />
     </>
   );
