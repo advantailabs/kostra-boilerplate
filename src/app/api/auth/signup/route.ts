@@ -14,7 +14,6 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('endpoint called');
     const body = await request.json();
     const validationResult = signupSchema.safeParse(body);
 
