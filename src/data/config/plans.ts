@@ -69,10 +69,18 @@ export const PLANS_CONFIG = {
     name: 'Professional',
     price: '29',
     features: ['unlimited_files', 'advanced_analytics', 'priority_support'],
+    credits: 1000, // Credits included with pro plan
   },
   enterprise: {
     name: 'Enterprise',
     price: 'custom',
     features: ['custom_deployment', 'dedicated_support', 'sso'],
+    credits: 5000, // Credits included with enterprise plan
+  },
+  creditPack: {
+    name: 'Credit Pack',
+    price: 'custom',
+    features: ['additional_credits'],
+    credits: 100, // Credits per credit pack
   },
 };
