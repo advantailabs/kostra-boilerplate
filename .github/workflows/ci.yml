@@ -57,12 +57,26 @@ jobs:
       - name: Run linting (Required for merge)
         run: npm run lint
 
+      - name: Start test app
+        run: |
+          npm run build
+          PORT=3001 npm start &
+          sleep 15
+          echo "App should be running on port 3001"
+        env:
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
+          NODE_ENV: test
+          JWT_SECRET: test-jwt-secret-key-for-testing-only
+          JWT_KEY: auth-token
+
       - name: Run tests (Required for merge)
         run: npm run test
         env:
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
           TEST_APP_URL: http://localhost:3001
           NODE_ENV: test
+          JWT_SECRET: test-jwt-secret-key-for-testing-only
+          JWT_KEY: auth-token
 
       - name: Upload test coverage
         uses: codecov/codecov-action@v4
