@@ -90,7 +90,23 @@
     "arrow-body-style": "off",
     "prefer-destructuring": "off",
     "no-useless-escape": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.test.ts",
+          "**/*.test.tsx",
+          "**/*.spec.ts",
+          "**/*.spec.tsx",
+          "**/test/**/*",
+          "**/tests/**/*",
+          "**/__tests__/**/*",
+          "**/jest.config.js",
+          "**/jest.setup.js"
+        ]
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
