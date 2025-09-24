@@ -30,6 +30,9 @@ const customJestConfig = {
   coverageReporters: ['text', 'lcov', 'html'],
   testTimeout: 30000, // Increased timeout for e2e tests
   maxWorkers: 1, // Run tests serially to avoid conflicts
+  verbose: true,
+  silent: false,
+  cache: false,
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },

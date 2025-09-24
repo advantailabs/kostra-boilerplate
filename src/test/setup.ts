@@ -15,7 +15,7 @@ export const testPrisma =
   new PrismaClient({
     datasources: {
       db: {
-        url: 'postgresql://postgres:postgres@127.0.0.1:5432/test',
+        url: 'postgresql://postgres:postgres@127.0.0.1:5433/peon_test?schema=public',
       },
     },
   });
