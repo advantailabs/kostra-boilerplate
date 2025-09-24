@@ -31,6 +31,7 @@ jobs:
       
       # App Configuration
       NODE_ENV: test
+      TEST_MODE: true
       NEXT_RUNTIME: node
       NEXT_PUBLIC_APP_URL: http://localhost:3001
       TEST_APP_URL: http://localhost:3001

@@ -9,14 +9,6 @@ import {
 } from '../../helpers/auth';
 import { cleanupDatabase, testPrisma } from '../../setup';
 
-// Mock EmailService to prevent actual email sending
-jest.mock('@/services/internal/email', () => ({
-  EmailService: {
-    sendOTPEmail: jest.fn().mockResolvedValue(undefined),
-    sendEmail: jest.fn().mockResolvedValue(undefined),
-  },
-}));
-
 // Mock JWT functions to avoid actual token generation in tests
 jest.mock('@/lib/auth/jwt', () => ({
   generateJWT: jest.fn().mockImplementation(async payload => {
