@@ -1,6 +1,8 @@
 // Mock environment variables for testing
-process.env.POSTGRES_URL = 'postgresql://test:test@localhost:5432/test';
+process.env.POSTGRES_URL = 'postgresql://postgres:postgres@127.0.0.1:5433/peon_test?schema=public';
 process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
+process.env.JWT_KEY = 'auth-token';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

@@ -2,6 +2,8 @@
  * Email driver types and interfaces
  */
 
+import type { TestEmailDriverConfig } from './drivers/test';
+
 export interface EmailMessage {
   to: string | string[];
   subject: string;
@@ -14,7 +16,7 @@ export interface EmailDriver {
   send(message: EmailMessage): Promise<void>;
 }
 
-export type EmailDriverType = 'aws-ses' | 'resend';
+export type EmailDriverType = 'aws-ses' | 'resend' | 'test';
 
 export type OtpPurpose = 'SIGNUP' | 'PASSWORD_RESET';
 
@@ -28,5 +30,5 @@ export interface EmailConfig {
   resend?: {
     apiKey: string;
   };
+  test?: TestEmailDriverConfig;
 }
-

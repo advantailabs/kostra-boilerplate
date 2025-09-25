@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const { high: HIGH_PRIORITY, medium: MEDIUM_PRIORITY } = siteConfig.sitemap.priorities;
 
   // Use change frequencies from site config
-  const { weekly: WEEKLY, monthly: MONTHLY, yearly: YEARLY } = siteConfig.sitemap.changeFrequencies;
+  const { weekly: WEEKLY, yearly: YEARLY } = siteConfig.sitemap.changeFrequencies;
 
   return [
     // Landing page - highest priority

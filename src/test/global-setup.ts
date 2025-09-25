@@ -9,8 +9,7 @@ export default async function globalSetup() {
       return;
     }
     // Set test database URL
-    const testDatabaseUrl = 'postgresql://postgres:postgres@127.0.0.1:5432/test';
-    process.env.POSTGRES_URL = testDatabaseUrl;
+    const testDatabaseUrl = process.env.POSTGRES_URL;
 
     console.log(`📂 Using test database: ${testDatabaseUrl}`);
 
