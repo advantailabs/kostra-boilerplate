@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { AppError, ERRORS } from '@/lib/utils/errors';
+import { AppError, ERRORS } from '../error/errors';
 
 export const successResponse = (data: any, status: number = 200) => {
   return NextResponse.json({ success: true, data }, { status });

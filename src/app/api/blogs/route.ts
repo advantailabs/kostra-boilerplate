@@ -1,11 +1,11 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
+  formatZodError,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { blogFiltersSchema, CreateBlogInput, createBlogSchema } from '@/schemas/blog.schema';
 import { createNewBlog, getAllBlogs } from '@/services/repositories/blogs';
 import { getUserById } from '@/services/repositories/user';

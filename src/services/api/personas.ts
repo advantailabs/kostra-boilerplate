@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { axios } from '@/lib/utils';
 import { CreatePersonaRequest, PublicPersona, UpdatePersonaRequest } from '@/types/chat';
 
 interface PersonasApiClient {
@@ -10,21 +10,21 @@ interface PersonasApiClient {
 
 export const personasApi: PersonasApiClient = {
   async getPersonas(): Promise<PublicPersona[]> {
-    const response = await axiosInstance.get('/personas');
+    const response = await axios.get('/personas');
     return response.data.data?.personas || [];
   },
 
   async createPersona(data: CreatePersonaRequest): Promise<PublicPersona> {
-    const response = await axiosInstance.post('/personas', data);
+    const response = await axios.post('/personas', data);
     return response.data.data?.persona;
   },
 
   async updatePersona(id: number, data: UpdatePersonaRequest): Promise<PublicPersona> {
-    const response = await axiosInstance.put(`/personas/${id}`, data);
+    const response = await axios.put(`/personas/${id}`, data);
     return response.data.data || response.data.persona;
   },
 
   async deletePersona(id: number): Promise<void> {
-    await axiosInstance.delete(`/personas/${id}`);
+    await axios.delete(`/personas/${id}`);
   },
 };

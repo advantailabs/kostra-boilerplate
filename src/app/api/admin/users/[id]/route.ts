@@ -1,13 +1,13 @@
 import { getAuthUser } from '@/lib/auth/jwt';
-import { hashPassword } from '@/lib/utils/password';
 import {
   badRequestResponse,
+  formatZodError,
+  hashPassword,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { deleteUserById, getUserById, updateUserById } from '@/services/repositories/user';
 import { updateUserSchema, userIdParamSchema } from '@/validations/admin';
 import { NextRequest } from 'next/server';

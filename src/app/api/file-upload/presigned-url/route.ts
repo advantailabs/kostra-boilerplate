@@ -1,8 +1,6 @@
 import { FREE_LIMITS } from '@/data/config/plans';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { validateFileUpload } from '@/lib/file-upload-config';
 import { prisma } from '@/lib/prisma';
-import { generatePresignedUrl } from '@/lib/s3';
 import {
   insufficientCreditsResponse,
   internalServerErrorResponse,
@@ -10,7 +8,9 @@ import {
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
+} from '@/lib/utils';
+import { generatePresignedUrl } from '@/services/external/aws/s3';
+import { validateFileUpload } from '@/services/internal/files/file-upload/file-upload-config';
 import { findPersonaByUserAndId } from '@/services/repositories/persona';
 import { getUserById } from '@/services/repositories/user';
 import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';

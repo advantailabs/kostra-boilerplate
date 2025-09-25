@@ -1,12 +1,12 @@
 import {
   badRequestResponse,
+  formatZodError,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { resendOTPSchema } from '@/schemas/auth.schema';
-import { OTPService } from '@/services/internal/otp';
+import { OTPService } from '@/services/internal/email/otp';
 import { OtpPurpose } from '@prisma/client';
 import { NextRequest } from 'next/server';
 

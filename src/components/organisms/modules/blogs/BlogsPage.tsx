@@ -172,8 +172,8 @@ export function BlogsPage({ className }: BlogsPageProps) {
   // Find the blog being edited
   const editingBlog = editingBlogId ? blogs?.find(blog => blog.id === editingBlogId) : null;
 
-  // Show loading screen while fetching blogs
-  if (isBlogsLoading) {
+  // Show loading screen only on initial load, not during search
+  if (isBlogsLoading && !searchInput) {
     return <LoadingScreen message="Loading blogs..." />;
   }
 

@@ -2,10 +2,8 @@
  * Permission and authentication logic
  */
 
-import { JWT_KEY } from '@/lib/auth/jwt';
 import { jwtVerify } from 'jose';
-import { NextRequest } from 'next/server';
-import { HttpMethod, ROLES_LIST, USER, UserRole } from './types';
+import { HttpMethod, UserRole } from './types';
 import { findMatchingRoute } from './utils';
 
 /**
@@ -20,21 +18,6 @@ export async function verifyJWT(token: string) {
     console.error('JWT verification failed:', error);
     return null;
   }
-}
-
-/**
- * Extracts and validates user role from request headers
- */
-export async function checkUserRoleStatus(request: NextRequest): Promise<UserRole | null> {
-  const token = request.cookies.get(JWT_KEY || 'auth-token')?.value;
-  if (token) {
-    const decoded = await verifyJWT(token);
-    if (decoded && typeof decoded.role === 'string') {
-      const role = decoded.role.toUpperCase() as UserRole;
-      return ROLES_LIST.includes(role) ? role : null;
-    }
-  }
-  return null;
 }
 
 /**
@@ -57,11 +40,4 @@ export function checkAccess(path: string, method: string, userRole: UserRole): b
   }
 
   return false;
-}
-
-/**
- * Gets the effective user role, defaulting to USER if none provided
- */
-export function getEffectiveUserRole(userRole: UserRole | null): UserRole {
-  return userRole || USER;
 }

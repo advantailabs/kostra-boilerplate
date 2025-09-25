@@ -24,7 +24,7 @@ import {
   unauthorizedResponse,
   notFoundResponse,
   internalServerErrorResponse,
-} from '@/lib/utils/response';
+} from '@/lib/utils/response/response';
 ```
 
 ### Usage Examples
@@ -80,7 +80,7 @@ The axios instance automatically shows toast notifications for errors. No additi
 For manual error handling, use the error handler utility:
 
 ```typescript
-import { handleApiError, handleApiSuccess } from '@/lib/utils/error-handler';
+import { handleApiError, handleApiSuccess } from '@/lib/utils/error/error-handler';
 
 try {
   const result = await apiCall();
@@ -119,8 +119,8 @@ const handleCreate = async data => {
 For cases where you don't want automatic error toasts, the system automatically excludes certain endpoints like `/auth` and `/health`. For other cases where you need manual error handling, you can catch and handle errors manually:
 
 ```typescript
-import axiosInstance from '@/lib/axios';
-import { handleApiError } from '@/lib/utils/error-handler';
+import axiosInstance from '@/lib/utils/http/axios';
+import { handleApiError } from '@/lib/utils/error/error-handler';
 
 try {
   const response = await axiosInstance.get('/api/data');
@@ -149,7 +149,7 @@ The system automatically shows different toast types based on HTTP status codes:
 Common errors are predefined in `src/lib/utils/errors.ts`:
 
 ```typescript
-import { ERRORS } from '@/lib/utils/errors';
+import { ERRORS } from '@/lib/utils/error/errors';
 
 // Examples relevant to Peon application
 ERRORS.AUTH_REQUIRED;

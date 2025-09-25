@@ -1,9 +1,5 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import {
-  internalServerErrorResponse,
-  successResponse,
-  unauthorizedResponse,
-} from '@/lib/utils/response';
+import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
 import { CreditService } from '@/services/internal/credit';
 import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';

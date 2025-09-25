@@ -1,5 +1,5 @@
 import { Button } from '@/components/atom/Button';
-import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
+import { S3_PUBLIC_BASE_URL } from '@/services/external/aws/s3';
 import { BlogResponseType } from '@/types/blog.type';
 import { Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';

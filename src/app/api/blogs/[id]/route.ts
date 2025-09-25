@@ -1,10 +1,10 @@
 import {
+  formatZodError,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { blogIdSchema, UpdateBlogInput, updateBlogSchema } from '@/schemas/blog.schema';
 import { deleteBlogById, getBlogById, updateBlogById } from '@/services/repositories/blogs';
 import { NextRequest } from 'next/server';

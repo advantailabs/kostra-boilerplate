@@ -1,10 +1,10 @@
 import {
+  formatZodError,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import {
   UpdateCategoryInput,
   categoryIdSchema,

@@ -1,4 +1,4 @@
-import { handleApiError, handleApiSuccess } from '@/lib/utils/error-handler';
+import { handleApiError, handleApiSuccess } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 

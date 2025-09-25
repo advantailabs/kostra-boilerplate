@@ -6,8 +6,8 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/atom/Button';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useUploadFiles } from '@/hooks/useFiles';
-import { formatFileSize } from '@/lib/file-utils';
-import { uploadFileViaPresignedUrl } from '@/lib/presigned-upload';
+import { uploadFileViaPresignedUrl } from '@/services/external/aws/presigned-upload';
+import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
 import { useAuthStore } from '@/store/auth';
 
 interface FileUploaderProps {

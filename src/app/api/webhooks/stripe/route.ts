@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 import { PLANS_CONFIG } from '@/data/config/plans';
 import { prisma } from '@/lib/prisma';
-import { getStripeWebhookSecret, stripe } from '@/lib/stripe';
+import { getStripeWebhookSecret, stripe } from '@/services/external/stripe/stripe';
 import { UserPlan } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';

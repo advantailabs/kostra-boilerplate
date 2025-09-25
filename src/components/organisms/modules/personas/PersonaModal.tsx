@@ -3,7 +3,7 @@ import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
+import { S3_PUBLIC_BASE_URL } from '@/services/external/aws/s3';
 import { Persona } from '@prisma/client';
 import { RiCloseLine, RiImageAddLine } from '@remixicon/react';
 import Image from 'next/image';

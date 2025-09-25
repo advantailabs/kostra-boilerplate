@@ -9,8 +9,8 @@ import { PageHeader } from '@/components/molecules/common/PageHeader';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
-import { formatFileSize } from '@/lib/file-utils';
 import { FileFilters, filesApi } from '@/services/api/files';
+import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
 import { useAuthStore } from '@/store/auth';
 
 export default function FilesPage() {

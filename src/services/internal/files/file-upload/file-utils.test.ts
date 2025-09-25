@@ -1,4 +1,4 @@
-import { PREFIX_TO_PURPOSE, inferUploadPurposeFromKey } from '@/lib/file-utils';
+import { PREFIX_TO_PURPOSE, inferUploadPurposeFromKey } from './file-utils';
 
 describe('inferUploadPurposeFromKey', () => {
   it('returns the correct purpose for all configured prefixes', () => {

@@ -1,9 +1,9 @@
 import { generateJWT } from '@/lib/auth/jwt';
-import { comparePassword, hashPassword, validatePassword } from '@/lib/utils/password';
+import { comparePassword, hashPassword, validatePassword } from '@/lib/utils';
 import { OtpPurpose, UserRole } from '@prisma/client';
-import { emailOTPRepository } from '../repositories/email-otp';
-import { createUser, getUserByEmail, updateUserByEmail } from '../repositories/user';
-import { OTPService } from './otp';
+import { emailOTPRepository } from '../../repositories/email-otp';
+import { createUser, getUserByEmail, updateUserByEmail } from '../../repositories/user';
+import { OTPService } from '../email/otp';
 
 export interface SignupData {
   email: string;

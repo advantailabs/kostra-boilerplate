@@ -3,7 +3,7 @@
 import { Calendar, HardDrive } from 'lucide-react';
 
 import { Modal } from '@/components/molecules/common/Modal';
-import { formatFileSize } from '@/lib/file-utils';
+import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
 
 interface FileDetailsModalProps {
   isOpen: boolean;

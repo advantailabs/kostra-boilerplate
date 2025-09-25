@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/molecules/common/Table';
 import { useCredits } from '@/hooks/useCredits';
-import { formatters } from '@/lib/format-utils';
+import { formatters } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { openCreditPurchase } from '@/store/ui/modals';
 

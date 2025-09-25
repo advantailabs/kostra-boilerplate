@@ -1,11 +1,7 @@
 import { generateJWT, getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { NextRequest } from 'next/server';
 // No direct NextResponse usage; use standardized responses
-import {
-  internalServerErrorResponse,
-  successResponse,
-  unauthorizedResponse,
-} from '@/lib/utils/response';
+import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
 import { getUserById } from '@/services/repositories/user';
 
 // Force dynamic rendering for this API route

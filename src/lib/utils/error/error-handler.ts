@@ -1,6 +1,6 @@
 import { toast } from '@/components/atom/Toast';
-import { ERRORS } from '@/lib/utils/errors';
 import { AxiosError } from 'axios';
+import { ERRORS } from './errors';
 
 interface ApiErrorResponse {
   success: false;

@@ -59,7 +59,8 @@ export function CategoriesTable({
     }
   }, [page, onPageChange]);
 
-  if (isLoading) {
+  // Show loading screen only on initial load, not during search
+  if (isLoading && !searchInput) {
     return <LoadingScreen message="Loading categories..." />;
   }
 

@@ -1,11 +1,11 @@
 import {
   badRequestResponse,
+  formatZodError,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
-import { AuthService } from '@/services/internal/auth';
+} from '@/lib/utils';
+import { AuthService } from '@/services/internal/auth/auth';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
