@@ -6,7 +6,6 @@ const createJestConfig = nextJest({
 });
 
 const customJestConfig = {
-  setupFiles: ['<rootDir>/jest.setup.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
   testEnvironment: 'node',

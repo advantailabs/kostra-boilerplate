@@ -2,6 +2,8 @@
  * Email driver types and interfaces
  */
 
+import type { TestEmailDriverConfig } from './drivers/test';
+
 export interface EmailMessage {
   to: string | string[];
   subject: string;
@@ -28,5 +30,5 @@ export interface EmailConfig {
   resend?: {
     apiKey: string;
   };
-  test?: {};
+  test?: TestEmailDriverConfig;
 }

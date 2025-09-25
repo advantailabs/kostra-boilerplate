@@ -1,8 +1,16 @@
 import { EmailDriver, EmailMessage } from '../types';
 
+export interface TestEmailDriverConfig {
+  // Empty interface for now - can be extended in the future
+  // Example future properties:
+  // logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  // storeEmails?: boolean;
+  // simulateErrors?: boolean;
+}
+
 export class TestDriver implements EmailDriver {
   // eslint-disable-next-line no-useless-constructor
-  constructor(_config?: Record<string, any>) {
+  constructor(_config?: TestEmailDriverConfig) {
     // Test driver doesn't need any configuration
     // Accept config parameter for interface consistency
   }
