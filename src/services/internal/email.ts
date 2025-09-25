@@ -38,10 +38,6 @@ export class EmailService {
    * Send OTP verification email
    */
   static async sendOTPEmail(data: SendOTPEmailData): Promise<void> {
-    if (process.env.TEST_MODE === 'true') {
-      return; // skip sending in tests
-    }
-
     const { email, otp, purpose } = data;
 
     // Convert purpose to template format

@@ -1,5 +1,4 @@
-import { AwsSesDriver } from './drivers/aws-ses';
-import { ResendDriver } from './drivers/resend';
+import { AwsSesDriver, ResendDriver, TestDriver } from './drivers';
 import { EmailConfig, EmailDriver, EmailDriverType } from './types';
 
 export class EmailDriverFactory {
@@ -17,6 +16,9 @@ export class EmailDriverFactory {
         }
         return new ResendDriver(config.resend);
 
+      case 'test':
+        return new TestDriver();
+
       default:
         throw new Error(`Unsupported email driver: ${config.driver}`);
     }
@@ -27,9 +29,10 @@ export class EmailDriverFactory {
 let emailDriver: EmailDriver | null = null;
 
 export function getEmailDriver(): EmailDriver {
+  const isTest = process.env.TEST_MODE === 'true';
   if (!emailDriver) {
     const config: EmailConfig = {
-      driver: (process.env.EMAIL_DRIVER as EmailDriverType) || 'resend',
+      driver: isTest ? 'test' : (process.env.EMAIL_DRIVER as EmailDriverType) || 'resend',
       awsSes:
         process.env.EMAIL_DRIVER === 'aws-ses'
           ? {
@@ -44,6 +47,7 @@ export function getEmailDriver(): EmailDriver {
               apiKey: process.env.RESEND_API_KEY || '',
             }
           : undefined,
+      test: isTest ? {} : undefined,
     };
 
     emailDriver = EmailDriverFactory.create(config);
