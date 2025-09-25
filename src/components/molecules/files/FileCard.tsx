@@ -14,7 +14,11 @@ import {
 import { FileDetailsModal } from '@/components/molecules/files/FileDetailsModal';
 import { DeleteFileDialog } from '@/components/organisms/modules/files/DeleteFileDialog';
 import { useDeleteFile } from '@/hooks/useFiles';
-import { formatFileSize, formatMimeType, getFileTypeIconWithColor } from '@/lib/file-utils';
+import {
+  formatFileSize,
+  formatMimeType,
+  getFileTypeIconWithColor,
+} from '@/services/internal/files/file-upload/file-utils';
 
 interface FileCardProps {
   file: any;

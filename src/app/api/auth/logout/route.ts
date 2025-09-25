@@ -1,5 +1,5 @@
 import { JWT_KEY } from '@/lib/auth/jwt';
-import { internalServerErrorResponse, successResponse } from '@/lib/utils/response';
+import { internalServerErrorResponse, successResponse } from '@/lib/utils';
 import { cookies } from 'next/headers';
 
 export async function POST() {

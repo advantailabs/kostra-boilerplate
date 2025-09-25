@@ -5,12 +5,12 @@ import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { prisma } from '@/lib/prisma';
 import {
   errorResponse,
+  formatZodError,
   internalServerErrorResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { createPersonaService, getUserPersonasService } from '@/services/internal/persona';
 import { getUserById } from '@/services/repositories/user';
 import { createPersonaSchema } from '@/validations/persona';

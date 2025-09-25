@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { axios } from '@/lib/utils';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 
 export interface Blog {
@@ -59,12 +59,12 @@ export const blogsApi = {
     if (filters?.page) params.append('page', filters.page.toString());
     if (filters?.limit) params.append('limit', filters.limit.toString());
 
-    const response = await axiosInstance.get(`/blogs?${params.toString()}`);
+    const response = await axios.get(`/blogs?${params.toString()}`);
     return response.data.data || response.data;
   },
 
   createBlog: async (data: CreateBlogInput): Promise<Blog> => {
-    const response = await axiosInstance.post('/blogs', data, {
+    const response = await axios.post('/blogs', data, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -73,7 +73,7 @@ export const blogsApi = {
   },
 
   updateBlog: async (id: number, data: UpdateBlogInput): Promise<Blog> => {
-    const response = await axiosInstance.patch(`/blogs/${id}`, data, {
+    const response = await axios.patch(`/blogs/${id}`, data, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -82,6 +82,6 @@ export const blogsApi = {
   },
 
   deleteBlog: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/blogs/${id}`);
+    await axios.delete(`/blogs/${id}`);
   },
 };

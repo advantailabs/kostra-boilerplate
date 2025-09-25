@@ -1,4 +1,4 @@
-import { inferUploadPurposeFromKey } from '@/lib/file-utils';
+import { inferUploadPurposeFromKey } from '@/services/internal/files/file-upload/file-utils';
 
 import {
   createFile,

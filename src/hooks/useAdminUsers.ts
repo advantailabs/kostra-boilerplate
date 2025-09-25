@@ -1,5 +1,5 @@
-import axios from '@/lib/axios';
 import { UserRole } from '@/lib/constants/admin';
+import { axios } from '@/lib/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

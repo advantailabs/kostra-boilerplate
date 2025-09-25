@@ -9,7 +9,7 @@ import {
   requiresRoleAccess,
 } from '@/lib/routes';
 import { NextRequest, NextResponse } from 'next/server';
-import { forbiddenResponse } from './lib/utils/response';
+import { forbiddenResponse } from './lib/utils/response/response';
 
 // Main middleware
 const middleware = async (request: NextRequest) => {

@@ -1,9 +1,5 @@
 // Using standardized response helpers
-import {
-  internalServerErrorResponse,
-  successResponse,
-  unauthorizedResponse,
-} from '@/lib/utils/response';
+import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
 
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CreditService } from '@/services/internal/credit';

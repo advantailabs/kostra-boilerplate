@@ -1,11 +1,11 @@
-import { hashPassword } from '@/lib/utils/password';
 import {
   badRequestResponse,
+  formatZodError,
+  hashPassword,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { createUser, getUserByEmail, getUserByRole } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
 import { UserRole } from '@prisma/client';

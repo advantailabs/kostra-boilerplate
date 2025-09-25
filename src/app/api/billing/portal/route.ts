@@ -1,10 +1,6 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { stripe } from '@/lib/stripe';
-import {
-  internalServerErrorResponse,
-  successResponse,
-  unauthorizedResponse,
-} from '@/lib/utils/response';
+import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
+import { stripe } from '@/services/external/stripe/stripe';
 import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 

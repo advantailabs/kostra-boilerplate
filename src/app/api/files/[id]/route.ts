@@ -1,14 +1,18 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import {
   errorResponse,
+  formatZodError,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
-import { deleteFileService, getFileByIdService, updateFileService } from '@/services/internal/file';
+} from '@/lib/utils';
+import {
+  deleteFileService,
+  getFileByIdService,
+  updateFileService,
+} from '@/services/internal/files/file';
 import { getUserById } from '@/services/repositories/user';
 import { updateFileSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';

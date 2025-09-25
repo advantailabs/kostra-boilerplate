@@ -2,13 +2,13 @@ import { NextRequest } from 'next/server';
 
 import { PLANS_CONFIG } from '@/data/config/plans';
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { stripe } from '@/lib/stripe';
 import {
   errorResponse,
   internalServerErrorResponse,
   successResponse,
   unauthorizedResponse,
-} from '@/lib/utils/response';
+} from '@/lib/utils';
+import { stripe } from '@/services/external/stripe/stripe';
 import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
 
 export const dynamic = 'force-dynamic';

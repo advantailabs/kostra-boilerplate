@@ -1,8 +1,11 @@
+import {
+  getBucketName,
+  getUploadPurposeConfig,
+} from '@/services/internal/files/file-upload/file-upload-config';
 import { UploadPurpose } from '@/types/file-upload';
 import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
-import { getBucketName, getUploadPurposeConfig } from './file-upload-config';
 
 // Client-side environment variables (available in browser)
 export const S3_PUBLIC_BASE_URL =

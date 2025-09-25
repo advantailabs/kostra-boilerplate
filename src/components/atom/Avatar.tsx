@@ -1,5 +1,5 @@
-import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { cx } from '@/lib/utils';
+import { S3_PUBLIC_BASE_URL } from '@/services/external/aws/s3';
 import Image from 'next/image';
 import React from 'react';
 

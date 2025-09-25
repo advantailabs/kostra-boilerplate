@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { axios } from '@/lib/utils';
 
 export interface Category {
   id: number;
@@ -43,21 +43,21 @@ export const categoriesApi = {
     if (filters?.page) params.append('page', filters.page.toString());
     if (filters?.limit) params.append('limit', filters.limit.toString());
 
-    const response = await axiosInstance.get(`/categories?${params.toString()}`);
+    const response = await axios.get(`/categories?${params.toString()}`);
     return response.data.data || response.data;
   },
 
   createCategory: async (data: { name: string; slug: string }): Promise<Category> => {
-    const response = await axiosInstance.post('/categories', data);
+    const response = await axios.post('/categories', data);
     return response.data.data || response.data;
   },
 
   updateCategory: async (id: number, data: { name: string; slug: string }): Promise<Category> => {
-    const response = await axiosInstance.patch(`/categories/${id}`, data);
+    const response = await axios.patch(`/categories/${id}`, data);
     return response.data.data || response.data;
   },
 
   deleteCategory: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/categories/${id}`);
+    await axios.delete(`/categories/${id}`);
   },
 };

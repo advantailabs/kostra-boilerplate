@@ -1,13 +1,13 @@
 import { FREE_LIMITS } from '@/data/config/plans';
 import {
   errorResponse,
+  formatZodError,
   internalServerErrorResponse,
   successResponse,
   unauthorizedResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
-import { getUserFilesService, uploadFileService } from '@/services/internal/file';
+} from '@/lib/utils';
+import { getUserFilesService, uploadFileService } from '@/services/internal/files/file';
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 

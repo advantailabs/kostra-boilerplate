@@ -1,6 +1,4 @@
 import { getUserIdFromHeaders } from '@/lib/auth/jwt';
-import { getBucketName } from '@/lib/file-upload-config';
-import { generateDownloadUrl } from '@/lib/s3';
 import {
   errorResponse,
   forbiddenResponse,
@@ -8,7 +6,9 @@ import {
   notFoundResponse,
   successResponse,
   unauthorizedResponse,
-} from '@/lib/utils/response';
+} from '@/lib/utils';
+import { generateDownloadUrl } from '@/services/external/aws/s3';
+import { getBucketName } from '@/services/internal/files/file-upload/file-upload-config';
 import { findFileById } from '@/services/repositories/file';
 import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';

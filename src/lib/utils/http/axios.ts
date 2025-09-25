@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { redirect } from 'next/navigation';
 
-import { handleApiError } from '@/lib/utils/error-handler';
+import { handleApiError } from '../error/error-handler';
 
 const axiosInstance = axios.create({
   baseURL: '/api',
@@ -69,3 +69,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+export { axiosInstance };

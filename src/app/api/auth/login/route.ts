@@ -1,13 +1,13 @@
 import { setAuthCookie } from '@/lib/auth/jwt';
 import {
   badRequestResponse,
+  formatZodError,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
-} from '@/lib/utils/response';
-import { formatZodError } from '@/lib/utils/validation';
+} from '@/lib/utils';
 import { loginSchema } from '@/schemas/auth.schema';
-import { AuthService } from '@/services/internal/auth';
+import { AuthService } from '@/services/internal/auth/auth';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route

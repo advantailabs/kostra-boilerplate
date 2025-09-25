@@ -1,9 +1,5 @@
 import { generateJWT, setAuthCookie } from '@/lib/auth/jwt';
-import {
-  badRequestResponse,
-  internalServerErrorResponse,
-  successResponse,
-} from '@/lib/utils/response';
+import { badRequestResponse, internalServerErrorResponse, successResponse } from '@/lib/utils';
 import {
   extractGoogleUserInfo,
   validateGoogleResponse,

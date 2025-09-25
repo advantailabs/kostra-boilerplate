@@ -1,6 +1,6 @@
-import { getUploadPurposeConfig } from '@/lib/file-upload-config';
-import { S3_PUBLIC_BASE_URL } from '@/lib/s3';
 import { fileUploadApi } from '@/services/api/file-upload';
+import { S3_PUBLIC_BASE_URL } from '@/services/external/aws/s3';
+import { getUploadPurposeConfig } from '@/services/internal/files/file-upload/file-upload-config';
 import { UploadPurpose } from '@/types/file-upload';
 import { useCallback, useState } from 'react';
 
