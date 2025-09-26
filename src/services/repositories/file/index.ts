@@ -1,7 +1,13 @@
 import { prisma as sharedPrisma } from '@/lib/prisma';
-import { RepositoryResult } from '@/types/chat';
 import type { File as FileType } from '@/types/file';
 import { File, PrismaClient } from '@prisma/client';
+
+// Repository result type
+interface RepositoryResult<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
 
 const prisma = sharedPrisma as PrismaClient;
 

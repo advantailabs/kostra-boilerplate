@@ -37,7 +37,7 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
 
   { path: '/app/files', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/personas', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
+  { path: '/app/packages', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
 
@@ -52,22 +52,22 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/admin', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/admin/users', isPublic: false, accessTo: { GET: [ADMIN] } },
 
-  // API routes - personas
+  // API routes - packages
   {
-    path: '/api/personas',
+    path: '/api/packages',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      POST: [USER, ADMIN],
+      GET: [ADMIN],
+      POST: [ADMIN],
     },
   },
   {
-    path: '/api/personas/[id]',
+    path: '/api/packages/[id]',
     isPublic: false,
     accessTo: {
-      GET: [USER, ADMIN],
-      PUT: [USER, ADMIN],
-      DELETE: [USER, ADMIN],
+      GET: [ADMIN],
+      PATCH: [ADMIN],
+      DELETE: [ADMIN],
     },
   },
 

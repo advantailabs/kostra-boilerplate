@@ -2,12 +2,6 @@ import { FileUploadConfig, UploadPurpose } from '@/types/file-upload';
 
 export const FILE_UPLOAD_CONFIG: FileUploadConfig = {
   purposes: {
-    PersonaLogo: {
-      bucket: 'public',
-      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-      maxFileSize: 5 * 1024 * 1024, // 5MB
-      keyPrefix: 'personas/logos',
-    },
     UserAvatar: {
       bucket: 'public',
       allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],

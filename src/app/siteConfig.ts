@@ -10,7 +10,7 @@ export const siteConfig = {
     home: '/app',
     blogs: '/app/blogs',
     categories: '/app/categories',
-    personas: '/app/personas',
+    packages: '/app/packages',
     files: '/app/files',
     chat: '/app/chat',
     creditHistory: '/app/credit-history',

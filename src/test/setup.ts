@@ -32,7 +32,7 @@ export async function cleanupDatabase() {
     await testPrisma.$transaction(async tx => {
       await tx.creditHistory.deleteMany({});
       await tx.file.deleteMany({});
-      await tx.persona.deleteMany({});
+      await tx.package.deleteMany({});
       await tx.user.deleteMany({});
     });
 
@@ -65,15 +65,15 @@ export async function createTestUser(overrides: Partial<any> = {}) {
   });
 }
 
-export async function createTestPersona(userId: number, overrides: Partial<any> = {}) {
-  return testPrisma.persona.create({
+export async function createTestPackage(overrides: Partial<any> = {}) {
+  return testPrisma.package.create({
     data: {
-      user: { connect: { id: userId } },
-      name: 'Test Assistant',
-      description: 'A helpful test assistant',
-      instructions: 'You are a helpful test assistant.',
-      tags: ['test', 'assistant'],
-      logo: null,
+      title: 'Test Package',
+      description: 'A test package for testing',
+      isFeatured: false,
+      price: 9.99,
+      currencySymbol: '$',
+      features: ['Feature 1', 'Feature 2'],
       ...overrides,
     },
   });

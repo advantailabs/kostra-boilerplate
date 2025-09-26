@@ -11,7 +11,6 @@ import {
 } from '@/lib/utils';
 import { generatePresignedUrl } from '@/services/external/aws/s3';
 import { validateFileUpload } from '@/services/internal/files/file-upload/file-upload-config';
-import { findPersonaByUserAndId } from '@/services/repositories/persona';
 import { getUserById } from '@/services/repositories/user';
 import { FileUploadRequest, FileUploadResponse } from '@/types/file-upload';
 import { NextRequest } from 'next/server';
@@ -63,20 +62,6 @@ export async function POST(request: NextRequest) {
 
     // Enforce ownership/authorization by purpose
     switch (uploadPurpose) {
-      case 'PersonaLogo': {
-        const personaId = Number(objectId);
-        if (Number.isNaN(personaId)) {
-          return validationErrorResponse('Invalid input data', [
-            { field: 'objectId', message: 'Persona ID must be a number' },
-          ]);
-        }
-        // Allow upload for new personas (objectId = 0) or existing personas
-        if (personaId !== 0) {
-          const persona = await findPersonaByUserAndId(user.id, personaId);
-          if (!persona) return notFoundResponse('Persona not found');
-        }
-        break;
-      }
       case 'UserAvatar': {
         // Only the current user can upload their avatar. objectId must match user.id
         const userId = Number(objectId);

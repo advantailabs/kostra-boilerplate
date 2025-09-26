@@ -41,25 +41,22 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   deletedAt      DateTime? // Soft delete
-  personas       Persona[]
   files          File[]
   creditHistory  CreditHistory[]
   blogs          Blog[]
 }
 
 
-model Persona {
-  id                Int            @id @default(autoincrement())
-  userId            Int?
-  name              String
-  description       String
-  instructions      String
-  tags              String[]
-  logo              String? // URL to the logo image in S3
-  deletedAt         DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  user              User?          @relation(fields: [userId], references: [id])
+model Package {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  isFeatured    Boolean  @default(false)
+  price         Decimal
+  currencySymbol String  @default("$")
+  features      Json     // JSON array of features
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 

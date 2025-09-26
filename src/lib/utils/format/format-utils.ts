@@ -1,4 +1,9 @@
-import { StoredCitation } from '@/types/chat';
+// Citation types for content processing
+export interface StoredCitation {
+  startIndex: number;
+  endIndex: number;
+  originalName: string;
+}
 
 /**
  * Process content by replacing citation text with links or removing them

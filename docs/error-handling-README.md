@@ -97,16 +97,16 @@ Use the `useApiMutation` hook for automatic error/success handling:
 ```typescript
 import { useApiMutation } from '@/hooks/useApiMutation';
 
-const createPersonaMutation = useApiMutation({
-  mutationFn: personasApi.createPersona,
-  successMessage: 'Persona created successfully!',
-  invalidateQueries: [['personas']],
+const createPackageMutation = useApiMutation({
+  mutationFn: packagesApi.createPackage,
+  successMessage: 'Package created successfully!',
+  invalidateQueries: [['packages']],
 });
 
 // Usage
 const handleCreate = async data => {
   try {
-    await createPersonaMutation.mutateAsync(data);
+    await createPackageMutation.mutateAsync(data);
     // Success toast shown automatically
   } catch (error) {
     // Error toast shown automatically
@@ -154,7 +154,7 @@ import { ERRORS } from '@/lib/utils/error/errors';
 // Examples relevant to Peon application
 ERRORS.AUTH_REQUIRED;
 ERRORS.AUTH_INSUFFICIENT_CREDITS;
-ERRORS.PERSONA_NOT_FOUND;
+ERRORS.PACKAGE_NOT_FOUND;
 ERRORS.KB_NOT_FOUND;
 ERRORS.FILE_UPLOAD_FAILED;
 ERRORS.THREAD_NOT_FOUND;
@@ -216,11 +216,11 @@ export async function POST(request: NextRequest) {
 Example:
 
 ```typescript
-export function PersonaForm() {
+export function PackageForm() {
   const createMutation = useApiMutation({
-    mutationFn: personasApi.createPersona,
-    successMessage: 'Persona created successfully!',
-    invalidateQueries: [['personas']],
+    mutationFn: packagesApi.createPackage,
+    successMessage: 'Package created successfully!',
+    invalidateQueries: [['packages']],
   });
 
   const handleSubmit = async (data) => {
