@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from './Modal';
+import { Input } from '@/components/atom/Input';
 
 /**
  * Generic DeleteDialog component for consistent delete confirmation across the application.
@@ -46,6 +47,9 @@ export interface DeleteDialogProps {
   onSuccess?: () => void;
   warningMessage?: string;
   additionalInfo?: React.ReactNode;
+  // Name confirmation feature (for contact management)
+  showNameConfirmation?: boolean;
+  confirmationPlaceholder?: string;
 }
 
 export function DeleteDialog({
@@ -59,8 +63,15 @@ export function DeleteDialog({
   onSuccess,
   warningMessage,
   additionalInfo,
+  showNameConfirmation = false,
+  confirmationPlaceholder = 'Type the name to confirm',
 }: DeleteDialogProps) {
+  const [confirmationName, setConfirmationName] = useState('');
+
   const handleDelete = async () => {
+    if (showNameConfirmation && confirmationName !== itemName) {
+      return;
+    }
     try {
       await onConfirm();
       onClose();
@@ -71,18 +82,55 @@ export function DeleteDialog({
     }
   };
 
+  const handleClose = () => {
+    setConfirmationName('');
+    onClose();
+  };
+
+  const isConfirmDisabled = isLoading || (showNameConfirmation && confirmationName !== itemName);
+
+  // Custom footer for name confirmation
+  const customFooter = showNameConfirmation ? (
+    <div className="flex items-center justify-end gap-2">
+      <button
+        type="button"
+        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={handleClose}
+        disabled={isLoading}
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        className="rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={handleDelete}
+        disabled={isConfirmDisabled}
+      >
+        {isLoading ? (
+          <>
+            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            Deleting...
+          </>
+        ) : (
+          'Delete'
+        )}
+      </button>
+    </div>
+  ) : undefined;
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="max-w-md"
       title={title}
-      primaryActionText={isLoading ? 'Deleting...' : 'Delete'}
-      secondaryActionText="Cancel"
-      onPrimaryAction={handleDelete}
-      isPrimaryActionDisabled={isLoading}
-      isPrimaryActionLoading={isLoading}
+      primaryActionText={showNameConfirmation ? undefined : isLoading ? 'Deleting...' : 'Delete'}
+      secondaryActionText={showNameConfirmation ? undefined : 'Cancel'}
+      onPrimaryAction={showNameConfirmation ? undefined : handleDelete}
+      isPrimaryActionDisabled={showNameConfirmation ? undefined : isConfirmDisabled}
+      isPrimaryActionLoading={showNameConfirmation ? undefined : isLoading}
       primaryActionVariant="destructive"
+      footer={customFooter}
     >
       <div>
         {warningMessage && (
@@ -99,6 +147,25 @@ export function DeleteDialog({
           Are you sure you want to delete the {itemType} <strong>{itemName}</strong>? This action
           cannot be undone.
         </p>
+
+        {showNameConfirmation && (
+          <div className="mt-4">
+            <label
+              htmlFor="confirmation-name"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Type "{itemName}" to confirm deletion
+            </label>
+            <Input
+              id="confirmation-name"
+              type="text"
+              placeholder={confirmationPlaceholder}
+              value={confirmationName}
+              onChange={e => setConfirmationName(e.target.value)}
+              className="mt-2"
+            />
+          </div>
+        )}
 
         {additionalInfo && <div className="mt-4 space-y-2">{additionalInfo}</div>}
       </div>

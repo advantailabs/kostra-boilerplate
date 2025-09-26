@@ -193,6 +193,33 @@ export const ERRORS = {
     httpStatus: 408,
   },
 
+  // Contact Errors (CONTACT_xxx)
+  CONTACT_NOT_FOUND: {
+    code: 'CONTACT_NOT_FOUND',
+    message: 'Contact submission not found',
+    httpStatus: 404,
+  },
+  CONTACT_CREATION_FAILED: {
+    code: 'CONTACT_CREATION_FAILED',
+    message: 'Failed to create contact submission. Please try again.',
+    httpStatus: 500,
+  },
+  CONTACT_UPDATE_FAILED: {
+    code: 'CONTACT_UPDATE_FAILED',
+    message: 'Failed to update contact submission. Please try again.',
+    httpStatus: 500,
+  },
+  CONTACT_DELETE_FAILED: {
+    code: 'CONTACT_DELETE_FAILED',
+    message: 'Failed to delete contact submission. Please try again.',
+    httpStatus: 500,
+  },
+  CONTACT_FETCH_FAILED: {
+    code: 'CONTACT_FETCH_FAILED',
+    message: 'Failed to fetch contact submissions. Please try again.',
+    httpStatus: 500,
+  },
+
   // Generic Errors (GENERIC_xxx)
   GENERIC_INTERNAL_ERROR: {
     code: 'GENERIC_INTERNAL_ERROR',
