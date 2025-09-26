@@ -33,7 +33,7 @@ A comprehensive SaaS boilerplate built with Next.js, TypeScript, and Tailwind CS
 - 🎯 Blog management system
 - 📂 Category management
 - 👥 User management with admin panel
-- 🤖 AI persona management
+- 📦 Package management with admin panel
 - 📄 SEO optimization with sitemap and robots.txt
 - 🎨 Modern landing page with branding components
 - 📱 Progressive Web App (PWA) support
@@ -178,9 +178,9 @@ saas-boilerplate/
 │   │   │   ├── files/         # File management endpoints
 │   │   │   │   ├── [id]/      # Individual file endpoints
 │   │   │   │   └── route.ts   # File route handler
-│   │   │   ├── personas/      # AI persona endpoints
-│   │   │   │   ├── [id]/      # Individual persona endpoints
-│   │   │   │   └── route.ts   # Persona route handler
+│   │   │   ├── packages/      # Package endpoints
+│   │   │   │   ├── [id]/      # Individual package endpoints
+│   │   │   │   └── route.ts   # Package route handler
 │   │   │   ├── users/         # User management endpoints
 │   │   │   │   ├── credits/   # Credit management
 │   │   │   │   └── data/      # User data endpoints
@@ -198,7 +198,7 @@ saas-boilerplate/
 │   │   │   ├── credit-history/ # Credit transaction history
 │   │   │   ├── details/      # User details page
 │   │   │   ├── files/        # File management pages
-│   │   │   ├── personas/     # AI persona pages
+│   │   │   ├── packages/     # Package management pages
 │   │   │   ├── settings/     # User settings pages
 │   │   │   ├── layout.tsx    # App layout
 │   │   │   ├── not-found.tsx # 404 page
@@ -242,9 +242,6 @@ saas-boilerplate/
 │   │   │   │   ├── BlogCard.tsx # Blog card component
 │   │   │   │   └── BlogGrid.tsx # Blog grid component
 │   │   │   ├── chat/        # Chat-related molecules
-│   │   │   │   ├── PersonaCard.tsx # Persona card
-│   │   │   │   ├── PersonaCardExample.tsx # Persona example
-│   │   │   │   └── PersonaSelectionModal.tsx # Persona selection
 │   │   │   ├── common/      # Common reusable molecules
 │   │   │   │   ├── Calendar.tsx # Calendar component
 │   │   │   │   ├── CommandBar.tsx # Command bar
@@ -300,10 +297,11 @@ saas-boilerplate/
 │   │   │   │   ├── files/    # File module components
 │   │   │   │   │   ├── FileGrid.tsx # File grid
 │   │   │   │   │   └── FileUploader.tsx # File uploader
-│   │   │   │   ├── personas/ # Persona module components
-│   │   │   │   │   ├── ModalAddPersona.tsx # Add persona modal
-│   │   │   │   │   ├── ModalEditPersona.tsx # Edit persona modal
-│   │   │   │   │   └── PersonaModal.tsx # Persona modal
+│   │   │   │   ├── packages/ # Package module components
+│   │   │   │   │   ├── PackageModal.tsx # Package modal
+│   │   │   │   │   ├── PackagesPage.tsx # Packages page
+│   │   │   │   │   ├── PackagesTable.tsx # Packages table
+│   │   │   │   │   └── DeletePackageDialog.tsx # Delete package dialog
 │   │   │   │   └── settings/ # Settings module components
 │   │   │   │       └── ModalAddUser.tsx # Add user modal
 │   │   │   └── shared/       # Shared organisms (navigation, data tables)
@@ -368,7 +366,7 @@ saas-boilerplate/
 │   │   ├── useFileUpload.ts # File upload hook
 │   │   ├── useGoogleSignIn.ts # Google sign-in hook
 │   │   ├── useLogout.ts # Logout hook
-│   │   ├── usePersonas.ts # Personas hook
+│   │   ├── usePackages.ts # Packages hook
 │   │   ├── useSignInModal.ts # Sign-in modal hook
 │   │   └── useStripe.ts # Stripe hook
 │   │
@@ -427,16 +425,16 @@ saas-boilerplate/
 │   │   │   ├── credits.ts   # Credits API service
 │   │   │   ├── file-upload.ts # File upload API service
 │   │   │   ├── files.ts     # Files API service
-│   │   │   └── personas.ts  # Personas API service
+│   │   │   └── packages.ts  # Packages API service
 │   │   ├── external/        # Third-party service integrations
 │   │   │   └── google/      # Google services
 │   │   │       └── auth.ts  # Google auth service
 │   │   ├── internal/        # Backend reusable services
 │   │   │   ├── __tests__/   # Service tests
-│   │   │   │   └── persona.service.test.ts # Persona service tests
+│   │   │   │   └── package.service.test.ts # Package service tests
 │   │   │   ├── credit.ts    # Credit service
 │   │   │   ├── file.ts      # File service
-│   │   │   └── persona.ts   # Persona service
+│   │   │   └── package.ts   # Package service
 │   │   └── repositories/    # Database/ORM service calls
 │   │       ├── blogs/       # Blog repository
 │   │       │   └── index.ts # Blog repository implementation
@@ -444,8 +442,8 @@ saas-boilerplate/
 │   │       │   └── index.ts # Category repository implementation
 │   │       ├── file/        # File repository
 │   │       │   └── index.ts # File repository implementation
-│   │       ├── persona/     # Persona repository
-│   │       │   └── index.ts # Persona repository implementation
+│   │       ├── package/     # Package repository
+│   │       │   └── index.ts # Package repository implementation
 │   │       └── user/        # User repository
 │   │           └── index.ts # User repository implementation
 │   │

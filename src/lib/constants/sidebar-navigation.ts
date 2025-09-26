@@ -5,8 +5,8 @@ import {
   RiFileLine,
   RiHomeLine,
   RiListCheck,
+  RiShoppingBagLine,
   RiTeamLine,
-  RiUserLine,
 } from '@remixicon/react';
 import { ADMIN, USER, UserRole } from '../routes/types';
 
@@ -26,30 +26,30 @@ export interface NavigationItem {
  * Each navigation item specifies which roles can access it
  */
 export const NAVIGATION_ITEMS: NavigationItem[] = [
-  // Persona section - accessible to both USER and ADMIN
+  // Main section - accessible to both USER and ADMIN
   {
     name: 'Home',
     href: siteConfig.baseLinks.home,
-    section: 'Persona',
+    section: 'Main',
     roles: [USER, ADMIN],
     icon: RiHomeLine,
   },
   {
-    name: 'Personas',
-    href: siteConfig.baseLinks.personas,
-    section: 'Persona',
-    roles: [USER, ADMIN],
-    icon: RiUserLine,
-  },
-  {
     name: 'Files',
     href: siteConfig.baseLinks.files,
-    section: 'Persona',
+    section: 'Main',
     roles: [USER, ADMIN],
     icon: RiFileLine,
   },
 
   // Admin section - accessible only to ADMIN
+  {
+    name: 'Packages',
+    href: siteConfig.baseLinks.packages,
+    section: 'Admin',
+    roles: [ADMIN],
+    icon: RiShoppingBagLine,
+  },
   {
     name: 'Blogs',
     href: siteConfig.baseLinks.blogs,

@@ -54,25 +54,25 @@ export const ERRORS = {
     httpStatus: 400,
   },
 
-  // Persona Errors (PERSONA_xxx)
-  PERSONA_NOT_FOUND: {
-    code: 'PERSONA_NOT_FOUND',
-    message: 'Persona not found',
+  // Package Errors (PACKAGE_xxx)
+  PACKAGE_NOT_FOUND: {
+    code: 'PACKAGE_NOT_FOUND',
+    message: 'Package not found',
     httpStatus: 404,
   },
-  PERSONA_CREATION_FAILED: {
-    code: 'PERSONA_CREATION_FAILED',
-    message: 'Failed to create persona. Please try again.',
+  PACKAGE_CREATION_FAILED: {
+    code: 'PACKAGE_CREATION_FAILED',
+    message: 'Failed to create package. Please try again.',
     httpStatus: 500,
   },
-  PERSONA_UPDATE_FAILED: {
-    code: 'PERSONA_UPDATE_FAILED',
-    message: 'Failed to update persona. Please try again.',
+  PACKAGE_UPDATE_FAILED: {
+    code: 'PACKAGE_UPDATE_FAILED',
+    message: 'Failed to update package. Please try again.',
     httpStatus: 500,
   },
-  PERSONA_DELETE_FAILED: {
-    code: 'PERSONA_DELETE_FAILED',
-    message: 'Failed to delete persona. Please try again.',
+  PACKAGE_DELETE_FAILED: {
+    code: 'PACKAGE_DELETE_FAILED',
+    message: 'Failed to delete package. Please try again.',
     httpStatus: 500,
   },
 
@@ -266,7 +266,7 @@ export function mapPrismaError(prismaError: any): AppError {
     case 'P2002':
       // Unique constraint violation
       if (prismaError.meta?.target?.includes('name')) {
-        // Could be persona name, knowledge base title, etc.
+        // Could be package title, knowledge base title, etc.
         return ERRORS.DB_CONSTRAINT_VIOLATION;
       }
       if (prismaError.meta?.target?.includes('email')) {
