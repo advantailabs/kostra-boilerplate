@@ -24,6 +24,23 @@ enum OtpPurpose {
   PASSWORD_RESET
 }
 
+enum ContactPurpose {
+  ACCOUNT
+  BILLING
+  TECHNICAL_SUPPORT
+  FEATURE_REQUEST
+  BUG_REPORT
+  GENERAL_INQUIRY
+  OTHER
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 model User {
   id             Int             @id @default(autoincrement())
   googleId       String?         @unique
@@ -44,6 +61,7 @@ model User {
   files          File[]
   creditHistory  CreditHistory[]
   blogs          Blog[]
+  contactSubmissions ContactSubmission[]
 }
 
 
@@ -147,4 +165,26 @@ model EmailOTP {
 
   @@index([email, purpose])
   @@index([expiringAt])
+}
+
+model ContactSubmission {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @unique @default(dbgenerated("gen_random_uuid()"))
+  userId      Int?          // Optional - if user is logged in
+  name        String
+  email       String
+  purpose     ContactPurpose
+  message     String
+  status      ContactStatus @default(NEW)
+  adminNotes  String?       // Admin can add notes
+  resolvedAt  DateTime?     // When the issue was resolved
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?     // Soft delete
+  
+  user        User?         @relation(fields: [userId], references: [id])
+  
+  @@index([status])
+  @@index([purpose])
+  @@index([createdAt])
 }

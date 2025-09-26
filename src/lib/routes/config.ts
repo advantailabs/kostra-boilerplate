@@ -11,6 +11,7 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/robots.txt', isPublic: true },
   { path: '/privacy-policy', isPublic: true },
   { path: '/terms-of-services', isPublic: true },
+  { path: '/contact', isPublic: true },
 
   // Static files and assets (should be handled by Next.js but included for safety)
   { path: '/favicon.ico', isPublic: true },
@@ -40,6 +41,7 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/packages', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/contact-management', isPublic: false, accessTo: { GET: [ADMIN] } },
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -216,5 +218,13 @@ export const ALL_ROUTES: RouteConfig[] = [
     path: '/api/onboard',
     isPublic: false,
     accessTo: { POST: [ADMIN, USER] },
+  },
+
+  // API routes - contact management
+  { path: '/api/contact', isPublic: false, accessTo: { POST: [], GET: [ADMIN] } },
+  {
+    path: '/api/contact/[id]',
+    isPublic: false,
+    accessTo: { GET: [ADMIN], PUT: [ADMIN], DELETE: [ADMIN] },
   },
 ] as const;

@@ -1,6 +1,7 @@
 import { siteConfig } from '@/app/siteConfig';
 import {
   RiArticleLine,
+  RiCustomerService2Line,
   RiFileLine,
   RiHomeLine,
   RiListCheck,
@@ -69,5 +70,12 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     section: 'Admin',
     roles: [ADMIN],
     icon: RiTeamLine,
+  },
+  {
+    name: 'Contact Management',
+    href: '/app/contact-management',
+    icon: RiCustomerService2Line,
+    section: 'Admin',
+    roles: [ADMIN],
   },
 ] as const;
