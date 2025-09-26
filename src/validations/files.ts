@@ -23,9 +23,7 @@ export const uploadFilesSchema = z.object({
       mimeType: z.string(),
       size: z.number(),
       s3Key: z.string(),
-      uploadPurpose: z
-        .enum(['PersonaLogo', 'UserAvatar', 'MessageAttachment', 'UserDocument'])
-        .optional(),
+      uploadPurpose: z.enum(['UserAvatar', 'MessageAttachment', 'UserDocument']).optional(),
     })
   ),
 });

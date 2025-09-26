@@ -50,14 +50,14 @@ export default function MobileSidebar() {
         </div>
         <DrawerBody>
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
-            {/* Persona Section */}
+            {/* Main Section */}
             <div>
               <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs dark:text-gray-500">
-                Persona
+                Main
               </span>
               <ul role="list" className="space-y-1.5">
                 {NAVIGATION_ITEMS.filter(
-                  item => item.section === 'Persona' && item.roles.includes(userRole as any)
+                  item => item.section === 'Main' && item.roles.includes(userRole as any)
                 ).map(item => (
                   <li key={item.name}>
                     <DrawerClose asChild>

@@ -139,7 +139,6 @@ export const getFileTypeIconWithColor = (mimeType: string) => {
 
 /**
  * Returns icon and color for file type categories (not mime types)
- * Used in PersonaCard
  */
 export const getFileTypeCategoryIcon = (type: string) => {
   const fileTypeConfig: Record<string, { icon: any; color: string }> = {
@@ -178,7 +177,6 @@ export const PREFIX_TO_PURPOSE: ReadonlyArray<{
 }> = [
   { prefix: 'messages/attachments/', purpose: 'MessageAttachment' },
   { prefix: 'users/documents/', purpose: 'UserDocument' },
-  { prefix: 'personas/logos/', purpose: 'PersonaLogo' },
   { prefix: 'users/avatars/', purpose: 'UserAvatar' },
 ] as const;
 
@@ -187,7 +185,6 @@ export const PREFIX_TO_PURPOSE: ReadonlyArray<{
  * Example prefixes:
  * - messages/attachments/ → MessageAttachment
  * - users/documents/ → UserDocument
- * - personas/logos/ → PersonaLogo
  * - users/avatars/ → UserAvatar
  */
 export function inferUploadPurposeFromKey(key: string): UploadPurpose | undefined {

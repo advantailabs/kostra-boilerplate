@@ -55,14 +55,14 @@ export function Sidebar() {
             />
           </div>
           <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
-            {/* Persona Section */}
+            {/* Main Section */}
             <div>
               <span className="text-xs font-medium leading-6 text-gray-500 dark:text-gray-500">
-                Persona
+                Main
               </span>
               <ul role="list" className="space-y-0.5">
                 {NAVIGATION_ITEMS.filter(
-                  item => item.section === 'Persona' && item.roles.includes(userRole as any)
+                  item => item.section === 'Main' && item.roles.includes(userRole as any)
                 ).map(item => (
                   <li key={item.name}>
                     <Link

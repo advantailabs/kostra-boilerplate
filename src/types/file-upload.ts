@@ -1,9 +1,4 @@
-export type UploadPurpose =
-  | 'PersonaLogo'
-  | 'UserAvatar'
-  | 'MessageAttachment'
-  | 'UserDocument'
-  | 'BlogImage';
+export type UploadPurpose = 'UserAvatar' | 'MessageAttachment' | 'UserDocument' | 'BlogImage';
 
 export interface UploadPurposeConfig {
   bucket: 'public' | 'private';
