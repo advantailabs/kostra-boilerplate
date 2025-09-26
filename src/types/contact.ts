@@ -1,11 +1,11 @@
+import {
+  ContactFormData,
+  ContactSubmissionFilters,
+  ContactSubmissionUpdate,
+} from '@/validations/contact';
 import { ContactPurpose, ContactStatus } from '@prisma/client';
 
-export interface ContactFormData {
-  name: string;
-  email: string;
-  purpose: ContactPurpose;
-  message: string;
-}
+// ContactFormData is now imported from validations
 
 export interface ContactSubmission {
   id: number;
@@ -27,19 +27,8 @@ export interface ContactSubmission {
   } | null;
 }
 
-export interface ContactSubmissionUpdate {
-  status?: ContactStatus;
-  adminNotes?: string;
-  resolvedAt?: Date;
-}
-
-export interface ContactSubmissionFilters {
-  status?: ContactStatus;
-  purpose?: ContactPurpose;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
+// Re-export types from validations as the single source of truth
+export type { ContactFormData, ContactSubmissionFilters, ContactSubmissionUpdate };
 
 export interface ContactSubmissionResponse {
   submissions: ContactSubmission[];

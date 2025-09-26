@@ -1,5 +1,9 @@
 import { AppErrorClass, ERRORS } from '@/lib/utils';
-import { ContactSubmissionFilters, ContactSubmissionResponse } from '@/types/contact';
+import {
+  ContactSubmission,
+  ContactSubmissionFilters,
+  ContactSubmissionResponse,
+} from '@/types/contact';
 import { contactRepository } from '../repositories/contact';
 
 export interface ContactService {
@@ -11,7 +15,7 @@ export interface ContactService {
     message: string;
   }): Promise<any>;
 
-  getContactSubmission(_id: number): Promise<any>;
+  getContactSubmission(_id: number): Promise<ContactSubmission>;
 
   getContactSubmissionByUuid(_uuid: string): Promise<any>;
 

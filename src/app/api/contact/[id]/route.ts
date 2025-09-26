@@ -1,7 +1,6 @@
 import { getAuthUser } from '@/lib/auth/jwt';
 import {
   AppErrorClass,
-  badRequestResponse,
   errorResponse,
   forbiddenResponse,
   formatZodError,
@@ -11,8 +10,8 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils';
+import { contactIdSchema, contactUpdateSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
-import { contactSubmissionUpdateSchema } from '@/validations/contact';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -21,10 +20,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const authUser = await getAuthUser(request);
     if (!authUser?.userId) return unauthorizedResponse();
 
-    const id = parseInt(params.id, 10);
-    if (Number.isNaN(id)) {
-      return badRequestResponse('Invalid contact submission ID');
+    // Validate ID parameter using schema
+    const validationResult = contactIdSchema.safeParse({ id: params.id });
+    if (!validationResult.success) {
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
+    const id = validationResult.data.id;
 
     const submission = await contactService.getContactSubmission(id);
 
@@ -55,15 +56,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return forbiddenResponse('Admin access required');
     }
 
-    const id = parseInt(params.id, 10);
-    if (Number.isNaN(id)) {
-      return badRequestResponse('Invalid contact submission ID');
+    // Validate ID parameter using schema
+    const idValidationResult = contactIdSchema.safeParse({ id: params.id });
+    if (!idValidationResult.success) {
+      return validationErrorResponse('Validation failed', formatZodError(idValidationResult.error));
     }
+    const id = idValidationResult.data.id;
 
     const body = await request.json();
 
-    // Validate the request body
-    const validationResult = contactSubmissionUpdateSchema.safeParse(body);
+    // Validate the request body using the new schema
+    const validationResult = contactUpdateSchema.safeParse(body);
     if (!validationResult.success) {
       return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
@@ -104,10 +107,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const authUser = await getAuthUser(request);
     if (!authUser?.userId) return unauthorizedResponse();
 
-    const id = parseInt(params.id, 10);
-    if (Number.isNaN(id)) {
-      return badRequestResponse('Invalid contact submission ID');
+    // Validate ID parameter using schema
+    const validationResult = contactIdSchema.safeParse({ id: params.id });
+    if (!validationResult.success) {
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
     }
+    const id = validationResult.data.id;
 
     await contactService.deleteContactSubmission(id);
 

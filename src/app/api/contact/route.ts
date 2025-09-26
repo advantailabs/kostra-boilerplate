@@ -9,6 +9,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils';
+import { contactFiltersSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
 import { contactFormSchema } from '@/validations/contact';
 import { ContactPurpose, ContactStatus } from '@prisma/client';
@@ -81,17 +82,32 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const rawStatus = searchParams.get('status');
-    const rawPurpose = searchParams.get('purpose');
-    const filters = {
-      status: (rawStatus as ContactStatus) || undefined,
-      purpose: (rawPurpose as ContactPurpose) || undefined,
-      search: (searchParams.get('search') as string) || undefined,
-      page: parseInt(searchParams.get('page') || '1', 10),
-      limit: parseInt(searchParams.get('limit') || '20', 10),
+
+    // Create filters object from searchParams
+    const filters = Array.from(searchParams).reduce((acc: Record<string, any>, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+
+    // Validate filters using Zod
+    const validationResult = contactFiltersSchema.safeParse(filters);
+
+    if (!validationResult.success) {
+      return validationErrorResponse('Validation failed', formatZodError(validationResult.error));
+    }
+
+    const validatedFilters = validationResult.data;
+
+    // Process validated filters
+    const processedFilters = {
+      status: validatedFilters.status as ContactStatus | undefined,
+      purpose: validatedFilters.purpose as ContactPurpose | undefined,
+      search: validatedFilters.search,
+      page: validatedFilters.page ? parseInt(validatedFilters.page, 10) : 1,
+      limit: validatedFilters.limit ? parseInt(validatedFilters.limit, 10) : 20,
     };
 
-    const result = await contactService.getContactSubmissions(filters);
+    const result = await contactService.getContactSubmissions(processedFilters);
 
     return successResponse({
       data: result,
