@@ -77,8 +77,10 @@ export const contactRepository: ContactRepository = {
   },
 
   async findMany(filters: ContactSubmissionFilters) {
-    const { status, purpose, search, page = 1, limit = 20 } = filters;
-    const skip = (page - 1) * limit;
+    const { status, purpose, search, page = '1', limit = '20' } = filters;
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+    const skip = (pageNum - 1) * limitNum;
 
     const where: any = {
       deletedAt: null,
@@ -114,7 +116,7 @@ export const contactRepository: ContactRepository = {
         },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: limitNum,
       }),
       prisma.contactSubmission.count({ where }),
     ]);
@@ -122,9 +124,9 @@ export const contactRepository: ContactRepository = {
     return {
       submissions,
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
     };
   },
 

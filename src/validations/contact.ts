@@ -43,8 +43,8 @@ export const contactSubmissionFiltersSchema = z.object({
   status: contactStatusEnum.optional(),
   purpose: contactPurposeEnum.optional(),
   search: z.string().optional(),
-  page: z.number().int().min(1).default(1),
-  limit: z.number().int().min(1).max(100).default(20),
+  page: z.string().optional(),
+  limit: z.string().optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;

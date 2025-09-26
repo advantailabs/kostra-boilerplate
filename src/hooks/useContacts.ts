@@ -6,10 +6,15 @@ import {
   type UpdateContactSubmissionRequest,
 } from '../services/api/contact';
 
-export function useContacts(filters: ContactSubmissionFilters = {}, page = 1, limit = 10) {
+export function useContacts(filters: ContactSubmissionFilters = {}) {
   return useQuery({
-    queryKey: ['contacts', page, limit, filters],
-    queryFn: () => contactClient.list(page, limit, filters),
+    queryKey: ['contacts', filters],
+    queryFn: () =>
+      contactClient.list(
+        parseInt(filters.page || '1', 10),
+        parseInt(filters.limit || '10', 10),
+        filters
+      ),
     staleTime: 30_000,
     placeholderData: previousData => previousData,
   });

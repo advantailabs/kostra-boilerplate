@@ -30,11 +30,13 @@ export default function ContactManagementPage() {
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [purpose, setPurpose] = useState<string | undefined>(undefined);
 
-  const { data, isLoading, refetch, isFetching } = useContacts(
-    { status: status as any, purpose: purpose as any, search: debouncedSearch, page, limit },
-    page,
-    limit
-  );
+  const { data, isLoading, refetch, isFetching } = useContacts({
+    status: status as any,
+    purpose: purpose as any,
+    search: debouncedSearch,
+    page: page.toString(),
+    limit: limit.toString(),
+  });
 
   const submissions = data?.submissions || [];
   const total = data?.total || 0;

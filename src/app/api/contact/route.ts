@@ -103,8 +103,8 @@ export async function GET(request: NextRequest) {
       status: validatedFilters.status as ContactStatus | undefined,
       purpose: validatedFilters.purpose as ContactPurpose | undefined,
       search: validatedFilters.search,
-      page: validatedFilters.page ? parseInt(validatedFilters.page, 10) : 1,
-      limit: validatedFilters.limit ? parseInt(validatedFilters.limit, 10) : 20,
+      page: validatedFilters.page || '1',
+      limit: validatedFilters.limit || '20',
     };
 
     const result = await contactService.getContactSubmissions(processedFilters);
