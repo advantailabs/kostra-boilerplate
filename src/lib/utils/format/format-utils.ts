@@ -1,5 +1,5 @@
 // Citation types for content processing
-interface StoredCitation {
+export interface StoredCitation {
   startIndex: number;
   endIndex: number;
   originalName: string;

@@ -1,16 +1,16 @@
 import { packagesApi, type PackageFilters } from '@/services/api/packages';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from './useApiMutation';
 
 export function usePackages(filters?: PackageFilters) {
+  const queryClient = useQueryClient();
+
   // Normalize filters to create a stable query key
   const normalizedFilters = {
     page: filters?.page || 1,
     limit: filters?.limit || 10,
     ...(filters?.title && { title: filters.title }),
     ...(filters?.isFeatured !== undefined && { isFeatured: filters.isFeatured }),
-    ...(filters?.minPrice !== undefined && { minPrice: filters.minPrice }),
-    ...(filters?.maxPrice !== undefined && { maxPrice: filters.maxPrice }),
     ...(filters?.sortBy && { sortBy: filters.sortBy }),
     ...(filters?.sortOrder && { sortOrder: filters.sortOrder }),
   };
@@ -19,7 +19,6 @@ export function usePackages(filters?: PackageFilters) {
     data: response,
     isLoading,
     error,
-    refetch,
   } = useQuery({
     queryKey: ['packages', normalizedFilters],
     queryFn: () => packagesApi.getPackages(normalizedFilters),
@@ -38,7 +37,10 @@ export function usePackages(filters?: PackageFilters) {
       features: string[];
     }) => packagesApi.createPackage(data),
     successMessage: 'Package created successfully!',
-    invalidateQueries: [['packages']],
+    onSuccess: () => {
+      // Invalidate all packages queries to refresh all package-related data
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
+    },
   });
 
   const updatePackageMutation = useApiMutation({
@@ -57,15 +59,18 @@ export function usePackages(filters?: PackageFilters) {
       };
     }) => packagesApi.updatePackage(id, data),
     successMessage: 'Package updated successfully!',
-    invalidateQueries: [['packages']],
+    onSuccess: () => {
+      // Invalidate all packages queries to refresh all package-related data
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
+    },
   });
 
   const deletePackageMutation = useApiMutation({
     mutationFn: (id: number) => packagesApi.deletePackage(id),
     successMessage: 'Package deleted successfully!',
     onSuccess: () => {
-      // Refetch the current query directly instead of invalidating
-      refetch();
+      // Invalidate all packages queries to refresh all package-related data
+      queryClient.invalidateQueries({ queryKey: ['packages'] });
     },
   });
 
@@ -74,7 +79,6 @@ export function usePackages(filters?: PackageFilters) {
     pagination,
     isLoading,
     error,
-    refetch,
     createPackage: createPackageMutation.mutate,
     updatePackage: updatePackageMutation.mutate,
     deletePackage: deletePackageMutation.mutate,

@@ -22,7 +22,7 @@ export interface UploadFilesRequest {
     mimeType: string;
     size: number;
     s3Key: string;
-    uploadPurpose?: 'UserAvatar' | 'MessageAttachment' | 'UserDocument';
+    uploadPurpose?: 'UserAvatar' | 'MessageAttachment' | 'UserDocument' | 'BlogImage';
   }>;
 }
 

@@ -46,10 +46,10 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 }
 
 /**
- * PUT /api/packages/[id]
- * Update a specific package by ID
+ * PATCH /api/packages/[id]
+ * Update a specific package by ID (partial update)
  */
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Validate ID parameter using schema
     const idValidationResult = packageIdSchema.safeParse({ id: params.id });

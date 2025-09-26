@@ -52,7 +52,7 @@ model Package {
   title         String
   description   String
   isFeatured    Boolean  @default(false)
-  price         Float
+  price         Decimal
   currencySymbol String  @default("$")
   features      Json     // JSON array of features
   createdAt     DateTime @default(now())

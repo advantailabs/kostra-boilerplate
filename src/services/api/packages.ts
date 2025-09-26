@@ -15,8 +15,6 @@ export interface Package {
 export interface PackageFilters {
   title?: string;
   isFeatured?: boolean;
-  minPrice?: number;
-  maxPrice?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   page?: number;
@@ -42,8 +40,6 @@ export const packagesApi = {
     if (filters?.title) params.append('title', filters.title);
     if (filters?.isFeatured !== undefined)
       params.append('isFeatured', filters.isFeatured.toString());
-    if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString());
-    if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString());
     if (filters?.sortBy) params.append('sortBy', filters.sortBy);
     if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
     if (filters?.page) params.append('page', filters.page.toString());
@@ -81,7 +77,7 @@ export const packagesApi = {
       features?: string[];
     }
   ): Promise<Package> => {
-    const response = await axios.put(`/packages/${id}`, data);
+    const response = await axios.patch(`/packages/${id}`, data);
     return response.data.data || response.data;
   },
 

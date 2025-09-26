@@ -41,7 +41,7 @@ CREATE TABLE "Package" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "isFeatured" BOOLEAN NOT NULL DEFAULT false,
-    "price" DOUBLE PRECISION NOT NULL,
+    "price" DECIMAL(65,30) NOT NULL,
     "currencySymbol" TEXT NOT NULL DEFAULT '$',
     "features" JSONB NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

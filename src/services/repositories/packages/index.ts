@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { CreatePackageInput, UpdatePackageInput } from '@/schemas/package.schema';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export const createNewPackage = async (packageData: CreatePackageInput) => {
   const newPackage = await prisma.package.create({
@@ -7,7 +8,7 @@ export const createNewPackage = async (packageData: CreatePackageInput) => {
       title: packageData.title,
       description: packageData.description,
       isFeatured: packageData.isFeatured || false,
-      price: packageData.price,
+      price: new Decimal(packageData.price),
       currencySymbol: packageData.currencySymbol,
       features: packageData.features,
     },
@@ -92,7 +93,7 @@ export const updatePackageById = async (id: number, data: UpdatePackageInput) =>
       title: data.title,
       description: data.description,
       isFeatured: data.isFeatured,
-      price: data.price,
+      price: data.price ? new Decimal(data.price) : undefined,
       currencySymbol: data.currencySymbol,
       features: data.features,
     },

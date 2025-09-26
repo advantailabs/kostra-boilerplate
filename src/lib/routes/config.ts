@@ -66,7 +66,7 @@ export const ALL_ROUTES: RouteConfig[] = [
     isPublic: false,
     accessTo: {
       GET: [ADMIN],
-      PUT: [ADMIN],
+      PATCH: [ADMIN],
       DELETE: [ADMIN],
     },
   },

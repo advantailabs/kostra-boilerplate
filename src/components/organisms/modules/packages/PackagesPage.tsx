@@ -10,7 +10,7 @@ interface Package {
   title: string;
   description: string;
   isFeatured: boolean;
-  price: number;
+  price: number | string; // Can be number from API or Decimal string from DB
   currencySymbol: string;
   features: string[];
   createdAt: string;

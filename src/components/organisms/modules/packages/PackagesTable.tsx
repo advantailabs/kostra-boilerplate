@@ -18,7 +18,7 @@ interface Package {
   title: string;
   description: string;
   isFeatured: boolean;
-  price: number;
+  price: number | string; // Can be number from API or Decimal string from DB
   currencySymbol: string;
   features: string[];
   createdAt: string;
@@ -129,7 +129,9 @@ export function PackagesTable({
                     <TableCell className="py-1">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-50">
                         {pkg.currencySymbol}
-                        {pkg.price.toFixed(2)}
+                        {typeof pkg.price === 'string'
+                          ? parseFloat(pkg.price).toFixed(2)
+                          : pkg.price.toFixed(2)}
                       </div>
                     </TableCell>
                     <TableCell className="py-1">

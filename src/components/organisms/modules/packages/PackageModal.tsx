@@ -15,7 +15,7 @@ interface Package {
   title: string;
   description: string;
   isFeatured: boolean;
-  price: number;
+  price: number | string; // Can be number from API or Decimal string from DB
   currencySymbol: string;
   features: string[];
   createdAt: string;
@@ -65,15 +65,17 @@ export function PackageModal({
 
   useEffect(() => {
     if (mode === 'edit' && pkg) {
+      // Convert Decimal string to number if needed
+      const priceValue = typeof pkg.price === 'string' ? parseFloat(pkg.price) : pkg.price;
       setFormData({
         title: pkg.title || '',
         description: pkg.description || '',
         isFeatured: pkg.isFeatured || false,
-        price: pkg.price || 0,
+        price: priceValue || 0,
         currencySymbol: pkg.currencySymbol || '$',
         features: pkg.features || [],
       });
-      setPriceDisplay(pkg.price === 0 ? '' : pkg.price.toString());
+      setPriceDisplay(priceValue === 0 ? '' : priceValue.toString());
     } else if (mode === 'create') {
       setFormData({
         title: '',
