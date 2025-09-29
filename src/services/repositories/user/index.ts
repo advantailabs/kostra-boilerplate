@@ -37,7 +37,25 @@ const upsertUser = async (user: GoogleUserUpdate) => {
   });
 };
 
+const getUserByEmail = async (email: string, includeDeleted: boolean = false) => {
+  const whereClause: any = { email };
+
+  if (!includeDeleted) {
+    whereClause.deletedAt = null;
+  }
+
+  return prisma.user.findFirst({
+    where: whereClause,
+  });
+};
+
 const createUser = async (user: GoogleUserUpdate) => {
+  // Check if user already exists (including soft deleted users)
+  const existingUser = await getUserByEmail(user.email, true);
+  if (existingUser) {
+    throw new Error('Email already exists');
+  }
+
   const userData: any = {
     email: user.email,
     name: user.name,
@@ -97,12 +115,6 @@ const getUserById = async (userId: string | number | null) => {
 
   return prisma.user.findUnique({
     where: { id, deletedAt: null },
-  });
-};
-
-const getUserByEmail = async (email: string) => {
-  return prisma.user.findFirst({
-    where: { email, deletedAt: null },
   });
 };
 

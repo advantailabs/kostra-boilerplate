@@ -15,7 +15,7 @@ export const createUserSchema = z.object({
     .max(128, 'Password must be 128 characters or less')
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      'Invalid password format'
     ),
   role: z
     .enum([ROLES.ADMIN, ROLES.USER], {

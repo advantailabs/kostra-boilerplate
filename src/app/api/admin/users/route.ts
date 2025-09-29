@@ -1,12 +1,12 @@
 import {
-  badRequestResponse,
+  errorResponse,
   formatZodError,
   hashPassword,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils';
-import { createUser, getUserByEmail, getUserByRole } from '@/services/repositories/user';
+import { createUser, getUserByRole } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
 import { UserRole } from '@prisma/client';
 import { NextRequest } from 'next/server';
@@ -68,12 +68,6 @@ export async function POST(request: NextRequest) {
 
     const { email, password, role: dbRole } = validationResult.data;
 
-    // Check if user already exists
-    const existingUser = await getUserByEmail(email);
-    if (existingUser) {
-      return badRequestResponse('User with this email already exists', 409);
-    }
-
     // Hash password
     const hashedPassword = await hashPassword(password);
 
@@ -103,8 +97,13 @@ export async function POST(request: NextRequest) {
     };
 
     return successResponse(response, 201);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating user', error);
+
+    if (error.message === 'Email already exists') {
+      return errorResponse('Email already exists');
+    }
+
     return internalServerErrorResponse();
   }
 }

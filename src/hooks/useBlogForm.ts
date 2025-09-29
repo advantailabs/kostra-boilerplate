@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 // Type for the form data (proper types)
 type BlogFormData = {
   title: string;
+  slug: string;
   content: string;
   tags: string[];
   categories: string[];
@@ -35,6 +36,7 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
     resolver: zodResolver(schema),
     defaultValues: {
       title: '',
+      slug: '',
       content: '',
       tags: [],
       blogImageUrl: '',
@@ -64,6 +66,7 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
       form.reset(
         {
           title: blog.title || '',
+          slug: blog.slug || '',
           content: blog.content || '',
           tags: Array.isArray(blog.tags) ? blog.tags : [],
           blogImageUrl: blog.blogImageUrl || '',
@@ -80,6 +83,7 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
       // For create mode, just reset to default values
       form.reset({
         title: '',
+        slug: '',
         content: '',
         tags: [],
         blogImageUrl: '',

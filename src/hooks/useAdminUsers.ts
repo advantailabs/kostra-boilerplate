@@ -73,8 +73,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User created successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Failed to create user';
+      toast.error(errorMessage);
     },
   });
 
