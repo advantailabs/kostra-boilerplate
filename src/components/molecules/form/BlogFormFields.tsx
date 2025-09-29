@@ -9,6 +9,7 @@ import { Control, Controller, FieldErrors } from 'react-hook-form';
 // Type for the form data (proper types)
 type BlogFormData = {
   title: string;
+  slug: string;
   content: string;
   tags: string[];
   categories: string[];
@@ -52,6 +53,32 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                 className="h-9"
               />
               {errors.title && <span className="text-sm text-red-500">{errors.title.message}</span>}
+            </>
+          )}
+        />
+      </div>
+
+      {/* Slug */}
+      <div>
+        <Label
+          htmlFor="slug"
+          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          Slug
+        </Label>
+        <Controller
+          control={control}
+          name="slug"
+          render={({ field }) => (
+            <>
+              <Input
+                id="slug"
+                {...field}
+                value={String(field.value ?? '')}
+                placeholder="Enter blog slug..."
+                className="h-9"
+              />
+              {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
             </>
           )}
         />

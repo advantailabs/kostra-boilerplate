@@ -1,12 +1,12 @@
 import {
-  badRequestResponse,
+  errorResponse,
   formatZodError,
   hashPassword,
   internalServerErrorResponse,
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils';
-import { createUser, getUserByEmail, getUserByRole } from '@/services/repositories/user';
+import { createUser, getUserByRole } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
 import { UserRole } from '@prisma/client';
 import { NextRequest } from 'next/server';
@@ -18,9 +18,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
+    const includeDeleted = searchParams.get('includeDeleted') === 'true';
 
     // Get all users (excluding soft deleted)
-    const users = await getUserByRole(UserRole.USER, true);
+    const users = await getUserByRole(UserRole.USER, true, includeDeleted);
 
     // Filter users based on search term
     const filteredUsers = search
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
         stripeCustomerId: user.stripeCustomerId,
         isOverDue: user.isOverDue,
         planExpiringAt: user.planExpiringAt?.toISOString(),
+        deletedAt: user.deletedAt,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),
@@ -67,12 +69,6 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password, role: dbRole } = validationResult.data;
-
-    // Check if user already exists
-    const existingUser = await getUserByEmail(email);
-    if (existingUser) {
-      return badRequestResponse('User with this email already exists', 409);
-    }
 
     // Hash password
     const hashedPassword = await hashPassword(password);
@@ -103,8 +99,13 @@ export async function POST(request: NextRequest) {
     };
 
     return successResponse(response, 201);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating user', error);
+
+    if (error.message === 'Email already exists') {
+      return errorResponse('Email already exists');
+    }
+
     return internalServerErrorResponse();
   }
 }

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const createBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
+  slug: z.string().min(1, { message: 'Slug is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
   tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
   categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),
@@ -11,6 +12,7 @@ export const createBlogSchema = z.object({
 
 export const updateBlogSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
+  slug: z.string().min(1, { message: 'Slug is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
   tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
   categories: z.array(z.string()).min(1, { message: 'At least one category is required' }),

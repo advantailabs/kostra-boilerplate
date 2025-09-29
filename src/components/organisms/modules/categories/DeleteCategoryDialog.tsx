@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { ActionDialog } from '@/components/molecules/common/ActionDialog';
 import { useCategories } from '@/hooks/useCategories';
 
 interface DeleteCategoryDialogProps {
@@ -41,13 +41,14 @@ export function DeleteCategoryDialog({
   };
 
   return (
-    <DeleteDialog
+    <ActionDialog
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleDelete}
       title="Delete Category"
       itemName={categoryName}
       itemType="category"
+      actionType="delete"
       isLoading={isDeleting}
       onSuccess={onSuccess}
     />

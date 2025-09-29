@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { ActionDialog } from '@/components/molecules/common/ActionDialog';
 import { usePackages } from '@/hooks/usePackages';
 
 interface DeletePackageDialogProps {
@@ -41,13 +41,14 @@ export function DeletePackageDialog({
   };
 
   return (
-    <DeleteDialog
+    <ActionDialog
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleDelete}
       title="Delete Package"
       itemName={packageTitle}
       itemType="package"
+      actionType="delete"
       isLoading={isDeleting}
       onSuccess={onSuccess}
     />

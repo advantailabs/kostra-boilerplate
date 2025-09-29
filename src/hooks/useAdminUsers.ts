@@ -17,6 +17,7 @@ interface User {
   planExpiringAt?: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 interface CreateUserData {
@@ -40,11 +41,12 @@ interface UpdateUserData {
 
 interface UseAdminUsersOptions {
   search?: string;
+  includeDeleted?: boolean;
 }
 
 export const useAdminUsers = (options?: UseAdminUsersOptions) => {
   const queryClient = useQueryClient();
-  const { search = '' } = options || {};
+  const { search = '', includeDeleted = false } = options || {};
 
   // Get all users
   const {
@@ -52,11 +54,14 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
     isLoading,
     error,
   } = useQuery<User[]>({
-    queryKey: ['admin-users', search],
+    queryKey: ['admin-users', search, includeDeleted],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) {
         params.append('search', search);
+      }
+      if (includeDeleted) {
+        params.append('includeDeleted', 'true');
       }
       const response = await axios.get(`/admin/users?${params.toString()}`);
       return response.data.data.users;
@@ -73,8 +78,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User created successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Failed to create user';
+      toast.error(errorMessage);
     },
   });
 
@@ -108,6 +115,21 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
     },
   });
 
+  // Restore user mutation
+  const restoreUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await axios.post(`/admin/users/${userId}/restore`);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('User restored successfully');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   return {
     users: users || [],
     isLoading,
@@ -115,8 +137,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
     createUser: createUserMutation.mutateAsync,
     updateUser: updateUserMutation.mutateAsync,
     deleteUser: deleteUserMutation.mutateAsync,
+    restoreUser: restoreUserMutation.mutateAsync,
     isCreating: createUserMutation.isPending,
     isUpdating: updateUserMutation.isPending,
     isDeleting: deleteUserMutation.isPending,
+    isRestoring: restoreUserMutation.isPending,
   };
 };

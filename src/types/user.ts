@@ -25,6 +25,7 @@ export interface User {
   stripeCustomerId?: string;
   isOverDue?: boolean;
   planExpiringAt?: string;
+  deletedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -173,9 +174,11 @@ export interface UseAdminUsersReturn {
   createUser: (data: CreateUserRequest) => Promise<void>;
   updateUser: (data: UpdateUserRequest) => Promise<void>;
   deleteUser: (userId: number) => Promise<void>;
+  restoreUser: (userId: number) => Promise<void>;
   isCreating: boolean;
   isUpdating: boolean;
   isDeleting: boolean;
+  isRestoring: boolean;
 }
 
 // ============================================================================

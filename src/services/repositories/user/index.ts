@@ -37,7 +37,25 @@ const upsertUser = async (user: GoogleUserUpdate) => {
   });
 };
 
+const getUserByEmail = async (email: string, includeDeleted: boolean = false) => {
+  const whereClause: any = { email };
+
+  if (!includeDeleted) {
+    whereClause.deletedAt = null;
+  }
+
+  return prisma.user.findFirst({
+    where: whereClause,
+  });
+};
+
 const createUser = async (user: GoogleUserUpdate) => {
+  // Check if user already exists (including soft deleted users)
+  const existingUser = await getUserByEmail(user.email, true);
+  if (existingUser) {
+    throw new Error('Email already exists');
+  }
+
   const userData: any = {
     email: user.email,
     name: user.name,
@@ -67,7 +85,11 @@ const deleteUser = async (googleId: string) => {
   });
 };
 
-const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => {
+const getUserByRole = async (
+  role: UserRole,
+  includeAdmins: boolean = false,
+  includeDeleted: boolean = false
+) => {
   let roles: UserRole[] = [];
   if (includeAdmins) {
     roles = [UserRole.ADMIN, role];
@@ -77,7 +99,7 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
   return prisma.user.findMany({
     where: {
       role: { in: roles },
-      deletedAt: null,
+      ...(includeDeleted ? {} : { deletedAt: null }),
     },
   });
 };
@@ -97,12 +119,6 @@ const getUserById = async (userId: string | number | null) => {
 
   return prisma.user.findUnique({
     where: { id, deletedAt: null },
-  });
-};
-
-const getUserByEmail = async (email: string) => {
-  return prisma.user.findFirst({
-    where: { email, deletedAt: null },
   });
 };
 
@@ -166,6 +182,14 @@ const deleteUserById = async (userId: number) => {
   });
 };
 
+// Restore soft-deleted user by ID
+const restoreUserById = async (userId: number) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { deletedAt: null },
+  });
+};
+
 export {
   createUser,
   deleteUser,
@@ -175,6 +199,7 @@ export {
   getUserByGoogleIdOrEmail,
   getUserById,
   getUserByRole,
+  restoreUserById,
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,

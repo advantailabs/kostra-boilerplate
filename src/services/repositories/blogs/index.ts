@@ -1,14 +1,23 @@
 import { prisma } from '@/lib/prisma';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 
+// Helper function to get blog by slug
+export const getBlogBySlug = async (slug: string) => {
+  return prisma.blog.findUnique({
+    where: { slug },
+  });
+};
+
 // Helper function to generate a unique slug
-const generateUniqueSlug = async (title: string): Promise<string> => {
-  const baseSlug = title
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .split(/\s+/)
-    .join('-');
+const generateUniqueSlug = async (title: string, currentSlug?: string): Promise<string> => {
+  const baseSlug =
+    currentSlug ||
+    title
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .split(/\s+/)
+      .join('-');
 
   // Generate full epoch timestamp for uniqueness
   const timestamp = Date.now();
@@ -16,7 +25,13 @@ const generateUniqueSlug = async (title: string): Promise<string> => {
 };
 
 export const createNewBlog = async (blogData: CreateBlogInput & { authorId: number }) => {
-  const slug = await generateUniqueSlug(blogData.title);
+  // Check if the provided slug already exists
+  const existingBlog = await getBlogBySlug(blogData.slug);
+
+  // If slug exists, generate a unique one by adding timestamp
+  const slug = existingBlog
+    ? await generateUniqueSlug(blogData.title, blogData.slug)
+    : blogData.slug;
 
   const newBlog = await prisma.blog.create({
     data: {
@@ -147,9 +162,13 @@ export const updateBlogById = async (id: number, data: UpdateBlogInput) => {
     throw new Error(`Blog with ID ${id} not found`);
   }
 
-  // Generate a new slug if the title has changed
-  const slug =
-    data.title !== existingBlog.title ? await generateUniqueSlug(data.title) : existingBlog.slug;
+  // Check if slug has changed or if the new slug already exists
+  let slug = existingBlog.slug;
+
+  if (data.slug !== existingBlog.slug) {
+    const existingBlogWithNewSlug = await getBlogBySlug(data.slug);
+    slug = existingBlogWithNewSlug ? await generateUniqueSlug(data.title, data.slug) : data.slug;
+  }
 
   // Update the blog with proper category handling
   return prisma.blog.update({
