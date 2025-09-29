@@ -8,7 +8,7 @@ import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { ActionDialog } from '@/components/molecules/common/ActionDialog';
 import { PageHeader } from '@/components/molecules/common/PageHeader';
 import {
   Select,
@@ -268,7 +268,7 @@ export default function ContactManagementPage() {
 
       {/* Delete Dialog */}
       {deleteTarget && (
-        <DeleteDialog
+        <ActionDialog
           isOpen={!!deleteTarget}
           onClose={() => setDeleteTarget(null)}
           onConfirm={handleDelete}
@@ -276,6 +276,7 @@ export default function ContactManagementPage() {
           title="Delete Contact Submission"
           itemName={deleteTarget.name}
           itemType="contact submission"
+          actionType="delete"
           showNameConfirmation
           confirmationPlaceholder="Type the contact name to confirm"
         />

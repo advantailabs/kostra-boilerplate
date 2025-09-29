@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteDialog } from '@/components/molecules/common/DeleteDialog';
+import { ActionDialog } from '@/components/molecules/common/ActionDialog';
 
 interface DeleteBlogDialogProps {
   isOpen: boolean;
@@ -27,13 +27,14 @@ export function DeleteBlogDialog({
   };
 
   return (
-    <DeleteDialog
+    <ActionDialog
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleDelete}
       title="Delete Blog"
       itemName={blogTitle}
       itemType="blog"
+      actionType="delete"
       isLoading={isDeleting}
       onSuccess={onSuccess}
     />

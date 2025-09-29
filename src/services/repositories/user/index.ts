@@ -85,7 +85,11 @@ const deleteUser = async (googleId: string) => {
   });
 };
 
-const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => {
+const getUserByRole = async (
+  role: UserRole,
+  includeAdmins: boolean = false,
+  includeDeleted: boolean = false
+) => {
   let roles: UserRole[] = [];
   if (includeAdmins) {
     roles = [UserRole.ADMIN, role];
@@ -95,7 +99,7 @@ const getUserByRole = async (role: UserRole, includeAdmins: boolean = false) => 
   return prisma.user.findMany({
     where: {
       role: { in: roles },
-      deletedAt: null,
+      ...(includeDeleted ? {} : { deletedAt: null }),
     },
   });
 };
@@ -178,6 +182,14 @@ const deleteUserById = async (userId: number) => {
   });
 };
 
+// Restore soft-deleted user by ID
+const restoreUserById = async (userId: number) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { deletedAt: null },
+  });
+};
+
 export {
   createUser,
   deleteUser,
@@ -187,6 +199,7 @@ export {
   getUserByGoogleIdOrEmail,
   getUserById,
   getUserByRole,
+  restoreUserById,
   setUserOverdue,
   setUserPlan,
   setUserStripeCustomerId,

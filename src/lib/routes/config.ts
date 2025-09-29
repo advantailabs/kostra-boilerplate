@@ -212,6 +212,13 @@ export const ALL_ROUTES: RouteConfig[] = [
       DELETE: [ADMIN],
     },
   },
+  {
+    path: '/api/admin/users/[id]/restore',
+    isPublic: false,
+    accessTo: {
+      POST: [ADMIN],
+    },
+  },
 
   // Legacy route for backward compatibility
   {

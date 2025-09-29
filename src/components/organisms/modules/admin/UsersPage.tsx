@@ -8,6 +8,7 @@ import { User } from '@/types/user';
 import { ModalAddUser } from './ModalAddUser';
 import { ModalDeleteUser } from './ModalDeleteUser';
 import { ModalEditUser } from './ModalEditUser';
+import { ModalRestoreUser } from './ModalRestoreUser';
 import { ModalUserDetails } from './ModalUserDetails';
 import { UsersTable } from './UsersTable';
 
@@ -21,6 +22,7 @@ export function UsersPage({ className }: UsersPageProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const handleDeleteUser = (user: User) => {
@@ -31,6 +33,11 @@ export function UsersPage({ className }: UsersPageProps) {
   const handleViewUserDetails = (user: User) => {
     setSelectedUser(user);
     setIsDetailsModalOpen(true);
+  };
+
+  const handleRestoreUser = (user: User) => {
+    setSelectedUser(user);
+    setIsRestoreModalOpen(true);
   };
 
   const handleEditUser = (user: User) => {
@@ -68,6 +75,7 @@ export function UsersPage({ className }: UsersPageProps) {
         onDelete={handleDeleteUser}
         onViewDetails={handleViewUserDetails}
         onAdd={handleAddUser}
+        onRestore={handleRestoreUser}
       />
 
       <ModalAddUser isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
@@ -82,6 +90,11 @@ export function UsersPage({ className }: UsersPageProps) {
         user={selectedUser}
       />
       <ModalEditUser isOpen={isEditModalOpen} onClose={handleCloseEditModal} user={selectedUser} />
+      <ModalRestoreUser
+        isOpen={isRestoreModalOpen}
+        onClose={() => setIsRestoreModalOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 }

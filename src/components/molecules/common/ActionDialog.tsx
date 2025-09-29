@@ -1,33 +1,36 @@
 import React, { useState } from 'react';
+import { Input } from '../../atom/Input';
 import { Modal } from './Modal';
-import { Input } from '@/components/atom/Input';
 
 /**
- * Generic DeleteDialog component for consistent delete confirmation across the application.
+ * Generic ActionDialog component for consistent action confirmation across the application.
+ * Supports different action types like delete, restore, etc.
  *
  * @example
- * // Basic usage
- * <DeleteDialog
+ * // Basic delete usage
+ * <ActionDialog
  *   isOpen={showDelete}
  *   onClose={() => setShowDelete(false)}
  *   onConfirm={handleDelete}
  *   title="Delete Item"
  *   itemName="My Item"
  *   itemType="item"
+ *   actionType="delete"
  *   isLoading={isDeleting}
  * />
  *
  * @example
- * // With custom warning and additional info
- * <DeleteDialog
- *   isOpen={showDelete}
- *   onClose={() => setShowDelete(false)}
- *   onConfirm={handleDelete}
- *   title="Delete User"
+ * // Restore action with purple styling
+ * <ActionDialog
+ *   isOpen={showRestore}
+ *   onClose={() => setShowRestore(false)}
+ *   onConfirm={handleRestore}
+ *   title="Restore User"
  *   itemName={user.name}
  *   itemType="user"
- *   isLoading={isDeleting}
- *   warningMessage="This will permanently delete the user account and all associated data."
+ *   actionType="restore"
+ *   isLoading={isRestoring}
+ *   warningMessage="This will restore the user account with all pre-deletion data."
  *   additionalInfo={
  *     <div>
  *       <p>Email: {user.email}</p>
@@ -36,13 +39,14 @@ import { Input } from '@/components/atom/Input';
  *   }
  * />
  */
-export interface DeleteDialogProps {
+export interface ActionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
   title: string;
   itemName: string;
   itemType: string;
+  actionType?: 'delete' | 'restore';
   isLoading?: boolean;
   onSuccess?: () => void;
   warningMessage?: string;
@@ -52,23 +56,24 @@ export interface DeleteDialogProps {
   confirmationPlaceholder?: string;
 }
 
-export function DeleteDialog({
+export function ActionDialog({
   isOpen,
   onClose,
   onConfirm,
   title,
   itemName,
   itemType,
+  actionType = 'delete',
   isLoading = false,
   onSuccess,
   warningMessage,
   additionalInfo,
   showNameConfirmation = false,
   confirmationPlaceholder = 'Type the name to confirm',
-}: DeleteDialogProps) {
+}: ActionDialogProps) {
   const [confirmationName, setConfirmationName] = useState('');
 
-  const handleDelete = async () => {
+  const handleAction = async () => {
     if (showNameConfirmation && confirmationName !== itemName) {
       return;
     }
@@ -77,7 +82,7 @@ export function DeleteDialog({
       onClose();
       onSuccess?.();
     } catch (error) {
-      console.error(`Error deleting ${itemType}:`, error);
+      console.error(`Error ${actionType}ing ${itemType}:`, error);
       // Error is already handled by the mutation hook
     }
   };
@@ -88,6 +93,31 @@ export function DeleteDialog({
   };
 
   const isConfirmDisabled = isLoading || (showNameConfirmation && confirmationName !== itemName);
+
+  // Get action-specific styling and text
+  const getActionConfig = () => {
+    switch (actionType) {
+      case 'restore':
+        return {
+          buttonClass:
+            'rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          loadingText: 'Restoring...',
+          actionText: 'Restore',
+          primaryActionVariant: 'primary' as const,
+        };
+      case 'delete':
+      default:
+        return {
+          buttonClass:
+            'rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          loadingText: 'Deleting...',
+          actionText: 'Delete',
+          primaryActionVariant: 'destructive' as const,
+        };
+    }
+  };
+
+  const actionConfig = getActionConfig();
 
   // Custom footer for name confirmation
   const customFooter = showNameConfirmation ? (
@@ -102,17 +132,17 @@ export function DeleteDialog({
       </button>
       <button
         type="button"
-        className="rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={handleDelete}
+        className={actionConfig.buttonClass}
+        onClick={handleAction}
         disabled={isConfirmDisabled}
       >
         {isLoading ? (
           <>
             <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            Deleting...
+            {actionConfig.loadingText}
           </>
         ) : (
-          'Delete'
+          actionConfig.actionText
         )}
       </button>
     </div>
@@ -124,15 +154,22 @@ export function DeleteDialog({
       onClose={handleClose}
       maxWidth="max-w-md"
       title={title}
-      primaryActionText={showNameConfirmation ? undefined : isLoading ? 'Deleting...' : 'Delete'}
+      primaryActionText={
+        showNameConfirmation
+          ? undefined
+          : isLoading
+            ? actionConfig.loadingText
+            : actionConfig.actionText
+      }
       secondaryActionText={showNameConfirmation ? undefined : 'Cancel'}
-      onPrimaryAction={showNameConfirmation ? undefined : handleDelete}
+      onPrimaryAction={showNameConfirmation ? undefined : handleAction}
       isPrimaryActionDisabled={showNameConfirmation ? undefined : isConfirmDisabled}
       isPrimaryActionLoading={showNameConfirmation ? undefined : isLoading}
-      primaryActionVariant="destructive"
+      primaryActionVariant={actionConfig.primaryActionVariant}
       footer={customFooter}
     >
       <div>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
         {warningMessage && (
           <div className="mb-4 rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
             <div className="text-sm text-yellow-800 dark:text-yellow-200">
@@ -144,8 +181,8 @@ export function DeleteDialog({
         )}
 
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Are you sure you want to delete the {itemType} <strong>{itemName}</strong>? This action
-          cannot be undone.
+          Are you sure you want to {actionType} the {itemType} <strong>{itemName}</strong>?
+          {actionType === 'delete' ? ' This action cannot be undone.' : ''}
         </p>
 
         {showNameConfirmation && (
@@ -154,7 +191,7 @@ export function DeleteDialog({
               htmlFor="confirmation-name"
               className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Type "{itemName}" to confirm deletion
+              Type "{itemName}" to confirm {actionType}
             </label>
             <Input
               id="confirmation-name"

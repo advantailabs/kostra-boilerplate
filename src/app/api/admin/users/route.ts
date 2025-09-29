@@ -18,9 +18,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
+    const includeDeleted = searchParams.get('includeDeleted') === 'true';
 
     // Get all users (excluding soft deleted)
-    const users = await getUserByRole(UserRole.USER, true);
+    const users = await getUserByRole(UserRole.USER, true, includeDeleted);
 
     // Filter users based on search term
     const filteredUsers = search
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
         stripeCustomerId: user.stripeCustomerId,
         isOverDue: user.isOverDue,
         planExpiringAt: user.planExpiringAt?.toISOString(),
+        deletedAt: user.deletedAt,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),

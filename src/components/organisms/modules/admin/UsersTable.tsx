@@ -8,6 +8,7 @@ import { useDebounce } from 'use-debounce';
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
+import { Switch } from '@/components/atom/Switch';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,7 @@ interface UsersTableProps {
   onDelete: (_user: User) => void;
   onViewDetails: (_user: User) => void;
   onAdd: () => void;
+  onRestore?: (_user: User) => void;
   onPageChange?: (_page: number) => void;
   className?: string;
 }
@@ -44,6 +46,7 @@ export function UsersTable({
   onDelete,
   onViewDetails,
   onAdd,
+  onRestore,
   onPageChange,
   className,
 }: UsersTableProps) {
@@ -52,7 +55,11 @@ export function UsersTable({
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch] = useDebounce(searchInput, 400);
 
-  const { users, isLoading, updateUser } = useAdminUsers({ search: debouncedSearch });
+  const [showDeleted, setShowDeleted] = useState(false);
+  const { users, isLoading, updateUser, restoreUser, isRestoring } = useAdminUsers({
+    search: debouncedSearch,
+    includeDeleted: showDeleted,
+  });
   const { user: currentUser } = useAuthStore();
 
   // For now, we'll simulate pagination on the client side since the API doesn't support it
@@ -119,12 +126,18 @@ export function UsersTable({
       />
 
       <div className="h-full p-4 max-sm:p-3">
-        <UnifiedSearchBar
-          placeholder="Search by name or email..."
-          value={searchInput}
-          onChange={setSearchInput}
-          className="mb-2"
-        />
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <UnifiedSearchBar
+            placeholder="Search by name or email..."
+            value={searchInput}
+            onChange={setSearchInput}
+            className="flex-1"
+          />
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <span className="text-sm text-gray-600 dark:text-gray-300">Show Deleted Users</span>
+            <Switch checked={showDeleted} onCheckedChange={setShowDeleted} />
+          </div>
+        </div>
 
         {/* Table */}
         <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
@@ -182,7 +195,7 @@ export function UsersTable({
                       <div onClick={e => e.stopPropagation()}>
                         <Select
                           defaultValue={getUserRoleForDisplay(user.role)}
-                          disabled={isCurrentUser(user)}
+                          disabled={isCurrentUser(user) || Boolean(user.deletedAt)}
                           onValueChange={value => handleRoleChange(user.id, value)}
                         >
                           <SelectTrigger className="h-8 w-24">
@@ -232,7 +245,7 @@ export function UsersTable({
                               />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-36">
+                          <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuItem
                               onClick={e => {
                                 e.stopPropagation();
@@ -241,24 +254,41 @@ export function UsersTable({
                             >
                               View details
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={e => {
-                                e.stopPropagation();
-                                onEdit(user);
-                              }}
-                            >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-red-600 dark:text-red-500"
-                              disabled={isCurrentUser(user)}
-                              onClick={e => {
-                                e.stopPropagation();
-                                onDelete(user);
-                              }}
-                            >
-                              Delete
-                            </DropdownMenuItem>
+                            {user.deletedAt ? (
+                              <DropdownMenuItem
+                                onClick={async e => {
+                                  e.stopPropagation();
+                                  if (onRestore) {
+                                    onRestore(user);
+                                  } else {
+                                    await restoreUser(user.id);
+                                  }
+                                }}
+                              >
+                                {isRestoring ? 'Restoring...' : 'Restore user'}
+                              </DropdownMenuItem>
+                            ) : (
+                              <>
+                                <DropdownMenuItem
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    onEdit(user);
+                                  }}
+                                >
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-600 dark:text-red-500"
+                                  disabled={isCurrentUser(user)}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    onDelete(user);
+                                  }}
+                                >
+                                  Delete
+                                </DropdownMenuItem>
+                              </>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
