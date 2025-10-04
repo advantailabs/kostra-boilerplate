@@ -113,10 +113,7 @@ export function UserFilterModal({
     >
       {/* Search - Full Width */}
       <div className="mb-4">
-        <label
-          htmlFor="search-users"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="search-users" className="mb-2 block text-sm font-medium text-text">
           Search Users
         </label>
         <Input
@@ -134,10 +131,7 @@ export function UserFilterModal({
         <div className="space-y-4">
           {/* Role Filter */}
           <div>
-            <label
-              htmlFor="role-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="role-filter" className="mb-2 block text-sm font-medium text-text">
               Role
             </label>
             <Select
@@ -161,10 +155,7 @@ export function UserFilterModal({
 
           {/* Plan Filter */}
           <div>
-            <label
-              htmlFor="plan-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="plan-filter" className="mb-2 block text-sm font-medium text-text">
               Plan
             </label>
             <Select
@@ -185,10 +176,7 @@ export function UserFilterModal({
 
           {/* Onboarding Status Filter */}
           <div>
-            <label
-              htmlFor="onboarding-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="onboarding-filter" className="mb-2 block text-sm font-medium text-text">
               Onboarding Status
             </label>
             <Select
@@ -216,10 +204,7 @@ export function UserFilterModal({
               onChange={e => handleIncludeDeleted(e.target.checked)}
               className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
-            <label
-              htmlFor="include-deleted"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="include-deleted" className="text-sm font-medium text-text">
               Include deleted users
             </label>
           </div>
@@ -229,10 +214,7 @@ export function UserFilterModal({
         <div className="space-y-4">
           {/* Sort Options */}
           <div>
-            <label
-              htmlFor="sort-by-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="sort-by-filter" className="mb-2 block text-sm font-medium text-text">
               Sort By
             </label>
             <Select
@@ -258,10 +240,7 @@ export function UserFilterModal({
           </div>
 
           <div>
-            <label
-              htmlFor="sort-order-button"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="sort-order-button" className="mb-2 block text-sm font-medium text-text">
               Sort Order
             </label>
             <Button
