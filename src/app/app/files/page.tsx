@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
-import { PageHeader } from '@/components/molecules/common/PageHeader';
+import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
@@ -84,28 +84,14 @@ export default function FilesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border shadow-sm max-sm:flex-col max-sm:items-start max-sm:gap-3">
-        <PageHeader title="Files" description="Manage and organize your uploaded files" />
-        {/* Desktop actions */}
-        <div className="px-4 py-3 max-sm:hidden">
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setShowFilterModal(true)}
-              variant="secondary"
-              className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''}`}
-            >
-              <RiFilterLine className="h-4 w-4" />
-              Filter
-              {hasActiveFilters && <span className="ml-1 flex h-2 w-2 rounded-full bg-primary" />}
-            </Button>
-            <Button onClick={() => setShowUploader(true)} className="flex items-center gap-2">
-              <RiAddLine className="h-4 w-4" />
-              Upload Files
-            </Button>
-          </div>
-        </div>
-      </div>
+      <PageHeaderWithAction
+        title="Files"
+        description="Manage and organize your uploaded files"
+        onFilter={() => setShowFilterModal(true)}
+        hasActiveFilters={hasActiveFilters}
+        onAdd={() => setShowUploader(true)}
+        addButtonText="Upload Files"
+      />
 
       {/* Files Content */}
       <div className="h-full p-4 max-sm:p-3">

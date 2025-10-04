@@ -111,10 +111,10 @@ export function PackagesTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                packages.map((pkg, index) => (
+                packages.map(pkg => (
                   <TableRow
                     key={pkg.id}
-                    className={`group cursor-pointer select-text hover:bg-background-light ${index < packages.length - 1 ? 'border-b border-border-light' : ''}`}
+                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
                     onClick={() => onEdit(pkg)}
                   >
                     <TableCell className="py-1 text-text">

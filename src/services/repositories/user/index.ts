@@ -104,6 +104,98 @@ const getUserByRole = async (
   });
 };
 
+// Advanced user filtering and sorting
+export interface UserFilterOptions {
+  search?: string;
+  role?: UserRole;
+  plan?: UserPlan;
+  isOnboarded?: boolean;
+  includeDeleted?: boolean;
+  sortBy?:
+    | 'id'
+    | 'name'
+    | 'email'
+    | 'role'
+    | 'plan'
+    | 'isOnboarded'
+    | 'credits'
+    | 'createdAt'
+    | 'updatedAt';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+const getUsersWithFilters = async (options: UserFilterOptions = {}) => {
+  const {
+    search = '',
+    role,
+    plan,
+    isOnboarded,
+    includeDeleted = false,
+    sortBy = 'id',
+    sortOrder = 'desc',
+    limit,
+    offset = 0,
+  } = options;
+
+  // Build where clause
+  const whereClause: any = {};
+
+  // Search filter
+  if (search) {
+    whereClause.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  // Role filter
+  if (role) {
+    whereClause.role = role;
+  }
+
+  // Plan filter
+  if (plan) {
+    whereClause.plan = plan;
+  }
+
+  // Onboarding status filter
+  if (isOnboarded !== undefined) {
+    whereClause.isOnboarded = isOnboarded;
+  }
+
+  // Include deleted users
+  if (!includeDeleted) {
+    whereClause.deletedAt = null;
+  }
+
+  // Build orderBy clause
+  const orderBy: any = {};
+  orderBy[sortBy] = sortOrder;
+
+  // Execute query
+  const queryOptions: any = {
+    where: whereClause,
+    orderBy,
+  };
+
+  if (limit) {
+    queryOptions.take = limit;
+    queryOptions.skip = offset;
+  }
+
+  const [users, totalCount] = await Promise.all([
+    prisma.user.findMany(queryOptions),
+    prisma.user.count({ where: whereClause }),
+  ]);
+
+  return {
+    users,
+    totalCount,
+  };
+};
+
 const getUserByGoogleId = async (googleId: string) => {
   return prisma.user.findFirst({
     where: { googleId, deletedAt: null },
@@ -199,6 +291,7 @@ export {
   getUserByGoogleIdOrEmail,
   getUserById,
   getUserByRole,
+  getUsersWithFilters,
   restoreUserById,
   setUserOverdue,
   setUserPlan,

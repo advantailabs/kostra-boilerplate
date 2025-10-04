@@ -31,7 +31,7 @@ export default function ContactManagementPage() {
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [purpose, setPurpose] = useState<string | undefined>(undefined);
 
-  const { data, isLoading, refetch, isFetching } = useContacts({
+  const { data, isLoading, refetch } = useContacts({
     status: status as any,
     purpose: purpose as any,
     search: debouncedSearch,
@@ -162,7 +162,7 @@ export default function ContactManagementPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                submissions.map((s, index) => {
+                submissions.map(s => {
                   const statusMeta = CONTACT_STATUSES.find(
                     x => x.value === (s.status as unknown as string)
                   );
@@ -176,7 +176,7 @@ export default function ContactManagementPage() {
                   return (
                     <TableRow
                       key={s.id}
-                      className={`group cursor-pointer select-text hover:bg-background-light ${index < submissions.length - 1 ? 'border-b border-border-light' : ''}`}
+                      className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
                       onClick={() => handleOpenDetails(s)}
                     >
                       <TableCell className="py-1 text-text">

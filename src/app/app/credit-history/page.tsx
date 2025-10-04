@@ -81,10 +81,10 @@ export default function CreditHistoryPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                history.map((item, index) => (
+                history.map(item => (
                   <TableRow
                     key={item.id}
-                    className={`group hover:bg-background-light ${index < history.length - 1 ? 'border-b border-border-light' : ''}`}
+                    className="group border-b border-border-light hover:bg-background-light"
                   >
                     <TableCell className="whitespace-nowrap py-1 text-text-muted">
                       <div className="text-xs text-text-muted">Date:</div>

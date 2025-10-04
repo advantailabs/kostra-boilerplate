@@ -76,17 +76,7 @@ const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, forwardedRef) => (
-  <tbody
-    ref={forwardedRef}
-    className={cx(
-      // base
-      'divide-y',
-      // divide color
-      'divide-gray-200 dark:divide-gray-800',
-      className
-    )}
-    {...props}
-  />
+  <tbody ref={forwardedRef} className={cx(className)} {...props} />
 ));
 
 TableBody.displayName = 'TableBody';

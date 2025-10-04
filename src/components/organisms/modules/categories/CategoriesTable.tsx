@@ -101,10 +101,10 @@ export function CategoriesTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                categories.map((category, index) => (
+                categories.map(category => (
                   <TableRow
                     key={category.id}
-                    className={`group cursor-pointer select-text hover:bg-background-light ${index < categories.length - 1 ? 'border-b border-border-light' : ''}`}
+                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
                     onClick={() =>
                       onEdit({ id: category.id, name: category.name, slug: category.slug })
                     }

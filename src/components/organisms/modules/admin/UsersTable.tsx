@@ -26,6 +26,7 @@ import {
 } from '@/components/molecules/common/Select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/molecules/common/Table';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
+import { UserFilterModal, UserFilters } from '@/components/molecules/common/UserFilterModal';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, ROLES, UserRole } from '@/lib/constants/admin';
 import { useAuthStore } from '@/store/auth';
@@ -54,28 +55,49 @@ export function UsersTable({
   const [limit] = useState(10);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch] = useDebounce(searchInput, 400);
-
   const [showDeleted, setShowDeleted] = useState(false);
-  const { users, isLoading, updateUser, restoreUser, isRestoring } = useAdminUsers({
-    search: debouncedSearch,
-    includeDeleted: showDeleted,
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState<UserFilters>({
+    sortBy: 'id',
+    sortOrder: 'desc',
+    includeDeleted: false,
   });
+
+  // Check if any filters are active (excluding default sorting)
+  const hasActiveFilters = Object.keys(filters).some(key => {
+    const value = filters[key as keyof UserFilters];
+    // Exclude default sorting values and empty values
+    if (key === 'sortBy' && value === 'id') return false;
+    if (key === 'sortOrder' && value === 'desc') return false;
+    if (key === 'includeDeleted' && value === false) return false;
+    return value !== undefined && value !== '';
+  });
+
+  const { users, totalCount, pagination, isLoading, updateUser, restoreUser, isRestoring } =
+    useAdminUsers({
+      search: debouncedSearch,
+      includeDeleted: showDeleted,
+      role: filters.role,
+      plan: filters.plan,
+      isOnboarded: filters.isOnboarded,
+      sortBy: filters.sortBy,
+      sortOrder: filters.sortOrder,
+      limit,
+      offset: (page - 1) * limit,
+    });
   const { user: currentUser } = useAuthStore();
 
-  // For now, we'll simulate pagination on the client side since the API doesn't support it
-  const total = users.length;
-  const totalPages = Math.ceil(total / limit);
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-  const paginatedUsers = users.slice(startIndex, endIndex);
+  // Use server-side pagination
+  const total = totalCount;
+  const totalPages = pagination?.totalPages || Math.ceil(total / limit);
 
   // Handle smart pagination after deletion
   useEffect(() => {
     // If current page is empty and we're not on page 1, go to previous page
-    if (paginatedUsers.length === 0 && page > 1 && !isLoading && totalPages > 1) {
+    if (users.length === 0 && page > 1 && !isLoading && totalPages > 1) {
       setPage(page - 1);
     }
-  }, [paginatedUsers.length, page, isLoading, totalPages]);
+  }, [users.length, page, isLoading, totalPages]);
 
   // Notify parent of page changes
   useEffect(() => {
@@ -90,6 +112,19 @@ export function UsersTable({
     } catch (error) {
       // Error handling is done in the hook
     }
+  };
+
+  const handleFiltersChange = (newFilters: UserFilters) => {
+    setFilters(newFilters);
+    setPage(1); // Reset to first page when filters change
+  };
+
+  const handleFilterModalOpen = () => {
+    setIsFilterModalOpen(true);
+  };
+
+  const handleFilterModalClose = () => {
+    setIsFilterModalOpen(false);
   };
 
   // Map user role to display format
@@ -123,6 +158,8 @@ export function UsersTable({
         description="Workspace administrators can add, manage, and remove users"
         onAdd={onAdd}
         addButtonText="Add User"
+        onFilter={handleFilterModalOpen}
+        hasActiveFilters={hasActiveFilters}
       />
 
       <div className="h-full p-4 max-sm:p-3">
@@ -152,17 +189,17 @@ export function UsersTable({
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : paginatedUsers.length === 0 ? (
+              ) : users.length === 0 ? (
                 <TableRow className="border-b border-border-light">
                   <TableCell colSpan={7} className="h-24 text-center">
                     No users found.
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedUsers.map((user, index) => (
+                users.map(user => (
                   <TableRow
                     key={user.id}
-                    className={`group cursor-pointer select-text hover:bg-background-light ${index < paginatedUsers.length - 1 ? 'border-b border-border-light' : ''}`}
+                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
                     onClick={() => onViewDetails(user)}
                   >
                     <TableCell className="p-4 text-text">
@@ -299,7 +336,7 @@ export function UsersTable({
         </div>
 
         {/* Pagination */}
-        {paginatedUsers.length > 0 && totalPages > 1 && (
+        {users.length > 0 && totalPages > 1 && (
           <Pagination
             pagination={{
               page,
@@ -311,6 +348,14 @@ export function UsersTable({
           />
         )}
       </div>
+
+      {/* Filter Modal */}
+      <UserFilterModal
+        isOpen={isFilterModalOpen}
+        onClose={handleFilterModalClose}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+      />
     </div>
   );
 }
