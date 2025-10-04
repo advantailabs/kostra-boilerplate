@@ -65,7 +65,7 @@ export function CategoriesTable({
   }
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-gray-950 ${className || ''}`}>
+    <div className={`min-h-screen bg-background ${className || ''}`}>
       <PageHeaderWithAction
         title="Categories"
         description="Manage blog categories"
@@ -82,36 +82,39 @@ export function CategoriesTable({
         />
 
         {/* Table */}
-        <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
           <Table className="border-0">
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
-                <TableRow>
+                <TableRow className="border-b border-border-light">
                   <TableCell colSpan={4} className="h-24 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-                      <span className="text-sm text-gray-500">Searching...</span>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      <span className="text-sm text-text-muted">Searching...</span>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : categories.length === 0 ? (
-                <TableRow>
+                <TableRow className="border-b border-border-light">
                   <TableCell colSpan={4} className="h-24 text-center">
                     No categories found.
                   </TableCell>
                 </TableRow>
               ) : (
-                categories.map(category => (
+                categories.map((category, index) => (
                   <TableRow
                     key={category.id}
-                    className="group select-none hover:bg-gray-50 hover:dark:bg-gray-900"
+                    className={`group cursor-pointer select-text hover:bg-background-light ${index < categories.length - 1 ? 'border-b border-border-light' : ''}`}
+                    onClick={() =>
+                      onEdit({ id: category.id, name: category.name, slug: category.slug })
+                    }
                   >
-                    <TableCell className="py-1 text-gray-700 dark:text-gray-300">
+                    <TableCell className="py-1 text-text">
                       <div className="truncate">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">
+                        <p className="truncate text-sm font-medium text-text">
                           {category.name || 'Unnamed Category'}
                         </p>
-                        <p className="truncate text-xs text-gray-500">
+                        <p className="truncate text-xs text-text-muted">
                           {category.slug || 'No slug'}
                         </p>
                       </div>
@@ -120,9 +123,9 @@ export function CategoriesTable({
                       {/* eslint-disable-next-line no-underscore-dangle */}
                       <Badge variant="neutral">{category._count?.blogs || 0} blogs</Badge>
                     </TableCell>
-                    <TableCell className="py-1 text-gray-600 dark:text-gray-400">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Last Modified:</div>
-                      <div className="text-sm">
+                    <TableCell className="py-1 text-text-muted">
+                      <div className="text-xs text-text-muted">Last Modified:</div>
+                      <div className="text-sm text-text-muted">
                         {category.updatedAt && !Number.isNaN(new Date(category.updatedAt).getTime())
                           ? new Date(category.updatedAt).toLocaleDateString()
                           : 'N/A'}
@@ -132,22 +135,23 @@ export function CategoriesTable({
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="ghost"
-                          onClick={() =>
-                            onEdit({ id: category.id, name: category.name, slug: category.slug })
-                          }
-                          className="group size-8 hover:border hover:border-gray-300 hover:bg-gray-50 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+                          onClick={e => {
+                            e.stopPropagation();
+                            onEdit({ id: category.id, name: category.name, slug: category.slug });
+                          }}
+                          className="group size-8 hover:border hover:border-border hover:bg-background-light"
                         >
                           <RiEditLine size={14} className="shrink-0" />
                         </Button>
                         <Button
                           variant="ghost"
-                          onClick={() => onDelete(category.id, category.name)}
-                          className="group size-8 hover:border hover:border-gray-300 hover:bg-gray-50 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+                          onClick={e => {
+                            e.stopPropagation();
+                            onDelete(category.id, category.name);
+                          }}
+                          className="group size-8 hover:border hover:border-border hover:bg-background-light"
                         >
-                          <RiDeleteBinLine
-                            size={14}
-                            className="shrink-0 text-red-600 dark:text-red-500"
-                          />
+                          <RiDeleteBinLine size={14} className="shrink-0 text-danger" />
                         </Button>
                       </div>
                     </TableCell>

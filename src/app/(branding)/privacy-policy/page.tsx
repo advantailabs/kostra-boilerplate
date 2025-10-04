@@ -72,8 +72,8 @@ export default function PrivacyPolicyPage() {
 
       {/* Background Effects */}
       <div className="absolute inset-0">
-        <div className="bg-gradient-radial absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 via-purple-500/5 to-transparent blur-3xl" />
-        <div className="bg-gradient-radial absolute right-0 top-1/3 h-96 w-96 translate-x-1/2 from-purple-500/10 via-pink-500/5 to-transparent blur-3xl" />
+        <div className="bg-gradient-radial via-purple-500/5 absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-purple-500/10 absolute right-0 top-1/3 h-96 w-96 translate-x-1/2 via-pink-500/5 to-transparent blur-3xl" />
       </div>
 
       {/* Content */}
@@ -84,14 +84,14 @@ export default function PrivacyPolicyPage() {
             <h1 className="mb-3 text-3xl font-bold text-white sm:mb-4 sm:text-4xl md:text-5xl">
               Privacy Policy
             </h1>
-            <p className="text-base text-gray-400 sm:text-lg">Last updated: {lastUpdated}</p>
+            <p className="text-base text-text-muted sm:text-lg">Last updated: {lastUpdated}</p>
           </div>
 
           {/* Content */}
           <div className="prose prose-invert mx-auto max-w-none">
-            <div className="space-y-6 text-gray-300 sm:space-y-8">
+            <div className="space-y-6 text-text-muted sm:space-y-8">
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   1. Introduction
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -103,12 +103,12 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   2. Information We Collect
                 </h2>
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     2.1 Information You Provide
                   </h3>
                   <ul className="list-disc space-y-2 pl-4 text-sm sm:pl-6 sm:text-base">
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
                     </li>
                   </ul>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     2.2 Information We Collect Automatically
                   </h3>
                   <ul className="list-disc space-y-2 pl-4 text-sm sm:pl-6 sm:text-base">
@@ -151,7 +151,7 @@ export default function PrivacyPolicyPage() {
                     </li>
                   </ul>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     2.3 Information from Third Parties
                   </h3>
                   <ul className="list-disc space-y-2 pl-4 text-sm sm:pl-6 sm:text-base">
@@ -172,7 +172,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   3. How We Use Your Information
                 </h2>
                 <div className="space-y-4">
@@ -193,7 +193,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   4. AI Processing and Data Use
                 </h2>
                 <div className="space-y-4">
@@ -217,7 +217,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   5. Information Sharing and Disclosure
                 </h2>
                 <div className="space-y-4">
@@ -225,14 +225,14 @@ export default function PrivacyPolicyPage() {
                     We may share your information in the following circumstances:
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     5.1 With Your Consent
                   </h3>
                   <p className="text-sm sm:text-base">
                     We share information when you explicitly consent to such sharing.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     5.2 Service Providers
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -247,7 +247,7 @@ export default function PrivacyPolicyPage() {
                     <li>Analytics and monitoring services</li>
                   </ul>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     5.3 Legal Requirements
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -255,7 +255,7 @@ export default function PrivacyPolicyPage() {
                     or to protect our rights, property, or safety.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     5.4 Business Transfers
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -266,7 +266,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   6. Data Security
                 </h2>
                 <div className="space-y-4">
@@ -299,7 +299,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   7. Your Rights and Choices
                 </h2>
                 <div className="space-y-4">
@@ -307,7 +307,7 @@ export default function PrivacyPolicyPage() {
                     You have the following rights regarding your personal information:
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     7.1 Access and Portability
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -315,7 +315,7 @@ export default function PrivacyPolicyPage() {
                     account settings.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     7.2 Correction and Updates
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -323,13 +323,13 @@ export default function PrivacyPolicyPage() {
                     settings.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">7.3 Deletion</h3>
+                  <h3 className="text-lg font-medium text-text sm:text-xl">7.3 Deletion</h3>
                   <p className="text-sm sm:text-base">
                     You can request deletion of your account and personal data. Some data may be
                     retained for legal or operational purposes.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="text-lg font-medium text-text sm:text-xl">
                     7.4 Communication Preferences
                   </h3>
                   <p className="text-sm sm:text-base">
@@ -337,7 +337,7 @@ export default function PrivacyPolicyPage() {
                     unsubscribe links.
                   </p>
 
-                  <h3 className="text-lg font-medium text-white sm:text-xl">7.5 Cookie Controls</h3>
+                  <h3 className="text-lg font-medium text-text sm:text-xl">7.5 Cookie Controls</h3>
                   <p className="text-sm sm:text-base">
                     You can manage cookie preferences through your browser settings or our cookie
                     preference center.
@@ -346,7 +346,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   8. Data Retention
                 </h2>
                 <div className="space-y-4">
@@ -376,7 +376,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   9. International Data Transfers
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -387,7 +387,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   10. Children's Privacy
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -398,7 +398,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   11. Changes to This Privacy Policy
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -410,7 +410,7 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   12. Compliance and Regulations
                 </h2>
                 <div className="space-y-4">
@@ -427,14 +427,14 @@ export default function PrivacyPolicyPage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   13. Contact Information
                 </h2>
                 <p className="text-sm sm:text-base">
                   If you have any questions about this Privacy Policy or our privacy practices,
                   please contact us:
                 </p>
-                <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4 sm:p-6">
+                <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
                   <p className="text-sm sm:text-base">
                     <strong>Email:</strong> hi@peon.sh
                   </p>

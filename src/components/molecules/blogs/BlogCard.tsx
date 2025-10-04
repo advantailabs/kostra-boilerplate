@@ -74,7 +74,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
 
   return (
     <div
-      className={`group relative h-48 w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/20 dark:hover:shadow-gray-900/40 ${className}`}
+      className={`card-shadow group h-48 w-full cursor-pointer overflow-hidden rounded-xl bg-background transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${className}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       role="button"
@@ -96,7 +96,13 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
         )}
 
         {/* Bottom gradient overlay for text readability on light images */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.75) 50%, rgba(0, 0, 0, 0.1) 100%)',
+          }}
+        />
       </div>
 
       {/* Published Status - Top Left */}
@@ -119,7 +125,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onEdit(blog);
             }}
-            className="h-6 w-6 bg-white/20 p-0 text-white backdrop-blur-sm hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30"
+            className="bg-white/20 hover:bg-white/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
           >
             <Edit className="h-3 w-3" aria-label="Edit blog" />
           </Button>
@@ -131,7 +137,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onDelete(blog);
             }}
-            className="h-6 w-6 bg-red-500/20 p-0 text-white backdrop-blur-sm hover:bg-red-500/30 dark:bg-red-600/20 dark:hover:bg-red-600/30"
+            className="bg-danger/20 hover:bg-danger/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
           >
             <Trash2 className="h-3 w-3" aria-label="Delete blog" />
           </Button>
@@ -142,7 +148,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
       <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
         {/* Title and Tags */}
         <div className="mb-1 flex items-start justify-between gap-2">
-          <h3 className="line-clamp-2 flex-1 text-sm font-semibold leading-tight group-hover:text-white/90">
+          <h3 className="group-hover:text-white/90 line-clamp-2 flex-1 text-sm font-semibold leading-tight">
             {blog.title}
           </h3>
           {blog.tags && blog.tags.length > 0 && (
@@ -150,13 +156,13 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               {blog.tags.slice(0, 1).map((tag, index) => (
                 <span
                   key={index}
-                  className="rounded-full bg-white/20 px-1 py-0.5 text-xs font-medium backdrop-blur-sm"
+                  className="bg-white/20 rounded-full px-1 py-0.5 text-xs font-medium backdrop-blur-sm"
                 >
                   {tag}
                 </span>
               ))}
               {blog.tags.length > 1 && (
-                <span className="rounded-full bg-white/20 px-1 py-0.5 text-xs font-medium backdrop-blur-sm">
+                <span className="bg-white/20 rounded-full px-1 py-0.5 text-xs font-medium backdrop-blur-sm">
                   +{blog.tags.length - 1}
                 </span>
               )}
@@ -165,7 +171,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
         </div>
 
         {/* Author and Date */}
-        <div className="flex items-center justify-between text-xs text-white/80">
+        <div className="text-white/80 flex items-center justify-between text-xs">
           <span className="font-medium">{blog.author?.name || 'Unknown Author'}</span>
           <span className="text-white/70">{formatDate(blog.createdAt)}</span>
         </div>

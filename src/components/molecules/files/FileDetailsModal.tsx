@@ -62,22 +62,18 @@ export function FileDetailsModal({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
-              <HardDrive className="h-4 w-4 text-gray-400" />
-              <span className="font-medium text-gray-700 dark:text-gray-300">File Size</span>
+              <HardDrive className="h-4 w-4 text-text-muted" />
+              <span className="font-medium text-text">File Size</span>
             </div>
-            <p className="ml-6 text-sm text-gray-600 dark:text-gray-400">
-              {formatFileSize(file.size)}
-            </p>
+            <p className="ml-6 text-sm text-text-muted">{formatFileSize(file.size)}</p>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <span className="font-medium text-gray-700 dark:text-gray-300">Uploaded</span>
+              <Calendar className="h-4 w-4 text-text-muted" />
+              <span className="font-medium text-text">Uploaded</span>
             </div>
-            <p className="ml-6 text-sm text-gray-600 dark:text-gray-400">
-              {formatDate(file.createdAt)}
-            </p>
+            <p className="ml-6 text-sm text-text-muted">{formatDate(file.createdAt)}</p>
           </div>
         </div>
       </div>

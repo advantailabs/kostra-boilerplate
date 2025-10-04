@@ -146,7 +146,7 @@ export function CategoryModal({
         {/* Name */}
         <div>
           <Label htmlFor="name">
-            Name <span className="text-red-500">*</span>
+            Name <span className="text-danger">*</span>
           </Label>
           <Input
             id="name"
@@ -155,13 +155,13 @@ export function CategoryModal({
             placeholder="Enter category name..."
             className="mt-1"
           />
-          {formErrors.name && <span className="text-sm text-red-500">{formErrors.name}</span>}
+          {formErrors.name && <span className="text-sm text-danger">{formErrors.name}</span>}
         </div>
 
         {/* Slug */}
         <div>
           <Label htmlFor="slug">
-            Slug <span className="text-red-500">*</span>
+            Slug <span className="text-danger">*</span>
           </Label>
           <Input
             id="slug"
@@ -170,11 +170,11 @@ export function CategoryModal({
             placeholder="Enter category slug..."
             className="mt-1"
           />
-          {formErrors.slug && <span className="text-sm text-red-500">{formErrors.slug}</span>}
+          {formErrors.slug && <span className="text-sm text-danger">{formErrors.slug}</span>}
         </div>
 
         {serverError && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">{serverError}</div>
+          <div className="bg-danger/10 rounded-md p-3 text-sm text-danger">{serverError}</div>
         )}
       </form>
     </Modal>

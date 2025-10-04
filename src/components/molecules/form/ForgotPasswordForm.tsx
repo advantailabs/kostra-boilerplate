@@ -42,7 +42,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {/* Email Field */}
       <div>
-        <Label htmlFor="email" className="mb-2 block text-sm font-medium !text-gray-900">
+        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-text">
           Email
         </Label>
         <Input
@@ -50,10 +50,10 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
           type="email"
           placeholder="Enter your email address"
           {...form.register('email')}
-          inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+          inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         {form.formState.errors.email && (
-          <span className="text-sm text-red-500">{form.formState.errors.email.message}</span>
+          <span className="text-sm text-danger">{form.formState.errors.email.message}</span>
         )}
       </div>
 
@@ -61,18 +61,18 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
       <Button
         type="submit"
         disabled={isLoading}
-        className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
+        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {isLoading ? 'Sending...' : 'Send Reset Code'}
       </Button>
 
       {/* Back to Sign In */}
       <div className="text-center">
-        <span className="text-sm text-gray-600">Remember your password? </span>
+        <span className="text-sm text-text-muted">Remember your password? </span>
         <button
           type="button"
           onClick={onBackToSignIn}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm text-primary hover:text-primary-hover"
         >
           Sign in
         </button>

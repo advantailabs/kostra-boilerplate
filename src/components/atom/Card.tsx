@@ -17,13 +17,19 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         ref={forwardedRef}
         className={cx(
           // base
-          'relative w-full rounded-xl border text-left shadow-sm',
-          // background color
-          'bg-white dark:bg-gray-900',
-          // border color
-          'border-gray-200 dark:border-gray-800',
+          'relative w-full rounded-xl text-left',
+          // embossed effect using layered shadows
+          'shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)]',
+          // light inset shadow on top for embossed effect
+          'before:pointer-events-none before:absolute before:inset-0 before:rounded-xl',
+          'before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)]',
+          // background color - using bg for cards (elevated elements)
+          'bg-background',
           // transitions
           'transition-all duration-200',
+          // dark mode embossed effect with theme colors
+          'dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)]',
+          'dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]',
           className
         )}
         {...props}
@@ -58,7 +64,7 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
       // eslint-disable-next-line jsx-a11y/heading-has-content
       <h3
         ref={forwardedRef}
-        className={cx('text-base font-semibold text-gray-900 dark:text-gray-50', className)}
+        className={cx('text-base font-semibold text-text', className)}
         {...props}
       />
     );
@@ -72,11 +78,7 @@ interface CardDescriptionProps extends React.ComponentPropsWithoutRef<'p'> {}
 const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   ({ className, ...props }, forwardedRef) => {
     return (
-      <p
-        ref={forwardedRef}
-        className={cx('mt-1 text-sm text-gray-500 dark:text-gray-400', className)}
-        {...props}
-      />
+      <p ref={forwardedRef} className={cx('mt-1 text-sm text-text-muted', className)} {...props} />
     );
   }
 );

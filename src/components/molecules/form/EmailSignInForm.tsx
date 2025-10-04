@@ -53,7 +53,7 @@ export function EmailSignInForm({
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
       {/* Email Field */}
       <div>
-        <Label htmlFor="email" className="mb-2 block text-sm font-medium !text-gray-900">
+        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-text">
           Email
         </Label>
         <Input
@@ -61,16 +61,16 @@ export function EmailSignInForm({
           type="email"
           placeholder="Enter your email"
           {...form.register('email')}
-          inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+          inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         {form.formState.errors.email && (
-          <span className="text-sm text-red-500">{form.formState.errors.email.message}</span>
+          <span className="text-sm text-danger">{form.formState.errors.email.message}</span>
         )}
       </div>
 
       {/* Password Field */}
       <div>
-        <Label htmlFor="password" className="mb-2 block text-sm font-medium !text-gray-900">
+        <Label htmlFor="password" className="mb-2 block text-sm font-medium text-text">
           Password
         </Label>
         <div className="relative">
@@ -79,19 +79,19 @@ export function EmailSignInForm({
             type={showPassword ? 'text' : 'password'}
             placeholder="Enter your password"
             {...form.register('password')}
-            inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 pr-12 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <Button
             type="button"
             variant="ghost"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 !text-gray-600 shadow-none hover:bg-gray-100 hover:!text-gray-800"
+            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 text-text-muted shadow-none hover:bg-background-light hover:text-text"
           >
             {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
           </Button>
         </div>
         {form.formState.errors.password && (
-          <span className="text-sm text-red-500">{form.formState.errors.password.message}</span>
+          <span className="text-sm text-danger">{form.formState.errors.password.message}</span>
         )}
       </div>
 
@@ -101,7 +101,7 @@ export function EmailSignInForm({
           type="button"
           variant="ghost"
           onClick={onForgotPassword}
-          className="!h-auto !min-w-0 !border-0 !bg-transparent !p-0 text-sm !text-blue-600 !shadow-none hover:!bg-transparent hover:!text-blue-800 focus:!bg-transparent"
+          className="!h-auto !min-w-0 !border-0 !bg-transparent !p-0 text-sm text-primary !shadow-none hover:!bg-transparent hover:text-primary-hover focus:!bg-transparent"
         >
           Forgot Password?
         </Button>
@@ -111,18 +111,18 @@ export function EmailSignInForm({
       <Button
         type="submit"
         disabled={isLoading}
-        className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
+        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
 
       {/* Switch to Sign Up */}
       <div className="text-center">
-        <span className="text-sm text-gray-600">Don't have an account? </span>
+        <span className="text-sm text-text-muted">Don't have an account? </span>
         <button
           type="button"
           onClick={onSwitchToSignUp}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm text-primary hover:text-primary-hover"
         >
           Sign up
         </button>

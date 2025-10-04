@@ -1,6 +1,6 @@
 'use client';
 
-import { RiDeleteBinLine, RiEyeLine, RiRefreshLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiEyeLine } from '@remixicon/react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -9,7 +9,8 @@ import { Button } from '@/components/atom/Button';
 import { Input } from '@/components/atom/Input';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { ActionDialog } from '@/components/molecules/common/ActionDialog';
-import { PageHeader } from '@/components/molecules/common/PageHeader';
+import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
+import { Pagination } from '@/components/molecules/common/Pagination';
 import {
   Select,
   SelectContent,
@@ -90,18 +91,13 @@ export default function ContactManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      <div className="flex items-center justify-between border-b border-gray-200 max-sm:flex-col max-sm:items-start max-sm:gap-3 dark:border-gray-700">
-        <PageHeader title="Contact Inquiries" description="Manage contact form submissions" />
-        <div className="px-4 py-3 max-sm:hidden">
-          <Button
-            onClick={() => refetch()}
-            className="max-sm:w-auto max-sm:justify-center max-sm:px-2 max-sm:py-2"
-          >
-            <RiRefreshLine className="h-4 w-4" /> Refresh
-          </Button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background">
+      <PageHeaderWithAction
+        title="Contact Inquiries"
+        description="Manage contact form submissions"
+        onAdd={() => refetch()}
+        addButtonText="Refresh"
+      />
 
       <div className="h-full p-4 max-sm:p-3">
         {/* Filters */}
@@ -156,17 +152,17 @@ export default function ContactManagementPage() {
         </div>
 
         {/* Table */}
-        <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
           <Table className="border-0">
             <TableBody>
               {submissions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                    No results.
+                <TableRow className="border-b border-border-light">
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    No contact submissions found.
                   </TableCell>
                 </TableRow>
               ) : (
-                submissions.map(s => {
+                submissions.map((s, index) => {
                   const statusMeta = CONTACT_STATUSES.find(
                     x => x.value === (s.status as unknown as string)
                   );
@@ -180,41 +176,57 @@ export default function ContactManagementPage() {
                   return (
                     <TableRow
                       key={s.id}
-                      className="group select-none hover:bg-gray-50 hover:dark:bg-gray-900"
+                      className={`group cursor-pointer select-text hover:bg-background-light ${index < submissions.length - 1 ? 'border-b border-border-light' : ''}`}
+                      onClick={() => handleOpenDetails(s)}
                     >
-                      <TableCell className="py-1 text-gray-700 dark:text-gray-300">
+                      <TableCell className="py-1 text-text">
                         <div className="truncate">
-                          <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">
-                            {s.name}
+                          <p className="truncate text-sm font-medium text-text">
+                            {s.name || 'Unnamed Contact'}
                           </p>
-                          <p className="truncate text-xs text-gray-500">{s.email}</p>
+                          <p className="truncate text-xs text-text-muted">
+                            {s.email || 'No email'}
+                          </p>
                         </div>
                       </TableCell>
-                      <TableCell className="py-1">{purposeMeta?.label || s.purpose}</TableCell>
+                      <TableCell className="py-1 text-text-muted">
+                        <div className="text-xs text-text-muted">Purpose:</div>
+                        <div className="text-sm text-text-muted">
+                          {purposeMeta?.label || s.purpose}
+                        </div>
+                      </TableCell>
                       <TableCell className="py-1">
                         <Badge variant={badgeVariant as any}>{statusMeta?.label || s.status}</Badge>
                       </TableCell>
-                      <TableCell className="py-1 text-gray-600 dark:text-gray-400">
-                        {new Date(s.createdAt).toLocaleString()}
+                      <TableCell className="py-1 text-text-muted">
+                        <div className="text-xs text-text-muted">Submitted:</div>
+                        <div className="text-sm text-text-muted">
+                          {s.createdAt && !Number.isNaN(new Date(s.createdAt).getTime())
+                            ? new Date(s.createdAt).toLocaleDateString()
+                            : 'N/A'}
+                        </div>
                       </TableCell>
                       <TableCell className="py-1 text-right">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="ghost"
-                            onClick={() => handleOpenDetails(s)}
-                            className="group size-8 hover:border hover:border-gray-300 hover:bg-gray-50 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOpenDetails(s);
+                            }}
+                            className="group size-8 hover:border hover:border-border hover:bg-background-light"
                           >
                             <RiEyeLine size={14} className="shrink-0" />
                           </Button>
                           <Button
                             variant="ghost"
-                            onClick={() => setDeleteTarget(s)}
-                            className="group size-8 hover:border hover:border-gray-300 hover:bg-gray-50 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setDeleteTarget(s);
+                            }}
+                            className="group size-8 hover:border hover:border-border hover:bg-background-light"
                           >
-                            <RiDeleteBinLine
-                              size={14}
-                              className="shrink-0 text-red-600 dark:text-red-500"
-                            />
+                            <RiDeleteBinLine size={14} className="shrink-0 text-danger" />
                           </Button>
                         </div>
                       </TableCell>
@@ -228,27 +240,15 @@ export default function ContactManagementPage() {
 
         {/* Pagination */}
         {submissions.length > 0 && (
-          <div className="mt-3 flex items-center justify-between">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Page {page} of {totalPages} • {total} total
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                disabled={page <= 1 || isFetching}
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="secondary"
-                disabled={page >= totalPages || isFetching}
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            pagination={{
+              page,
+              limit,
+              totalCount: total,
+              totalPages,
+            }}
+            onPageChange={setPage}
+          />
         )}
       </div>
 

@@ -13,24 +13,24 @@ const progressCircleVariants = tv({
   variants: {
     variant: {
       default: {
-        background: 'stroke-indigo-200 dark:stroke-indigo-500/30',
-        circle: 'stroke-indigo-600 dark:stroke-indigo-500',
+        background: 'stroke-primary/20',
+        circle: 'stroke-primary',
       },
       neutral: {
-        background: 'stroke-gray-200 dark:stroke-gray-500/40',
+        background: 'dark:stroke-gray-500/40 stroke-gray-200',
         circle: 'stroke-gray-500 dark:stroke-gray-500',
       },
       warning: {
-        background: 'stroke-yellow-200 dark:stroke-yellow-500/30',
-        circle: 'stroke-yellow-500 dark:stroke-yellow-500',
+        background: 'stroke-warning/20',
+        circle: 'stroke-warning',
       },
       error: {
-        background: 'stroke-red-200 dark:stroke-red-500/30',
-        circle: 'stroke-red-500 dark:stroke-red-500',
+        background: 'stroke-danger/20',
+        circle: 'stroke-danger',
       },
       success: {
-        background: 'stroke-emerald-200 dark:stroke-emerald-500/30',
-        circle: 'stroke-emerald-500 dark:stroke-emerald-500',
+        background: 'stroke-success/20',
+        circle: 'stroke-success',
       },
     },
   },

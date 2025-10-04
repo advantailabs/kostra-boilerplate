@@ -29,15 +29,14 @@ const RadioCardGroupIndicator = React.forwardRef<
         // base
         'relative flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border shadow-sm outline-none',
         // border color
-        'border-gray-300 dark:border-gray-800',
+        'border-border',
         // background color
-        'bg-white dark:bg-gray-950',
+        'bg-background',
         // checked
-        'group-data-[state=checked]:border-0 group-data-[state=checked]:border-transparent group-data-[state=checked]:bg-indigo-600',
+        'group-data-[state=checked]:border-0 group-data-[state=checked]:border-transparent group-data-[state=checked]:bg-primary',
         // disabled
         'group-data-[disabled]:border',
-        'group-data-[disabled]:border-gray-300 group-data-[disabled]:bg-gray-100 group-data-[disabled]:text-gray-400',
-        'group-data-[disabled]:dark:border-gray-700 group-data-[disabled]:dark:bg-gray-800',
+        'group-data-[disabled]:border-border-muted group-data-[disabled]:bg-background-light group-data-[disabled]:text-text-muted',
         // focus
         focusRing,
         className
@@ -75,10 +74,10 @@ const RadioCardItem = React.forwardRef<
         // base
         'group relative w-full rounded-md border p-4 text-left shadow-sm transition-all focus:outline-none',
         // background color
-        'bg-white dark:bg-gray-950',
+        'bg-background',
         // border color
-        'border-gray-200 dark:border-gray-800',
-        'data-[state=checked]:border-indigo-600 data-[state=checked]:dark:border-indigo-600',
+        'border-border',
+        'data-[state=checked]:border-primary',
         focusInput,
         className
       )}

@@ -34,14 +34,14 @@ export default function MobileSidebar() {
         <Button
           variant="ghost"
           aria-label="open sidebar"
-          className="group flex items-center rounded-md p-2 text-sm font-medium data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:bg-gray-100 hover:dark:bg-gray-400/10"
+          className="group flex items-center rounded-md p-2 text-sm font-medium data-[state=open]:bg-background-light hover:bg-background-light"
         >
           <RiMenuLine className="size-6 shrink-0 sm:size-5" aria-hidden="true" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="sm:max-w-lg">
-        <div className="flex items-center justify-between border-b border-gray-200 px-2 py-4 dark:border-gray-800">
-          <h2 className="px-2 text-lg font-semibold">Menu</h2>
+        <div className="flex items-center justify-between border-b border-border px-2 py-4">
+          <h2 className="px-2 text-lg font-semibold text-text">Menu</h2>
           <DrawerClose asChild>
             <Button variant="ghost" aria-label="close sidebar" className="h-8 w-8 p-0">
               <RiCloseLine className="h-4 w-4" />
@@ -52,9 +52,7 @@ export default function MobileSidebar() {
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-6">
             {/* Main Section */}
             <div>
-              <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs dark:text-gray-500">
-                Main
-              </span>
+              <span className="text-sm font-medium leading-6 text-text-muted sm:text-xs">Main</span>
               <ul role="list" className="space-y-1.5">
                 {NAVIGATION_ITEMS.filter(
                   item => item.section === 'Main' && item.roles.includes(userRole as any)
@@ -64,10 +62,8 @@ export default function MobileSidebar() {
                       <Link
                         href={item.href}
                         className={cx(
-                          isActive(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900',
+                          isActive(item.href) ? 'text-primary' : 'text-text-muted hover:text-text',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-background-light sm:text-sm',
                           focusRing
                         )}
                       >
@@ -82,7 +78,7 @@ export default function MobileSidebar() {
             {/* Admin Section */}
             {userRole === 'ADMIN' && (
               <div>
-                <span className="text-sm font-medium leading-6 text-gray-500 sm:text-xs dark:text-gray-500">
+                <span className="text-sm font-medium leading-6 text-text-muted sm:text-xs">
                   Admin
                 </span>
                 <ul role="list" className="space-y-1.5">

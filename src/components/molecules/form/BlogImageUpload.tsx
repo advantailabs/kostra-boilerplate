@@ -91,11 +91,8 @@ export function BlogImageUpload({
 
   return (
     <div className={className}>
-      <Label
-        htmlFor="blogImage"
-        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-      >
-        {label} {required && <span className="text-red-500">*</span>}
+      <Label htmlFor="blogImage" className="mb-2 block text-sm font-medium text-text">
+        {label} {required && <span className="text-danger">*</span>}
       </Label>
 
       <div className="relative">
@@ -104,10 +101,10 @@ export function BlogImageUpload({
             isUploading ? 'cursor-not-allowed opacity-50' : ''
           } ${
             displayError
-              ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-950/20'
+              ? 'bg-danger/10 border-danger'
               : value
-                ? 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800'
-                : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800'
+                ? 'border-border bg-background-light'
+                : 'border-border bg-background-light'
           }`}
           onClick={handleImageClick}
           role="button"
@@ -146,19 +143,19 @@ export function BlogImageUpload({
                   e.stopPropagation();
                   handleRemoveImage();
                 }}
-                className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+                className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-danger text-white transition-colors hover:bg-danger-hover"
                 aria-label="Remove image"
               >
                 <RiCloseLine className="h-3 w-3" />
               </button>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-gray-500">
+            <div className="flex flex-col items-center justify-center text-text-muted">
               <RiImageAddLine className="mb-2 h-8 w-8" />
-              <span className="text-sm font-medium text-gray-600">
+              <span className="text-sm font-medium text-text">
                 {isUploading ? 'Uploading...' : 'Upload Blog Image'}
               </span>
-              <span className="mt-1 text-xs text-gray-400">
+              <span className="mt-1 text-xs text-text-muted">
                 .jpg, .png up to 5MB {required && '(Required)'}
               </span>
             </div>
@@ -167,9 +164,9 @@ export function BlogImageUpload({
       </div>
 
       {/* Error Messages */}
-      {displayError && <p className="mt-2 text-xs text-red-500">{displayError}</p>}
+      {displayError && <p className="mt-2 text-xs text-danger">{displayError}</p>}
 
-      {isUploading && <p className="mt-2 text-xs text-gray-500">Uploading...</p>}
+      {isUploading && <p className="mt-2 text-xs text-text-muted">Uploading...</p>}
     </div>
   );
 }

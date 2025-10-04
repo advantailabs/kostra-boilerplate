@@ -78,10 +78,7 @@ export function FileFilterModal({
     >
       {/* Search - Full Width */}
       <div className="mb-4">
-        <label
-          htmlFor="search-files"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="search-files" className="mb-2 block text-sm font-medium text-text">
           Search Files
         </label>
         <Input
@@ -99,10 +96,7 @@ export function FileFilterModal({
         <div className="space-y-4">
           {/* File Type Filter */}
           <div>
-            <label
-              htmlFor="file-type-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="file-type-filter" className="mb-2 block text-sm font-medium text-text">
               File Type
             </label>
             <Select
@@ -130,10 +124,7 @@ export function FileFilterModal({
         <div className="space-y-4">
           {/* Sort Options */}
           <div>
-            <label
-              htmlFor="sort-by-filter"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="sort-by-filter" className="mb-2 block text-sm font-medium text-text">
               Sort By
             </label>
             <Select
@@ -154,10 +145,7 @@ export function FileFilterModal({
           </div>
 
           <div>
-            <label
-              htmlFor="sort-order-button"
-              className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="sort-order-button" className="mb-2 block text-sm font-medium text-text">
               Sort Order
             </label>
             <Button

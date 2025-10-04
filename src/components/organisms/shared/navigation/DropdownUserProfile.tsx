@@ -87,7 +87,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
               disabled={isCreatingPortal}
               onClick={openBillingPortal}
             >
-              <RiBillLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              <RiBillLine className="size-4 shrink-0 text-text-muted" aria-hidden="true" />
               Billing
             </button>
           </DropdownMenuItem>
@@ -97,7 +97,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
               href={siteConfig.baseLinks.creditHistory}
               className="flex w-full items-center gap-2"
             >
-              <RiCoinLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              <RiCoinLine className="size-4 shrink-0 text-text-muted" aria-hidden="true" />
               Credit history
             </Link>
           </DropdownMenuItem>
@@ -107,7 +107,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
           <DropdownMenuSubMenu>
             <DropdownMenuSubMenuTrigger>
               <span className="flex items-center gap-2">
-                <RiSunLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+                <RiSunLine className="size-4 shrink-0 text-text-muted" aria-hidden="true" />
                 Theme
               </span>
             </DropdownMenuSubMenuTrigger>
@@ -150,7 +150,7 @@ export function DropdownUserProfile({ children, align = 'start' }: DropdownUserP
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <button type="button" className="flex w-full items-center gap-2" onClick={handleLogout}>
-              <RiLogoutBoxRLine className="size-4 shrink-0 text-gray-500" aria-hidden="true" />
+              <RiLogoutBoxRLine className="size-4 shrink-0 text-text-muted" aria-hidden="true" />
               Sign out
             </button>
           </DropdownMenuItem>

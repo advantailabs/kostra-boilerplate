@@ -33,8 +33,8 @@ export default function TermsOfServicePage() {
     <>
       {/* Background Effects */}
       <div className="absolute inset-0">
-        <div className="bg-gradient-radial absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 via-purple-500/5 to-transparent blur-3xl" />
-        <div className="bg-gradient-radial absolute right-0 top-1/3 h-96 w-96 translate-x-1/2 from-purple-500/10 via-pink-500/5 to-transparent blur-3xl" />
+        <div className="bg-gradient-radial via-purple-500/5 absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 from-blue-500/10 to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-purple-500/10 absolute right-0 top-1/3 h-96 w-96 translate-x-1/2 via-pink-500/5 to-transparent blur-3xl" />
       </div>
 
       {/* Content */}
@@ -42,17 +42,17 @@ export default function TermsOfServicePage() {
         <div className="mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-8 text-center sm:mb-12">
-            <h1 className="mb-3 text-3xl font-bold text-white sm:mb-4 sm:text-4xl md:text-5xl">
+            <h1 className="mb-3 text-3xl font-bold text-text sm:mb-4 sm:text-4xl md:text-5xl">
               Terms of Service
             </h1>
-            <p className="text-base text-gray-400 sm:text-lg">Last updated: {lastUpdated}</p>
+            <p className="text-base text-text-muted sm:text-lg">Last updated: {lastUpdated}</p>
           </div>
 
           {/* Content */}
           <div className="prose prose-invert mx-auto max-w-none">
-            <div className="space-y-6 text-gray-300 sm:space-y-8">
+            <div className="space-y-6 text-text-muted sm:space-y-8">
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -63,7 +63,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   2. Description of Service
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -74,7 +74,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   3. User Accounts
                 </h2>
                 <div className="space-y-4">
@@ -92,7 +92,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   4. Acceptable Use
                 </h2>
                 <div className="space-y-4">
@@ -122,7 +122,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   5. Content and Data
                 </h2>
                 <div className="space-y-4">
@@ -146,7 +146,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   6. Intellectual Property
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -158,7 +158,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   7. Privacy
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -169,7 +169,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   8. Service Availability
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -180,7 +180,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   9. Limitation of Liability
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -192,7 +192,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   10. Termination
                 </h2>
                 <div className="space-y-4">
@@ -211,7 +211,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   11. Governing Law
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -223,7 +223,7 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   12. Changes to Terms
                 </h2>
                 <p className="text-sm sm:text-base">
@@ -234,13 +234,13 @@ export default function TermsOfServicePage() {
               </section>
 
               <section>
-                <h2 className="mb-3 text-xl font-semibold text-white sm:mb-4 sm:text-2xl">
+                <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
                   13. Contact Information
                 </h2>
                 <p className="text-sm sm:text-base">
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
-                <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4 sm:p-6">
+                <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
                   <p className="text-sm sm:text-base">Email: hi@peon.sh</p>
                 </div>
               </section>

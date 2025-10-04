@@ -52,13 +52,13 @@ export function TagInput({
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+              className="bg-primary/20 inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm text-primary"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => removeTag(index)}
-                className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
+                className="hover:bg-primary/30 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full"
                 aria-label={`Remove ${tag} tag`}
               >
                 <RiCloseLine className="h-3 w-3" />
@@ -77,11 +77,11 @@ export function TagInput({
         onBlur={addTag}
         placeholder={tags.length >= maxTags ? `Maximum ${maxTags} tags allowed` : placeholder}
         disabled={tags.length >= maxTags}
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50 dark:placeholder-gray-400 dark:disabled:bg-gray-900 dark:disabled:text-gray-600"
+        className="w-full rounded-md border border-border bg-background-light px-3 py-2 text-sm text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:bg-background-light disabled:text-text-muted"
       />
 
       {/* Helper Text */}
-      <p className="text-xs text-gray-500 dark:text-gray-400">
+      <p className="text-xs text-text-muted">
         {tags.length}/{maxTags} tags • Press Enter or comma to add
       </p>
     </div>

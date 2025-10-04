@@ -12,8 +12,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         role="alert"
         className={cx(
           'relative w-full rounded-md border p-3 text-sm',
-          'border-gray-200 bg-gray-50 text-gray-700',
-          'dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300',
+          'border-border bg-background-light text-text',
           className
         )}
         {...props}

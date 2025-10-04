@@ -24,13 +24,11 @@ export function BlogGrid({
     return (
       <div className={`flex flex-col items-center justify-center py-12 ${className}`}>
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-            <RiAddLine className="h-12 w-12 text-gray-400" />
+          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-background-light">
+            <RiAddLine className="h-12 w-12 text-text-muted" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            No blogs yet
-          </h3>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+          <h3 className="mb-2 text-lg font-semibold text-text">No blogs yet</h3>
+          <p className="mb-6 text-sm text-text-muted">
             Get started by creating your first blog post
           </p>
           {onAdd && (

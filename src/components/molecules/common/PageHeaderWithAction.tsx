@@ -17,13 +17,11 @@ export function PageHeaderWithAction({
   className,
 }: PageHeaderWithActionProps) {
   return (
-    <div
-      className={`flex items-center justify-between border-b border-gray-200 dark:border-gray-700 ${className || ''}`}
-    >
-      <div className="relative min-w-0 flex-1 border-gray-200 px-4 py-3 dark:border-gray-700">
+    <div className={`flex items-center justify-between border-b border-border ${className || ''}`}>
+      <div className="relative min-w-0 flex-1 border-border px-4 py-3">
         <div className="min-w-0">
-          <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h1>
-          {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
+          <h1 className="text-lg font-medium text-text">{title}</h1>
+          {description && <p className="text-xs text-text-muted">{description}</p>}
         </div>
       </div>
       {onAdd && (

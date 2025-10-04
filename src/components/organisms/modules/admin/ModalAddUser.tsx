@@ -104,7 +104,7 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                   required
                 />
                 {errors.email && (
-                  <span className="mt-1 text-sm text-red-500">{errors.email.message}</span>
+                  <span className="mt-1 text-sm text-danger">{errors.email.message}</span>
                 )}
               </>
             )}
@@ -131,9 +131,9 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                   required
                 />
                 {errors.password && (
-                  <span className="mt-1 text-sm text-red-500">{errors.password.message}</span>
+                  <span className="mt-1 text-sm text-danger">{errors.password.message}</span>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-text-muted">
                   Password must be at least 8 characters with uppercase, lowercase, number, and
                   special character.
                 </p>
@@ -164,7 +164,7 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                   </SelectContent>
                 </Select>
                 {errors.role && (
-                  <span className="mt-1 text-sm text-red-500">{errors.role.message}</span>
+                  <span className="mt-1 text-sm text-danger">{errors.role.message}</span>
                 )}
               </>
             )}

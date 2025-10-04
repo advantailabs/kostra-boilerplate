@@ -268,7 +268,7 @@ export function PackageModal({
           {/* Title */}
           <div className="sm:col-span-2">
             <Label htmlFor="title">
-              Title <span className="text-red-500">*</span>
+              Title <span className="text-danger">*</span>
             </Label>
             <Input
               id="title"
@@ -277,13 +277,13 @@ export function PackageModal({
               placeholder="Enter package title..."
               className="mt-1"
             />
-            {formErrors.title && <span className="text-sm text-red-500">{formErrors.title}</span>}
+            {formErrors.title && <span className="text-sm text-danger">{formErrors.title}</span>}
           </div>
 
           {/* Description */}
           <div className="sm:col-span-2">
             <Label htmlFor="description">
-              Description <span className="text-red-500">*</span>
+              Description <span className="text-danger">*</span>
             </Label>
             <Textarea
               id="description"
@@ -295,14 +295,14 @@ export function PackageModal({
               style={{ height: '80px', minHeight: '80px', maxHeight: '80px' }}
             />
             {formErrors.description && (
-              <span className="text-sm text-red-500">{formErrors.description}</span>
+              <span className="text-sm text-danger">{formErrors.description}</span>
             )}
           </div>
 
           {/* Price */}
           <div>
             <Label htmlFor="price">
-              Price <span className="text-red-500">*</span>
+              Price <span className="text-danger">*</span>
             </Label>
             <Input
               id="price"
@@ -315,7 +315,7 @@ export function PackageModal({
               placeholder="0.00"
               className="mt-1"
             />
-            {formErrors.price && <span className="text-sm text-red-500">{formErrors.price}</span>}
+            {formErrors.price && <span className="text-sm text-danger">{formErrors.price}</span>}
           </div>
 
           {/* Currency Symbol */}
@@ -330,11 +330,9 @@ export function PackageModal({
               maxLength={4}
             />
             {formErrors.currencySymbol ? (
-              <span className="text-sm text-red-500">{formErrors.currencySymbol}</span>
+              <span className="text-sm text-danger">{formErrors.currencySymbol}</span>
             ) : (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Examples: $, €, £, ¥, ₹
-              </span>
+              <span className="text-xs text-text-muted">Examples: $, €, £, ¥, ₹</span>
             )}
           </div>
 
@@ -343,7 +341,7 @@ export function PackageModal({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isFeatured">Featured Package</Label>
-                <p className="text-sm text-gray-500">Mark this package as featured</p>
+                <p className="text-sm text-text-muted">Mark this package as featured</p>
               </div>
               <Switch
                 id="isFeatured"
@@ -371,7 +369,7 @@ export function PackageModal({
                     <button
                       type="button"
                       onClick={() => handleRemoveFeature(index)}
-                      className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-indigo-200 dark:hover:bg-indigo-800"
+                      className="hover:bg-primary/20 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full"
                       aria-label={`Remove ${feature} feature`}
                     >
                       <RiCloseLine className="h-3 w-3" />
@@ -398,7 +396,7 @@ export function PackageModal({
               <button
                 type="button"
                 onClick={handleAddFeature}
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-hover"
               >
                 Add
               </button>
@@ -407,7 +405,7 @@ export function PackageModal({
         </div>
 
         {serverError && (
-          <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">{serverError}</div>
+          <div className="bg-danger/10 rounded-md p-3 text-sm text-danger">{serverError}</div>
         )}
       </form>
     </Modal>

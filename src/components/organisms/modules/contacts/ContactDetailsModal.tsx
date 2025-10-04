@@ -136,13 +136,13 @@ export function ContactDetailsModal({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <Label className="font-medium">Submitted</Label>
-              <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <div className="mt-1 text-sm text-text-muted">
                 {new Date(contact.createdAt).toLocaleString()}
               </div>
             </div>
             <div>
               <Label className="font-medium">Updated</Label>
-              <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <div className="mt-1 text-sm text-text-muted">
                 {new Date(contact.updatedAt).toLocaleString()}
               </div>
             </div>

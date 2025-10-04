@@ -117,7 +117,7 @@ export function UsersTable({
   }
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-gray-950 ${className || ''}`}>
+    <div className={`min-h-screen bg-background ${className || ''}`}>
       <PageHeaderWithAction
         title="Users"
         description="Workspace administrators can add, manage, and remove users"
@@ -134,38 +134,38 @@ export function UsersTable({
             className="flex-1"
           />
           <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-sm text-gray-600 dark:text-gray-300">Show Deleted Users</span>
+            <span className="text-sm text-text-muted">Show Deleted Users</span>
             <Switch checked={showDeleted} onCheckedChange={setShowDeleted} />
           </div>
         </div>
 
         {/* Table */}
-        <div className="relative overflow-hidden overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
           <Table className="border-0">
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
-                <TableRow>
+                <TableRow className="border-b border-border-light">
                   <TableCell colSpan={7} className="h-24 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-                      <span className="text-sm text-gray-500">Searching...</span>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      <span className="text-sm text-text-muted">Searching...</span>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : paginatedUsers.length === 0 ? (
-                <TableRow>
+                <TableRow className="border-b border-border-light">
                   <TableCell colSpan={7} className="h-24 text-center">
                     No users found.
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedUsers.map(user => (
+                paginatedUsers.map((user, index) => (
                   <TableRow
                     key={user.id}
-                    className="group cursor-pointer select-none hover:bg-gray-50 hover:dark:bg-gray-900"
+                    className={`group cursor-pointer select-text hover:bg-background-light ${index < paginatedUsers.length - 1 ? 'border-b border-border-light' : ''}`}
                     onClick={() => onViewDetails(user)}
                   >
-                    <TableCell className="p-4 text-gray-700 dark:text-gray-300">
+                    <TableCell className="p-4 text-text">
                       <div className="flex items-center gap-x-3 truncate">
                         {user.profilePicture ? (
                           <Image
@@ -173,21 +173,19 @@ export function UsersTable({
                             alt={user.name}
                             width={32}
                             height={32}
-                            className="size-8 shrink-0 rounded-full border border-gray-300 object-cover dark:border-gray-800"
+                            className="size-8 shrink-0 rounded-full border border-border object-cover"
                           />
                         ) : (
                           <span
-                            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300"
+                            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-xs text-text"
                             aria-hidden="true"
                           >
                             {user.name.charAt(0).toUpperCase()}
                           </span>
                         )}
                         <div className="truncate">
-                          <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-50">
-                            {user.name}
-                          </p>
-                          <p className="truncate text-xs text-gray-500">{user.email}</p>
+                          <p className="truncate text-sm font-medium text-text">{user.name}</p>
+                          <p className="truncate text-xs text-text-muted">{user.email}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -219,12 +217,12 @@ export function UsersTable({
                         {user.isOnboarded ? 'Onboarded' : 'Pending'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="p-4 text-gray-600 dark:text-gray-400">
-                      <div className="text-sm font-medium">{user.credits} Credits</div>
+                    <TableCell className="p-4">
+                      <div className="text-sm font-medium text-text">{user.credits} Credits</div>
                     </TableCell>
-                    <TableCell className="p-4 text-gray-600 dark:text-gray-400">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Joined:</div>
-                      <div className="text-sm">
+                    <TableCell className="p-4">
+                      <div className="text-xs text-text-muted">Joined:</div>
+                      <div className="text-sm text-text-muted">
                         {user.createdAt && !Number.isNaN(new Date(user.createdAt).getTime())
                           ? new Date(user.createdAt).toLocaleDateString()
                           : 'N/A'}
@@ -236,11 +234,11 @@ export function UsersTable({
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
-                              className="group size-8 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:border hover:border-gray-300 hover:bg-gray-50 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900 hover:dark:border-gray-700 hover:dark:bg-gray-900"
+                              className="group size-8 data-[state=open]:border-border data-[state=open]:bg-background-light hover:border hover:border-border hover:bg-background-light"
                               onClick={e => e.stopPropagation()}
                             >
                               <RiMore2Fill
-                                className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-hover:dark:text-gray-400"
+                                className="size-4 shrink-0 text-text-muted group-hover:text-text"
                                 aria-hidden="true"
                               />
                             </Button>
@@ -278,7 +276,7 @@ export function UsersTable({
                                   Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  className="text-red-600 dark:text-red-500"
+                                  className="text-danger"
                                   disabled={isCurrentUser(user)}
                                   onClick={e => {
                                     e.stopPropagation();

@@ -79,8 +79,8 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
 
       {loading && hasMore && (
         <div className="p-4 text-center">
-          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-indigo-600" />
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Loading more files...</p>
+          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-primary" />
+          <p className="mt-2 text-sm text-text-muted">Loading more files...</p>
         </div>
       )}
     </>

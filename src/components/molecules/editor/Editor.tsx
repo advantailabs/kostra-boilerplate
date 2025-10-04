@@ -183,13 +183,13 @@ function Editor({
       }),
       CodeBlock.configure({
         HTMLAttributes: {
-          class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-md font-mono text-sm',
+          class: 'bg-background-light p-4 rounded-md font-mono text-sm',
         },
       }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 underline cursor-pointer',
+          class: 'text-primary underline cursor-pointer',
         },
       }),
       TaskList.configure({
@@ -218,8 +218,7 @@ function Editor({
     content: initialContent,
     editorProps: {
       attributes: {
-        class:
-          'mx-auto focus:outline-none min-h-[150px] cursor-text text-gray-900 dark:text-white text-sm',
+        class: 'mx-auto focus:outline-none min-h-[150px] cursor-text text-text text-sm',
         'data-placeholder': 'Write something here...',
       },
     },
@@ -437,7 +436,7 @@ function Editor({
   return (
     <div className="flex h-full w-full flex-col">
       {/* Toolbar */}
-      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-950">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-border bg-background p-2">
         {/* Heading Dropdown */}
         <div className="heading-dropdown relative">
           <Button
@@ -451,10 +450,10 @@ function Editor({
           </Button>
 
           {showHeadingDropdown && (
-            <div className="absolute left-0 z-[9999] min-w-[120px] rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
+            <div className="absolute left-0 z-[9999] min-w-[120px] rounded-md border border-border bg-background shadow-lg">
               <button
                 onClick={() => setHeading(0)}
-                className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="w-full px-3 py-2 text-left text-sm hover:bg-background-light"
               >
                 Paragraph
               </button>
@@ -462,7 +461,7 @@ function Editor({
                 <button
                   key={level}
                   onClick={() => setHeading(level)}
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-background-light"
                 >
                   Heading {level}
                 </button>
@@ -527,13 +526,13 @@ function Editor({
           </Button>
 
           {showColorPicker && (
-            <div className="absolute left-0 top-full z-[9999] mt-1 min-w-[200px] rounded-md border border-gray-300 bg-white p-3 shadow-lg dark:border-gray-600 dark:bg-gray-800">
+            <div className="absolute left-0 top-full z-[9999] mt-1 min-w-[200px] rounded-md border border-border bg-background p-3 shadow-lg">
               <div className="mb-3 grid grid-cols-5 gap-2">
                 {presetColors.map(color => (
                   <button
                     key={color}
                     onClick={() => setTextColor(color)}
-                    className="h-8 w-8 rounded border border-gray-300 transition-transform hover:scale-110"
+                    className="h-8 w-8 rounded border border-border transition-transform hover:scale-110"
                     style={{ backgroundColor: color }}
                     title={color}
                     aria-label={`Select color ${color}`}
@@ -545,7 +544,7 @@ function Editor({
                   type="color"
                   value={selectedColor}
                   onChange={e => setSelectedColor(e.target.value)}
-                  className="h-8 w-8 cursor-pointer rounded border border-gray-300"
+                  className="h-8 w-8 cursor-pointer rounded border border-border"
                   aria-label="Color picker"
                 />
                 <Button
@@ -561,7 +560,7 @@ function Editor({
           )}
         </div>
 
-        <div className="mx-2 h-6 w-px bg-gray-300" />
+        <div className="mx-2 h-6 w-px bg-border" />
 
         {/* Text Alignment Buttons */}
         <Button
@@ -638,13 +637,13 @@ function Editor({
           </Button>
 
           {showLinkInput && (
-            <div className="absolute left-0 top-full z-[9999] mt-1 min-w-[300px] rounded-md border border-gray-300 bg-white p-2 shadow-lg dark:border-gray-600 dark:bg-gray-800">
+            <div className="absolute left-0 top-full z-[9999] mt-1 min-w-[300px] rounded-md border border-border bg-background p-2 shadow-lg">
               <input
                 type="url"
                 placeholder="Enter URL..."
                 value={linkUrl}
                 onChange={e => setLinkUrl(e.target.value)}
-                className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                className="w-full rounded border border-border bg-background px-2 py-1 text-sm text-text"
                 aria-label="Link URL"
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
@@ -795,7 +794,7 @@ function Editor({
 
       {/* Editor Content */}
       <div
-        className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 flex-1 cursor-text overflow-y-auto"
+        className="flex-1 cursor-text overflow-y-auto scrollbar-thin scrollbar-track-background-light scrollbar-thumb-border hover:scrollbar-thumb-border-muted"
         onClick={e => {
           e.stopPropagation();
           if (editor && !editor.isFocused) {

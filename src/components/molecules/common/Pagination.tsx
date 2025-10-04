@@ -24,7 +24,7 @@ export function Pagination({ pagination, onPageChange, className }: PaginationPr
 
   return (
     <div className={`mt-3 flex items-center justify-between ${className || ''}`}>
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="text-sm text-text-muted">
         Page {page} of {totalPages} • {totalCount} total
       </div>
       <div className="flex gap-2">
@@ -46,4 +46,3 @@ export function Pagination({ pagination, onPageChange, className }: PaginationPr
     </div>
   );
 }
-

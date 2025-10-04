@@ -15,12 +15,12 @@ export function ModalRestoreUser({ isOpen, onClose, user }: ModalDeleteUserProps
   const additionalInfo = (
     <div className="space-y-2">
       <div>
-        <span className="font-medium text-gray-900 dark:text-gray-50">Name:</span>
-        <span className="ml-2 text-gray-700 dark:text-gray-300">{user.name}</span>
+        <span className="font-medium text-text">Name:</span>
+        <span className="ml-2 text-text-muted">{user.name}</span>
       </div>
       <div>
-        <span className="font-medium text-gray-900 dark:text-gray-50">Email:</span>
-        <span className="ml-2 text-gray-700 dark:text-gray-300">{user.email}</span>
+        <span className="font-medium text-text">Email:</span>
+        <span className="ml-2 text-text-muted">{user.email}</span>
       </div>
     </div>
   );
