@@ -6,9 +6,9 @@ import {
   successResponse,
   validationErrorResponse,
 } from '@/lib/utils';
-import { createUser, getUserByRole } from '@/services/repositories/user';
+import { createUser, getUsersWithFilters, UserFilterOptions } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
-import { UserRole } from '@prisma/client';
+import { UserPlan, UserRole } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route
@@ -17,23 +17,44 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+
+    // Parse filter parameters
     const search = searchParams.get('search') || '';
+    const role = searchParams.get('role') as UserRole | null;
+    const plan = searchParams.get('plan') as UserPlan | null;
+    const isOnboardedParam = searchParams.get('isOnboarded');
     const includeDeleted = searchParams.get('includeDeleted') === 'true';
+    const sortBy = (searchParams.get('sortBy') as UserFilterOptions['sortBy']) || 'id';
+    const sortOrder = (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc';
+    const limitParam = searchParams.get('limit');
+    const offsetParam = searchParams.get('offset');
 
-    // Get all users (excluding soft deleted)
-    const users = await getUserByRole(UserRole.USER, true, includeDeleted);
+    // Parse pagination parameters
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined;
+    const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
 
-    // Filter users based on search term
-    const filteredUsers = search
-      ? users.filter(
-          user =>
-            user.name.toLowerCase().includes(search.toLowerCase()) ||
-            user.email.toLowerCase().includes(search.toLowerCase())
-        )
-      : users;
+    // Parse boolean parameters
+    const isOnboarded =
+      isOnboardedParam === 'true' ? true : isOnboardedParam === 'false' ? false : undefined;
+
+    // Build filter options
+    const filterOptions: UserFilterOptions = {
+      search: search || undefined,
+      role: role || undefined,
+      plan: plan || undefined,
+      isOnboarded,
+      includeDeleted,
+      sortBy,
+      sortOrder,
+      limit,
+      offset,
+    };
+
+    // Get users with filters
+    const { users, totalCount } = await getUsersWithFilters(filterOptions);
 
     const response = {
-      users: filteredUsers.map(user => ({
+      users: users.map(user => ({
         id: user.id,
         name: user.name,
         email: user.email,
@@ -49,6 +70,16 @@ export async function GET(request: NextRequest) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),
+      totalCount,
+      pagination: limit
+        ? {
+            limit,
+            offset,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1,
+          }
+        : undefined,
     };
 
     return successResponse(response);

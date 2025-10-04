@@ -141,14 +141,14 @@ export function Modal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}>
-        <DialogHeader className="relative border-b border-gray-200 p-4 max-sm:p-3 dark:border-gray-700">
+        <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
           <DialogTitle className="text-base max-sm:pr-12">{title}</DialogTitle>
           {description && (
             <DialogDescription className="-mt-1 text-sm max-sm:pr-12">
               {description}
             </DialogDescription>
           )}
-          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
+          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-none focus:ring-2 focus:ring-primary">
             <RiCloseLine className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </DialogClose>
@@ -161,7 +161,7 @@ export function Modal({
           {/* Footer with action buttons */}
           {(footer || defaultFooter) && (
             <>
-              <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+              <div className="-mx-4 border-t border-border" />
               <div className="py-4 max-sm:py-3">{footer || defaultFooter}</div>
             </>
           )}

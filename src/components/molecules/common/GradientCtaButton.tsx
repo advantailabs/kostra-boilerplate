@@ -35,8 +35,7 @@ export function GradientCtaButton({
         variant="ghost"
         className={cx(
           size === 'sm' ? 'h-7 px-2 text-xs' : 'h-8 px-3 text-sm',
-          'border-transparent bg-white text-gray-900 hover:bg-gray-50',
-          'dark:bg-gray-900/50 dark:text-gray-100 dark:hover:bg-gray-900/60',
+          'border-transparent bg-background text-text hover:bg-background-light',
           'btn-shimmer',
           buttonClassName
         )}

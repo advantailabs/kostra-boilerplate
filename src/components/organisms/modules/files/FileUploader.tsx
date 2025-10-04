@@ -235,28 +235,26 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           {/* Drop Zone */}
           <div
             ref={dropZoneRef}
-            className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors dark:border-gray-600"
+            className="hover:border-primary/50 rounded-lg border-2 border-dashed border-border p-8 text-center shadow-sm transition-all duration-200 hover:shadow-md"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
           >
-            <RiUploadLine className="mx-auto h-16 w-16 text-gray-400" />
+            <RiUploadLine className="mx-auto h-16 w-16 text-text-muted" />
             <div className="mt-4">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">
-                Drop files here or browse
-              </p>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-lg font-medium text-text">Drop files here or browse</p>
+              <p className="mt-2 text-sm text-text-muted">
                 Drag and drop files here, or{' '}
                 <button
                   type="button"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  className="font-medium text-primary hover:text-primary-hover"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   browse
                 </button>
               </p>
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-xs text-text-muted">
                 Maximum file size: 100MB • Supported formats: PDF, Text, JSON, Markdown, and more
               </p>
             </div>
@@ -273,69 +271,65 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           {uploadingFiles.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4 className="text-sm font-medium text-text">
                   Files ({uploadingFiles.filter(f => f.status === 'success').length}/
                   {uploadingFiles.length})
                 </h4>
                 {readyFiles.length > 0 && (
-                  <div className="text-sm text-gray-500">{readyFiles.length} ready to save</div>
+                  <div className="text-sm text-text-muted">{readyFiles.length} ready to save</div>
                 )}
               </div>
 
               {uploadingFiles.map(uploadingFile => (
                 <div
                   key={uploadingFile.id}
-                  className="flex items-center space-x-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+                  className="flex items-center space-x-4 rounded-lg bg-background p-3"
                 >
-                  <RiFileLine className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                  <RiFileLine className="h-5 w-5 flex-shrink-0 text-text-muted" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                    <p className="truncate text-sm font-medium text-text">
                       {uploadingFile.file.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-text-muted">
                       {formatFileSize(uploadingFile.file.size)}
                     </p>
                     {uploadingFile.status === 'uploading' && (
-                      <div className="mt-2 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                      <div className="mt-2 h-2 w-full rounded-full bg-background-light">
                         <div
-                          className="h-2 rounded-full bg-indigo-600 transition-all duration-300"
+                          className="h-2 rounded-full bg-primary transition-all duration-300"
                           style={{ width: `${uploadingFile.progress}%` }}
                         />
                       </div>
                     )}
                     {uploadingFile.error && (
-                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                        {uploadingFile.error}
-                      </p>
+                      <p className="mt-1 text-xs text-danger">{uploadingFile.error}</p>
                     )}
                     {uploadingFile.status === 'ready' && (
-                      <p className="mt-1 text-xs text-green-600 dark:text-green-400">
-                        Ready to save
-                      </p>
+                      <p className="mt-1 text-xs text-success">Ready to save</p>
                     )}
                   </div>
                   <div className="flex items-center space-x-2">
                     {uploadingFile.status === 'uploading' && (
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                     )}
                     {uploadingFile.status === 'ready' && (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500">
+                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                         <RiCheckLine className="h-3 w-3 text-white" />
                       </div>
                     )}
                     {uploadingFile.status === 'success' && (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-success">
                         <RiCheckLine className="h-3 w-3 text-white" />
                       </div>
                     )}
                     {uploadingFile.status === 'error' && (
-                      <div className="h-5 w-5 rounded-full bg-red-500" />
+                      <div className="h-5 w-5 rounded-full bg-danger" />
                     )}
                     <button
                       onClick={() =>
                         setUploadingFiles(prev => prev.filter(f => f.id !== uploadingFile.id))
                       }
-                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="text-text-muted hover:text-text"
                     >
                       <RiCloseLine className="h-4 w-4" />
                     </button>
@@ -360,11 +354,11 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           maxWidth="max-w-md"
         >
           <div
-            className={`-mt-2 mb-2 text-sm font-medium ${warning.type === 'error' ? 'text-red-600' : 'text-orange-600'}`}
+            className={`-mt-2 mb-2 text-sm font-medium ${warning.type === 'error' ? 'text-danger' : 'text-warning'}`}
           >
             {warning.type === 'error' ? 'Error:' : 'Warning:'}
           </div>
-          <p className="text-sm text-gray-700 dark:text-gray-300">{warning.message}</p>
+          <p className="text-sm text-text">{warning.message}</p>
         </Modal>
       )}
     </>

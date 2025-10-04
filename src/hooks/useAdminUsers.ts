@@ -42,19 +42,56 @@ interface UpdateUserData {
 interface UseAdminUsersOptions {
   search?: string;
   includeDeleted?: boolean;
+  role?: 'USER' | 'ADMIN';
+  plan?: 'FREE' | 'PRO';
+  isOnboarded?: 'true' | 'false';
+  sortBy?:
+    | 'id'
+    | 'name'
+    | 'email'
+    | 'role'
+    | 'plan'
+    | 'isOnboarded'
+    | 'credits'
+    | 'createdAt'
+    | 'updatedAt';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
 }
 
 export const useAdminUsers = (options?: UseAdminUsersOptions) => {
   const queryClient = useQueryClient();
-  const { search = '', includeDeleted = false } = options || {};
+  const {
+    search = '',
+    includeDeleted = false,
+    role,
+    plan,
+    isOnboarded,
+    sortBy,
+    sortOrder,
+    limit,
+    offset,
+  } = options || {};
 
   // Get all users
   const {
-    data: users,
+    data: usersData,
     isLoading,
     error,
-  } = useQuery<User[]>({
-    queryKey: ['admin-users', search, includeDeleted],
+  } = useQuery<{ users: User[]; totalCount: number; pagination?: any }>({
+    queryKey: [
+      'admin-users',
+      search,
+      includeDeleted,
+      role,
+      plan,
+      isOnboarded,
+      sortBy,
+      sortOrder,
+      limit,
+      offset,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) {
@@ -63,10 +100,35 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       if (includeDeleted) {
         params.append('includeDeleted', 'true');
       }
+      if (role) {
+        params.append('role', role);
+      }
+      if (plan) {
+        params.append('plan', plan);
+      }
+      if (isOnboarded) {
+        params.append('isOnboarded', isOnboarded);
+      }
+      if (sortBy) {
+        params.append('sortBy', sortBy);
+      }
+      if (sortOrder) {
+        params.append('sortOrder', sortOrder);
+      }
+      if (limit) {
+        params.append('limit', limit.toString());
+      }
+      if (offset) {
+        params.append('offset', offset.toString());
+      }
       const response = await axios.get(`/admin/users?${params.toString()}`);
-      return response.data.data.users;
+      return response.data.data;
     },
   });
+
+  const users = usersData?.users || [];
+  const totalCount = usersData?.totalCount || 0;
+  const pagination = usersData?.pagination;
 
   // Create user mutation
   const createUserMutation = useMutation({
@@ -131,7 +193,9 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
   });
 
   return {
-    users: users || [],
+    users,
+    totalCount,
+    pagination,
     isLoading,
     error,
     createUser: createUserMutation.mutateAsync,

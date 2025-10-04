@@ -147,7 +147,7 @@ export function OTPVerificationForm({
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {/* Verification Code Section */}
       <div>
-        <Label className="mb-2 block text-sm font-medium !text-gray-900">Verification Code</Label>
+        <Label className="mb-2 block text-sm font-medium text-text">Verification Code</Label>
         <div className="flex gap-2">
           {[0, 1, 2, 3].map(index => (
             <Input
@@ -156,7 +156,7 @@ export function OTPVerificationForm({
               maxLength={1}
               inputMode="numeric"
               pattern="[0-9]*"
-              inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-gray-200 !bg-white !text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+              inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-border bg-background text-text focus:border-primary focus:ring-2 focus:ring-primary/20"
               {...form.register(`otp${index}` as any, {
                 onChange: e => handleOTPChange(index, e.target.value, e),
               })}
@@ -165,20 +165,18 @@ export function OTPVerificationForm({
             />
           ))}
         </div>
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          Enter the 4-digit code sent to your email.
-        </p>
+        <p className="mt-2 text-xs text-text-muted">Enter the 4-digit code sent to your email.</p>
         {(form.formState.errors.otp0 ||
           form.formState.errors.otp1 ||
           form.formState.errors.otp2 ||
           form.formState.errors.otp3) && (
-          <span className="text-sm text-red-500">Please enter all 4 digits</span>
+          <span className="text-sm text-danger">Please enter all 4 digits</span>
         )}
       </div>
 
       {/* Password Field */}
       <div>
-        <Label htmlFor="password" className="mb-2 block text-sm font-medium !text-gray-900">
+        <Label htmlFor="password" className="mb-2 block text-sm font-medium text-text">
           Password
         </Label>
         <div className="relative">
@@ -187,12 +185,12 @@ export function OTPVerificationForm({
             type={showPassword ? 'text' : 'password'}
             placeholder="Create a password"
             {...form.register('password')}
-            inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 pr-12 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
           >
             {showPassword ? (
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,13 +220,13 @@ export function OTPVerificationForm({
           </button>
         </div>
         {form.formState.errors.password && (
-          <span className="text-sm text-red-500">{form.formState.errors.password.message}</span>
+          <span className="text-sm text-danger">{form.formState.errors.password.message}</span>
         )}
       </div>
 
       {/* Confirm Password Field */}
       <div>
-        <Label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium !text-gray-900">
+        <Label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-text">
           Confirm Password
         </Label>
         <div className="relative">
@@ -237,12 +235,12 @@ export function OTPVerificationForm({
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="Re-enter your password"
             {...form.register('confirmPassword')}
-            inputClassName="h-12 w-full rounded-lg border-gray-200 !bg-white !text-gray-900 px-4 pr-12 placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
           >
             {showConfirmPassword ? (
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,7 +270,7 @@ export function OTPVerificationForm({
           </button>
         </div>
         {form.formState.errors.confirmPassword && (
-          <span className="text-sm text-red-500">
+          <span className="text-sm text-danger">
             {form.formState.errors.confirmPassword.message}
           </span>
         )}
@@ -282,14 +280,14 @@ export function OTPVerificationForm({
       <Button
         type="submit"
         disabled={otpVerificationMutation.isPending}
-        className="h-12 w-full rounded-lg bg-black font-medium !text-white transition-all duration-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-200"
+        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {otpVerificationMutation.isPending ? 'Creating Account...' : 'Sign Up'}
       </Button>
 
       {/* Resend OTP */}
       <div className="text-center">
-        <span className="text-sm text-gray-600 dark:text-gray-400">Didn't receive the code? </span>
+        <span className="text-sm text-text-muted">Didn't receive the code? </span>
         <button
           type="button"
           onClick={async () => {
@@ -301,7 +299,7 @@ export function OTPVerificationForm({
             }
           }}
           disabled={isResending}
-          className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
+          className="text-sm text-primary hover:text-primary-hover disabled:opacity-50"
         >
           {isResending ? 'Sending...' : 'Resend'}
         </button>

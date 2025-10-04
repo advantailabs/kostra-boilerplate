@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
-import { PageHeader } from '@/components/molecules/common/PageHeader';
+import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
@@ -83,31 +83,15 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 max-sm:flex-col max-sm:items-start max-sm:gap-3 dark:border-gray-700">
-        <PageHeader title="Files" description="Manage and organize your uploaded files" />
-        {/* Desktop actions */}
-        <div className="px-4 py-3 max-sm:hidden">
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setShowFilterModal(true)}
-              variant="secondary"
-              className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-indigo-500' : ''}`}
-            >
-              <RiFilterLine className="h-4 w-4" />
-              Filter
-              {hasActiveFilters && (
-                <span className="ml-1 flex h-2 w-2 rounded-full bg-indigo-500" />
-              )}
-            </Button>
-            <Button onClick={() => setShowUploader(true)} className="flex items-center gap-2">
-              <RiAddLine className="h-4 w-4" />
-              Upload Files
-            </Button>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background">
+      <PageHeaderWithAction
+        title="Files"
+        description="Manage and organize your uploaded files"
+        onFilter={() => setShowFilterModal(true)}
+        hasActiveFilters={hasActiveFilters}
+        onAdd={() => setShowUploader(true)}
+        addButtonText="Upload Files"
+      />
 
       {/* Files Content */}
       <div className="h-full p-4 max-sm:p-3">
@@ -118,7 +102,7 @@ export default function FilesPage() {
               onClick={() => setShowFilterModal(true)}
               variant="secondary"
               className={`w-auto justify-center px-3 py-2 ${
-                hasActiveFilters ? 'ring-2 ring-indigo-500' : ''
+                hasActiveFilters ? 'ring-2 ring-primary' : ''
               }`}
             >
               <RiFilterLine className="mr-1 h-4 w-4" />
@@ -134,11 +118,11 @@ export default function FilesPage() {
           </div>
         </div>
         {files.length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8 dark:border-gray-600">
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-sm max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
-              <RiFileLine className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No files</h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
+              <h3 className="mt-2 text-sm font-medium text-text">No files</h3>
+              <p className="mt-1 text-sm text-text-muted">
                 Get started by uploading your first file.
               </p>
               <div className="mt-6">
@@ -154,7 +138,7 @@ export default function FilesPage() {
         ) : (
           <>
             <div className="mb-4 max-sm:mb-3">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-text-muted">
                 {total} file{total !== 1 ? 's' : ''} •{' '}
                 {formatFileSize(files.reduce((acc, file) => acc + file.size, 0))} total
               </p>

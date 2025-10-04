@@ -33,7 +33,7 @@ export function UserProfilePicture({ user, size = 'md', className }: UserProfile
         width={sizeDimensions[size]}
         height={sizeDimensions[size]}
         className={cx(
-          'rounded-full border border-gray-300 object-cover dark:border-gray-800',
+          'rounded-full border border-border object-cover',
           sizeClasses[size],
           className
         )}
@@ -45,7 +45,7 @@ export function UserProfilePicture({ user, size = 'md', className }: UserProfile
   return (
     <div
       className={cx(
-        'flex items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300',
+        'flex items-center justify-center rounded-full border border-border bg-background text-text',
         sizeClasses[size],
         className
       )}

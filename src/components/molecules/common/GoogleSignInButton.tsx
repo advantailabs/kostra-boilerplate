@@ -64,7 +64,7 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
   return (
     <Button
       onClick={() => login()}
-      className={`${className} h-12 w-full rounded-lg border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus:ring-2 focus:ring-purple-200`}
+      className={`${className} h-12 w-full rounded-lg border border-border bg-background text-text hover:bg-background-light focus:ring-2 focus:ring-primary`}
       variant="secondary"
       isLoading={googleSignInMutation.isPending}
       loadingText="Signing in..."

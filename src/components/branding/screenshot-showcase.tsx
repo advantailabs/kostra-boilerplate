@@ -7,12 +7,15 @@ export function ScreenshotShowcase() {
   return (
     <section
       className="relative overflow-hidden py-20 sm:py-24 md:py-32"
-      style={{ background: 'linear-gradient(180deg, #0c0c0c 0%, #030712 50%, #000000 100%)' }}
+      style={{
+        background:
+          'linear-gradient(180deg, var(--bg-dark) 0%, var(--bg) 50%, var(--bg-dark) 100%)',
+      }}
     >
       {/* Seamless background transition - no visible borders */}
       <div className="absolute inset-0">
         {/* Subtle texture overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 via-gray-800/5 to-gray-900/10" />
+        <div className="from-background-dark/10 via-background/5 to-background-dark/10 absolute inset-0 bg-gradient-to-b" />
       </div>
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6">
@@ -24,10 +27,10 @@ export function ScreenshotShowcase() {
           viewport={{ once: true }}
           className="mb-12 text-center sm:mb-16"
         >
-          <h2 className="mb-4 text-3xl font-light text-white sm:mb-6 sm:text-4xl md:text-5xl">
+          <h2 className="mb-4 text-3xl font-light text-text sm:mb-6 sm:text-4xl md:text-5xl">
             Natural Chat Interface
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-gray-400 sm:text-xl">
+          <p className="mx-auto max-w-3xl text-lg text-text-muted sm:text-xl">
             Have conversations with your data using natural language. Ask questions and get instant,
             accurate answers backed by your knowledge base.
           </p>

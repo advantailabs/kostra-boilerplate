@@ -124,7 +124,7 @@ export function ActionDialog({
     <div className="flex items-center justify-end gap-2">
       <button
         type="button"
-        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-text hover:bg-background-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handleClose}
         disabled={isLoading}
       >
@@ -169,10 +169,9 @@ export function ActionDialog({
       footer={customFooter}
     >
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
         {warningMessage && (
-          <div className="mb-4 rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
-            <div className="text-sm text-yellow-800 dark:text-yellow-200">
+          <div className="bg-warning/50 mb-4 rounded-md p-3">
+            <div className="text-sm text-warning">
               <p>
                 <strong>Warning:</strong> {warningMessage}
               </p>
@@ -180,17 +179,14 @@ export function ActionDialog({
           </div>
         )}
 
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-text-muted">
           Are you sure you want to {actionType} the {itemType} <strong>{itemName}</strong>?
           {actionType === 'delete' ? ' This action cannot be undone.' : ''}
         </p>
 
         {showNameConfirmation && (
           <div className="mt-4">
-            <label
-              htmlFor="confirmation-name"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="confirmation-name" className="text-sm font-medium text-text">
               Type "{itemName}" to confirm {actionType}
             </label>
             <Input

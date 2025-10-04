@@ -74,7 +74,7 @@ export default function ContactPage() {
         {/* Header */}
         <div className="mb-10 text-center">
           <h1 className="mb-3 text-3xl font-semibold text-white">Contact Us</h1>
-          <p className="mx-auto max-w-2xl text-base text-gray-300">
+          <p className="mx-auto max-w-2xl text-base text-text-muted">
             We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
@@ -82,47 +82,47 @@ export default function ContactPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Contact Information */}
           <div className="space-y-8">
-            <Card className="border-gray-800 bg-black">
+            <Card className="border-border bg-background-dark">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Mail className="h-5 w-5" />
                   Get in Touch
                 </CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-text-muted">
                   Choose the most convenient way to reach us
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <Mail className="mt-1 h-5 w-5 text-gray-400" />
+                  <Mail className="mt-1 h-5 w-5 text-text-muted" />
                   <div>
                     <h3 className="font-semibold text-white">Email Support</h3>
-                    <p className="text-gray-300">hi@peon.sh</p>
+                    <p className="text-text">hi@peon.sh</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-gray-800 bg-black">
+            <Card className="border-border bg-background-dark">
               <CardHeader>
                 <CardTitle className="text-white">Response Time</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-text-muted">
                   We typically respond within 24 hours
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex justify-between text-gray-300">
+                  <div className="flex justify-between text-text-muted">
                     <span>General Inquiries</span>
-                    <span className="font-medium text-white">24 hours</span>
+                    <span className="font-medium text-text">24 hours</span>
                   </div>
-                  <div className="flex justify-between text-gray-300">
+                  <div className="flex justify-between text-text-muted">
                     <span>Technical Support</span>
-                    <span className="font-medium text-white">12 hours</span>
+                    <span className="font-medium text-text">12 hours</span>
                   </div>
-                  <div className="flex justify-between text-gray-300">
+                  <div className="flex justify-between text-text-muted">
                     <span>Billing Issues</span>
-                    <span className="font-medium text-white">6 hours</span>
+                    <span className="font-medium text-text">6 hours</span>
                   </div>
                 </div>
               </CardContent>
@@ -131,10 +131,10 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div>
-            <Card className="border-gray-800 bg-black">
+            <Card className="border-border bg-background-dark">
               <CardHeader>
                 <CardTitle className="text-white">Send us a Message</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-text-muted">
                   Fill out the form below and we'll get back to you soon.
                 </CardDescription>
               </CardHeader>
@@ -142,21 +142,21 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   {/* Name */}
                   <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-gray-300">
+                    <label htmlFor="name" className="text-sm font-medium text-text">
                       Name *
                     </label>
                     <Input
                       id="name"
                       {...register('name')}
                       placeholder="Your full name"
-                      className={errors.name ? 'border-red-500' : ''}
+                      className={errors.name ? 'border-danger' : ''}
                     />
-                    {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+                    {errors.name && <p className="text-sm text-danger">{errors.name.message}</p>}
                   </div>
 
                   {/* Email */}
                   <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-gray-300">
+                    <label htmlFor="email" className="text-sm font-medium text-text">
                       Email *
                     </label>
                     <Input
@@ -164,14 +164,14 @@ export default function ContactPage() {
                       type="email"
                       {...register('email')}
                       placeholder="your.email@example.com"
-                      className={errors.email ? 'border-red-500' : ''}
+                      className={errors.email ? 'border-danger' : ''}
                     />
-                    {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+                    {errors.email && <p className="text-sm text-danger">{errors.email.message}</p>}
                   </div>
 
                   {/* Purpose */}
                   <div className="space-y-2">
-                    <label htmlFor="purpose" className="text-sm font-medium text-gray-300">
+                    <label htmlFor="purpose" className="text-sm font-medium text-text">
                       Purpose *
                     </label>
                     <Select
@@ -180,7 +180,7 @@ export default function ContactPage() {
                         setValue('purpose', value as ContactFormData['purpose'])
                       }
                     >
-                      <SelectTrigger className={errors.purpose ? 'border-red-500' : ''}>
+                      <SelectTrigger className={errors.purpose ? 'border-danger' : ''}>
                         <SelectValue placeholder="Select a purpose" />
                       </SelectTrigger>
                       <SelectContent>
@@ -192,13 +192,13 @@ export default function ContactPage() {
                       </SelectContent>
                     </Select>
                     {errors.purpose && (
-                      <p className="text-sm text-red-600">{errors.purpose.message}</p>
+                      <p className="text-sm text-danger">{errors.purpose.message}</p>
                     )}
                   </div>
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium text-gray-300">
+                    <label htmlFor="message" className="text-sm font-medium text-text">
                       Message *
                     </label>
                     <Textarea
@@ -206,10 +206,10 @@ export default function ContactPage() {
                       {...register('message')}
                       placeholder="Tell us how we can help you..."
                       rows={6}
-                      className={errors.message ? 'border-red-500' : ''}
+                      className={errors.message ? 'border-danger' : ''}
                     />
                     {errors.message && (
-                      <p className="text-sm text-red-600">{errors.message.message}</p>
+                      <p className="text-sm text-danger">{errors.message.message}</p>
                     )}
                   </div>
 
@@ -221,9 +221,9 @@ export default function ContactPage() {
 
                 {/* Status Messages */}
                 {submitStatus === 'success' && (
-                  <Alert className="mt-6 border-green-900/50 bg-green-900/20">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-200">
+                  <Alert className="border-success/50 bg-success/20 mt-6">
+                    <CheckCircle className="h-4 w-4 text-success" />
+                    <AlertDescription className="text-success">
                       Thank you! Your message has been sent successfully. We'll get back to you
                       soon.
                     </AlertDescription>
@@ -231,9 +231,9 @@ export default function ContactPage() {
                 )}
 
                 {submitStatus === 'error' && (
-                  <Alert className="mt-6 border-red-900/50 bg-red-900/20">
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-200">{errorMessage}</AlertDescription>
+                  <Alert className="border-danger/50 bg-danger/20 mt-6">
+                    <AlertCircle className="h-4 w-4 text-danger" />
+                    <AlertDescription className="text-danger">{errorMessage}</AlertDescription>
                   </Alert>
                 )}
               </CardContent>

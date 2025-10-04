@@ -102,16 +102,16 @@ export function DataTablePagination<TData>({
 
   return (
     <div className="flex items-center justify-between">
-      <div className="text-sm tabular-nums text-gray-500">
+      <div className="text-sm tabular-nums text-text-muted">
         {table.getFilteredSelectedRowModel().rows.length} of {totalRows} row(s) selected.
       </div>
       <div className="flex items-center gap-x-6 lg:gap-x-8">
-        <p className="hidden text-sm tabular-nums text-gray-500 sm:block">
+        <p className="hidden text-sm tabular-nums text-text-muted sm:block">
           Showing{' '}
-          <span className="font-medium text-gray-900 dark:text-gray-50">
+          <span className="font-medium text-text">
             {firstRowIndex}-{lastRowIndex}
           </span>{' '}
-          of <span className="font-medium text-gray-900 dark:text-gray-50">{totalRows}</span>
+          of <span className="font-medium text-text">{totalRows}</span>
         </p>
         <div className="flex items-center gap-x-1.5">
           {paginationButtons.map((button, index) => (

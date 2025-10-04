@@ -14,7 +14,7 @@ export function PricingSection() {
     <section className="relative overflow-hidden py-24 sm:py-32">
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0 -z-10 select-none">
-        <div className="absolute left-1/2 top-0 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-indigo-600/20 to-violet-600/20 blur-3xl" />
+        <div className="from-indigo-600/20 absolute left-1/2 top-0 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-gradient-to-br to-violet-600/20 blur-3xl" />
       </div>
       <div className="container mx-auto px-6">
         <motion.div
@@ -24,10 +24,10 @@ export function PricingSection() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl dark:text-white">
+          <h2 className="text-3xl font-bold text-text sm:text-4xl lg:text-5xl">
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-600 dark:text-gray-300">
+          <p className="mx-auto mt-6 max-w-3xl text-xl text-text-muted">
             Choose the plan that fits your needs. Start free and upgrade as you grow.
           </p>
         </motion.div>
@@ -38,10 +38,10 @@ export function PricingSection() {
               {plan.id === 'pro' && (
                 <>
                   {/* Subtle halo behind the card */}
-                  <div className="pointer-events-none absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-r from-indigo-600/40 to-violet-600/40 opacity-30 blur-2xl dark:opacity-40" />
+                  <div className="from-indigo-600/40 pointer-events-none absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-r to-violet-600/40 opacity-30 blur-2xl dark:opacity-40" />
                   {/* Top centered pill */}
                   <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
-                    <span className="inline-flex items-center rounded-full bg-gray-900/90 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/20 backdrop-blur dark:bg-white/10">
+                    <span className="bg-gray-900/90 ring-white/20 dark:bg-white/10 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold text-white ring-1 backdrop-blur">
                       Recommended
                     </span>
                   </div>
@@ -51,8 +51,8 @@ export function PricingSection() {
               <motion.div
                 className={`relative flex flex-col overflow-hidden rounded-3xl border p-8 transition-all hover:scale-[1.02] ${
                   plan.id === 'pro'
-                    ? 'border-indigo-400/60 bg-white/90 shadow-lg ring-1 ring-indigo-500/40 dark:border-indigo-300/20 dark:bg-white/[0.06]'
-                    : 'border-gray-200 bg-white/80 shadow-sm hover:border-gray-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20'
+                    ? 'border-indigo-400/60 bg-white/90 ring-indigo-500/40 dark:border-indigo-300/20 dark:bg-white/[0.06] shadow-lg ring-1'
+                    : 'bg-white/80 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 border-gray-200 shadow-sm hover:border-gray-300'
                 }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ export function PricingSection() {
                     className={`w-full rounded-full px-6 py-4 text-lg font-semibold transition-all ${
                       plan.id === 'pro'
                         ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-700 hover:to-violet-700'
-                        : 'border border-gray-200 bg-white text-gray-900 hover:border-gray-300 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:border-white/20'
+                        : 'dark:border-white/10 dark:bg-white/10 dark:hover:border-white/20 border border-gray-200 bg-white text-gray-900 hover:border-gray-300 dark:text-white'
                     }`}
                   >
                     {getButtonText(plan.id)}
@@ -136,7 +136,7 @@ export function PricingSection() {
             </div>
 
             <div className="text-center">
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-600/20 text-green-400">
+              <div className="bg-green-600/20 mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full text-green-400">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"

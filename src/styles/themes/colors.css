@@ -1,0 +1,364 @@
+/* Color System - Centralized color variables for light and dark modes */
+
+:root {
+  /* Light Mode Colors */
+  --bg-dark: hsl(0 0% 96%);
+  --bg: hsl(0 0% 97%); /* Main background - cards, elevated elements */
+  --bg-light: hsl(0 0% 99%); /* Very light background - buttons, popups */
+
+  --text-light: hsl(0 0% 5%); /* Light text (darkest text) */
+  --text: hsl(0 0% 5%); /* Main text */
+  --text-muted: hsl(0 0% 30%); /* Muted text */
+
+  --highlight: hsl(0 0% 70%); /* Highlight color */
+  --border-light: hsl(0 0% 85%); /* Light border */
+  --border: hsl(0 0% 75%); /* Main border */
+  --border-muted: hsl(0 0% 65%); /* Muted border */
+
+  --primary: hsl(264 50% 45%); /* Primary color - blue/indigo */
+  --primary-hover: hsl(264 50% 40%); /* Primary hover */
+  --secondary: hsl(84 50% 45%); /* Secondary color - yellow-green */
+  --secondary-hover: hsl(84 50% 40%); /* Secondary hover */
+
+  --danger: hsl(30 60% 55%); /* Danger color - red/orange */
+  --danger-hover: hsl(30 60% 50%); /* Danger hover */
+  --warning: hsl(40 95% 55%);
+  --warning-hover: hsl(40 95% 50%);
+
+  --success: hsl(160 60% 55%); /* Success color - green */
+  --success-hover: hsl(160 60% 50%); /* Success hover */
+  --info: hsl(260 60% 55%); /* Info color - blue */
+  --info-hover: hsl(260 60% 50%); /* Info hover */
+
+  /* Semantic color mappings for existing Tailwind classes */
+  --gray-50: var(--bg-light);
+  --gray-100: var(--bg);
+  --gray-200: var(--bg-dark);
+  --gray-300: var(--border-light);
+  --gray-400: var(--border);
+  --gray-500: var(--text-muted);
+  --gray-600: var(--text-muted);
+  --gray-700: var(--text);
+  --gray-800: var(--text);
+  --gray-900: var(--text-light);
+  --gray-950: var(--text-light);
+
+  --white: var(--bg-light);
+  --black: var(--text-light);
+
+  /* Indigo colors (commonly used) */
+  --indigo-50: oklch(0.95 0.02 264);
+  --indigo-100: oklch(0.9 0.05 264);
+  --indigo-200: oklch(0.8 0.08 264);
+  --indigo-300: oklch(0.7 0.1 264);
+  --indigo-400: oklch(0.6 0.12 264);
+  --indigo-500: var(--primary);
+  --indigo-600: var(--primary-hover);
+  --indigo-700: oklch(0.4 0.15 264);
+  --indigo-800: oklch(0.3 0.15 264);
+  --indigo-900: oklch(0.2 0.15 264);
+  --indigo-950: oklch(0.1 0.15 264);
+
+  /* Red colors */
+  --red-50: oklch(0.95 0.02 30);
+  --red-100: oklch(0.9 0.05 30);
+  --red-200: oklch(0.8 0.08 30);
+  --red-300: oklch(0.7 0.1 30);
+  --red-400: oklch(0.6 0.12 30);
+  --red-500: var(--danger);
+  --red-600: var(--danger-hover);
+  --red-700: oklch(0.4 0.15 30);
+  --red-800: oklch(0.3 0.15 30);
+  --red-900: oklch(0.2 0.15 30);
+  --red-950: oklch(0.1 0.15 30);
+
+  /* Green colors */
+  --green-50: oklch(0.95 0.02 160);
+  --green-100: oklch(0.9 0.05 160);
+  --green-200: oklch(0.8 0.08 160);
+  --green-300: oklch(0.7 0.1 160);
+  --green-400: oklch(0.6 0.12 160);
+  --green-500: var(--success);
+  --green-600: var(--success-hover);
+  --green-700: oklch(0.4 0.15 160);
+  --green-800: oklch(0.3 0.15 160);
+  --green-900: oklch(0.2 0.15 160);
+  --green-950: oklch(0.1 0.15 160);
+
+  /* Yellow colors */
+  --yellow-50: oklch(0.95 0.02 100);
+  --yellow-100: oklch(0.9 0.05 100);
+  --yellow-200: oklch(0.8 0.08 100);
+  --yellow-300: oklch(0.7 0.1 100);
+  --yellow-400: oklch(0.6 0.12 100);
+  --yellow-500: var(--warning);
+  --yellow-600: var(--warning-hover);
+  --yellow-700: oklch(0.4 0.15 100);
+  --yellow-800: oklch(0.3 0.15 100);
+  --yellow-900: oklch(0.2 0.15 100);
+  --yellow-950: oklch(0.1 0.15 100);
+
+  /* Cyan colors */
+  --cyan-50: oklch(0.95 0.02 260);
+  --cyan-100: oklch(0.9 0.05 260);
+  --cyan-200: oklch(0.8 0.08 260);
+  --cyan-300: oklch(0.7 0.1 260);
+  --cyan-400: oklch(0.6 0.12 260);
+  --cyan-500: var(--info);
+  --cyan-600: var(--info-hover);
+  --cyan-700: oklch(0.4 0.15 260);
+  --cyan-800: oklch(0.3 0.15 260);
+  --cyan-900: oklch(0.2 0.15 260);
+  --cyan-950: oklch(0.1 0.15 260);
+
+  /* Purple colors */
+  --purple-50: oklch(0.95 0.02 300);
+  --purple-100: oklch(0.9 0.05 300);
+  --purple-200: oklch(0.8 0.08 300);
+  --purple-300: oklch(0.7 0.1 300);
+  --purple-400: oklch(0.6 0.12 300);
+  --purple-500: oklch(0.5 0.15 300);
+  --purple-600: oklch(0.45 0.15 300);
+  --purple-700: oklch(0.4 0.15 300);
+  --purple-800: oklch(0.3 0.15 300);
+  --purple-900: oklch(0.2 0.15 300);
+  --purple-950: oklch(0.1 0.15 300);
+
+  /* Emerald colors */
+  --emerald-50: oklch(0.95 0.02 160);
+  --emerald-100: oklch(0.9 0.05 160);
+  --emerald-200: oklch(0.8 0.08 160);
+  --emerald-300: oklch(0.7 0.1 160);
+  --emerald-400: oklch(0.6 0.12 160);
+  --emerald-500: var(--success);
+  --emerald-600: var(--success-hover);
+  --emerald-700: oklch(0.4 0.15 160);
+  --emerald-800: oklch(0.3 0.15 160);
+  --emerald-900: oklch(0.2 0.15 160);
+  --emerald-950: oklch(0.1 0.15 160);
+}
+
+/* Dark Mode Colors - Following Design Guidelines */
+.dark {
+  --bg-dark: hsl(0 0% 4%); /* Darkest background - page background */
+  --bg: hsl(0 0% 3%); /* Main background - cards, elevated elements */
+  --bg-light: hsl(0 0% 1%); /* Lightest background - buttons, popups */
+
+  --text-light: hsl(0 0% 98%); /* Lightest text - headings */
+  --text: hsl(0 0% 90%); /* Main text */
+  --text-muted: hsl(0 0% 60%); /* Muted text */
+
+  --highlight: hsl(0 0% 20%); /* Highlight color */
+  --border-light: hsl(0 0% 25%); /* Light border */
+  --border: hsl(0 0% 20%); /* Main border */
+  --border-muted: hsl(0 0% 15%); /* Muted border */
+
+  --primary: hsl(264 50% 60%); /* Primary color */
+  --primary-hover: hsl(264 50% 65%); /* Primary hover */
+  --secondary: hsl(84 50% 70%); /* Secondary color */
+  --secondary-hover: hsl(84 50% 75%); /* Secondary hover */
+
+  --danger: hsl(30 60% 65%); /* Danger color */
+  --danger-hover: hsl(30 60% 70%); /* Danger hover */
+  --warning: hsl(40 90% 60%);
+  --warning-hover: hsl(40 90% 65%);
+
+  --success: hsl(160 60% 70%); /* Success color */
+  --success-hover: hsl(160 60% 75%); /* Success hover */
+  --info: hsl(260 60% 70%); /* Info color */
+  --info-hover: hsl(260 60% 75%); /* Info hover */
+
+  /* Semantic color mappings for existing Tailwind classes */
+  --gray-50: hsl(0 0% 5%); /* Darkest - base */
+  --gray-100: hsl(0 0% 8%); /* Main background */
+  --gray-200: hsl(0 0% 12%); /* Elevated elements */
+  --gray-300: hsl(0 0% 15%); /* Muted border */
+  --gray-400: hsl(0 0% 20%); /* Main border */
+  --gray-500: hsl(0 0% 25%); /* Light border */
+  --gray-600: hsl(0 0% 35%); /* Muted text */
+  --gray-700: hsl(0 0% 50%); /* Text */
+  --gray-800: hsl(0 0% 70%); /* Main text */
+  --gray-900: hsl(0 0% 90%); /* Light text */
+  --gray-950: hsl(0 0% 95%); /* Lightest text */
+
+  --white: hsl(0 0% 95%);
+  --black: hsl(0 0% 5%);
+
+  /* Indigo colors (commonly used) */
+  --indigo-50: hsl(264 10% 5%); /* Darkest */
+  --indigo-100: hsl(264 10% 8%);
+  --indigo-200: hsl(264 10% 12%);
+  --indigo-300: hsl(264 10% 15%);
+  --indigo-400: hsl(264 10% 20%);
+  --indigo-500: var(--primary);
+  --indigo-600: var(--primary-hover);
+  --indigo-700: hsl(264 50% 50%);
+  --indigo-800: hsl(264 50% 70%);
+  --indigo-900: hsl(264 50% 90%);
+  --indigo-950: hsl(264 50% 95%);
+
+  /* Red colors */
+  --red-50: hsl(30 10% 5%); /* Darkest */
+  --red-100: hsl(30 10% 8%);
+  --red-200: hsl(30 10% 12%);
+  --red-300: hsl(30 10% 15%);
+  --red-400: hsl(30 10% 20%);
+  --red-500: var(--danger);
+  --red-600: var(--danger-hover);
+  --red-700: hsl(30 60% 50%);
+  --red-800: hsl(30 60% 70%);
+  --red-900: hsl(30 60% 90%);
+  --red-950: hsl(30 60% 95%);
+
+  /* Green colors */
+  --green-50: hsl(160 10% 5%); /* Darkest */
+  --green-100: hsl(160 10% 8%);
+  --green-200: hsl(160 10% 12%);
+  --green-300: hsl(160 10% 15%);
+  --green-400: hsl(160 10% 20%);
+  --green-500: var(--success);
+  --green-600: var(--success-hover);
+  --green-700: hsl(160 60% 50%);
+  --green-800: hsl(160 60% 70%);
+  --green-900: hsl(160 60% 90%);
+  --green-950: hsl(160 60% 95%);
+
+  /* Yellow colors */
+  --yellow-50: hsl(100 10% 5%); /* Darkest */
+  --yellow-100: hsl(100 10% 8%);
+  --yellow-200: hsl(100 10% 12%);
+  --yellow-300: hsl(100 10% 15%);
+  --yellow-400: hsl(100 10% 20%);
+  --yellow-500: var(--warning);
+  --yellow-600: var(--warning-hover);
+  --yellow-700: hsl(100 60% 50%);
+  --yellow-800: hsl(100 60% 70%);
+  --yellow-900: hsl(100 60% 90%);
+  --yellow-950: hsl(100 60% 95%);
+
+  /* Cyan colors */
+  --cyan-50: hsl(260 10% 5%); /* Darkest */
+  --cyan-100: hsl(260 10% 8%);
+  --cyan-200: hsl(260 10% 12%);
+  --cyan-300: hsl(260 10% 15%);
+  --cyan-400: hsl(260 10% 20%);
+  --cyan-500: var(--info);
+  --cyan-600: var(--info-hover);
+  --cyan-700: hsl(260 60% 50%);
+  --cyan-800: hsl(260 60% 70%);
+  --cyan-900: hsl(260 60% 90%);
+  --cyan-950: hsl(260 60% 95%);
+
+  /* Purple colors */
+  --purple-50: hsl(300 10% 5%); /* Darkest */
+  --purple-100: hsl(300 10% 8%);
+  --purple-200: hsl(300 10% 12%);
+  --purple-300: hsl(300 10% 15%);
+  --purple-400: hsl(300 10% 20%);
+  --purple-500: hsl(300 50% 70%);
+  --purple-600: hsl(300 50% 75%);
+  --purple-700: hsl(300 50% 50%);
+  --purple-800: hsl(300 50% 70%);
+  --purple-900: hsl(300 50% 90%);
+  --purple-950: hsl(300 50% 95%);
+
+  /* Emerald colors */
+  --emerald-50: hsl(160 10% 5%); /* Darkest */
+  --emerald-100: hsl(160 10% 8%);
+  --emerald-200: hsl(160 10% 12%);
+  --emerald-300: hsl(160 10% 15%);
+  --emerald-400: hsl(160 10% 20%);
+  --emerald-500: var(--success);
+  --emerald-600: var(--success-hover);
+  --emerald-700: hsl(160 60% 50%);
+  --emerald-800: hsl(160 60% 70%);
+  --emerald-900: hsl(160 60% 90%);
+  --emerald-950: hsl(160 60% 95%);
+}
+
+/* Utility classes for easy access to color variables */
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-secondary {
+  background-color: var(--secondary);
+}
+.bg-danger {
+  background-color: var(--danger);
+}
+.bg-warning {
+  background-color: var(--warning);
+}
+.bg-success {
+  background-color: var(--success);
+}
+.bg-info {
+  background-color: var(--info);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-warning {
+  color: var(--warning);
+}
+.text-success {
+  color: var(--success);
+}
+.text-info {
+  color: var(--info);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+.border-secondary {
+  border-color: var(--secondary);
+}
+.border-danger {
+  border-color: var(--danger);
+}
+.border-warning {
+  border-color: var(--warning);
+}
+.border-success {
+  border-color: var(--success);
+}
+.border-info {
+  border-color: var(--info);
+}
+
+/* Shadow utility classes */
+.shadow-none {
+  box-shadow: var(--shadow-none);
+}
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+.shadow-inset {
+  box-shadow: var(--shadow-inset);
+}
+.shadow-glow-primary {
+  box-shadow: var(--shadow-glow-primary);
+}
+.shadow-glow-success {
+  box-shadow: var(--shadow-glow-success);
+}
+.shadow-glow-danger {
+  box-shadow: var(--shadow-glow-danger);
+}

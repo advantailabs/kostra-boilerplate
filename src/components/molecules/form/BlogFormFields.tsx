@@ -34,10 +34,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
     <>
       {/* Title */}
       <div>
-        <Label
-          htmlFor="title"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <Label htmlFor="title" className="mb-2 block text-sm font-medium text-text">
           Title
         </Label>
         <Controller
@@ -52,7 +49,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                 placeholder="Enter blog title..."
                 className="h-9"
               />
-              {errors.title && <span className="text-sm text-red-500">{errors.title.message}</span>}
+              {errors.title && <span className="text-sm text-danger">{errors.title.message}</span>}
             </>
           )}
         />
@@ -60,10 +57,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
 
       {/* Slug */}
       <div>
-        <Label
-          htmlFor="slug"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <Label htmlFor="slug" className="mb-2 block text-sm font-medium text-text">
           Slug
         </Label>
         <Controller
@@ -78,7 +72,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                 placeholder="Enter blog slug..."
                 className="h-9"
               />
-              {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
+              {errors.slug && <span className="text-sm text-danger">{errors.slug.message}</span>}
             </>
           )}
         />
@@ -86,10 +80,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
 
       {/* Categories */}
       <div>
-        <Label
-          htmlFor="categories"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <Label htmlFor="categories" className="mb-2 block text-sm font-medium text-text">
           Categories
         </Label>
         <Controller
@@ -110,12 +101,9 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                         : currentValue.filter((val: string) => val !== option.value);
                       field.onChange(newValue);
                     }}
-                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-0 focus:ring-offset-0"
+                    className="h-3 w-3 rounded border-border text-primary focus:ring-0 focus:ring-offset-0"
                   />
-                  <label
-                    htmlFor={`category-${option.value}`}
-                    className="text-sm text-gray-700 dark:text-gray-300"
-                  >
+                  <label htmlFor={`category-${option.value}`} className="text-sm text-text">
                     {option.label}
                   </label>
                 </div>
@@ -124,7 +112,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
           )}
         />
         {errors.categories && typeof errors.categories.message === 'string' && (
-          <span className="text-sm text-red-500">{errors.categories.message}</span>
+          <span className="text-sm text-danger">{errors.categories.message}</span>
         )}
       </div>
 
@@ -144,14 +132,11 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
       />
 
       {/* Separator */}
-      <div className="-mx-4 border-t border-gray-200 dark:border-gray-700" />
+      <div className="-mx-4 border-t border-border" />
 
       {/* Tags */}
       <div>
-        <Label
-          htmlFor="tags"
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <Label htmlFor="tags" className="mb-2 block text-sm font-medium text-text">
           Tags
         </Label>
         <Controller
@@ -166,16 +151,13 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
             />
           )}
         />
-        {errors.tags && <span className="text-sm text-red-500">{errors.tags.message}</span>}
+        {errors.tags && <span className="text-sm text-danger">{errors.tags.message}</span>}
       </div>
 
       {/* Published */}
       <div>
         <div className="flex items-center justify-between">
-          <Label
-            htmlFor="published"
-            className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
+          <Label htmlFor="published" className="mb-2 block text-sm font-medium text-text">
             Published
           </Label>
           <Controller
@@ -190,7 +172,7 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
             )}
           />
         </div>
-        <p className="-mt-2 text-xs text-gray-500 dark:text-gray-400">
+        <p className="-mt-2 text-xs text-text-muted">
           When enabled, this blog will be visible to the public
         </p>
       </div>

@@ -178,7 +178,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-white dark:bg-gray-950 ${className || ''}`}>
+    <div className={`min-h-screen bg-background ${className || ''}`}>
       <BlogModal
         isOpen={isBlogModalOpen}
         onClose={handleBlogModalClose}

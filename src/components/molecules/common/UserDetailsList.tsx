@@ -16,8 +16,8 @@ interface DetailItemProps {
 function DetailItem({ label, value, className }: DetailItemProps) {
   return (
     <div className={className}>
-      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</dt>
-      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">{value}</dd>
+      <dt className="text-sm font-medium text-text-muted">{label}</dt>
+      <dd className="mt-1 text-sm text-text">{value}</dd>
     </div>
   );
 }

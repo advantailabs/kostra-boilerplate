@@ -15,12 +15,12 @@ const Label = React.forwardRef<React.ElementRef<typeof LabelPrimitives.Root>, Ch
       ref={forwardedRef}
       className={cx(
         // base
-        'text-sm leading-none',
+        'text-sm font-medium leading-none',
         // text color
-        'text-gray-900 dark:text-gray-50',
+        'text-text',
         // disabled
         {
-          'text-gray-400 dark:text-gray-600': disabled,
+          'text-text-muted': disabled,
         },
         className
       )}

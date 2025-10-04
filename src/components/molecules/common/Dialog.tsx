@@ -56,11 +56,19 @@ const DialogContent = React.forwardRef<
           ref={forwardedRef}
           className={cx(
             // base
-            'fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-md border p-6 shadow-lg',
-            // border color
-            'border-gray-200 dark:border-gray-900',
-            // background color
-            'bg-white dark:bg-[#090E1A]',
+            'fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl p-6',
+            // embossed effect using layered shadows
+            'shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)]',
+            // light inset shadow on top for embossed effect
+            'before:pointer-events-none before:absolute before:inset-0 before:rounded-xl',
+            'before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)]',
+            // background color - using bg-light for modals/popups
+            'bg-background-light',
+            // transitions
+            'transition-all duration-200',
+            // dark mode embossed effect with theme colors
+            'dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)]',
+            'dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]',
             // transition
             'data-[state=open]:animate-dialogContentShow',
             focusRing,
@@ -91,7 +99,7 @@ const DialogTitle = React.forwardRef<
       // base
       'text-lg font-semibold',
       // text color
-      'text-gray-900 dark:text-gray-50',
+      'text-text',
       className
     )}
     {...props}
@@ -107,7 +115,7 @@ const DialogDescription = React.forwardRef<
   return (
     <DialogPrimitives.Description
       ref={forwardedRef}
-      className={cx('text-gray-500 dark:text-gray-500', className)}
+      className={cx('text-text-muted', className)}
       {...props}
     />
   );

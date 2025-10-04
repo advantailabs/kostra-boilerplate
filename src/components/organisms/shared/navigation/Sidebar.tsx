@@ -44,7 +44,7 @@ export function Sidebar() {
     <>
       {/* sidebar (lg+) */}
       <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
-        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-border bg-background p-4">
           <div className="flex h-8 items-center px-2">
             <Image
               src={logoSrc}
@@ -57,7 +57,7 @@ export function Sidebar() {
           <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
             {/* Main Section */}
             <div>
-              <span className="text-xs font-medium leading-6 text-gray-500 dark:text-gray-500">
+              <span className="text-xs font-semibold uppercase leading-6 tracking-wide text-text">
                 Main
               </span>
               <ul role="list" className="space-y-0.5">
@@ -68,10 +68,8 @@ export function Sidebar() {
                     <Link
                       href={item.href}
                       className={cx(
-                        isActive(item.href)
-                          ? 'text-indigo-600 dark:text-indigo-400'
-                          : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                        isActive(item.href) ? 'text-primary' : 'text-text-muted hover:text-text',
+                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-background-light',
                         focusRing
                       )}
                     >
@@ -85,7 +83,7 @@ export function Sidebar() {
             {/* Admin Section */}
             {userRole === 'ADMIN' && (
               <div>
-                <span className="text-xs font-medium leading-6 text-gray-500 dark:text-gray-500">
+                <span className="text-xs font-semibold uppercase leading-6 tracking-wide text-text">
                   Admin
                 </span>
                 <ul role="list" className="space-y-0.5">
@@ -96,10 +94,8 @@ export function Sidebar() {
                       <Link
                         href={item.href}
                         className={cx(
-                          isActive(item.href)
-                            ? 'text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-gray-100 hover:dark:bg-gray-900',
+                          isActive(item.href) ? 'text-primary' : 'text-text-muted hover:text-text',
+                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-background-light',
                           focusRing
                         )}
                       >
@@ -114,10 +110,10 @@ export function Sidebar() {
           </nav>
           <div className="mt-auto">
             {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}
-            <div className="mb-2 flex items-center justify-between rounded-md border border-gray-200 px-2 py-1.5 dark:border-gray-800">
+            <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5">
               <CreditDisplay size="sm" />
               {userPlan === 'PRO' ? (
-                <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-700 dark:text-amber-300">
+                <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
                   <RiVipCrownLine className="size-3.5" /> Pro User
                 </span>
               ) : (
@@ -129,7 +125,7 @@ export function Sidebar() {
         </aside>
       </nav>
       {/* top navbar (xs-lg) */}
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-2 shadow-sm sm:gap-x-6 sm:px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
+      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-2 shadow-sm sm:gap-x-6 sm:px-4 lg:hidden">
         <div className="flex h-8 items-center">
           <Image src={logoSrc} alt="Peon Logo" width={120} height={32} className="h-8 w-auto" />
         </div>

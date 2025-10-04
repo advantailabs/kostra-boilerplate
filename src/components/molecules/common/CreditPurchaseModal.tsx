@@ -18,24 +18,21 @@ function CardContent({ plan }: { plan: (typeof PLANS)[0] }) {
   return (
     <>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{plan.name}</h3>
+        <h3 className="text-base font-semibold text-text">{plan.name}</h3>
         {plan.badge && (
-          <span className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-600 dark:text-indigo-400">
+          <span className="border-indigo-500/40 bg-indigo-500/10 rounded-full border px-2 py-0.5 text-[10px] font-medium text-indigo-600 dark:text-indigo-400">
             {plan.badge}
           </span>
         )}
       </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400">{plan.description}</p>
+      <p className="text-xs text-text-muted">{plan.description}</p>
       <div className="mt-3 flex items-baseline gap-1">
-        <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{plan.price}</span>
-        {plan.period && <span className="text-xs text-gray-500">/ {plan.period}</span>}
+        <span className="text-xl font-bold text-text">{plan.price}</span>
+        {plan.period && <span className="text-xs text-text-muted">/ {plan.period}</span>}
       </div>
       <ul className="mt-3 space-y-2">
         {plan.features.map(feature => (
-          <li
-            key={feature}
-            className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
-          >
+          <li key={feature} className="flex items-center gap-2 text-sm text-text">
             <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
             {feature}
           </li>
@@ -53,7 +50,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
   const footer = (
     <div className="flex w-full items-center justify-between gap-2 px-4">
       <div className="flex items-center gap-2">
-        <p className="text-sm text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-text-muted">
           Contact{' '}
           <a
             href="mailto:hi@peon.io?subject=Enterprise%20Plan%20Inquiry"
@@ -105,10 +102,8 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       <div className="px-4 pb-4 pt-5">
         <div className="mb-4 rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]">
           <div className="flex items-center justify-between rounded-md bg-gradient-to-b from-white to-gray-50 px-4 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ring-1 ring-inset ring-gray-200 dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:ring-gray-800">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Lets keep your chats going, Topup some credits now.
-            </p>
-            <div className="rounded-md bg-indigo-600/10 px-3 py-1 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+            <p className="text-sm text-text">Lets keep your chats going, Topup some credits now.</p>
+            <div className="bg-indigo-600/10 rounded-md px-3 py-1 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
               Credits: <span className="text-indigo-800 dark:text-indigo-200">{credits}</span>
             </div>
           </div>
@@ -125,7 +120,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
                 className={
                   plan.id === 'pro'
                     ? 'rounded-lg bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]'
-                    : 'min-w-0 rounded-lg border border-gray-200 p-0 shadow-sm transition-colors dark:border-gray-800'
+                    : 'min-w-0 rounded-lg border border-border p-0 shadow-sm transition-colors'
                 }
               >
                 {plan.id === 'pro' ? (

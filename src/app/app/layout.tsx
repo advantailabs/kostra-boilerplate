@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const creditPurchaseOpen = useUiModalsStore(state => state.creditPurchaseOpen);
   const closeCreditPurchase = useUiModalsStore(state => state.closeCreditPurchase);
   return (
-    <div className="mx-auto scroll-auto antialiased selection:bg-indigo-100 selection:text-indigo-700 dark:bg-gray-950">
+    <div className="selection:bg-primary/20 mx-auto scroll-auto bg-background antialiased selection:text-primary">
       <ThemeProvider defaultTheme="system" attribute="class">
         <Sidebar />
         <main className="lg:pl-60">{children}</main>

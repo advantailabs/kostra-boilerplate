@@ -86,14 +86,14 @@ export function DataTable<TData>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="border border-gray-200 dark:border-gray-800"
-                style={{ backgroundColor: '#0A0F1D' }}
+                className="border border-border"
+                style={{ backgroundColor: 'var(--bg-dark)' }}
               >
                 {headerGroup.headers.map(header => (
                   <TableHeaderCell
                     key={header.id}
                     className={cx(
-                      'whitespace-nowrap py-3 text-base font-semibold text-white',
+                      'whitespace-nowrap py-3 text-base font-semibold text-text',
                       header.column.columnDef.meta?.className
                     )}
                   >
@@ -109,19 +109,19 @@ export function DataTable<TData>({
                 <TableRow
                   key={row.id}
                   onClick={() => row.toggleSelected(!row.getIsSelected())}
-                  className="group select-none hover:bg-gray-50 hover:dark:bg-gray-900"
+                  className="group select-none hover:bg-background-light"
                 >
                   {row.getVisibleCells().map((cell, index) => (
                     <TableCell
                       key={cell.id}
                       className={cx(
-                        row.getIsSelected() ? 'bg-gray-50 dark:bg-gray-900' : '',
-                        'relative whitespace-nowrap py-1 text-gray-600 first:w-10 dark:text-gray-400',
+                        row.getIsSelected() ? 'bg-background-light' : '',
+                        'relative whitespace-nowrap py-1 text-text first:w-10',
                         cell.column.columnDef.meta?.className
                       )}
                     >
                       {index === 0 && row.getIsSelected() && (
-                        <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600 dark:bg-indigo-500" />
+                        <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                       )}
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

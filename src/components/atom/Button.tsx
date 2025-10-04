@@ -10,7 +10,9 @@ import { cx, focusRing } from '@/lib/utils';
 const buttonVariants = tv({
   base: [
     // base
-    'relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-center text-sm font-medium shadow-sm transition-all duration-100 ease-in-out',
+    'relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out',
+    // shadow - using shadow-sm for buttons
+    'shadow-sm',
     // disabled
     'disabled:pointer-events-none disabled:shadow-none',
     // focus
@@ -22,27 +24,26 @@ const buttonVariants = tv({
         // border
         'border-transparent',
         // text color
-        'text-white dark:text-gray-900',
-        // background color
-        'bg-indigo-600 dark:bg-indigo-500',
-        // hover color
-        'hover:bg-indigo-500 dark:hover:bg-indigo-600',
+        'text-white',
+        // background color - using primary color
+        'bg-primary',
+        // hover effects
+        'hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-md',
         // disabled
-        'disabled:bg-indigo-100 disabled:text-gray-400',
-        'disabled:dark:bg-indigo-800 disabled:dark:text-indigo-400',
+        'disabled:bg-gray-100 disabled:text-gray-400',
+        'disabled:dark:bg-gray-800 disabled:dark:text-gray-600',
       ],
       secondary: [
         // border
-        'border-gray-300 dark:border-gray-800',
+        'border-border',
         // text color
-        'text-gray-900 dark:text-gray-50',
-        // background color
-        'bg-white dark:bg-gray-950',
-        // hover color
-        'hover:bg-gray-50 dark:hover:bg-gray-900/60',
+        'text-text',
+        // background color - using bg-light for secondary buttons
+        'bg-background-light',
+        // hover effects
+        'hover:-translate-y-0.5 hover:bg-background hover:shadow-md',
         // disabled
-        'disabled:text-gray-400',
-        'disabled:dark:text-gray-600',
+        'disabled:text-text-muted',
       ],
       light: [
         // base
@@ -50,14 +51,13 @@ const buttonVariants = tv({
         // border
         'border-transparent',
         // text color
-        'text-gray-900 dark:text-gray-50',
+        'text-text',
         // background color
-        'bg-gray-200 dark:bg-gray-900',
+        'bg-background-dark',
         // hover color
-        'hover:bg-gray-300/70 dark:hover:bg-gray-800/80',
+        'hover:bg-background',
         // disabled
-        'disabled:bg-gray-100 disabled:text-gray-400',
-        'disabled:dark:bg-gray-800 disabled:dark:text-gray-600',
+        'disabled:bg-background-light disabled:text-text-muted',
       ],
       ghost: [
         // base
@@ -65,12 +65,11 @@ const buttonVariants = tv({
         // border
         'border-transparent',
         // text color
-        'text-gray-900 dark:text-gray-50',
+        'text-text',
         // hover color
-        'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800/80',
+        'bg-transparent hover:bg-background-light',
         // disabled
-        'disabled:text-gray-400',
-        'disabled:dark:text-gray-600',
+        'disabled:text-text-muted',
       ],
       destructive: [
         // text color
@@ -78,25 +77,24 @@ const buttonVariants = tv({
         // border
         'border-transparent',
         // background color
-        'bg-red-600 dark:bg-red-700',
-        // hover color
-        'hover:bg-red-700 dark:hover:bg-red-600',
+        'bg-danger',
+        // hover effects
+        'hover:-translate-y-0.5 hover:bg-danger-hover hover:shadow-md',
         // disabled
-        'disabled:bg-red-300 disabled:text-white',
-        'disabled:dark:bg-red-950 disabled:dark:text-red-400',
+        'disabled:bg-gray-300 disabled:text-white',
+        'disabled:dark:bg-gray-800 disabled:dark:text-gray-400',
       ],
       elevated: [
         // border
-        'border-gray-200 dark:border-gray-700',
+        'border-border',
         // text color
-        'text-gray-600 dark:text-gray-300',
+        'text-text-muted',
         // background color
-        'bg-white dark:bg-gray-800',
-        // hover color
-        'hover:bg-gray-50 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-200',
+        'bg-background',
+        // hover effects
+        'hover:-translate-y-0.5 hover:bg-background-light hover:text-text hover:shadow-md',
         // disabled
-        'disabled:bg-gray-100 disabled:text-gray-400',
-        'disabled:dark:bg-gray-900 disabled:dark:text-gray-600',
+        'disabled:bg-background-light disabled:text-text-muted',
       ],
     },
   },
