@@ -135,7 +135,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <span className="pointer-events-none flex shrink-0 items-center justify-center gap-1.5">
-            <RiLoader2Fill className="size-4 shrink-0 animate-spin" aria-hidden="true" />
+            <RiLoader2Fill
+              className="size-4 shrink-0 animate-spin text-gray-600 dark:text-gray-300"
+              aria-hidden="true"
+            />
             <span className="sr-only">{loadingText || 'Loading'}</span>
             {loadingText || children}
           </span>

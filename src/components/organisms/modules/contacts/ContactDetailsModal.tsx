@@ -70,7 +70,7 @@ export function ContactDetailsModal({
       <Button variant="secondary" onClick={onClose} disabled={isSaving}>
         Close
       </Button>
-      <Button onClick={handleSave} isLoading={isSaving}>
+      <Button onClick={handleSave} isLoading={isSaving} loadingText="Saving...">
         Save changes
       </Button>
     </div>

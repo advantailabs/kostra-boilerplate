@@ -128,10 +128,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         {/* Basic Information */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="name"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="name" className="mb-1 block text-sm font-medium">
               Name
             </label>
             <Input
@@ -145,10 +142,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="email" className="mb-1 block text-sm font-medium">
               Email
             </label>
             <Input
@@ -165,10 +159,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         {/* New Password and Role */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="password"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="password" className="mb-1 block text-sm font-medium">
               New Password
             </label>
             <Input
@@ -183,10 +174,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
           </div>
 
           <div>
-            <label
-              htmlFor="role"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="role" className="mb-1 block text-sm font-medium">
               Role
             </label>
             <Select value={formData.role} onValueChange={value => handleInputChange('role', value)}>
@@ -207,10 +195,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         {/* Plan and Plan Expiring Date */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="plan"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="plan" className="mb-1 block text-sm font-medium">
               Plan
             </label>
             <Select value={formData.plan} onValueChange={value => handleInputChange('plan', value)}>
@@ -225,10 +210,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
           </div>
 
           <div>
-            <label
-              htmlFor="planExpiringAt"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="planExpiringAt" className="mb-1 block text-sm font-medium">
               Plan Expiring Date
             </label>
             <Input
@@ -253,10 +235,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         {/* Is Onboarded and Is Payment Due */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="isOnboarded"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="isOnboarded" className="mb-1 block text-sm font-medium">
               Is Onboarded?
             </label>
             <Select
@@ -274,10 +253,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
           </div>
 
           <div>
-            <label
-              htmlFor="isOverDue"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="isOverDue" className="mb-1 block text-sm font-medium">
               Is Payment Due?
             </label>
             <Select
@@ -298,10 +274,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         {/* Credits and Stripe Customer ID */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="credits"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="credits" className="mb-1 block text-sm font-medium">
               Credits
             </label>
             <Input
@@ -316,10 +289,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
           </div>
 
           <div>
-            <label
-              htmlFor="stripeCustomerId"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label htmlFor="stripeCustomerId" className="mb-1 block text-sm font-medium">
               Stripe Customer ID
             </label>
             <Input
@@ -336,23 +306,23 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
           <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Created:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">
+              <span className="">Created:</span>
+              <span className="ml-2 text-text-muted">
                 {new Date(user.createdAt).toLocaleDateString()}
               </span>
             </div>
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Last Updated:</span>
-              <span className="ml-2 text-gray-900 dark:text-gray-100">
+              <span className="">Last Updated:</span>
+              <span className="ml-2 text-text-muted">
                 {new Date(user.updatedAt).toLocaleDateString()}
               </span>
             </div>
             <div>
-              <span className="text-gray-500 dark:text-gray-400">Current Role:</span>
+              <span className="">Current Role:</span>
               <span
                 className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                   user.role === 'ADMIN'
-                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300'
+                    ? 'dark:bg-purple-900/20 bg-purple-100 text-purple-800 dark:text-purple-300'
                     : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
                 }`}
               >

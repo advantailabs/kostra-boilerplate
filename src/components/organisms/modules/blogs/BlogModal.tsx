@@ -125,14 +125,13 @@ export function BlogModal({
                 <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {mode === 'create'
-                    ? isLoading
-                      ? 'Creating...'
-                      : 'Create Blog'
-                    : isLoading
-                      ? 'Updating...'
-                      : 'Update Blog'}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  isLoading={isLoading}
+                  loadingText="Saving..."
+                >
+                  {mode === 'create' ? 'Create Blog' : 'Update Blog'}
                 </Button>
               </div>
             </form>

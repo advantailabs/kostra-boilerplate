@@ -123,16 +123,11 @@ export function Modal({
           type="button"
           variant={primaryActionVariant}
           onClick={onPrimaryAction}
-          disabled={isPrimaryActionDisabled || isPrimaryActionLoading}
+          disabled={isPrimaryActionDisabled}
+          isLoading={isPrimaryActionLoading}
+          loadingText="Saving..."
         >
-          {isPrimaryActionLoading ? (
-            <>
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Loading...
-            </>
-          ) : (
-            primaryActionText
-          )}
+          {primaryActionText}
         </Button>
       )}
     </div>

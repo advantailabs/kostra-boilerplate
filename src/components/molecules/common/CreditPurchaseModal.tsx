@@ -20,7 +20,14 @@ function CardContent({ plan }: { plan: (typeof PLANS)[0] }) {
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-base font-semibold text-text">{plan.name}</h3>
         {plan.badge && (
-          <span className="border-indigo-500/40 bg-indigo-500/10 rounded-full border px-2 py-0.5 text-[10px] font-medium text-indigo-600 dark:text-indigo-400">
+          <span
+            className="rounded-full border px-2 py-0.5 text-[10px] font-medium"
+            style={{
+              backgroundColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--bg-dark)',
+              borderColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--border)',
+              color: plan.id === 'pro' ? 'var(--bg-light)' : 'var(--text-muted)',
+            }}
+          >
             {plan.badge}
           </span>
         )}
@@ -101,10 +108,21 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
     >
       <div className="px-4 pb-4 pt-5">
         <div className="mb-4 rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]">
-          <div className="flex items-center justify-between rounded-md bg-gradient-to-b from-white to-gray-50 px-4 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ring-1 ring-inset ring-gray-200 dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:ring-gray-800">
-            <p className="text-sm text-text">Lets keep your chats going, Topup some credits now.</p>
-            <div className="bg-indigo-600/10 rounded-md px-3 py-1 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-              Credits: <span className="text-indigo-800 dark:text-indigo-200">{credits}</span>
+          <div
+            className="flex items-center justify-between rounded-md px-4 py-2 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
+            style={{
+              backgroundColor: 'var(--bg-light)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              Lets keep your chats going, Topup some credits now.
+            </p>
+            <div
+              className="rounded-md px-3 py-1 text-sm font-semibold"
+              style={{ backgroundColor: 'var(--bg-dark)', color: 'var(--text)' }}
+            >
+              Credits: <span style={{ color: 'var(--text-light)' }}>{credits}</span>
             </div>
           </div>
         </div>
@@ -124,7 +142,13 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
                 }
               >
                 {plan.id === 'pro' ? (
-                  <div className="h-full min-w-0 rounded-lg bg-gradient-to-b from-white to-gray-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ring-1 ring-inset ring-gray-200 dark:from-gray-950 dark:to-gray-900 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] dark:ring-gray-800">
+                  <div
+                    className="h-full min-w-0 rounded-lg p-4 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
+                    style={{
+                      backgroundColor: 'var(--bg-light)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
                     <CardContent plan={plan} />
                   </div>
                 ) : (
