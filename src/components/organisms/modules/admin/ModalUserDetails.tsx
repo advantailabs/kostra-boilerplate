@@ -3,6 +3,7 @@
  * Displays comprehensive user information with profile picture
  */
 
+import { Badge } from '@/components/atom/Badge';
 import { UserProfilePicture } from '@/components/atom/UserProfilePicture';
 import { Modal } from '@/components/molecules/common/Modal';
 import { UserDetailsList } from '@/components/molecules/common/UserDetailsList';
@@ -33,24 +34,8 @@ export function ModalUserDetails({ isOpen, onClose, user }: ModalUserDetailsProp
             <h3 className="truncate text-lg font-semibold text-text">{user.name}</h3>
             <p className="truncate text-sm text-text-muted">{user.email}</p>
             <div className="mt-2 flex items-center gap-2">
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  user.role === 'ADMIN'
-                    ? 'dark:bg-purple-900/20 bg-purple-100 text-purple-800 dark:text-purple-300'
-                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-                }`}
-              >
-                {user.role}
-              </span>
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  user.plan === 'PRO'
-                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
-                    : 'dark:bg-gray-900/20 bg-gray-100 text-gray-800 dark:text-gray-300'
-                }`}
-              >
-                {user.plan} Plan
-              </span>
+              <Badge variant={user.role === 'ADMIN' ? 'primary' : 'default'}>{user.role}</Badge>
+              <Badge variant={user.plan === 'PRO' ? 'warning' : 'neutral'}>{user.plan} Plan</Badge>
             </div>
           </div>
         </div>

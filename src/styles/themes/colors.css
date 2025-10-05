@@ -22,9 +22,8 @@
 
   --danger: hsl(30 60% 55%); /* Danger color - red/orange */
   --danger-hover: hsl(30 60% 50%); /* Danger hover */
-  --warning: hsl(40 95% 55%);
-  --warning-hover: hsl(40 95% 50%);
-
+  --warning: hsl(100 60% 55%); /* Warning color - yellow */
+  --warning-hover: hsl(100 60% 50%); /* Warning hover */
   --success: hsl(160 60% 55%); /* Success color - green */
   --success-hover: hsl(160 60% 50%); /* Success hover */
   --info: hsl(260 60% 55%); /* Info color - blue */
@@ -160,9 +159,8 @@
 
   --danger: hsl(30 60% 65%); /* Danger color */
   --danger-hover: hsl(30 60% 70%); /* Danger hover */
-  --warning: hsl(40 90% 60%);
-  --warning-hover: hsl(40 90% 65%);
-
+  --warning: hsl(100 60% 70%); /* Warning color */
+  --warning-hover: hsl(100 60% 75%); /* Warning hover */
   --success: hsl(160 60% 70%); /* Success color */
   --success-hover: hsl(160 60% 75%); /* Success hover */
   --info: hsl(260 60% 70%); /* Info color */
