@@ -23,8 +23,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           // light inset shadow on top for embossed effect
           'before:pointer-events-none before:absolute before:inset-0 before:rounded-xl',
           'before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)]',
-          // background color - using bg for cards (elevated elements)
-          'bg-background',
+          // background color - using bg-light for cards (elevated elements)
+          'bg-background-light',
           // transitions
           'transition-all duration-200',
           // dark mode embossed effect with theme colors

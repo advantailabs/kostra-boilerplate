@@ -170,8 +170,8 @@ export function ActionDialog({
     >
       <div>
         {warningMessage && (
-          <div className="bg-warning/50 mb-4 rounded-md p-3">
-            <div className="text-sm text-warning">
+          <div className="bg-danger/90 mb-4 rounded-md p-3">
+            <div className="text-sm text-danger">
               <p>
                 <strong>Warning:</strong> {warningMessage}
               </p>

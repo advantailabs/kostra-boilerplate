@@ -30,17 +30,17 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-gray-900">Company</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   About
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   Careers
                 </a>
               </li>
@@ -51,17 +51,17 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-gray-900">Resources</h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-700 hover:text-gray-900">
+                <a href="#" className="text-sm text-text hover:text-gray-900">
                   Contact
                 </a>
               </li>
@@ -74,7 +74,7 @@ export function Footer() {
               <li>
                 <a
                   href={siteConfig.baseLinks.privacy}
-                  className="text-sm text-gray-700 hover:text-gray-900"
+                  className="text-sm text-text hover:text-gray-900"
                 >
                   Privacy Policy
                 </a>
@@ -82,7 +82,7 @@ export function Footer() {
               <li>
                 <a
                   href={siteConfig.baseLinks.terms}
-                  className="text-sm text-gray-700 hover:text-gray-900"
+                  className="text-sm text-text hover:text-gray-900"
                 >
                   Terms of Service
                 </a>
@@ -92,7 +92,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-gray-200 pt-8">
-          <p className="text-center text-sm text-gray-700">
+          <p className="text-center text-sm text-text">
             © {new Date().getFullYear()} Your Brand. All rights reserved.
           </p>
         </div>

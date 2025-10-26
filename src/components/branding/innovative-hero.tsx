@@ -34,7 +34,7 @@ export function InnovativeHero() {
       className="relative flex min-h-[calc(100vh-3rem)] items-center justify-center overflow-hidden bg-black md:min-h-screen"
     >
       {/* Subtle fade to next section */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-950/20 via-gray-950/10 to-transparent" />
+      <div className="from-gray-950/20 via-gray-950/10 pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t to-transparent" />
       {/* Animated grid background */}
       <div className="absolute inset-0">
         <div
@@ -71,10 +71,10 @@ export function InnovativeHero() {
             className="mb-6 sm:mb-8"
           >
             <h1 className="text-4xl font-light leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-              Build your{' '}
+              Best{' '}
               <span className="relative">
-                <span className="bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
-                  SaaS
+                <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                  Next.js
                 </span>
                 <motion.div
                   className="absolute -right-1 top-0 h-full w-0.5 bg-white"
@@ -83,7 +83,7 @@ export function InnovativeHero() {
                 />
               </span>
               <br />
-              application faster
+              boilerplate
             </h1>
           </motion.div>
 
@@ -92,10 +92,10 @@ export function InnovativeHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-gray-400 sm:mb-12 sm:text-xl md:text-2xl"
+            className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-white sm:mb-12 sm:text-xl md:text-2xl"
           >
-            <span className="text-white">A comprehensive boilerplate</span> with modern features,
-            authentication, and scalable architecture to accelerate your development
+            <span className="text-primary">A comprehensive Next.js boilerplate</span> with modern
+            features, authentication, and scalable architecture to accelerate your development
           </motion.p>
 
           {/* Interactive CTA */}
@@ -105,32 +105,6 @@ export function InnovativeHero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
           >
-            {user ? (
-              <Link href={siteConfig.baseLinks.chat}>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-lg border border-white/30 bg-transparent px-6 py-3 text-base font-medium text-white transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
-                >
-                  <span className="relative z-10">Start a new chat</span>
-                  <motion.div
-                    className="absolute inset-0 bg-white/10"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.div>
-              </Link>
-            ) : (
-              <SignInButton
-                onClick={openModal}
-                variant="dark"
-                className="group relative cursor-pointer overflow-hidden rounded-lg border border-gray-600 bg-black px-6 py-3 text-base font-medium text-white transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
-              >
-                <span className="relative z-10">Ready to get started?</span>
-              </SignInButton>
-            )}
-
             {user ? (
               <Link href={siteConfig.baseLinks.home}>
                 <motion.button
@@ -153,7 +127,7 @@ export function InnovativeHero() {
                 variant="light"
                 className="group relative overflow-hidden rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 sm:px-8 sm:py-4 sm:text-lg"
               >
-                <span className="relative z-10">Start Asking Now</span>
+                <span className="relative z-10">Get Started</span>
               </SignInButton>
             )}
           </motion.div>
@@ -174,7 +148,7 @@ export function InnovativeHero() {
                 <div className="mb-2 text-2xl font-light text-white sm:text-3xl md:text-4xl">
                   {metric.value}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-gray-500 sm:text-sm">
+                <div className="text-xs uppercase tracking-wide text-primary sm:text-sm">
                   {metric.label}
                 </div>
               </div>
@@ -193,14 +167,14 @@ export function InnovativeHero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="flex flex-col items-center gap-2 text-gray-500"
+          className="flex flex-col items-center gap-2 text-gray-900"
         >
           <span className="text-xs uppercase tracking-wide">Scroll</span>
-          <div className="flex h-6 w-4 justify-center rounded-full border border-gray-500">
+          <div className="flex h-6 w-4 justify-center rounded-full border border-gray-800">
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-              className="mt-1 h-2 w-0.5 rounded-full bg-gray-500"
+              className="mt-1 h-2 w-0.5 rounded-full bg-gray-800"
             />
           </div>
         </motion.div>

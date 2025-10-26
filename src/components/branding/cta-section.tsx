@@ -14,8 +14,8 @@ export function CTASection() {
 
   return (
     <section className="relative -mt-1 bg-black py-16 sm:py-20 md:py-24">
-      <div className="absolute inset-x-0 top-0 h-px bg-gray-800/30" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-purple-950/5 to-black/0" />
+      <div className="bg-gray-800/30 absolute inset-x-0 top-0 h-px" />
+      <div className="from-purple-950/5 to-black/0 pointer-events-none absolute inset-0 bg-gradient-to-b" />
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -28,8 +28,8 @@ export function CTASection() {
             <h3 className="mb-4 text-2xl font-light text-white sm:mb-6 sm:text-3xl md:text-4xl">
               Ready to get started?
             </h3>
-            <p className="mb-8 text-lg text-gray-400 sm:mb-10 sm:text-xl">
-              Join developers who are building faster with our comprehensive SaaS boilerplate.
+            <p className="mb-8 text-lg text-gray-800 sm:mb-10 sm:text-xl">
+              Join developers who are building faster with our comprehensive Next.js boilerplate.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
@@ -38,7 +38,7 @@ export function CTASection() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 hover:bg-gray-100 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
+                    className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 hover:bg-gray-900 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
                   >
                     Go to App
                   </motion.button>
@@ -54,7 +54,7 @@ export function CTASection() {
               )}
             </div>
 
-            <p className="mt-4 text-xs text-gray-500 sm:mt-6 sm:text-sm">
+            <p className="mt-4 text-xs text-primary sm:mt-6 sm:text-sm">
               No credit card required • Free plan available • Setup in minutes
             </p>
           </div>

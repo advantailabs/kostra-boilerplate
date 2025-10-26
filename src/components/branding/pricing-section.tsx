@@ -24,10 +24,10 @@ export function PricingSection() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl font-bold text-text sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-xl text-text-muted">
+          <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-800">
             Choose the plan that fits your needs. Start free and upgrade as you grow.
           </p>
         </motion.div>
@@ -62,15 +62,13 @@ export function PricingSection() {
                 {/* Plan header */}
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">{plan.description}</p>
+                  <p className="mt-2 text-gray-800">{plan.description}</p>
 
                   <div className="mt-6 flex items-baseline">
                     <span className="text-4xl font-bold text-gray-900 dark:text-white">
                       {plan.price}
                     </span>
-                    {plan.period && (
-                      <span className="ml-2 text-gray-500 dark:text-gray-400">/{plan.period}</span>
-                    )}
+                    {plan.period && <span className="ml-2 text-gray-800">/{plan.period}</span>}
                   </div>
                 </div>
 
@@ -79,7 +77,7 @@ export function PricingSection() {
                   {plan.features.map(feature => (
                     <li key={feature} className="flex items-center">
                       <svg
-                        className="mr-3 h-5 w-5 flex-shrink-0 text-green-400"
+                        className="mr-3 h-5 w-5 flex-shrink-0 text-primary"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -89,7 +87,7 @@ export function PricingSection() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700 dark:text-gray-300">{feature}</span>
+                      <span className="text-gray-800">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -99,8 +97,8 @@ export function PricingSection() {
                   <button
                     className={`w-full rounded-full px-6 py-4 text-lg font-semibold transition-all ${
                       plan.id === 'pro'
-                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-700 hover:to-violet-700'
-                        : 'dark:border-white/10 dark:bg-white/10 dark:hover:border-white/20 border border-gray-200 bg-white text-gray-900 hover:border-gray-300 dark:text-white'
+                        ? 'bg-gradient-to-r from-primary to-primary-hover text-white hover:from-primary-hover hover:to-primary'
+                        : 'border border-gray-200 bg-white text-gray-100 hover:border-gray-300'
                     }`}
                   >
                     {getButtonText(plan.id)}
@@ -132,7 +130,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">No Credit Card Required</h4>
-              <p className="text-gray-400">Start with free plan instantly</p>
+              <p className="text-gray-800">Start with free plan instantly</p>
             </div>
 
             <div className="text-center">
@@ -147,7 +145,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">Quick Setup</h4>
-              <p className="text-gray-400">Get started in under 2 minutes</p>
+              <p className="text-gray-800">Get started in under 2 minutes</p>
             </div>
 
             <div className="text-center">
@@ -162,7 +160,7 @@ export function PricingSection() {
                 </svg>
               </div>
               <h4 className="mb-2 text-lg font-semibold text-white">24/7 Support</h4>
-              <p className="text-gray-400">Our team helps you succeed</p>
+              <p className="text-gray-800">Our team helps you succeed</p>
             </div>
           </div>
         </motion.div>

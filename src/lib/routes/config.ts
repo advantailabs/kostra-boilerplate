@@ -44,7 +44,6 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/contact-management', isPublic: false, accessTo: { GET: [ADMIN] } },
 
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
-  { path: '/app/details', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings/general', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings/billing', isPublic: false, accessTo: { GET: [USER, ADMIN] } },

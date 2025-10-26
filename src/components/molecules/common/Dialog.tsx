@@ -32,8 +32,8 @@ const DialogOverlay = React.forwardRef<
       className={cx(
         // base
         'fixed inset-0 z-50 overflow-y-auto',
-        // background color
-        'bg-black/70',
+        // background color with blur effect
+        'bg-black/70 backdrop-blur-sm',
         // transition
         'data-[state=open]:animate-dialogOverlayShow',
         className

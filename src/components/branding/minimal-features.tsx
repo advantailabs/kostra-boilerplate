@@ -53,7 +53,7 @@ export function MinimalFeatures() {
   return (
     <section className="relative bg-black py-20 sm:py-24 md:py-32">
       {/* Remove the top border line that creates a seam */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-indigo-950/5 to-black/0" />
+      <div className="from-indigo-950/5 to-black/0 pointer-events-none absolute inset-0 bg-gradient-to-b" />
       <div className="container mx-auto px-4 sm:px-6">
         {/* Features grid */}
         <motion.div
@@ -66,9 +66,9 @@ export function MinimalFeatures() {
           <h2 className="mb-4 text-3xl font-light text-white sm:mb-6 sm:text-4xl md:text-5xl">
             Everything You Need
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-400 sm:text-xl">
-            A complete SaaS boilerplate with all the essential features to get your application up
-            and running quickly. Focus on your business logic, not the infrastructure.
+          <p className="mx-auto max-w-2xl text-lg text-gray-800 sm:text-xl">
+            A complete Next.js boilerplate with all the essential features to get your application
+            up and running quickly. Focus on your business logic, not the infrastructure.
           </p>
         </motion.div>
 
@@ -83,14 +83,14 @@ export function MinimalFeatures() {
               className="group"
             >
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 transition-colors duration-300 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 sm:h-12 sm:w-12">
+                <div className="from-primary/20 to-primary/30 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-primary transition-colors duration-300 sm:h-12 sm:w-12">
                   <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
-                  <h3 className="mb-2 text-lg font-medium text-white transition-colors duration-300 group-hover:text-gray-100 sm:mb-3 sm:text-xl">
+                  <h3 className="mb-2 text-lg font-medium text-white transition-colors duration-300 group-hover:text-gray-900 sm:mb-3 sm:text-xl">
                     {feature.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-gray-400 sm:text-base">
+                  <p className="text-sm leading-relaxed text-gray-800 sm:text-base">
                     {feature.description}
                   </p>
                 </div>

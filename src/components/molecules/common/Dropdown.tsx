@@ -42,9 +42,9 @@ const DropdownMenuSubMenuTrigger = React.forwardRef<
       // disabled
       'data-[disabled]:pointer-events-none data-[disabled]:text-text-muted data-[disabled]:hover:bg-none',
       // focus
-      'data-[state=open]:bg-background-light focus-visible:bg-background-light',
+      'data-[state=open]:bg-background focus-visible:bg-background',
       // hover
-      'hover:bg-background-light',
+      'hover:bg-background',
       //
       className
     )}
@@ -72,7 +72,7 @@ const DropdownMenuSubMenuContent = React.forwardRef<
         // heights
         'max-h-[var(--radix-popper-available-height)]',
         // background color
-        'bg-background',
+        'bg-background-light',
         // text color
         'text-text',
         // border color
@@ -109,7 +109,7 @@ const DropdownMenuContent = React.forwardRef<
           // heights
           'max-h-[var(--radix-popper-available-height)]',
           // background color
-          'bg-background',
+          'bg-background-light',
           // text color
           'text-text',
           // border color
@@ -148,9 +148,9 @@ const DropdownMenuItem = React.forwardRef<
       // disabled
       'data-[disabled]:pointer-events-none data-[disabled]:text-text-muted data-[disabled]:hover:bg-none',
       // focus
-      'focus-visible:bg-background-light',
+      'focus-visible:bg-background',
       // hover
-      'hover:bg-background-light',
+      'hover:bg-background',
       className
     )}
     {...props}
@@ -179,9 +179,9 @@ const DropdownMenuCheckboxItem = React.forwardRef<
       // disabled
       'data-[disabled]:pointer-events-none data-[disabled]:text-text-muted data-[disabled]:hover:bg-none',
       // focus
-      'focus-visible:bg-background-light',
+      'focus-visible:bg-background',
       // hover
-      'hover:bg-background-light',
+      'hover:bg-background',
       className
     )}
     checked={checked}
@@ -221,9 +221,9 @@ const DropdownMenuRadioItem = React.forwardRef<
       // disabled
       'data-[disabled]:pointer-events-none data-[disabled]:text-text-muted data-[disabled]:hover:bg-none',
       // focus
-      'focus-visible:bg-background-light',
+      'focus-visible:bg-background',
       // hover
-      'hover:bg-background-light',
+      'hover:bg-background',
       className
     )}
     {...props}

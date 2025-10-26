@@ -156,7 +156,7 @@ export default function ContactManagementPage() {
           <Table className="border-0">
             <TableBody>
               {submissions.length === 0 ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={5} className="h-24 text-center">
                     No contact submissions found.
                   </TableCell>
@@ -176,7 +176,7 @@ export default function ContactManagementPage() {
                   return (
                     <TableRow
                       key={s.id}
-                      className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
+                      className="group cursor-pointer select-text border-b border-border-light bg-background-light hover:bg-background"
                       onClick={() => handleOpenDetails(s)}
                     >
                       <TableCell className="py-1 text-text">
@@ -214,7 +214,7 @@ export default function ContactManagementPage() {
                               e.stopPropagation();
                               handleOpenDetails(s);
                             }}
-                            className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                            className="group size-8 hover:border hover:border-border hover:bg-background"
                           >
                             <RiEyeLine size={14} className="shrink-0" />
                           </Button>
@@ -224,7 +224,7 @@ export default function ContactManagementPage() {
                               e.stopPropagation();
                               setDeleteTarget(s);
                             }}
-                            className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                            className="group size-8 hover:border hover:border-border hover:bg-background"
                           >
                             <RiDeleteBinLine size={14} className="shrink-0 text-danger" />
                           </Button>

@@ -64,15 +64,15 @@ function UserProfile() {
         )}
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-lg border border-gray-100 bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 transition-all">
-          <div className="border-b border-gray-100 px-4 py-3">
-            <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
-            <p className="text-xs text-gray-500">{user?.email}</p>
+        <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-lg border border-border-light bg-background-light p-1 shadow-lg ring-1 ring-black ring-opacity-5 transition-all">
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-sm font-medium text-text">{user?.name || 'User'}</p>
+            <p className="text-xs text-text-muted">{user?.email}</p>
           </div>
           <div className="py-1">
             <Link
               href={siteConfig.baseLinks.home}
-              className="flex items-center rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="flex items-center rounded-md px-4 py-2 text-sm text-text transition-colors hover:bg-background"
               onClick={() => setIsOpen(false)}
             >
               <span>Dashboard</span>
@@ -80,7 +80,7 @@ function UserProfile() {
 
             <button
               onClick={handleSignOutClick}
-              className="flex w-full items-center rounded-md px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              className="flex w-full items-center rounded-md px-4 py-2 text-left text-sm text-text transition-colors hover:bg-background"
             >
               <span>Sign Out</span>
             </button>

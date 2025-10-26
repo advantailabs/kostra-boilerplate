@@ -2,20 +2,19 @@ import { CTASection } from '@/components/branding/cta-section';
 import { InnovativeHero } from '@/components/branding/innovative-hero';
 import { MinimalFeatures } from '@/components/branding/minimal-features';
 import { PricingSection } from '@/components/branding/pricing-section';
-import { ScreenshotShowcase } from '@/components/branding/screenshot-showcase';
 import { SecuritySection } from '@/components/branding/security-section';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'SaaS Boilerplate - Modern Web Application',
+  title: 'Best Next.js Boilerplate - Modern Web Application',
   description:
-    'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture. Perfect for building your next web application.',
+    'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture. Perfect for building your next web application.',
   keywords:
-    'saas boilerplate, web application, authentication, modern ui, scalable architecture, next.js',
+    'nextjs boilerplate, web application, authentication, modern ui, scalable architecture, next.js',
   openGraph: {
-    title: 'SaaS Boilerplate - Modern Web Application',
+    title: 'Best Next.js Boilerplate - Modern Web Application',
     description:
-      'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+      'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
     type: 'website',
     url: 'https://your-domain.com',
     images: [
@@ -23,15 +22,15 @@ export const metadata: Metadata = {
         url: '/screenshots/dashboard.png',
         width: 1200,
         height: 630,
-        alt: 'SaaS Application Dashboard',
+        alt: 'Next.js Application Dashboard',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SaaS Boilerplate - Modern Web Application',
+    title: 'Best Next.js Boilerplate - Modern Web Application',
     description:
-      'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+      'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
     images: ['/screenshots/dashboard.png'],
   },
   alternates: {
@@ -60,9 +59,9 @@ export default function HomePage() {
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
-              name: 'SaaS Boilerplate - Modern Web Application',
+              name: 'Best Next.js Boilerplate - Modern Web Application',
               description:
-                'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+                'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
               url: 'https://your-domain.com',
               sameAs: [
                 'https://your-domain.com/privacy-policy',
@@ -70,10 +69,10 @@ export default function HomePage() {
               ],
               mainEntity: {
                 '@type': 'SoftwareApplication',
-                name: 'SaaS Boilerplate',
+                name: 'Next.js Boilerplate',
                 applicationCategory: 'BusinessApplication',
                 description:
-                  'A comprehensive SaaS boilerplate with modern features, authentication, and scalable architecture.',
+                  'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
                 operatingSystem: 'Web Browser',
                 offers: {
                   '@type': 'Offer',
@@ -84,7 +83,7 @@ export default function HomePage() {
               },
               publisher: {
                 '@type': 'Organization',
-                name: 'SaaS Boilerplate',
+                name: 'Next.js Boilerplate',
                 url: 'https://your-domain.com',
               },
               potentialAction: {
@@ -132,10 +131,6 @@ export default function HomePage() {
 
         <section id="home">
           <InnovativeHero />
-        </section>
-
-        <section id="product">
-          <ScreenshotShowcase />
         </section>
 
         <section id="features">

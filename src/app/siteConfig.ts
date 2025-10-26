@@ -12,7 +12,6 @@ export const siteConfig = {
     categories: '/app/categories',
     packages: '/app/packages',
     files: '/app/files',
-    chat: '/app/chat',
     creditHistory: '/app/credit-history',
 
     // Settings routes

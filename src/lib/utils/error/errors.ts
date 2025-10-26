@@ -76,28 +76,6 @@ export const ERRORS = {
     httpStatus: 500,
   },
 
-  // Knowledge Base Errors (KB_xxx)
-  KB_NOT_FOUND: {
-    code: 'KB_NOT_FOUND',
-    message: 'Knowledge base not found',
-    httpStatus: 404,
-  },
-  KB_CREATION_FAILED: {
-    code: 'KB_CREATION_FAILED',
-    message: 'Failed to create knowledge base. Please try again.',
-    httpStatus: 500,
-  },
-  KB_UPDATE_FAILED: {
-    code: 'KB_UPDATE_FAILED',
-    message: 'Failed to update knowledge base. Please try again.',
-    httpStatus: 500,
-  },
-  KB_DELETE_FAILED: {
-    code: 'KB_DELETE_FAILED',
-    message: 'Failed to delete knowledge base. Please try again.',
-    httpStatus: 500,
-  },
-
   // File Errors (FILE_xxx)
   FILE_NOT_FOUND: {
     code: 'FILE_NOT_FOUND',
@@ -123,35 +101,6 @@ export const ERRORS = {
     code: 'FILE_SIZE_TOO_LARGE',
     message: 'File size is too large. Please upload a smaller file.',
     httpStatus: 413,
-  },
-
-  // Thread/Chat Errors (THREAD_xxx)
-  THREAD_NOT_FOUND: {
-    code: 'THREAD_NOT_FOUND',
-    message: 'Conversation not found',
-    httpStatus: 404,
-  },
-  THREAD_CREATION_FAILED: {
-    code: 'THREAD_CREATION_FAILED',
-    message: 'Failed to create conversation. Please try again.',
-    httpStatus: 500,
-  },
-  MESSAGE_SEND_FAILED: {
-    code: 'MESSAGE_SEND_FAILED',
-    message: 'Failed to send message. Please try again.',
-    httpStatus: 500,
-  },
-
-  // Search Errors (SEARCH_xxx)
-  SEARCH_FAILED: {
-    code: 'SEARCH_FAILED',
-    message: 'Search failed. Please try again.',
-    httpStatus: 500,
-  },
-  SEARCH_QUERY_TOO_SHORT: {
-    code: 'SEARCH_QUERY_TOO_SHORT',
-    message: 'Search query must be at least 3 characters long.',
-    httpStatus: 400,
   },
 
   // Database Errors (DB_xxx)

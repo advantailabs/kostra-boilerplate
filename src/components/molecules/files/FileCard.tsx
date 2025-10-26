@@ -91,7 +91,7 @@ export function FileCard({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-3 w-3 p-0 text-text-muted transition-colors duration-200 hover:bg-background-light hover:text-text sm:h-4 sm:w-4"
+                  className="h-3 w-3 p-0 text-text-muted transition-colors duration-200 hover:bg-background hover:text-text sm:h-4 sm:w-4"
                   onClick={e => e.stopPropagation()}
                 >
                   <MoreHorizontal className="h-2 w-2 sm:h-2.5 sm:w-2.5" aria-label="More options" />

@@ -86,7 +86,7 @@ export function CategoriesTable({
           <Table className="border-0">
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={4} className="h-24 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -95,7 +95,7 @@ export function CategoriesTable({
                   </TableCell>
                 </TableRow>
               ) : categories.length === 0 ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={4} className="h-24 text-center">
                     No categories found.
                   </TableCell>
@@ -104,7 +104,7 @@ export function CategoriesTable({
                 categories.map(category => (
                   <TableRow
                     key={category.id}
-                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
+                    className="group cursor-pointer select-text border-b border-border-light bg-background-light hover:bg-background"
                     onClick={() =>
                       onEdit({ id: category.id, name: category.name, slug: category.slug })
                     }
@@ -139,7 +139,7 @@ export function CategoriesTable({
                             e.stopPropagation();
                             onEdit({ id: category.id, name: category.name, slug: category.slug });
                           }}
-                          className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                          className="group size-8 hover:border hover:border-border hover:bg-background"
                         >
                           <RiEditLine size={14} className="shrink-0" />
                         </Button>
@@ -149,7 +149,7 @@ export function CategoriesTable({
                             e.stopPropagation();
                             onDelete(category.id, category.name);
                           }}
-                          className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                          className="group size-8 hover:border hover:border-border hover:bg-background"
                         >
                           <RiDeleteBinLine size={14} className="shrink-0 text-danger" />
                         </Button>

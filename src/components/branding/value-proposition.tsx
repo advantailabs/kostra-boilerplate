@@ -113,7 +113,7 @@ export function ValueProposition() {
         >
           <div className="mb-16 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">Core Value Proposition</h2>
-            <p className="mt-4 text-xl text-gray-300">
+            <p className="mt-4 text-xl text-gray-200">
               Everything you need to transform your knowledge management
             </p>
           </div>
@@ -122,7 +122,7 @@ export function ValueProposition() {
             {valueProps.map((prop, index) => (
               <motion.div
                 key={prop.title}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10"
+                className="border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 group relative overflow-hidden rounded-2xl border p-8 backdrop-blur-sm transition-all"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -133,7 +133,7 @@ export function ValueProposition() {
                   {prop.icon}
                 </div>
                 <h3 className="mb-4 text-xl font-semibold text-white">{prop.title}</h3>
-                <p className="text-gray-300">{prop.description}</p>
+                <p className="text-gray-200">{prop.description}</p>
 
                 {/* Subtle hover effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-violet-600/5 opacity-0 transition-opacity group-hover:opacity-100" />

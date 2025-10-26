@@ -22,13 +22,6 @@ export function useCredits(limit = 100) {
     staleTime: 30_000,
   });
 
-  // Note: hasInsufficientCredits removed as only INITIAL_CREDITS operation is supported
-  // const hasInsufficientCredits = (operation: 'CHAT' | 'SMART_SEARCH' | 'SMART_QA') => {
-  //   const cost = CREDIT_COSTS[operation];
-  //   const currentCredits = creditsQuery.data ?? user?.credits ?? 0;
-  //   return currentCredits < cost;
-  // };
-
   const totals = useMemo(() => {
     const items = historyQuery.data ?? [];
     const credit = items.filter(h => h.type === 'CREDIT').reduce((s, h) => s + h.amount, 0);

@@ -7,7 +7,7 @@ alwaysApply: true
 # Project Structure
 
 **Description:**
-Defines the directory and file organization for the Peon project. Ensures consistency and maintainability across the codebase. Make sure any file you create under below structure. Make sure you don't put component outside of this directory structure untill and unless it doesn't fit
+Defines the directory and file organization for the SaaS Boilerplate project. Ensures consistency and maintainability across the codebase. Make sure any file you create follows the structure below. Make sure you don't put components outside of this directory structure unless they don't fit
 
 **Auto Attachments:**
 
@@ -16,73 +16,212 @@ Defines the directory and file organization for the Peon project. Ensures consis
 The project follows a well-organized directory structure:
 
 ```
-tracko/
+sass-boilerplate/
+├── docs/                      # Project documentation
+│   ├── error-handling-README.md
+│   └── file-upload-README.md
+│
+├── infra/                     # Infrastructure and deployment configs
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   └── Dockerfile-local.dockerfile
+│
+├── prisma/                    # Database schema and migrations
+│   ├── migrations/           # Database migration files
+│   └── schema.prisma         # Prisma schema definition
+│
+├── public/                    # Static assets
+│   ├── favicon/              # Favicon assets
+│   ├── logos/                # Brand logo files
+│   └── screenshots/          # Application screenshots
+│
 ├── src/
-│   ├── app/                    # Next.js app router pages and layouts
-│   │   ├── api/               # API routes and endpoints
-│   │   ├── (auth)/           # Authentication related pages
-│   │   └── (dashboard)/      # Dashboard related pages
+│   ├── app/                   # Next.js app router
+│   │   ├── (branding)/       # Landing page and marketing routes
+│   │   │   ├── contact/
+│   │   │   ├── privacy-policy/
+│   │   │   └── terms-of-services/
+│   │   │
+│   │   ├── api/              # API routes and endpoints
+│   │   │   ├── admin/        # Admin management endpoints
+│   │   │   ├── auth/         # Authentication endpoints
+│   │   │   ├── billing/      # Billing and payment endpoints
+│   │   │   ├── blogs/        # Blog management endpoints
+│   │   │   ├── categories/   # Category management endpoints
+│   │   │   ├── contact/      # Contact form endpoints
+│   │   │   ├── file-upload/  # File upload endpoints
+│   │   │   ├── files/        # File management endpoints
+│   │   │   ├── packages/     # Package management endpoints
+│   │   │   ├── users/        # User management endpoints
+│   │   │   └── webhooks/     # Webhook handlers
+│   │   │
+│   │   ├── app/              # Protected application routes
+│   │   │   ├── admin/        # Admin dashboard pages
+│   │   │   ├── blogs/        # Blog management pages
+│   │   │   ├── categories/   # Category management pages
+│   │   │   ├── contact-management/
+│   │   │   ├── credit-history/
+│   │   │   ├── details/
+│   │   │   ├── files/        # File management pages
+│   │   │   ├── packages/     # Package management pages
+│   │   │   └── settings/     # User settings pages
+│   │   │
+│   │   ├── auth/             # Authentication related pages
+│   │   │   └── signin/
+│   │   │
+│   │   └── onboarding/       # User onboarding flow
 │   │
 │   ├── components/            # Reusable UI components
 │   │   ├── atom/             # Basic building blocks (buttons, inputs, etc.)
-│   │   ├── molecules/        # Combinations of atoms (form fields, cards, etc.)
-│   │   ├── organisms/        # Complex UI components (forms, tables, etc.)
+│   │   ├── molecules/        # Combinations of atoms
+│   │   │   ├── blogs/
+│   │   │   ├── common/
+│   │   │   ├── editor/
+│   │   │   ├── files/
+│   │   │   └── form/
+│   │   ├── organisms/        # Complex UI components
+│   │   │   ├── modules/
+│   │   │   └── shared/
 │   │   ├── icons/            # SVG icons and icon components
 │   │   └── branding/         # Landing page components
 │   │
+│   ├── data/                 # Static data and constants
+│   │   ├── config/          # Configuration data
+│   │   ├── data.ts          # Static data exports
+│   │   └── schema.ts        # Data schemas
+│   │
+│   ├── hooks/                # Custom React hooks
+│   │   ├── useAdminUsers.ts
+│   │   ├── useApiMutation.ts
+│   │   ├── useBlogs.ts
+│   │   ├── useCategories.ts
+│   │   ├── useContacts.ts
+│   │   ├── useCredits.ts
+│   │   ├── useEmailSignIn.ts
+│   │   ├── useFiles.ts
+│   │   ├── useFileUpload.ts
+│   │   ├── useGoogleSignIn.ts
+│   │   ├── usePackages.ts
+│   │   ├── useSignInModal.ts
+│   │   └── useStripe.ts
+│   │
 │   ├── lib/                  # Utility functions and shared logic
+│   │   ├── auth/            # Authentication utilities
+│   │   │   └── jwt.ts
+│   │   ├── constants/       # Application constants
+│   │   ├── email/           # Email service configuration
+│   │   │   ├── drivers/     # Email provider drivers
+│   │   │   ├── templates/   # Email templates
+│   │   │   ├── factory.ts
+│   │   │   └── types.ts
 │   │   ├── prisma/          # Database client and utilities
-│   │   ├── utils/           # Helper functions
-│   │   └── constants/       # Application constants
+│   │   ├── routes/          # Route definitions and utilities
+│   │   └── utils/           # Helper functions
 │   │
-│   ├── providers/           # Context providers and wrappers
-│   │   ├── auth/           # Authentication providers
-│   │   └── theme/          # Theme providers
+│   ├── providers/            # Context providers and wrappers
+│   │   ├── AuthProvider.tsx
+│   │   ├── Providers.tsx
+│   │   └── SignInModalProvider.tsx
 │   │
-│   ├── services/           # API services and external integrations
-│   │   ├── api/           # API client and endpoints
-│   │   └── external/      # Third-party service integrations
-│   │   └── internal/      # Backend reusable services
-│   │   └── repositories/      # Database/ORM service calls
+│   ├── schemas/              # Validation schemas (Zod)
+│   │   ├── auth.schema.ts
+│   │   ├── blog.schema.ts
+│   │   ├── category.schema.ts
+│   │   ├── contact.schema.ts
+│   │   └── package.schema.ts
 │   │
-│   ├── store/             # Zustand store configurations
-│   │   ├── auth/         # Authentication state
-│   │   └── ui/           # UI state management
+│   ├── services/             # API services and integrations
+│   │   ├── api/             # Frontend API client methods
+│   │   ├── external/        # Third-party service integrations
+│   │   ├── internal/        # Backend business logic services
+│   │   └── repositories/    # Database/ORM service calls
 │   │
-│   ├── types/            # TypeScript type definitions
-│   │   ├── api/         # API types
-│   │   └── models/      # Data model types
+│   ├── store/                # Zustand store configurations
+│   │   ├── auth.ts          # Authentication state
+│   │   ├── credits.ts       # Credits state
+│   │   └── ui/              # UI state management
 │   │
-│   ├── data/            # Static data and constants
-│   │   ├── mock/       # Mock data for development
-│   │   └── config/     # Configuration data
+│   ├── styles/               # Global styles and theme configs
+│   │   └── themes/          # Theme configurations
 │   │
-│   └── styles/         # Global styles and Tailwind configurations
-│       ├── globals/    # Global CSS
-│       └── themes/     # Theme configurations
+│   ├── test/                 # Test files and utilities
+│   │   ├── api/             # API integration tests
+│   │   ├── helpers/         # Test helper functions
+│   │   ├── e2e-setup.ts
+│   │   ├── global-setup.ts
+│   │   └── global-teardown.ts
+│   │
+│   ├── types/                # TypeScript type definitions
+│   │   ├── blog.type.ts
+│   │   ├── contact.ts
+│   │   ├── file-upload.ts
+│   │   ├── file.ts
+│   │   ├── package.ts
+│   │   └── user.ts
+│   │
+│   ├── validations/          # Server-side validation utilities
+│   │   ├── admin.ts
+│   │   ├── contact.ts
+│   │   └── files.ts
+│   │
+│   └── middleware.ts         # Next.js middleware
 │
-├── prisma/             # Database schema and migrations
-│   ├── migrations/    # Database migration files
-│   └── seed/         # Database seed data
+├── .cursor/                   # Cursor IDE configuration
+│   └── rules/                # Project rules and guidelines
 │
-├── public/            # Static assets
-│   ├── images/       # Image assets
-│   └── fonts/        # Font files
-│
-└── supabase/         # Supabase configurations
-    ├── functions/    # Edge functions
-    └── config/      # Supabase configuration files
+├── jest.config.js            # Jest testing configuration
+├── next.config.mjs           # Next.js configuration
+├── tailwind.config.ts        # Tailwind CSS configuration
+└── tsconfig.json             # TypeScript configuration
 ```
 
 ## Component Architecture
 
 The project follows Atomic Design principles for component organization:
 
-- **Atom**: Basic building blocks (buttons, inputs, labels)
-- **Molecules**: Combinations of atoms (form fields, search bars)
-- **Organisms**: Complex UI components (navigation, forms, tables)
-- **Features**: Feature-specific components that combine organisms
-- **Icons**: Reusable icon components
-- **Branding**: All components for landing page.
+- **Atom** (`src/components/atom/`): Basic building blocks (buttons, inputs, labels, cards, badges, etc.)
+- **Molecules** (`src/components/molecules/`): Combinations of atoms organized by feature area:
+  - `blogs/`: Blog-related composite components
+  - `common/`: Shared composite components across features
+  - `editor/`: Editor-specific components
+  - `files/`: File management components
+  - `form/`: Form field combinations and inputs
+- **Organisms** (`src/components/organisms/`): Complex UI components:
+  - `modules/`: Feature-specific complex components
+  - `shared/`: Shared complex components (navigation, layouts, etc.)
+- **Icons** (`src/components/icons/`): Reusable SVG icon components
+- **Branding** (`src/components/branding/`): Landing page and marketing components
 
-When creating new file, strictly follow above directory and file structure.
+## Directory Guidelines
+
+### Hooks (`src/hooks/`)
+
+Place all custom React hooks here. Follow the `use*` naming convention (e.g., `useAuth`, `useFiles`).
+
+### Schemas (`src/schemas/`)
+
+Validation schemas using Zod for form and API validation. Used primarily on the client side.
+
+### Validations (`src/validations/`)
+
+Server-side validation utilities for API endpoints and server actions.
+
+### Services
+
+- **API** (`src/services/api/`): Client-side API methods for making HTTP requests
+- **External** (`src/services/external/`): Third-party service integrations (Stripe, email providers, etc.)
+- **Internal** (`src/services/internal/`): Backend business logic and server-side services
+- **Repositories** (`src/services/repositories/`): Database access layer using Prisma
+
+### Types vs Schemas
+
+- **Types** (`src/types/`): TypeScript type definitions and interfaces
+- **Schemas** (`src/schemas/`): Runtime validation schemas (Zod)
+
+### Testing (`src/test/`)
+
+- **API tests**: Integration tests for API endpoints
+- **Helpers**: Shared test utilities and helper functions
+- Test setup files for Jest configuration
+
+When creating new files, strictly follow the above directory and file structure.

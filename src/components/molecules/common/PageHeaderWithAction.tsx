@@ -24,7 +24,9 @@ export function PageHeaderWithAction({
   className,
 }: PageHeaderWithActionProps) {
   return (
-    <div className={`flex items-center justify-between border-b border-border ${className || ''}`}>
+    <div
+      className={`flex items-center justify-between border-b border-border bg-background-light ${className || ''}`}
+    >
       <div className="relative min-w-0 flex-1 border-border px-4 py-3">
         <div className="min-w-0">
           <h1 className="text-lg font-medium text-text">{title}</h1>

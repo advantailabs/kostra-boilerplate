@@ -181,7 +181,7 @@ export function UsersTable({
           <Table className="border-0">
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={7} className="h-24 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -190,7 +190,7 @@ export function UsersTable({
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={7} className="h-24 text-center">
                     No users found.
                   </TableCell>
@@ -199,7 +199,7 @@ export function UsersTable({
                 users.map(user => (
                   <TableRow
                     key={user.id}
-                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
+                    className="group cursor-pointer select-text border-b border-border-light bg-background-light hover:bg-background"
                     onClick={() => onViewDetails(user)}
                   >
                     <TableCell className="p-4 text-text">
@@ -271,7 +271,7 @@ export function UsersTable({
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
-                              className="group size-8 data-[state=open]:border-border data-[state=open]:bg-background-light hover:border hover:border-border hover:bg-background-light"
+                              className="group size-8 data-[state=open]:border-border data-[state=open]:bg-background hover:border hover:border-border hover:bg-background"
                               onClick={e => e.stopPropagation()}
                             >
                               <RiMore2Fill

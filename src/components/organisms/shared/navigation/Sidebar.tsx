@@ -44,7 +44,7 @@ export function Sidebar() {
     <>
       {/* sidebar (lg+) */}
       <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
-        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-border bg-background p-4">
+        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-border bg-background-light p-4">
           <div className="flex h-8 items-center px-2">
             <Image
               src={logoSrc}

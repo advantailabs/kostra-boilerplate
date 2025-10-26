@@ -96,7 +96,7 @@ export function PackagesTable({
           <Table className="border-0">
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={6} className="h-24 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -105,7 +105,7 @@ export function PackagesTable({
                   </TableCell>
                 </TableRow>
               ) : packages.length === 0 ? (
-                <TableRow className="border-b border-border-light">
+                <TableRow className="border-b border-border-light bg-background-light">
                   <TableCell colSpan={6} className="h-24 text-center">
                     No packages found.
                   </TableCell>
@@ -114,7 +114,7 @@ export function PackagesTable({
                 packages.map(pkg => (
                   <TableRow
                     key={pkg.id}
-                    className="group cursor-pointer select-text border-b border-border-light hover:bg-background-light"
+                    className="group cursor-pointer select-text border-b border-border-light bg-background-light hover:bg-background"
                     onClick={() => onEdit(pkg)}
                   >
                     <TableCell className="py-1 text-text">

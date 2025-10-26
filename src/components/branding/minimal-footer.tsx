@@ -50,7 +50,7 @@ export function MinimalFooter() {
   const { user } = useAuthStore();
 
   return (
-    <footer className="border-t border-white/5 bg-black">
+    <footer className="border-white/5 border-t bg-black">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Main footer content */}
         <div className="py-12 sm:py-16">
@@ -68,7 +68,7 @@ export function MinimalFooter() {
                   <div className="h-6 w-6 sm:h-8 sm:w-8">
                     <Image
                       src="/logos/light-logo.svg"
-                      alt="SaaS Boilerplate Logo"
+                      alt="Next.js Boilerplate Logo"
                       width={80}
                       height={20}
                       className="h-full w-full object-contain"
@@ -76,8 +76,8 @@ export function MinimalFooter() {
                   </div>
                 </div>
 
-                <p className="mb-6 max-w-md leading-relaxed text-gray-400 sm:mb-8 sm:text-sm">
-                  A comprehensive SaaS boilerplate with modern features, authentication, and
+                <p className="mb-6 max-w-md leading-relaxed text-gray-800 sm:mb-8 sm:text-sm">
+                  A comprehensive Next.js boilerplate with modern features, authentication, and
                   scalable architecture.
                 </p>
 
@@ -152,7 +152,7 @@ export function MinimalFooter() {
                               return (
                                 <Link
                                   href={link.href}
-                                  className="text-xs text-gray-400 transition-colors duration-200 hover:text-white sm:text-sm"
+                                  className="text-xs text-gray-900 transition-colors duration-200 hover:text-white sm:text-sm"
                                 >
                                   {link.name}
                                 </Link>
@@ -163,8 +163,8 @@ export function MinimalFooter() {
                                 href={link.href}
                                 className={`text-xs transition-colors duration-200 sm:text-sm ${
                                   link.name === 'Privacy Policy' || link.name === 'Terms of Service'
-                                    ? 'font-medium text-gray-300 underline hover:text-white'
-                                    : 'text-gray-400 hover:text-white'
+                                    ? 'font-medium text-gray-900 underline hover:text-white'
+                                    : 'text-gray-900 hover:text-white'
                                 }`}
                               >
                                 {link.name}
@@ -183,30 +183,30 @@ export function MinimalFooter() {
 
         {/* Bottom section */}
         <motion.div
-          className="flex flex-col items-center justify-between gap-4 border-t border-white/5 py-6 sm:py-8 md:flex-row"
+          className="border-white/5 flex flex-col items-center justify-between gap-4 border-t py-6 sm:py-8 md:flex-row"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 sm:gap-6 sm:text-sm">
-            <span>© {new Date().getFullYear()} SaaS Boilerplate. All rights reserved.</span>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-text sm:gap-6 sm:text-sm">
+            <span>© {new Date().getFullYear()} Next.js Boilerplate. All rights reserved.</span>
             <Link
               href={siteConfig.baseLinks.privacy}
-              className="font-medium text-gray-300 underline transition-colors hover:text-white"
+              className="font-medium text-text underline transition-colors hover:text-white"
             >
               Privacy Policy
             </Link>
             <Link
               href={siteConfig.baseLinks.terms}
-              className="font-medium text-gray-300 underline transition-colors hover:text-white"
+              className="font-medium text-text underline transition-colors hover:text-white"
             >
               Terms of Service
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-gray-500 sm:text-sm">
-            <div className="h-2 w-2 rounded-full bg-green-400" />
+          <div className="flex items-center gap-2 text-xs text-text sm:text-sm">
+            <div className="h-2 w-2 rounded-full bg-success" />
             <span>All systems operational</span>
           </div>
         </motion.div>

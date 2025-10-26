@@ -349,30 +349,6 @@
     outline-offset: 2px;
   }
 
-  /* Mobile chat scrolling improvements */
-  .chat-messages-container {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    scroll-behavior: smooth;
-  }
-
-  /* Ensure proper height constraints on mobile */
-  .mobile-chat-layout {
-    height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile */
-  }
-
-  /* Mobile-specific chat improvements */
-  @media (max-width: 799px) {
-    .chat-messages-container {
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .mobile-chat-layout {
-      padding-top: env(safe-area-inset-top);
-    }
-  }
-
   /* Card shadow utility - reusable embossed shadow pattern */
   .card-shadow {
     box-shadow:
@@ -415,11 +391,6 @@
 
   .btn-animate:active {
     transform: translateY(0);
-  }
-
-  /* Chat input button improvements */
-  .chat-input-textarea {
-    transition: all 0.2s ease-in-out;
   }
 
   /* Subtle shimmer attention effect for CTA buttons */
@@ -468,12 +439,6 @@
       /* violet-500 dim */ rgba(99, 102, 241, 0.12) 65%,
       rgba(99, 102, 241, 0) 100%
     );
-  }
-
-  /* Ensure proper button spacing and positioning */
-  .chat-input-textarea:focus-within {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 1px var(--primary);
   }
 
   /* Animation delay utilities for loading indicators */

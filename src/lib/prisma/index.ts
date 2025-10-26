@@ -8,6 +8,8 @@ declare global {
   // eslint-disable-next-line no-var
   // eslint-disable-next-line no-unused-vars
   var prisma: PrismaClient | undefined;
+  // eslint-disable-next-line no-var
+  var prismaListenersRegistered: boolean | undefined;
 }
 
 // Create database URL with connection pooling parameters
@@ -51,26 +53,23 @@ const cleanup = async () => {
   }
 };
 
-// Graceful shutdown handlers
-process.on('beforeExit', cleanup);
-process.on('SIGINT', async () => {
-  await cleanup();
-  process.exit(0);
-});
-process.on('SIGTERM', async () => {
-  await cleanup();
-  process.exit(0);
-});
+// Register process event listeners only once to prevent memory leaks
+// Using globalThis to survive HMR (Hot Module Replacement) in development
+if (!globalThis.prismaListenersRegistered) {
+  // Graceful shutdown handlers
+  process.on('beforeExit', cleanup);
+  process.on('SIGINT', async () => {
+    await cleanup();
+    process.exit(0);
+  });
+  process.on('SIGTERM', async () => {
+    await cleanup();
+    process.exit(0);
+  });
 
-// Handle uncaught exceptions and promise rejections
-process.on('uncaughtException', async error => {
-  console.error('Uncaught Exception:', error);
-  await cleanup();
-  process.exit(1);
-});
+  // Mark listeners as registered
+  globalThis.prismaListenersRegistered = true;
 
-process.on('unhandledRejection', async (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  await cleanup();
-  process.exit(1);
-});
+  // Note: uncaughtException and unhandledRejection handlers removed
+  // as Sentry already handles these globally
+}

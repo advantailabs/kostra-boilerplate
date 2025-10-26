@@ -78,7 +78,6 @@ export function ModernNavigation() {
   }, [pathname, hasInitialized]);
 
   const navItems = [
-    { name: 'Home', href: '/#home', section: 'home' },
     { name: 'Pricing', href: '/#pricing', section: 'pricing' },
     { name: 'Product', href: '/#product', section: 'product' },
     { name: 'Features', href: '/#features', section: 'features' },
@@ -126,7 +125,7 @@ export function ModernNavigation() {
             <div className="h-6 w-6 sm:h-8 sm:w-8">
               <Image
                 src="/logos/light-logo.svg"
-                alt="SaaS Boilerplate Logo"
+                alt="Next.js Boilerplate Logo"
                 width={32}
                 height={32}
                 className="h-full w-full object-contain"
@@ -142,7 +141,7 @@ export function ModernNavigation() {
                 <Link key={item.name} href={item.href}>
                   <motion.span
                     className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${
-                      active ? 'text-white' : 'text-gray-400 hover:text-white'
+                      active ? 'text-primary' : 'text-text hover:text-primary-hover'
                     }`}
                     whileHover={{ y: -1 }}
                     transition={{ duration: 0.2 }}
@@ -161,7 +160,7 @@ export function ModernNavigation() {
 
           {/* Mobile menu button */}
           <motion.button
-            className="flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white md:hidden"
+            className="hover:bg-white/5 flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-200 transition-colors hover:text-white md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
             aria-label="Toggle mobile menu"
@@ -189,7 +188,7 @@ export function ModernNavigation() {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <motion.div
-            className="border-t border-white/10 bg-black/95 backdrop-blur-md md:hidden"
+            className="border-white/10 bg-black/95 border-t backdrop-blur-md md:hidden"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -205,7 +204,7 @@ export function ModernNavigation() {
                     className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${
                       active
                         ? 'bg-white/10 text-white'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                        : 'hover:bg-white/5 text-gray-200 hover:text-white'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -215,24 +214,24 @@ export function ModernNavigation() {
               })}
 
               {/* Legal Links */}
-              <div className="flex flex-col gap-1 border-t border-white/10 px-4 pt-4">
+              <div className="border-white/10 flex flex-col gap-1 border-t px-4 pt-4">
                 <Link
                   href={siteConfig.baseLinks.privacy}
-                  className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  className="py-2 text-xs font-medium text-gray-200 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Privacy Policy
                 </Link>
                 <Link
                   href={siteConfig.baseLinks.terms}
-                  className="py-2 text-xs font-medium text-gray-400 underline transition-colors duration-200 hover:text-white"
+                  className="py-2 text-xs font-medium text-gray-200 underline transition-colors duration-200 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Terms of Service
                 </Link>
               </div>
 
-              <div className="flex flex-col gap-3 border-t border-white/10 px-4 pt-4">
+              <div className="border-white/10 flex flex-col gap-3 border-t px-4 pt-4">
                 {user ? (
                   <div className="py-2">
                     <UserProfile />

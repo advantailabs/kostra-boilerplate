@@ -23,9 +23,9 @@ function CardContent({ plan }: { plan: (typeof PLANS)[0] }) {
           <span
             className="rounded-full border px-2 py-0.5 text-[10px] font-medium"
             style={{
-              backgroundColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--bg-dark)',
-              borderColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--border)',
-              color: plan.id === 'pro' ? 'var(--bg-light)' : 'var(--text-muted)',
+              backgroundColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--primary)',
+              borderColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--primary)',
+              color: plan.id === 'pro' ? 'var(--bg-light)' : 'var(--bg-light)',
             }}
           >
             {plan.badge}
@@ -116,13 +116,13 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
             }}
           >
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Lets keep your chats going, Topup some credits now.
+              Lets keep your things going, Topup some credits now.
             </p>
             <div
               className="rounded-md px-3 py-1 text-sm font-semibold"
-              style={{ backgroundColor: 'var(--bg-dark)', color: 'var(--text)' }}
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--bg-light)' }}
             >
-              Credits: <span style={{ color: 'var(--text-light)' }}>{credits}</span>
+              Credits: <span style={{ color: 'var(--bg-light)' }}>{credits}</span>
             </div>
           </div>
         </div>

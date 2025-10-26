@@ -241,7 +241,6 @@ saas-boilerplate/
 │   │   │   ├── blogs/       # Blog-specific molecules
 │   │   │   │   ├── BlogCard.tsx # Blog card component
 │   │   │   │   └── BlogGrid.tsx # Blog grid component
-│   │   │   ├── chat/        # Chat-related molecules
 │   │   │   ├── common/      # Common reusable molecules
 │   │   │   │   ├── Calendar.tsx # Calendar component
 │   │   │   │   ├── CommandBar.tsx # Command bar
@@ -461,7 +460,6 @@ saas-boilerplate/
 │   │
 │   ├── types/               # TypeScript type definitions
 │   │   ├── blog.type.ts     # Blog types
-│   │   ├── chat.ts          # Chat types
 │   │   ├── file-upload.ts   # File upload types
 │   │   ├── file.ts          # File types
 │   │   └── user.ts          # User types
@@ -513,9 +511,7 @@ saas-boilerplate/
 │   │   └── light-symbol.png # Light symbol
 │   └── screenshots/         # Application screenshots
 │       ├── answers-with-citations.png # Answers with citations
-│       ├── chat-interface.png # Chat interface
 │       ├── file-management.png # File management
-│       ├── persona-chat.jpg # Persona chat
 │       ├── persona-management.png # Persona management
 │       ├── search.png # Search interface
 │       └── upload-file-to-knowledgebase.png # File upload
@@ -541,25 +537,21 @@ saas-boilerplate/
 The project follows Atomic Design principles for component organization:
 
 - **Atom**: Basic building blocks (buttons, inputs, labels, cards, badges, etc.)
-
   - Located in `src/components/atom/`
   - Includes: Avatar, Badge, Button, Card, Checkbox, CreditDisplay, Divider, Input, Label, LoadingScreen, PillSelect, ProgressBar, ProgressCircle, RadioCard, SignInButton, Spinner, Switch, Textarea, Toast, Tooltip, UserProfilePicture
 
 - **Molecules**: Combinations of atoms (form fields, search bars, modals, etc.)
-
   - Located in `src/components/molecules/`
-  - Organized by feature: blogs, chat, common, editor, files, form
-  - Includes: BlogCard, BlogGrid, PersonaCard, Calendar, CommandBar, CreditPurchaseModal, DatePicker, DeleteDialog, Dialog, Drawer, Dropdown, GoogleSignInButton, GradientCtaButton, Modal, PageHeader, Pagination, Popover, Searchbar, Select, Table, TabNavigation, UnifiedSearchBar, UserDetailsList, Editor, FileCard, FileDetailsModal, FileFilterModal, BlogFormFields, BlogImageUpload, FormTagInput, TagInput, SignInModal
+  - Organized by feature: blogs, common, editor, files, form
+  - Includes: BlogCard, BlogGrid, Calendar, CommandBar, CreditPurchaseModal, DatePicker, DeleteDialog, Dialog, Drawer, Dropdown, GoogleSignInButton, GradientCtaButton, Modal, PageHeader, Pagination, Popover, Searchbar, Select, Table, TabNavigation, UnifiedSearchBar, UserDetailsList, Editor, FileCard, FileDetailsModal, FileFilterModal, BlogFormFields, BlogImageUpload, FormTagInput, TagInput, SignInModal
 
 - **Organisms**: Complex UI components (navigation, forms, tables, etc.)
-
   - Located in `src/components/organisms/`
   - **Modules**: Feature-specific organisms (admin, blogs, categories, files, personas, settings)
   - **Shared**: Shared organisms (data-table, navigation)
   - Includes: UsersPage, UsersTable, BlogsPage, CategoriesPage, CategoriesTable, FileGrid, FileUploader, PersonaModal, DataTable, Sidebar, MobileSidebar, DropdownUserProfile, UserProfile
 
 - **Icons**: Reusable icon components
-
   - Located in `src/components/icons/`
   - Includes: AmazonWebServices, ArrowAnimated, Dropbox, GoogleDrive, JavaScript, Onedrive, Python, SharePoint, Slack, Swagger, Teams, Widget
 
@@ -628,20 +620,17 @@ We welcome contributions! Please follow these steps:
 ### Adding New Features
 
 1. **New Pages**
-
    - Create new routes in `src/app`
    - Follow the existing layout patterns
    - Add necessary components in `src/components`
 
 2. **New Components**
-
    - Create components in `src/components`
    - Use Radix UI primitives for accessibility
    - Follow the existing component patterns
    - Add TypeScript types in `src/types`
 
 3. **New API Routes**
-
    - Add API routes in `src/app/api`
    - Use the existing service patterns
    - Add proper error handling
