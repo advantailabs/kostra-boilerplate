@@ -2,18 +2,18 @@
 
 :root {
   /* Light Mode Colors */
-  --bg-dark: hsl(0 0% 96%);
-  --bg: hsl(0 0% 97%); /* Main background - cards, elevated elements */
-  --bg-light: hsl(0 0% 100%); /* Very light background - buttons, popups */
+  --bg-dark: hsl(220 15% 96%);
+  --bg: hsl(220 30% 98%); /* Main background - cards, elevated elements */
+  --bg-light: hsl(220 8% 100%); /* Very light background - buttons, popups */
 
   --text-light: hsl(0 0% 5%); /* Light text (darkest text) */
   --text: hsl(0 0% 5%); /* Main text */
   --text-muted: hsl(0 0% 30%); /* Muted text */
 
-  --highlight: hsl(0 0% 70%); /* Highlight color */
-  --border-light: hsl(0 0% 85%); /* Light border */
-  --border: hsl(0 0% 75%); /* Main border */
-  --border-muted: hsl(0 0% 65%); /* Muted border */
+  --highlight: hsl(220 10% 70%); /* Highlight color */
+  --border-light: hsl(220 10% 85%); /* Light border */
+  --border: hsl(220 10% 75%); /* Main border */
+  --border-muted: hsl(220 10% 65%); /* Muted border */
 
   --primary: hsl(264 50% 45%); /* Primary color - blue/indigo */
   --primary-hover: hsl(264 50% 40%); /* Primary hover */
@@ -139,18 +139,18 @@
 
 /* Dark Mode Colors - Following Design Guidelines */
 .dark {
-  --bg-dark: hsl(0 0% 4%); /* Darkest background - page background */
-  --bg: hsl(0 0% 5%); /* Main background - cards, elevated elements */
-  --bg-light: hsl(0 0% 1%); /* Lightest background - buttons, popups */
+  --bg-dark: hsl(220 20% 4%); /* Darkest background - page background */
+  --bg: hsl(220 15% 5%); /* Main background - cards, elevated elements */
+  --bg-light: hsl(220 10% 1%); /* Lightest background - buttons, popups */
 
   --text-light: hsl(0 0% 98%); /* Lightest text - headings */
   --text: hsl(0 0% 90%); /* Main text */
   --text-muted: hsl(0 0% 60%); /* Muted text */
 
-  --highlight: hsl(0 0% 20%); /* Highlight color */
-  --border-light: hsl(0 0% 25%); /* Light border */
-  --border: hsl(0 0% 20%); /* Main border */
-  --border-muted: hsl(0 0% 15%); /* Muted border */
+  --highlight: hsl(220 15% 20%); /* Highlight color */
+  --border-light: hsl(220 15% 25%); /* Light border */
+  --border: hsl(220 15% 20%); /* Main border */
+  --border-muted: hsl(220 15% 15%); /* Muted border */
 
   --primary: hsl(264 50% 60%); /* Primary color */
   --primary-hover: hsl(264 50% 65%); /* Primary hover */
