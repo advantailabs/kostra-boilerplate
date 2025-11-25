@@ -15,7 +15,8 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
@@ -59,7 +60,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
@@ -152,7 +154,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const authUser = await getAuthUser(request);
 

@@ -20,7 +20,8 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
@@ -60,7 +61,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
@@ -114,7 +116,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const userId = getUserIdFromHeaders(request);
     const user = await getUserById(userId);
