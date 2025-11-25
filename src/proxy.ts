@@ -1,18 +1,19 @@
 import { getAuthUser, JWT_KEY } from '@/lib/auth/jwt';
 import {
-  applyCorsHeaders,
-  checkAccess,
-  findMatchingRoute,
-  handleCorsPreflightRequest,
-  isPublicRoute,
-  isRouteConfigured,
-  requiresRoleAccess,
+    applyCorsHeaders,
+    checkAccess,
+    findMatchingRoute,
+    handleCorsPreflightRequest,
+    isPublicRoute,
+    isRouteConfigured,
+    requiresRoleAccess,
 } from '@/lib/routes';
 import { NextRequest, NextResponse } from 'next/server';
 import { forbiddenResponse } from './lib/utils/response/response';
 
-// Main middleware
-const middleware = async (request: NextRequest) => {
+// Middleware is now called Proxy
+// https://nextjs.org/docs/app/getting-started/proxy#proxy
+const proxy = async (request: NextRequest) => {
   const preflightResponse = handleCorsPreflightRequest(request);
   if (preflightResponse) return preflightResponse;
 
@@ -119,7 +120,7 @@ const middleware = async (request: NextRequest) => {
   return applyCorsHeaders(request, response);
 };
 
-export default middleware;
+export default proxy;
 
 export const config = {
   matcher: [

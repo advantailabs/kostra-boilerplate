@@ -73,8 +73,9 @@ export const getUserIdFromHeaders = (request: NextRequest): string | null => {
  * Sets the JWT token as an HTTP-only cookie
  * @param token - The JWT token to set
  */
-export const setAuthCookie = (token: string): void => {
-  cookies().set(JWT_KEY || 'auth-token', token, {
+export const setAuthCookie = async (token: string): Promise<void> => {
+  const cookieStore = await cookies();
+  cookieStore.set(JWT_KEY || 'auth-token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

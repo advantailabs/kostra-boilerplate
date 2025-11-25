@@ -1,10 +1,10 @@
 import { setAuthCookie } from '@/lib/auth/jwt';
 import {
-  badRequestResponse,
-  formatZodError,
-  internalServerErrorResponse,
-  successResponse,
-  validationErrorResponse,
+    badRequestResponse,
+    formatZodError,
+    internalServerErrorResponse,
+    successResponse,
+    validationErrorResponse,
 } from '@/lib/utils';
 import { verifySignupSchema } from '@/schemas/auth.schema';
 import { AuthService } from '@/services/internal/auth/auth';
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Set the token in an HTTP-only cookie (same as Google login)
     if (result.data?.token) {
-      setAuthCookie(result.data.token);
+      await setAuthCookie(result.data.token);
     }
 
     return successResponse({

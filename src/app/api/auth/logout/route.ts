@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 
 export async function POST() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     // Clear the auth token cookie
     cookieStore.delete(JWT_KEY || 'auth-token');
