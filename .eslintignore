@@ -3,6 +3,7 @@
 out/
 build/
 dist/
+infra/
 
 # Dependencies
 node_modules/
@@ -27,3 +28,4 @@ prisma/migrations/
 # Misc
 .DS_Store
 *.pem 
+
