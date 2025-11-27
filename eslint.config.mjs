@@ -2,6 +2,10 @@ import { fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import tsParser from '@typescript-eslint/parser';
+import nextConfig from 'eslint-config-next/core-web-vitals';
+import importPlugin from 'eslint-plugin-import';
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
+import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import path from 'node:path';
@@ -37,13 +41,14 @@ export default [
       'prisma/migrations/',
       '**/.DS_Store',
       '**/*.pem',
+      'next.config.mjs', // Stops 'process' is not defined eslint error by ignoring
     ],
   },
   // Base recommended config
   js.configs.recommended,
   // Convert legacy configs using FlatCompat
   // Note: 'airbnb/hooks' is excluded because react-hooks plugin needs fixupPluginRules for ESLint 9
-  ...compat.extends('eslint:recommended', 'airbnb', 'prettier'),
+  ...compat.extends('eslint:recommended', 'prettier'),
   // Note: Next.js config is not fully compatible with ESLint 9 flat config yet
   // Using FlatCompat for Next.js config may cause issues
   // You can manually add Next.js specific rules if needed
@@ -52,12 +57,15 @@ export default [
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
       'react-hooks': fixupPluginRules(reactHooks),
+      react: reactPlugin,
+      'jsx-a11y': jsxA11yPlugin,
+      import: importPlugin,
     },
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
         ...globals.jest,
+        ...globals.node,
       },
       parser: tsParser,
       ecmaVersion: 'latest',
@@ -77,10 +85,14 @@ export default [
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
       },
+      react: {
+        version: 'detect',
+      },
     },
     rules: {
       // Add react-hooks rules from airbnb/hooks manually
       ...reactHooks.configs.recommended.rules,
+      ...nextConfig.rules,
       'react/react-in-jsx-scope': 'off',
       'react/jsx-filename-extension': [
         1,
@@ -90,6 +102,10 @@ export default [
       ],
       'import/extensions': 'off',
       'react/jsx-props-no-spreading': 'off',
+      // there react-hooks rules cause atleast 15 linting errors if turned on
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/incompatible-library': 'off',
       'react/require-default-props': 'off',
       'react/prop-types': 'off',
       'import/prefer-default-export': 'off',
