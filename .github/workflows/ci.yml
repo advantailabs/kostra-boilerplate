@@ -133,7 +133,7 @@ jobs:
                   exit 1
 
             - name: Run tests (Required for merge)
-              run: pnpm run test -- --verbose --no-coverage
+              run: pnpm run test
 
             - name: Upload test coverage
               uses: codecov/codecov-action@v4
