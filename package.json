@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
+    "check-types": "tsc --noEmit",
     "build": "next build && npm run verify-sitemap",
     "build:only": "next build",
     "start": "next start",

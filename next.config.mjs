@@ -108,6 +108,9 @@ const nextConfig = {
 
   // PoweredBy header removal for security
   poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default withSentryConfig(nextConfig, {
