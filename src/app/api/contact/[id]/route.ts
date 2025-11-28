@@ -14,7 +14,8 @@ import { contactIdSchema, contactUpdateSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
 import { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Middleware protects; just ensure presence
     const authUser = await getAuthUser(request);
@@ -44,7 +45,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Check if user is authenticated and has admin role
     const authUser = await getAuthUser(request);
@@ -101,7 +103,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Middleware protects; just ensure presence
     const authUser = await getAuthUser(request);

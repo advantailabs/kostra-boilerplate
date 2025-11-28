@@ -20,7 +20,8 @@ import { NextRequest } from 'next/server';
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate category ID using Zod
     const validationResult = categoryIdSchema.safeParse({
@@ -45,7 +46,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate category ID using Zod
     const validationResult = categoryIdSchema.safeParse({
@@ -89,7 +91,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Parse and validate the category ID
     const validationResult = categoryIdSchema.safeParse({

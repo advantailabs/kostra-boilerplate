@@ -21,7 +21,8 @@ export const dynamic = 'force-dynamic';
  * GET /api/packages/[id]
  * Get a specific package by ID
  */
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate ID parameter using schema
     const validationResult = packageIdSchema.safeParse({ id: params.id });
@@ -49,7 +50,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
  * PATCH /api/packages/[id]
  * Update a specific package by ID (partial update)
  */
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate ID parameter using schema
     const idValidationResult = packageIdSchema.safeParse({ id: params.id });
@@ -85,7 +87,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
  * DELETE /api/packages/[id]
  * Delete a specific package by ID
  */
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     // Validate ID parameter using schema
     const validationResult = packageIdSchema.safeParse({ id: params.id });
