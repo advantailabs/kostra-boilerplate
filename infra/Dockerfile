@@ -10,16 +10,19 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
+# pnpm installation
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # =============================================================================
 # Stage 2: Dependencies Installation
 # =============================================================================
 FROM base AS deps
 
-# Copy package files first for better Docker layer caching
-COPY package.json package-lock.json ./
+# Copy package & lock files first for better Docker layer caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install all dependencies (including devDependencies for build stage)
-RUN npm ci
+RUN pnpm install
 
 # =============================================================================
 # Stage 3: Build Stage
@@ -33,7 +36,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma client before building
-RUN npx prisma generate
+RUN pnpm run generate
 
 # Build arguments for Next.js public environment variables
 ARG NEXT_PUBLIC_APP_URL
@@ -52,7 +55,7 @@ ENV NEXT_PUBLIC_R2_PUBLIC_BASE_URL=${NEXT_PUBLIC_R2_PUBLIC_BASE_URL}
 ENV NEXT_PUBLIC_R2_PRIVATE_BASE_URL=${NEXT_PUBLIC_R2_PRIVATE_BASE_URL}
 
 # Build the Next.js application
-RUN npm run build
+RUN pnpm run build
 
 # =============================================================================
 # Stage 4: Production Runtime
@@ -63,8 +66,8 @@ FROM base AS runner
 ENV NODE_ENV=production
 
 # Copy package files and install only production dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm prune --prod
 
 # Copy built application from builder stage
 COPY --from=builder /app/.next/standalone ./
@@ -73,7 +76,6 @@ COPY --from=builder /app/public ./public
 
 # Copy Prisma files for database operations
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Expose port
@@ -83,4 +85,4 @@ EXPOSE 3000
 ENV HOSTNAME="0.0.0.0"
 
 # Start the application
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]
