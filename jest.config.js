@@ -7,7 +7,6 @@ const createJestConfig = nextJest({
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-
   testEnvironment: 'node',
 
   testMatch: [
@@ -38,11 +37,15 @@ const customJestConfig = {
   verbose: true,
   silent: false,
   cache: false,
-
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/', // default ignored
+    '<rootDir>/.next/', // default ignored
+    '<rootDir>/lib/prisma/generated/', // generated files
+  ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
-  transformIgnorePatterns: ['node_modules/(?!(jose|@panva)/)'],
+  // transformIgnorePatterns: ['node_modules/(?!(jose|@panva)/)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
 
   // Global setup and teardown for e2e tests
