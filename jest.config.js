@@ -45,7 +45,9 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
-  // transformIgnorePatterns: ['node_modules/(?!(jose|@panva)/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(jose|@panva|prisma|@prisma/client|@prisma/adapter-pg|.pnpm)/)',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
 
   // Global setup and teardown for e2e tests
