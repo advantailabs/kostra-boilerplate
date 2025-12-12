@@ -2,8 +2,8 @@
 /* eslint-disable vars-on-top */
 /* eslint-disable no-undef */
 /* eslint-disable no-var */
-import { PrismaClient } from '@prisma/client';
-
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/client';
 declare global {
   // eslint-disable-next-line no-var
   // eslint-disable-next-line no-unused-vars
@@ -28,14 +28,12 @@ const createDatabaseUrl = () => {
   return url.toString();
 };
 
+const adapter = new PrismaPg({ connectionString: createDatabaseUrl() });
+
 export const prisma: PrismaClient =
   globalThis.prisma ||
   new PrismaClient({
-    datasources: {
-      db: {
-        url: createDatabaseUrl(),
-      },
-    },
+    adapter,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 
