@@ -27,7 +27,7 @@ const createDatabaseUrl = () => {
   // Currently because of a bug, prefer is equal to require
   // and will cause a connection error in development
   // Ref:- https://github.com/prisma/prisma/issues/27611
-  if (process.env.USE_SSL_DB === 'true') {
+  if (process.env.NODE_ENV === 'production') {
     url.searchParams.set('sslmode', 'prefer');
   } else {
     url.searchParams.set('sslmode', 'disable');
