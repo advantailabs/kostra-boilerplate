@@ -28,6 +28,7 @@ jobs:
       # Database
       POSTGRES_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
+      USE_SSL_DB: false
 
       # App Configuration
       NODE_ENV: test
