@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from '@/lib/prisma/generated/internal/prismaNamespace';
 
 // Database operation types
 export interface CreatePackageData {

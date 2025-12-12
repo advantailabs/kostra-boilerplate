@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
+import { Decimal } from '@/lib/prisma/generated/internal/prismaNamespace';
 import { CreatePackageInput, UpdatePackageInput } from '@/schemas/package.schema';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export const createNewPackage = async (packageData: CreatePackageInput) => {
   const newPackage = await prisma.package.create({
