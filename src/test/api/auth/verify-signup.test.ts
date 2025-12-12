@@ -1,4 +1,4 @@
-import { OtpPurpose, UserRole } from '@prisma/client';
+import { OtpPurpose, UserRole } from '@/lib/prisma/generated/client';
 import {
   createInvalidVerifySignupData,
   createVerifySignupRequestData,

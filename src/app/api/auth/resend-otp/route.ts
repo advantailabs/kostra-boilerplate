@@ -1,3 +1,4 @@
+import { OtpPurpose } from '@/lib/prisma/generated/client';
 import {
   badRequestResponse,
   formatZodError,
@@ -7,7 +8,6 @@ import {
 } from '@/lib/utils';
 import { resendOTPSchema } from '@/schemas/auth.schema';
 import { OTPService } from '@/services/internal/email/otp';
-import { OtpPurpose } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route

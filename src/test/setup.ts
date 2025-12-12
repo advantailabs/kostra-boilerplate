@@ -1,5 +1,5 @@
 import { JWT_KEY } from '@/lib/auth/jwt';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/lib/prisma/generated/client';
 
 /* eslint-disable no-var, vars-on-top, no-underscore-dangle */
 // Global test setup

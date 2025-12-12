@@ -1,4 +1,5 @@
 import { getAuthUser } from '@/lib/auth/jwt';
+import { ContactPurpose, ContactStatus } from '@/lib/prisma/generated/client';
 import {
   AppErrorClass,
   errorResponse,
@@ -12,7 +13,6 @@ import {
 import { contactFiltersSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
 import { contactFormSchema } from '@/validations/contact';
-import { ContactPurpose, ContactStatus } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {

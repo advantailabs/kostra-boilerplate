@@ -1,5 +1,5 @@
+import { OtpPurpose } from '@/lib/prisma/generated/client';
 import { emailOTPRepository } from '@/services/repositories/email-otp';
-import { OtpPurpose } from '@prisma/client';
 import { EmailService } from './email';
 
 export interface GenerateOTPData {

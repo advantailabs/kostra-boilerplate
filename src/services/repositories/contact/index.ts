@@ -1,5 +1,10 @@
+import {
+  ContactPurpose,
+  ContactStatus,
+  ContactSubmission,
+  PrismaClient,
+} from '@/lib/prisma/generated/client';
 import { ContactSubmissionFilters, ContactSubmissionResponse } from '@/types/contact';
-import { ContactPurpose, ContactStatus, ContactSubmission, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

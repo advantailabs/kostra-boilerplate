@@ -1,6 +1,6 @@
 import { generateJWT } from '@/lib/auth/jwt';
+import { OtpPurpose, UserRole } from '@/lib/prisma/generated/client';
 import { comparePassword, hashPassword, validatePassword } from '@/lib/utils';
-import { OtpPurpose, UserRole } from '@prisma/client';
 import { emailOTPRepository } from '../../repositories/email-otp';
 import { createUser, getUserByEmail, updateUserByEmail } from '../../repositories/user';
 import { OTPService } from '../email/otp';
