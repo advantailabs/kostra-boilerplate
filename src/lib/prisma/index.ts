@@ -23,12 +23,17 @@ const createDatabaseUrl = () => {
   const url = new URL(baseUrl);
   url.searchParams.set('connection_limit', '5');
   url.searchParams.set('pool_timeout', '20');
-  // TODO: set this to prefer or require if in production
-  // Currently because of a bug, prefer is equal to require
-  // and will cause a connection error
-  // Ref:- https://github.com/prisma/prisma/issues/27611
-  url.searchParams.set('sslmode', 'disable');
 
+  // Currently because of a bug, prefer is equal to require
+  // and will cause a connection error in development
+  // Ref:- https://github.com/prisma/prisma/issues/27611
+  if (process.env.NODE_ENV === 'production') {
+    url.searchParams.set('sslmode', 'prefer');
+  } else {
+    url.searchParams.set('sslmode', 'disable');
+  }
+
+  console.log('Database URL:', url.toString());
   return url.toString();
 };
 
