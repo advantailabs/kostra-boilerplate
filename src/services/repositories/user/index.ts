@@ -202,7 +202,7 @@ const getUserByGoogleId = async (googleId: string) => {
   });
 };
 
-const getUserById = async (userId: string | number | null) => {
+const getUserById = async (userId: string | number | null | undefined) => {
   const id = Number(userId);
 
   if (!id || id <= 0) {

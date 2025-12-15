@@ -11,7 +11,8 @@ export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await getAuthUser(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
 
     if (!user) {

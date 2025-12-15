@@ -20,7 +20,8 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await getAuthUser(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
 
     if (!user) return unauthorizedResponse();
