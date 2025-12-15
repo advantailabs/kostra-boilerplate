@@ -33,7 +33,6 @@ const createDatabaseUrl = () => {
     url.searchParams.set('sslmode', 'disable');
   }
 
-  console.log('Database URL:', url.toString());
   return url.toString();
 };
 
