@@ -229,8 +229,7 @@ export class AuthService {
       console.error('Error during login:', error);
       return {
         success: false,
-        message:
-          error instanceof Error ? error.message : 'Failed to login. Please try again later.',
+        message: 'Login failed. Please try again later.',
       };
     }
   }
