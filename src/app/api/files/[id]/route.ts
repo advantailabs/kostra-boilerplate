@@ -1,4 +1,4 @@
-import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getAuthUser } from '@/lib/auth/jwt';
 import {
   errorResponse,
   formatZodError,
@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = await getAuthUser(request);
     const user = await getUserById(userId);
 
     if (!user) {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
 export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = await getAuthUser(request);
     const user = await getUserById(userId);
 
     if (!user) {
@@ -119,7 +119,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
 export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = await getAuthUser(request);
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();
