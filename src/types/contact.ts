@@ -1,9 +1,9 @@
+import { ContactPurpose, ContactStatus } from '@/lib/prisma/generated/client';
 import {
   ContactFormData,
   ContactSubmissionFilters,
   ContactSubmissionUpdate,
 } from '@/validations/contact';
-import { ContactPurpose, ContactStatus } from '@prisma/client';
 
 // ContactFormData is now imported from validations
 

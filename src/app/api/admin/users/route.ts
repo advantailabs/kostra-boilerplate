@@ -1,3 +1,4 @@
+import { UserPlan, UserRole } from '@/lib/prisma/generated/client';
 import {
   errorResponse,
   formatZodError,
@@ -8,7 +9,6 @@ import {
 } from '@/lib/utils';
 import { createUser, getUsersWithFilters, UserFilterOptions } from '@/services/repositories/user';
 import { createUserSchema } from '@/validations/admin';
-import { UserPlan, UserRole } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // Force dynamic rendering for this API route

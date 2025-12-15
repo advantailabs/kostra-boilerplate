@@ -2,8 +2,8 @@
 /* eslint-disable vars-on-top */
 /* eslint-disable no-undef */
 /* eslint-disable no-var */
-import { PrismaClient } from '@prisma/client';
-
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/client';
 declare global {
   // eslint-disable-next-line no-var
   // eslint-disable-next-line no-unused-vars
@@ -23,19 +23,25 @@ const createDatabaseUrl = () => {
   const url = new URL(baseUrl);
   url.searchParams.set('connection_limit', '5');
   url.searchParams.set('pool_timeout', '20');
-  url.searchParams.set('sslmode', 'prefer');
+
+  // Currently because of a bug, prefer is equal to require
+  // and will cause a connection error in development
+  // Ref:- https://github.com/prisma/prisma/issues/27611
+  if (process.env.NODE_ENV === 'production' && process.env.TEST_MODE !== 'true') {
+    url.searchParams.set('sslmode', 'prefer');
+  } else {
+    url.searchParams.set('sslmode', 'disable');
+  }
 
   return url.toString();
 };
 
+const adapter = new PrismaPg({ connectionString: createDatabaseUrl() });
+
 export const prisma: PrismaClient =
   globalThis.prisma ||
   new PrismaClient({
-    datasources: {
-      db: {
-        url: createDatabaseUrl(),
-      },
-    },
+    adapter,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 

@@ -1,11 +1,11 @@
-import { Decimal } from '@prisma/client/runtime/library';
+import { Prisma } from '@/lib/prisma/generated/client';
 
 // Database operation types
 export interface CreatePackageData {
   title: string;
   description: string;
   isFeatured?: boolean;
-  price: Decimal;
+  price: Prisma.Decimal;
   currencySymbol?: string;
   features: string[];
 }
@@ -14,7 +14,7 @@ export interface UpdatePackageData {
   title?: string;
   description?: string;
   isFeatured?: boolean;
-  price?: Decimal;
+  price?: Prisma.Decimal;
   currencySymbol?: string;
   features?: string[];
 }

@@ -2,6 +2,9 @@ import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  devIndicators: { position: 'bottom-right' },
+  transpilePackages: ['@prisma/adapter-pg', '@prisma/client', 'prisma'],
+
   images: {
     remotePatterns: [
       {

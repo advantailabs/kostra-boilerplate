@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@/lib/prisma/generated/client';
 import { isValidJWTToken } from './auth';
 
 // Validation utilities for tests

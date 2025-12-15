@@ -1,4 +1,4 @@
-import { OtpPurpose, UserPlan, UserRole } from '@prisma/client';
+import { OtpPurpose, UserPlan, UserRole } from '@/lib/prisma/generated/client';
 import request from 'supertest';
 import { hashPassword } from '../../lib/utils/password/password';
 import { createTestUser, testPrisma } from '../setup';

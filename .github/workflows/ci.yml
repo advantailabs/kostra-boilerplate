@@ -1,145 +1,145 @@
 name: PR Validation
 
 on:
-    pull_request:
-        branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
 
 jobs:
-    validate:
-        name: Validate PR
-        runs-on: ubuntu-latest
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
 
-        services:
-            postgres:
-                image: postgres:16-alpine
-                env:
-                    POSTGRES_USER: postgres
-                    POSTGRES_PASSWORD: postgres
-                    POSTGRES_DB: peon_test
-                ports:
-                    - 5433:5432
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
-
+    services:
+      postgres:
+        image: postgres:16-alpine
         env:
-            # Database
-            POSTGRES_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
-            DATABASE_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: peon_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-            # App Configuration
-            NODE_ENV: test
-            TEST_MODE: true
-            NEXT_RUNTIME: node
-            NEXT_PUBLIC_APP_URL: http://localhost:3001
-            TEST_APP_URL: http://localhost:3001
-            PORT: 3001
+    env:
+      # Database Test Credentials
+      POSTGRES_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5433/peon_test?schema=public
 
-            # Authentication
-            JWT_SECRET: ${{ secrets.JWT_SECRET }}
-            JWT_KEY: ${{ secrets.JWT_KEY }}
+      # App Configuration
+      NODE_ENV: test
+      TEST_MODE: true
+      NEXT_RUNTIME: node
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
+      TEST_APP_URL: http://localhost:3001
+      PORT: 3001
 
-            # OpenAI
-            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Authentication
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
 
-            # R2 Configuration
-            R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-            R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-            R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-            NEXT_PUBLIC_R2_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_R2_PUBLIC_BASE_URL }}
-            NEXT_PUBLIC_R2_PRIVATE_BASE_URL: ${{ secrets.NEXT_PUBLIC_R2_PRIVATE_BASE_URL }}
+      # OpenAI
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-            # Stripe Configuration
-            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
-            STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-            STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-            STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
-            STRIPE_CREDIT_PACK_PRICE_ID: ${{ secrets.STRIPE_CREDIT_PACK_PRICE_ID }}
+      # R2 Configuration
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      NEXT_PUBLIC_R2_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_R2_PUBLIC_BASE_URL }}
+      NEXT_PUBLIC_R2_PRIVATE_BASE_URL: ${{ secrets.NEXT_PUBLIC_R2_PRIVATE_BASE_URL }}
 
-            # Sentry
-            NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+      # Stripe Configuration
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
+      STRIPE_CREDIT_PACK_PRICE_ID: ${{ secrets.STRIPE_CREDIT_PACK_PRICE_ID }}
 
-            # Google OAuth
-            NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+      # Sentry
+      NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
 
-            # Email Configuration
-            EMAIL_DRIVER: ${{ secrets.EMAIL_DRIVER }}
-            FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
-            FROM_EMAIL_NAME: ${{ secrets.FROM_EMAIL_NAME }}
-            RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      # Google OAuth
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
 
-            # AWS Configuration
-            AWS_REGION: ${{ secrets.AWS_REGION }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # Email Configuration
+      EMAIL_DRIVER: ${{ secrets.EMAIL_DRIVER }}
+      FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+      FROM_EMAIL_NAME: ${{ secrets.FROM_EMAIL_NAME }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
-            # File Storage
-            NEXT_PUBLIC_FILE_STORAGE_DRIVER: ${{ secrets.NEXT_PUBLIC_FILE_STORAGE_DRIVER }}
-            S3_PUBLIC_BUCKET_NAME: ${{ secrets.S3_PUBLIC_BUCKET_NAME }}
-            S3_PRIVATE_BUCKET_NAME: ${{ secrets.S3_PRIVATE_BUCKET_NAME }}
-            NEXT_PUBLIC_S3_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE_URL }}
+      # AWS Configuration
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-              with:
-                  version: 10
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: "pnpm"
-            - name: Install dependencies
-              run: pnpm install
+      # File Storage
+      NEXT_PUBLIC_FILE_STORAGE_DRIVER: ${{ secrets.NEXT_PUBLIC_FILE_STORAGE_DRIVER }}
+      S3_PUBLIC_BUCKET_NAME: ${{ secrets.S3_PUBLIC_BUCKET_NAME }}
+      S3_PRIVATE_BUCKET_NAME: ${{ secrets.S3_PRIVATE_BUCKET_NAME }}
+      NEXT_PUBLIC_S3_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE_URL }}
 
-            - name: Generate Prisma Client
-              run: npx prisma generate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Wait for PostgreSQL
-              run: |
-                  until pg_isready -h localhost -p 5433 -U postgres; do
-                    echo "Waiting for PostgreSQL..."
-                    sleep 2
-                  done
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
-            - name: Setup test database
-              run: |
-                  npx prisma migrate reset --force --skip-seed
-                  npx prisma migrate deploy
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5433 -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
-            - name: Run linting (Required for merge)
-              run: pnpm run lint
+      - name: Setup test database
+        run: |
+          npx prisma migrate reset --force
+          npx prisma migrate deploy
 
-            - name: Start test app
-              run: |
-                  pnpm run build
-                  PORT=3001 pnpm start &
+      - name: Run linting (Required for merge)
+        run: pnpm run lint
 
-                  echo "Waiting for app to be ready..."
-                  for i in {1..15}; do
-                    if curl -s http://localhost:3001 > /dev/null; then
-                      echo "App is up!"
-                      exit 0
-                    fi
-                    echo "Waiting... ($i)"
-                    sleep 2
-                  done
+      - name: Start test app
+        run: |
+          pnpm run build
+          PORT=3001 pnpm start &
 
-                  echo "App failed to start in time"
-                  exit 1
+          echo "Waiting for app to be ready..."
+          for i in {1..15}; do
+            if curl -s http://localhost:3001 > /dev/null; then
+              echo "App is up!"
+              exit 0
+            fi
+            echo "Waiting... ($i)"
+            sleep 2
+          done
 
-            - name: Run tests (Required for merge)
-              run: pnpm run test
+          echo "App failed to start in time"
+          exit 1
 
-            - name: Upload test coverage
-              uses: codecov/codecov-action@v4
-              if: success()
-              with:
-                  file: ./coverage/lcov.info
-                  flags: unittests
-                  name: codecov-umbrella
-                  fail_ci_if_error: false
+      - name: Run tests (Required for merge)
+        run: pnpm run test
+
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false

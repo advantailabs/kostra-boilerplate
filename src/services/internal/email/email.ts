@@ -1,6 +1,6 @@
 import { getEmailDriver } from '@/lib/email/factory';
 import { getOTPEmailTemplate } from '@/lib/email/templates';
-import { OtpPurpose } from '@prisma/client';
+import { OtpPurpose } from '@/lib/prisma/generated/client';
 
 export interface SendEmailData {
   to: string;

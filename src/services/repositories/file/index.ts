@@ -1,6 +1,6 @@
 import { prisma as sharedPrisma } from '@/lib/prisma';
+import { File, PrismaClient } from '@/lib/prisma/generated/client';
 import type { File as FileType } from '@/types/file';
-import { File, PrismaClient } from '@prisma/client';
 
 // Repository result type
 interface RepositoryResult<T> {

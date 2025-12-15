@@ -1,4 +1,4 @@
-import { UserPlan, UserRole } from '@prisma/client';
+import { UserPlan, UserRole } from '@/lib/prisma/generated/client';
 import {
   createGoogleOnlyTestUser,
   createInvalidLoginData,

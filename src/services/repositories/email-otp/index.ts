@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { OtpPurpose } from '@prisma/client';
+import { OtpPurpose } from '@/lib/prisma/generated/client';
 
 export interface CreateEmailOTPData {
   email: string;

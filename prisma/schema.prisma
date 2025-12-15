@@ -2,11 +2,11 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/lib/prisma/generated"
 }
 
 enum UserRole {
@@ -42,68 +42,65 @@ enum ContactStatus {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  googleId       String?         @unique
-  name           String
-  email          String          @unique
-  password       String?         // Hashed password for non-Google users
-  profilePicture String? // URL to the profile picture
-  role           UserRole        @default(USER)
-  isOnboarded    Boolean         @default(false)
-  credits        Float           @default(100.0) // Available credits
-  stripeCustomerId String?       @unique
-  plan           UserPlan        @default(FREE)
-  isOverDue      Boolean         @default(false)
-  planExpiringAt DateTime?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  deletedAt      DateTime? // Soft delete
-  files          File[]
-  creditHistory  CreditHistory[]
-  blogs          Blog[]
-  contactSubmissions ContactSubmission[]
-}
-
-
-model Package {
-  id            Int      @id @default(autoincrement())
-  title         String
-  description   String
-  isFeatured    Boolean  @default(false)
-  price         Decimal
-  currencySymbol String  @default("$")
-  features      Json     // JSON array of features
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-
-
-model File {
   id                 Int                 @id @default(autoincrement())
-  userId             Int?
-  filename           String
-  originalName       String
-  mimeType           String
-  size               Int // File size in bytes
-  url                String? // Storage URL (S3, Supabase, etc.)
-  metadata           Json? // Additional file metadata
+  googleId           String?             @unique
+  name               String
+  email              String              @unique
+  password           String? // Hashed password for non-Google users
+  profilePicture     String? // URL to the profile picture
+  role               UserRole            @default(USER)
+  isOnboarded        Boolean             @default(false)
+  credits            Float               @default(100.0) // Available credits
+  stripeCustomerId   String?             @unique
+  plan               UserPlan            @default(FREE)
+  isOverDue          Boolean             @default(false)
+  planExpiringAt     DateTime?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   deletedAt          DateTime? // Soft delete
-  user               User?               @relation(fields: [userId], references: [id])
+  files              File[]
+  creditHistory      CreditHistory[]
+  blogs              Blog[]
+  contactSubmissions ContactSubmission[]
+}
+
+model Package {
+  id             Int      @id @default(autoincrement())
+  title          String
+  description    String
+  isFeatured     Boolean  @default(false)
+  price          Decimal
+  currencySymbol String   @default("$")
+  features       Json // JSON array of features
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model File {
+  id           Int       @id @default(autoincrement())
+  userId       Int?
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int // File size in bytes
+  url          String? // Storage URL (S3, Supabase, etc.)
+  metadata     Json? // Additional file metadata
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime? // Soft delete
+  user         User?     @relation(fields: [userId], references: [id])
 }
 
 model CreditHistory {
-  id                Int                   @id @default(autoincrement())
-  userId            Int
-  type              CreditTransactionType
-  operation         CreditOperation
-  amount            Float // Amount of credits (positive for credit, negative for debit)
-  balanceAfter      Float // Balance after this transaction
-  objectId          String? // Related object ID (messageId, searchQueryId, etc.)
-  description       String? // Optional description
-  createdAt         DateTime              @default(now())
+  id           Int                   @id @default(autoincrement())
+  userId       Int
+  type         CreditTransactionType
+  operation    CreditOperation
+  amount       Float // Amount of credits (positive for credit, negative for debit)
+  balanceAfter Float // Balance after this transaction
+  objectId     String? // Related object ID (messageId, searchQueryId, etc.)
+  description  String? // Optional description
+  createdAt    DateTime              @default(now())
 
   user User @relation(fields: [userId], references: [id])
 
@@ -168,22 +165,22 @@ model EmailOTP {
 }
 
 model ContactSubmission {
-  id          Int           @id @default(autoincrement())
-  uuid        String        @unique @default(dbgenerated("gen_random_uuid()"))
-  userId      Int?          // Optional - if user is logged in
-  name        String
-  email       String
-  purpose     ContactPurpose
-  message     String
-  status      ContactStatus @default(NEW)
-  adminNotes  String?       // Admin can add notes
-  resolvedAt  DateTime?     // When the issue was resolved
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  deletedAt   DateTime?     // Soft delete
-  
-  user        User?         @relation(fields: [userId], references: [id])
-  
+  id         Int            @id @default(autoincrement())
+  uuid       String         @unique @default(dbgenerated("gen_random_uuid()"))
+  userId     Int? // Optional - if user is logged in
+  name       String
+  email      String
+  purpose    ContactPurpose
+  message    String
+  status     ContactStatus  @default(NEW)
+  adminNotes String? // Admin can add notes
+  resolvedAt DateTime? // When the issue was resolved
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  deletedAt  DateTime? // Soft delete
+
+  user User? @relation(fields: [userId], references: [id])
+
   @@index([status])
   @@index([purpose])
   @@index([createdAt])

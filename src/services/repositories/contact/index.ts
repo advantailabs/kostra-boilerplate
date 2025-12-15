@@ -1,7 +1,6 @@
+import { prisma } from '@/lib/prisma';
+import { ContactPurpose, ContactStatus, ContactSubmission } from '@/lib/prisma/generated/client';
 import { ContactSubmissionFilters, ContactSubmissionResponse } from '@/types/contact';
-import { ContactPurpose, ContactStatus, ContactSubmission, PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export interface ContactRepository {
   create(_data: {

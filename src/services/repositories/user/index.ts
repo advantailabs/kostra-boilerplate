@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { UserPlan, UserRole } from '@prisma/client';
+import { UserPlan, UserRole } from '@/lib/prisma/generated/client';
 
 export interface GoogleUserUpdate {
   googleId?: string;
