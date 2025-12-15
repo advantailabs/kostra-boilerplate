@@ -117,7 +117,7 @@ jobs:
       - name: Start test app
         run: |
           pnpm run build
-          PORT=3001 NODE_ENV=test pnpm start &
+          PORT=3001 pnpm start &
 
           echo "Waiting for app to be ready..."
           for i in {1..15}; do
