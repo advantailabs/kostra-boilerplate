@@ -1,4 +1,4 @@
-import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getAuthUser } from '@/lib/auth/jwt';
 import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
 import { stripe } from '@/services/external/stripe/stripe';
 import { getUserById, setUserStripeCustomerId } from '@/services/repositories/user';
@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();

@@ -11,7 +11,7 @@ import { getUserFilesService, uploadFileService } from '@/services/internal/file
 import { getFilesSchema, uploadFilesSchema } from '@/validations/files';
 import { NextRequest } from 'next/server';
 
-import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getAuthUser } from '@/lib/auth/jwt';
 import { getTotalFilesCount } from '@/services/repositories/file';
 import { getUserById } from '@/services/repositories/user';
 
@@ -41,7 +41,8 @@ if (typeof global.File === 'undefined') {
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();
@@ -85,7 +86,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();

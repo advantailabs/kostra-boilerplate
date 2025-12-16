@@ -1,4 +1,4 @@
-import { getUserIdFromHeaders } from '@/lib/auth/jwt';
+import { getAuthUser } from '@/lib/auth/jwt';
 import {
   errorResponse,
   forbiddenResponse,
@@ -19,7 +19,8 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
     if (!user) {
       return unauthorizedResponse();

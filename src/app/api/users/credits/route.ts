@@ -1,7 +1,7 @@
 // Using standardized response helpers
+import { getAuthUser } from '@/lib/auth/jwt';
 import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
 
-import { getUserIdFromHeaders } from '@/lib/auth/jwt';
 import { CreditService } from '@/services/internal/credit';
 import { getUserById } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
@@ -11,7 +11,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = getUserIdFromHeaders(request);
+    const { userId } = (await getAuthUser(request)) || {};
+
     const user = await getUserById(userId);
 
     if (!user) {
