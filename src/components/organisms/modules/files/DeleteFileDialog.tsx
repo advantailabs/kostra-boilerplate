@@ -37,7 +37,7 @@ export function DeleteFileDialog({
       actionType="delete"
       isLoading={isDeleting}
       onSuccess={onSuccess}
-      warningMessage={`Are you sure you want to permanently delete <strong>${fileName}</strong>? This will delete the file from storage. This action cannot be undone.`}
+      warningMessage={`This will permanently delete the file from storage and is irreversible`}
     />
   );
 }
