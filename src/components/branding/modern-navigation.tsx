@@ -39,7 +39,7 @@ export function ModernNavigation() {
 
       // Only track sections when on landing page and after initialization
       if (pathname === '/' && hasInitialized) {
-        const sections = ['home', 'product', 'features', 'security', 'pricing', 'cta'];
+        const sections = ['home', 'product', 'features', 'architecture', 'pricing', 'cta'];
         const scrollPosition = window.scrollY + 100; // Offset for fixed header
 
         let currentSection = '';
@@ -78,11 +78,11 @@ export function ModernNavigation() {
   }, [pathname, hasInitialized]);
 
   const navItems = [
-    { name: 'Pricing', href: '/#pricing', section: 'pricing' },
-    { name: 'Product', href: '/#product', section: 'product' },
+    { name: 'Home', href: '/', section: 'home' },
     { name: 'Features', href: '/#features', section: 'features' },
-    { name: 'Security', href: '/#security', section: 'security' },
-  ];
+    { name: 'Why Kostra', href: '/#architecture', section: 'architecture' },
+    { name: 'Blog', href: '/blog', section: '' },
+    { name: 'Pricing', href: '/#pricing', section: 'pricing' },]
 
   const isActive = (item: { href: string; section: string }) => {
     // For anchor links on landing page, check if this section is currently in view

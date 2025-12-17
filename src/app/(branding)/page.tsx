@@ -1,8 +1,9 @@
+import { ArchitectureSection } from '@/components/branding/architecture-section';
 import { CTASection } from '@/components/branding/cta-section';
+import { FeaturesSection } from '@/components/branding/features-section';
 import { InnovativeHero } from '@/components/branding/innovative-hero';
 import { MinimalFeatures } from '@/components/branding/minimal-features';
 import { PricingSection } from '@/components/branding/pricing-section';
-import { SecuritySection } from '@/components/branding/security-section';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -137,9 +138,14 @@ export default function HomePage() {
           <MinimalFeatures />
         </section>
 
-        <section id="security">
-          <SecuritySection />
+        <section id="features-detailed">
+          <FeaturesSection />
         </section>
+
+        <section id="architecture">
+          <ArchitectureSection />
+        </section>
+
 
         <section id="pricing">
           <PricingSection />

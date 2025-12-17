@@ -188,7 +188,7 @@ export function MinimalFooter() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-text sm:gap-6 sm:text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 sm:gap-6 sm:text-sm">
             <span>© {new Date().getFullYear()} Next.js Boilerplate. All rights reserved.</span>
             <Link
               href={siteConfig.baseLinks.privacy}
