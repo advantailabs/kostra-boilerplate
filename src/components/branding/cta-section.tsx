@@ -28,7 +28,7 @@ export function CTASection() {
             <h3 className="mb-4 text-2xl font-light text-white sm:mb-6 sm:text-3xl md:text-4xl">
               Ready to get started?
             </h3>
-            <p className="mb-8 text-lg text-gray-800 sm:mb-10 sm:text-xl">
+            <p className="mb-8 text-lg text-gray-400 sm:mb-10 sm:text-xl">
               Join developers who are building faster with our comprehensive Next.js boilerplate.
             </p>
 
@@ -38,7 +38,7 @@ export function CTASection() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 hover:bg-gray-900 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
+                    className="w-full rounded-lg bg-white px-6 py-3 text-base font-medium text-black transition-all duration-300 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
                   >
                     Go to App
                   </motion.button>

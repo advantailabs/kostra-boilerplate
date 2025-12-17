@@ -28,7 +28,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 group relative rounded-full border px-4 py-2 text-sm leading-6 text-gray-200 backdrop-blur-sm transition-all">
+            <div className="border-gray-500/20  bg-white/5 hover:border-white/20 hover:bg-white/10 group relative rounded-full border px-4 py-2 text-sm leading-6 text-gray-200 backdrop-blur-sm transition-all">
               Announcing our next generation platform
               <span className="ml-2 text-blue-400 transition-colors group-hover:text-blue-300">
                 →

@@ -50,7 +50,7 @@ export function MinimalFooter() {
   const { user } = useAuthStore();
 
   return (
-    <footer className="border-white/5 border-t bg-black">
+    <footer className="border-gray-500/20 border-t bg-black">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Main footer content */}
         <div className="py-12 sm:py-16">
@@ -76,7 +76,7 @@ export function MinimalFooter() {
                   </div>
                 </div>
 
-                <p className="mb-6 max-w-md leading-relaxed text-gray-800 sm:mb-8 sm:text-sm">
+                <p className="mb-6 max-w-md leading-relaxed text-gray-400 sm:mb-8 sm:text-sm">
                   A comprehensive Next.js boilerplate with modern features, authentication, and
                   scalable architecture.
                 </p>
@@ -115,7 +115,7 @@ export function MinimalFooter() {
                     <motion.a
                       key={social.name}
                       href={social.href}
-                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-gray-400 transition-all duration-200 hover:border-white/20 hover:text-white"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-500/20  bg-white/5 text-gray-400 transition-all duration-200 hover:border-white/20 hover:text-white"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -152,7 +152,7 @@ export function MinimalFooter() {
                               return (
                                 <Link
                                   href={link.href}
-                                  className="text-xs text-gray-900 transition-colors duration-200 hover:text-white sm:text-sm"
+                                  className="text-xs text-gray-400 transition-colors duration-200 hover:text-white sm:text-sm"
                                 >
                                   {link.name}
                                 </Link>
@@ -161,9 +161,9 @@ export function MinimalFooter() {
                             return (
                               <Link
                                 href={link.href}
-                                className={`text-xs transition-colors duration-200 sm:text-sm ${link.name === 'Privacy Policy' || link.name === 'Terms of Service'
-                                    ? 'font-medium text-gray-900 underline hover:text-white'
-                                    : 'text-gray-900 hover:text-white'
+                                className={`text-xs transition-colors duration-200 sm:text-sm  text-gray-400 hover:text-white ${link.name === 'Privacy Policy' || link.name === 'Terms of Service'
+                                  ? 'font-medium  underline'
+                                  : ''
                                   }`}
                               >
                                 {link.name}
@@ -182,7 +182,7 @@ export function MinimalFooter() {
 
         {/* Bottom section */}
         <motion.div
-          className="border-white/5 flex flex-col items-center justify-between gap-4 border-t py-6 sm:py-8 md:flex-row"
+          className="border-gray-500/20 flex flex-col items-center justify-between gap-4 border-t py-6 sm:py-8 md:flex-row"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}

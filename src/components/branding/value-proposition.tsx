@@ -122,7 +122,7 @@ export function ValueProposition() {
             {valueProps.map((prop, index) => (
               <motion.div
                 key={prop.title}
-                className="border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 group relative overflow-hidden rounded-2xl border p-8 backdrop-blur-sm transition-all"
+                className="border-gray-500/20  bg-white/5 hover:border-white/20 hover:bg-white/10 group relative overflow-hidden rounded-2xl border p-8 backdrop-blur-sm transition-all"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}

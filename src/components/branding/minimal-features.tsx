@@ -66,7 +66,7 @@ export function MinimalFeatures() {
           <h2 className="mb-4 text-3xl font-light text-white sm:mb-6 sm:text-4xl md:text-5xl">
             Everything You Need
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-800 sm:text-xl">
+          <p className="mx-auto max-w-2xl text-lg text-gray-400 sm:text-xl">
             A complete Next.js boilerplate with all the essential features to get your application
             up and running quickly. Focus on your business logic, not the infrastructure.
           </p>
@@ -87,10 +87,10 @@ export function MinimalFeatures() {
                   <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
-                  <h3 className="mb-2 text-lg font-medium text-white transition-colors duration-300 group-hover:text-gray-900 sm:mb-3 sm:text-xl">
+                  <h3 className="mb-2 text-lg font-medium text-white transition-colors duration-300 group-hover:text-gray-300 sm:mb-3 sm:text-xl">
                     {feature.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-gray-800 sm:text-base">
+                  <p className="text-sm leading-relaxed text-gray-400 sm:text-base">
                     {feature.description}
                   </p>
                 </div>
