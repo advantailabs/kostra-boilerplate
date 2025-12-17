@@ -67,10 +67,10 @@ export function BlogModal({
           }
         }}
       >
-        <DialogContent className="custom-modal-class max-w-screen z-[1000] flex h-screen max-h-screen w-screen flex-col border-border bg-background p-0 shadow-2xl">
+        <DialogContent className="custom-modal-class max-w-screen z-[1000] flex h-screen max-h-screen w-screen flex-col border-border bg-background  p-0 shadow-2xl">
           <div className="flex h-full flex-col">
             {/* Header */}
-            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
+            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3 bg-white dark:bg-background-light">
               <DialogTitle className="text-lg font-medium text-text max-sm:pr-12">
                 {mode === 'create' ? 'Create Blog' : 'Edit Blog'}
               </DialogTitle>

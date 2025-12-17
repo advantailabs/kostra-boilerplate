@@ -11,7 +11,7 @@ const switchVariants = tv({
     root: [
       // base
       'group relative isolate inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5 bg-red outline-none  transition-all',
-      'bg-gray-300 dark:bg-gray-950',
+      'bg-gray-300 dark:bg-background-light dark:border dark:border-border',
       // checked
       'data-[state=checked]:bg-primary',
       // disabled
