@@ -118,7 +118,7 @@ const config: Config = {
         black: 'var(--black)',
         // Semantic color mappings
         primary: {
-          DEFAULT: 'var(--primary)',
+          DEFAULT: 'hsl(var(--primary)/<alpha-value>)',
           hover: 'var(--primary-hover)',
         },
         secondary: {

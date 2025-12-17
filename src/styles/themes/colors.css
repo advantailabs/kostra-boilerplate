@@ -15,7 +15,7 @@
   --border: hsl(220 10% 75%); /* Main border */
   --border-muted: hsl(220 10% 65%); /* Muted border */
 
-  --primary: hsl(0, 100%, 67%); /* Primary color */
+  --primary: 0 100% 67%; /* Primary color */
   --primary-hover: hsl(0, 100%, 72%); /* Primary hover */
   --secondary: hsl(84 50% 45%); /* Secondary color - yellow-green */
   --secondary-hover: hsl(84 50% 40%); /* Secondary hover */
@@ -152,7 +152,7 @@
   --border: hsl(220 15% 20%); /* Main border */
   --border-muted: hsl(220 15% 15%); /* Muted border */
 
-  --primary: hsl(0, 100%, 67%); /* Primary color */
+  --primary: 0 100% 67%; /* Primary color */
   --primary-hover: hsl(0, 100%, 72%); /* Primary hover */
   --secondary: hsl(84 50% 70%); /* Secondary color */
   --secondary-hover: hsl(84 50% 75%); /* Secondary hover */
@@ -276,7 +276,7 @@
 
 /* Utility classes for easy access to color variables */
 .bg-primary {
-  background-color: var(--primary);
+  background-color: hsl(var(--primary));
 }
 .bg-secondary {
   background-color: var(--secondary);
