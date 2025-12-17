@@ -10,12 +10,10 @@ const switchVariants = tv({
   slots: {
     root: [
       // base
-      'group relative isolate inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5 shadow-inner outline-none ring-1 ring-inset transition-all',
-      'bg-gray-200 dark:bg-gray-950',
-      // ring color
-      'ring-black/5 dark:ring-gray-800',
+      'group relative isolate inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5 bg-red outline-none  transition-all',
+      'bg-gray-300 dark:bg-gray-950',
       // checked
-      'data-[state=checked]:bg-indigo-600 data-[state=checked]:dark:bg-indigo-600',
+      'data-[state=checked]:bg-primary',
       // disabled
       'data-[disabled]:cursor-default',
       // disabled checked
@@ -61,7 +59,7 @@ const switchVariants = tv({
 
 interface SwitchProps
   extends Omit<React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>, 'asChild'>,
-    VariantProps<typeof switchVariants> {}
+  VariantProps<typeof switchVariants> { }
 
 const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, SwitchProps>(
   ({ className, size, ...props }: SwitchProps, forwardedRef) => {

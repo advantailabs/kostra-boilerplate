@@ -144,7 +144,7 @@ export default function ContactManagementPage() {
             <Button
               variant="ghost"
               onClick={clearFilters}
-              className="border px-2 py-1 text-indigo-600 sm:border-0 dark:text-indigo-500"
+              className="border px-2 py-1 text-primary sm:border-0"
             >
               Clear filters
             </Button>
