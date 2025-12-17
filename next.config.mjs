@@ -33,15 +33,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'peon.sh',
+        hostname: 'kostra.sh',
       },
       {
         protocol: 'https',
-        hostname: 'public-storage.peon.sh',
+        hostname: 'public-storage.kostra.sh',
       },
       {
         protocol: 'https',
-        hostname: 'private-storage.peon.sh',
+        hostname: 'private-storage.kostra.sh',
       },
       {
         protocol: 'https',
@@ -53,11 +53,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'peon-data.s3.amazonaws.com',
+        hostname: 'kostra-data.s3.amazonaws.com',
       },
       {
         protocol: 'https',
-        hostname: 'peon-data-public.s3.amazonaws.com',
+        hostname: 'kostra-data-public.s3.amazonaws.com',
       },
     ],
   },
@@ -122,7 +122,7 @@ export default withSentryConfig(nextConfig, {
 
   org: 'advant-xi',
 
-  project: 'peon',
+  project: 'kostra',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

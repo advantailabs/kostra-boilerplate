@@ -22,7 +22,7 @@ export class EmailService {
   static async sendEmail(data: SendEmailData): Promise<void> {
     const emailDriver = getEmailDriver();
 
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@peon.app';
+    const fromEmail = process.env.FROM_EMAIL || 'noreply@kostra.app';
     const fromEmailName = process.env.FROM_EMAIL_NAME || 'Kostra';
 
     await emailDriver.send({

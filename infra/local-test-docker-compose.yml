@@ -1,17 +1,17 @@
 services:
   postgres-test:
     image: postgres:16-alpine
-    container_name: peon-postgres-test
+    container_name: kostra-postgres-test
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=peon_test
+      - POSTGRES_DB=kostra_test
     ports:
       - "5433:5432"
     volumes:
       - ./data/pgdata_test:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d peon_test"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kostra_test"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -20,11 +20,11 @@ services:
     build:
       context: ..
       dockerfile: infra/Dockerfile-local.dockerfile
-    container_name: peon-app-test
+    container_name: kostra-app-test
     environment:
       - NODE_ENV=test
       - HOST=0.0.0.0
-      - POSTGRES_URL=postgresql://postgres:postgres@postgres-test:5432/peon_test?schema=public
+      - POSTGRES_URL=postgresql://postgres:postgres@postgres-test:5432/kostra_test?schema=public
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
     ports:

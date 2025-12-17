@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description:
       'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
     type: 'website',
-    url: 'https://peon.ai',
+    url: 'https://kostra.ai',
   },
   twitter: {
     card: 'summary_large_image',

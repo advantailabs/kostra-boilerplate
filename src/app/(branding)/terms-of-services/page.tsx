@@ -241,7 +241,7 @@ export default function TermsOfServicePage() {
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
                 <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
-                  <p className="text-sm sm:text-base">Email: hi@peon.sh</p>
+                  <p className="text-sm sm:text-base">Email: hi@kostra.sh</p>
                 </div>
               </section>
             </div>

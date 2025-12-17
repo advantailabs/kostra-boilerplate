@@ -9,10 +9,10 @@ export const metadata: Metadata = {
     description:
       'Privacy Policy for Kostra - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
     type: 'article',
-    url: 'https://peon.sh/privacy-policy',
+    url: 'https://kostra.sh/privacy-policy',
   },
   alternates: {
-    canonical: 'https://peon.sh/privacy-policy',
+    canonical: 'https://kostra.sh/privacy-policy',
   },
   robots: {
     index: true,
@@ -48,12 +48,12 @@ export default function PrivacyPolicyPage() {
             '@type': 'WebPage',
             name: 'Privacy Policy',
             description: 'Privacy Policy for Kostra - Your Personal AI Assistant',
-            url: 'https://peon.sh/privacy-policy',
+            url: 'https://kostra.sh/privacy-policy',
             dateModified: lastUpdated,
             isPartOf: {
               '@type': 'WebSite',
               name: 'Kostra',
-              url: 'https://peon.sh',
+              url: 'https://kostra.sh',
             },
             mainEntity: {
               '@type': 'Article',
@@ -63,7 +63,7 @@ export default function PrivacyPolicyPage() {
               author: {
                 '@type': 'Organization',
                 name: 'Kostra',
-                url: 'https://peon.sh',
+                url: 'https://kostra.sh',
               },
             },
           }),
@@ -436,7 +436,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
                   <p className="text-sm sm:text-base">
-                    <strong>Email:</strong> hi@peon.sh
+                    <strong>Email:</strong> hi@kostra.sh
                   </p>
                 </div>
               </section>

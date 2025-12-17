@@ -97,7 +97,7 @@ export default function ContactPage() {
                   <Mail className="mt-1 h-5 w-5 text-text-muted" />
                   <div>
                     <h3 className="font-semibold text-white">Email Support</h3>
-                    <p className="text-text">hi@peon.sh</p>
+                    <p className="text-text">hi@kostra.sh</p>
                   </div>
                 </div>
               </CardContent>

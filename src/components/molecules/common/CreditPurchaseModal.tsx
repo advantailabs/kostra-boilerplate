@@ -60,10 +60,10 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
         <p className="text-sm text-text-muted">
           Contact{' '}
           <a
-            href="mailto:hi@peon.io?subject=Enterprise%20Plan%20Inquiry"
+            href="mailto:hi@kostra.io?subject=Enterprise%20Plan%20Inquiry"
             className="font-medium underline underline-offset-2"
           >
-            hi@peon.io
+            hi@kostra.io
           </a>{' '}
           for enterprise
         </p>
