@@ -11,24 +11,24 @@ import '../globals.css';
 // const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Kostra - Your Personal AI Kostra',
+  title: 'Kostra - Modern Next.js SaaS Boilerplate',
   description:
-    'Transform scattered information into actionable intelligence with AI-powered knowledge assistants. Trusted by hundreds of organizations worldwide.',
+    'A comprehensive Next.js SaaS boilerplate with authentication, file management, billing, and scalable architecture. Built with TypeScript, Tailwind CSS, and best practices.',
   keywords:
-    'knowledge management, AI assistants, document organization, enterprise search, intelligent automation',
+    'Next.js boilerplate, SaaS template, TypeScript, Tailwind CSS, authentication, file management, Stripe integration, Prisma, React, web development',
   authors: [{ name: 'Kostra Team' }],
   openGraph: {
-    title: 'Kostra - Your Personal AI Kostra',
+    title: 'Kostra - Modern Next.js SaaS Boilerplate',
     description:
-      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
+      'A comprehensive Next.js SaaS boilerplate with authentication, file management, billing, and scalable architecture.',
     type: 'website',
-    url: 'https://kostra.ai',
+    url: 'https://kostra.io',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kostra - Your Personal AI Kostra',
+    title: 'Kostra - Modern Next.js SaaS Boilerplate',
     description:
-      'Transform scattered information into actionable intelligence with AI-powered knowledge assistants.',
+      'A comprehensive Next.js SaaS boilerplate with authentication, file management, billing, and scalable architecture.',
   },
 };
 

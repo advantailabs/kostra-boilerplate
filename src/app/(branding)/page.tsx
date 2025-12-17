@@ -146,7 +146,6 @@ export default function HomePage() {
           <ArchitectureSection />
         </section>
 
-
         <section id="pricing">
           <PricingSection />
         </section>

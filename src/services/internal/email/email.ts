@@ -22,7 +22,7 @@ export class EmailService {
   static async sendEmail(data: SendEmailData): Promise<void> {
     const emailDriver = getEmailDriver();
 
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@kostra.app';
+    const fromEmail = process.env.FROM_EMAIL || 'noreply@kostra.io';
     const fromEmailName = process.env.FROM_EMAIL_NAME || 'Kostra';
 
     await emailDriver.send({
