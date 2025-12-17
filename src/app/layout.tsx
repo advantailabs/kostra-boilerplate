@@ -21,14 +21,14 @@ export function generateMetadata(): Metadata {
   );
 
   return {
-    metadataBase: new URL('https://kostra.sh'),
+    metadataBase: new URL('https://kostra.io'),
     title: siteConfig.name,
     description: siteConfig.description,
     keywords: [],
     authors: [
       {
         name: 'Kostra',
-        url: 'https://kostra.sh',
+        url: 'https://kostra.io',
       },
     ],
     creator: 'Kostra',

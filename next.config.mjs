@@ -33,15 +33,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'kostra.sh',
+        hostname: 'kostra.io',
       },
       {
         protocol: 'https',
-        hostname: 'public-storage.kostra.sh',
+        hostname: 'public-storage.kostra.io',
       },
       {
         protocol: 'https',
-        hostname: 'private-storage.kostra.sh',
+        hostname: 'private-storage.kostra.io',
       },
       {
         protocol: 'https',
