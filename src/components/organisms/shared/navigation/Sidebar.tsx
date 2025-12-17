@@ -39,7 +39,7 @@ export function Sidebar() {
   };
 
   const currentTheme = resolvedTheme || theme;
-  const logoSrc = currentTheme === 'dark' ? '/logos/light-logo.svg' : '/logos/dark-logo.svg';
+  const logoSrc = currentTheme === 'dark' ? '/logos/light-logo.png' : '/logos/dark-logo.png';
   return (
     <>
       {/* sidebar (lg+) */}

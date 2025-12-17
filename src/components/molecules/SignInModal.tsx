@@ -100,7 +100,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
           <div className="mb-8 text-center">
             <div className="mb-4 flex justify-center">
               <Image
-                src="/logos/dark-logo.svg"
+                src="/logos/dark-logo.png"
                 alt="Kostra Logo"
                 width={52}
                 height={52}
@@ -201,7 +201,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
               <span className="text-xs text-text-muted">
                 Secured by{' '}
                 <Image
-                  src="/logos/dark-logo.svg"
+                  src="/logos/dark-logo.png"
                   alt="Kostra Logo"
                   width={50}
                   height={50}

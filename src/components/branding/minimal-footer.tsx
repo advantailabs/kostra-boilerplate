@@ -67,7 +67,7 @@ export function MinimalFooter() {
                 <div className="mb-4 flex items-center sm:mb-6">
                   <div className="h-6 w-6 sm:h-8 sm:w-8">
                     <Image
-                      src="/logos/light-logo.svg"
+                      src="/logos/light-logo.png"
                       alt="Next.js Boilerplate Logo"
                       width={80}
                       height={20}
@@ -161,11 +161,10 @@ export function MinimalFooter() {
                             return (
                               <Link
                                 href={link.href}
-                                className={`text-xs transition-colors duration-200 sm:text-sm ${
-                                  link.name === 'Privacy Policy' || link.name === 'Terms of Service'
+                                className={`text-xs transition-colors duration-200 sm:text-sm ${link.name === 'Privacy Policy' || link.name === 'Terms of Service'
                                     ? 'font-medium text-gray-900 underline hover:text-white'
                                     : 'text-gray-900 hover:text-white'
-                                }`}
+                                  }`}
                               >
                                 {link.name}
                               </Link>

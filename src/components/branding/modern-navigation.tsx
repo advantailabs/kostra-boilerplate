@@ -74,7 +74,7 @@ export function ModernNavigation() {
     }
 
     // Return empty cleanup function for cases where no event listener is added
-    return () => {};
+    return () => { };
   }, [pathname, hasInitialized]);
 
   const navItems = [
@@ -94,11 +94,10 @@ export function ModernNavigation() {
 
   return (
     <motion.nav
-      className={`fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300 ${
-        isScrolled
+      className={`fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300 ${isScrolled
           ? 'border-white/10 bg-black/80 backdrop-blur-md'
           : 'border-transparent bg-transparent'
-      }`}
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
@@ -124,7 +123,7 @@ export function ModernNavigation() {
           >
             <div className="h-6 w-6 sm:h-8 sm:w-8">
               <Image
-                src="/logos/light-logo.svg"
+                src="/logos/light-logo.png"
                 alt="Next.js Boilerplate Logo"
                 width={32}
                 height={32}
@@ -140,9 +139,8 @@ export function ModernNavigation() {
               return (
                 <Link key={item.name} href={item.href}>
                   <motion.span
-                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${
-                      active ? 'text-primary' : 'text-text hover:text-primary-hover'
-                    }`}
+                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${active ? 'text-primary' : 'text-text hover:text-primary-hover'
+                      }`}
                     whileHover={{ y: -1 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -201,11 +199,10 @@ export function ModernNavigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-                      active
+                    className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${active
                         ? 'bg-white/10 text-white'
                         : 'hover:bg-white/5 text-gray-200 hover:text-white'
-                    }`}
+                      }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
