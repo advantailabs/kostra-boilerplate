@@ -48,7 +48,7 @@ export function Sidebar() {
           <div className="flex h-8 items-center px-2">
             <Image
               src={logoSrc}
-              alt="SaaS Boilerplate Logo"
+              alt="KostraLogo"
               width={120}
               height={32}
               className="h-8 w-auto"

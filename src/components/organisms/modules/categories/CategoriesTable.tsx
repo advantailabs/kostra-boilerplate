@@ -87,7 +87,7 @@ export function CategoriesTable({
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={4} className="h-24 text-center">
+                  <TableCell colSpan={4} className="h-24 text-center !text-text-muted">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                       <span className="text-sm text-text-muted">Searching...</span>
@@ -96,7 +96,7 @@ export function CategoriesTable({
                 </TableRow>
               ) : categories.length === 0 ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={4} className="h-24 text-center">
+                  <TableCell colSpan={4} className="h-24 text-center !text-text-muted">
                     No categories found.
                   </TableCell>
                 </TableRow>

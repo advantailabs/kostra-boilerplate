@@ -97,7 +97,7 @@ export function PackagesTable({
             <TableBody>
               {isLoading && searchInput !== debouncedSearch ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center !text-text-muted">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                       <span className="text-sm text-text-muted">Searching...</span>
@@ -106,7 +106,7 @@ export function PackagesTable({
                 </TableRow>
               ) : packages.length === 0 ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center !text-text-muted">
                     No packages found.
                   </TableCell>
                 </TableRow>

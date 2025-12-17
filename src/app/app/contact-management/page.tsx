@@ -157,7 +157,7 @@ export default function ContactManagementPage() {
             <TableBody>
               {submissions.length === 0 ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center !text-text-muted">
                     No contact submissions found.
                   </TableCell>
                 </TableRow>
