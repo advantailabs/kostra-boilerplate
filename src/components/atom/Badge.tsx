@@ -11,13 +11,32 @@ const badgeVariants = tv({
   ),
   variants: {
     variant: {
-      default: ['ring-indigo-500/30 bg-indigo-50 text-indigo-800'],
-      neutral: ['ring-gray-500/30 bg-gray-50 text-gray-700'],
-      success: ['ring-emerald-600/30 bg-emerald-50 text-emerald-800'],
-      error: ['ring-red-600/20 bg-red-50 text-red-800'],
-      warning: ['ring-yellow-600/30 bg-yellow-50 text-yellow-800'],
-      info: ['ring-cyan-600/30 bg-cyan-50 text-cyan-800'],
-      primary: ['ring-purple-600/30 bg-purple-50 text-purple-800'],
+      default: [
+        'bg-indigo-50 text-indigo-800 ring-indigo-500/30',
+        'dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/30',
+      ],
+      neutral: [
+        'bg-gray-50 text-gray-700 ring-gray-500/30',
+        'dark:bg-gray-400/10 dark:text-gray-300 dark:ring-gray-400/20',
+      ],
+      success: [
+        'bg-emerald-50 text-emerald-800 ring-emerald-600/30',
+        'dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20',
+      ],
+      error: [
+        'bg-red-50 text-red-800 ring-red-600/20',
+        'dark:bg-red-400/10 dark:text-red-400 dark:ring-red-400/20',
+      ],
+      warning: [
+        'bg-yellow-50 text-yellow-800 ring-yellow-600/30',
+        'dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-400/20',
+      ],
+      info: [
+        'bg-blue-50 text-blue-800 ring-blue-600/30',
+        'dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20',
+      ],
+      primary: ['bg-purple-50 text-purple-800 ring-purple-600/30 ', 'dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/20',
+      ],
     },
   },
   defaultVariants: {
@@ -27,7 +46,7 @@ const badgeVariants = tv({
 
 interface BadgeProps
   extends React.ComponentPropsWithoutRef<'span'>,
-    VariantProps<typeof badgeVariants> {}
+  VariantProps<typeof badgeVariants> { }
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant, ...props }: BadgeProps, forwardedRef) => {
