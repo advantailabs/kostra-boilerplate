@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Peon',
+  title: 'Privacy Policy - Kostra',
   description:
-    'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+    'Privacy Policy for Kostra - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
   openGraph: {
-    title: 'Privacy Policy - Peon',
+    title: 'Privacy Policy - Kostra',
     description:
-      'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+      'Privacy Policy for Kostra - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
     type: 'article',
     url: 'https://peon.sh/privacy-policy',
   },
@@ -47,12 +47,12 @@ export default function PrivacyPolicyPage() {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'Privacy Policy',
-            description: 'Privacy Policy for Peon - Your Personal AI Assistant',
+            description: 'Privacy Policy for Kostra - Your Personal AI Assistant',
             url: 'https://peon.sh/privacy-policy',
             dateModified: lastUpdated,
             isPartOf: {
               '@type': 'WebSite',
-              name: 'Peon',
+              name: 'Kostra',
               url: 'https://peon.sh',
             },
             mainEntity: {
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
               dateModified: lastUpdated,
               author: {
                 '@type': 'Organization',
-                name: 'Peon',
+                name: 'Kostra',
                 url: 'https://peon.sh',
               },
             },
@@ -95,7 +95,7 @@ export default function PrivacyPolicyPage() {
                   1. Introduction
                 </h2>
                 <p className="text-sm sm:text-base">
-                  At Peon, we are committed to protecting your privacy and ensuring the security of
+                  At Kostra, we are committed to protecting your privacy and ensuring the security of
                   your personal information. This Privacy Policy explains how we collect, use,
                   process, and protect your information when you use our AI-powered knowledge
                   management platform.

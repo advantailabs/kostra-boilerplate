@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - Peon',
+  title: 'Terms of Service - Kostra',
   description:
-    'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+    'Terms of Service for Kostra - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
   openGraph: {
-    title: 'Terms of Service - Peon',
+    title: 'Terms of Service - Kostra',
     description:
-      'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+      'Terms of Service for Kostra - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
     type: 'article',
   },
 };
@@ -56,7 +56,7 @@ export default function TermsOfServicePage() {
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-sm sm:text-base">
-                  By accessing and using Peon ("the Service"), you accept and agree to be bound by
+                  By accessing and using Kostra ("the Service"), you accept and agree to be bound by
                   the terms and provision of this agreement. If you do not agree to abide by the
                   above, please do not use this service.
                 </p>
@@ -67,7 +67,7 @@ export default function TermsOfServicePage() {
                   2. Description of Service
                 </h2>
                 <p className="text-sm sm:text-base">
-                  Peon is an AI-powered knowledge management platform that helps organizations
+                  Kostra is an AI-powered knowledge management platform that helps organizations
                   transform scattered information into actionable intelligence through AI
                   assistants, document organization, and intelligent automation features.
                 </p>
@@ -151,7 +151,7 @@ export default function TermsOfServicePage() {
                 </h2>
                 <p className="text-sm sm:text-base">
                   The Service, including its design, functionality, and underlying technology, is
-                  owned by Peon and protected by copyright, trademark, and other intellectual
+                  owned by Kostra and protected by copyright, trademark, and other intellectual
                   property laws. You may not copy, modify, distribute, or create derivative works
                   based on the Service without our explicit written permission.
                 </p>
@@ -184,7 +184,7 @@ export default function TermsOfServicePage() {
                   9. Limitation of Liability
                 </h2>
                 <p className="text-sm sm:text-base">
-                  To the maximum extent permitted by law, Peon shall not be liable for any indirect,
+                  To the maximum extent permitted by law, Kostra shall not be liable for any indirect,
                   incidental, special, consequential, or punitive damages, or any loss of profits or
                   revenues, whether incurred directly or indirectly, or any loss of data, use,
                   goodwill, or other intangible losses resulting from your use of the Service.

@@ -1,6 +1,6 @@
 # Standardized Error Handling System
 
-This document outlines the standardized error handling system implemented across the Peon application.
+This document outlines the standardized error handling system implemented across the Kostra application.
 
 ## Overview
 
@@ -151,7 +151,7 @@ Common errors are predefined in `src/lib/utils/errors.ts`:
 ```typescript
 import { ERRORS } from '@/lib/utils/error/errors';
 
-// Examples relevant to Peon application
+// Examples relevant to Kostra application
 ERRORS.AUTH_REQUIRED;
 ERRORS.AUTH_INSUFFICIENT_CREDITS;
 ERRORS.PACKAGE_NOT_FOUND;

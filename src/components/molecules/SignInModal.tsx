@@ -101,21 +101,21 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <div className="mb-4 flex justify-center">
               <Image
                 src="/logos/dark-logo.svg"
-                alt="Peon Logo"
+                alt="Kostra Logo"
                 width={52}
                 height={52}
                 className="drop-shadow-sm"
               />
             </div>
             <h1 id="modal-title" className="mb-2 text-2xl font-bold text-text">
-              {authMode === 'signin' && 'Welcome to Peon'}
+              {authMode === 'signin' && 'Welcome to Kostra'}
               {authMode === 'signup' && 'Sign Up'}
               {authMode === 'otp-verification' && 'Verify Your Email'}
               {authMode === 'forgot-password' && 'Reset Password'}
               {authMode === 'reset-password' && 'Enter New Password'}
             </h1>
             <p className="text-center text-xs text-text-muted">
-              {authMode === 'signin' && 'Join thousands of teams already using Peon'}
+              {authMode === 'signin' && 'Join thousands of teams already using Kostra'}
               {authMode === 'signup' && 'Start your journey with us'}
               {authMode === 'otp-verification' && 'Complete your account setup'}
               {authMode === 'forgot-password' && 'Enter your email to receive a reset code'}
@@ -202,7 +202,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 Secured by{' '}
                 <Image
                   src="/logos/dark-logo.svg"
-                  alt="Peon Logo"
+                  alt="Kostra Logo"
                   width={50}
                   height={50}
                   className="inline-block h-3 w-auto object-contain"

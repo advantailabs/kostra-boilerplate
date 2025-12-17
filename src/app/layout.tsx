@@ -27,11 +27,11 @@ export function generateMetadata(): Metadata {
     keywords: [],
     authors: [
       {
-        name: 'Peon',
+        name: 'Kostra',
         url: 'https://peon.sh',
       },
     ],
-    creator: 'Peon',
+    creator: 'Kostra',
     openGraph: {
       type: 'website',
       locale: 'en_US',

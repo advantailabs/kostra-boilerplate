@@ -132,9 +132,9 @@ export function generateOTPEmailTemplate(data: OTPTemplateData): {
         <div class="header">
           <div class="logo">
             <div class="logo-icon">
-                <img src="${siteConfig.url}/logos/dark-symbol.png" alt="Peon Logo" width="32" height="32" style="border-radius: 7px; display: block;"/>
+                <img src="${siteConfig.url}/logos/dark-symbol.png" alt="Kostra Logo" width="32" height="32" style="border-radius: 7px; display: block;"/>
             </div>
-            <div class="logo-text">Peon</div>
+            <div class="logo-text">Kostra</div>
           </div>
           <h1 class="title">${header}</h1>
         </div>
@@ -165,7 +165,7 @@ Your verification code: ${otp}
 ${disclaimer}
 
 ---
-Peon Team
+Kostra Team
   `;
 
   return { subject, html, text };

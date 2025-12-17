@@ -23,7 +23,7 @@ export class EmailService {
     const emailDriver = getEmailDriver();
 
     const fromEmail = process.env.FROM_EMAIL || 'noreply@peon.app';
-    const fromEmailName = process.env.FROM_EMAIL_NAME || 'Peon';
+    const fromEmailName = process.env.FROM_EMAIL_NAME || 'Kostra';
 
     await emailDriver.send({
       to: data.to,

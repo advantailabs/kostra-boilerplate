@@ -1,6 +1,6 @@
 # File Upload and Download System
 
-This document describes the file upload and download system for the Peon application.
+This document describes the file upload and download system for the Kostra application.
 
 ## Overview
 

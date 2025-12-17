@@ -127,7 +127,7 @@ export function Sidebar() {
       {/* top navbar (xs-lg) */}
       <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-2 shadow-sm sm:gap-x-6 sm:px-4 lg:hidden">
         <div className="flex h-8 items-center">
-          <Image src={logoSrc} alt="Peon Logo" width={120} height={32} className="h-8 w-auto" />
+          <Image src={logoSrc} alt="Kostra Logo" width={120} height={32} className="h-8 w-auto" />
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
           <UserProfileMobile />
