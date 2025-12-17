@@ -108,9 +108,8 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
       {/* Published Status - Top Left */}
       <div className="absolute left-2 top-2">
         <span
-          className={`rounded-full px-1.5 py-0.5 text-xs font-medium backdrop-blur-sm ${
-            blog.published ? 'bg-green-500/20 text-green-200' : 'bg-yellow-500 text-black'
-          }`}
+          className={`rounded-full px-1.5 py-0.5 text-xs font-medium backdrop-blur-sm ${blog.published ? 'bg-green-600 text-green-200' : 'bg-yellow-500 text-black'
+            }`}
         >
           {blog.published ? 'Published' : 'Draft'}
         </span>
@@ -125,7 +124,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onEdit(blog);
             }}
-            className="bg-white/20 hover:bg-white/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
+            className="bg-gray-800/30 hover:bg-white/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
           >
             <Edit className="h-3 w-3" aria-label="Edit blog" />
           </Button>
@@ -137,7 +136,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
               e.stopPropagation();
               onDelete(blog);
             }}
-            className="bg-danger/20 hover:bg-danger/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
+            className="bg-red-600/80 hover:bg-danger/30 h-6 w-6 p-0 text-white backdrop-blur-sm"
           >
             <Trash2 className="h-3 w-3" aria-label="Delete blog" />
           </Button>
