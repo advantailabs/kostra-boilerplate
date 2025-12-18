@@ -1,5 +1,5 @@
 export type Plan = {
-  id: 'free' | 'pro' | 'enterprise';
+  id: 'free' | 'pro' | 'enterprise' | 'lifetime';
   name: string;
   price: string;
   period?: string;
