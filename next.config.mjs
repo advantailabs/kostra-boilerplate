@@ -17,18 +17,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pub-1c83380c5e270f0d584e576e038edc6b.r2.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-af1e06f43a504834a771308801881057.r2.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-e93e4a1737574e22a77941480819d550.r2.dev',
-      },
-      {
-        protocol: 'https',
         hostname: `${process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL.split('//')[1]}`,
       },
       {
@@ -46,10 +34,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-9289de1e12e7471b88dd293bc200f4f0.r2.dev',
       },
       {
         protocol: 'https',

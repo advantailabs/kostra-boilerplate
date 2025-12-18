@@ -5,7 +5,7 @@
 # 3) Copy application files
 # 4) Expose port and run dev server
 
-FROM node:20-alpine
+FROM node:24-alpine
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
