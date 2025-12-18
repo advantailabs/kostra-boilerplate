@@ -1,15 +1,13 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
-
+import { getStripeWebhookSecret, stripe } from '@/services/external/stripe/stripe';
 import {
-  getStripeWebhookSecret,
   handleEventCheckoutSessionCompleted,
   handleEventInvoicePaymentFailed,
   handleEventInvoicePaymentSucceeded,
   handleEventSubscriptionCreated,
   handleEventSubscriptionDeleted,
-  stripe,
-} from '@/services/external/stripe/stripe';
+} from '@/services/external/stripe/webhook-event-handlers';
+import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
