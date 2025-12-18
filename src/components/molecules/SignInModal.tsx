@@ -79,7 +79,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
         <Button
           onClick={onClose}
           variant="ghost"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-background-light text-text transition-colors hover:bg-background hover:text-text"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-background-light text-text transition-colors hover:bg-background hover:text-text p-0"
           aria-label="Close modal"
         >
           <svg
@@ -198,14 +198,14 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 <circle cx="12" cy="16" r="1" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              <span className="text-xs text-text-muted">
+              <span className="text-sm text-text-muted">
                 Secured by{' '}
                 <Image
                   src="/logos/dark-logo.png"
                   alt="Kostra Logo"
                   width={50}
                   height={50}
-                  className="inline-block h-3 w-auto object-contain"
+                  className="inline-block h-4 w-auto object-contain"
                 />
               </span>
             </div>

@@ -165,8 +165,8 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
           form.formState.errors.otp1 ||
           form.formState.errors.otp2 ||
           form.formState.errors.otp3) && (
-          <span className="text-sm text-danger">Please enter all 4 digits</span>
-        )}
+            <span className="text-sm text-danger">Please enter all 4 digits</span>
+          )}
       </div>
 
       {/* New Password Field */}
@@ -237,7 +237,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
       <Button
         type="submit"
         disabled={isResetting}
-        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
+        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-primary/90 hover:bg-primary-hover font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {isResetting ? 'Resetting Password...' : 'Reset Password'}
       </Button>
