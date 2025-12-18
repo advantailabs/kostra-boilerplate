@@ -1,6 +1,7 @@
 import { PLANS_CONFIG } from '@/data/config/plans';
-import { prisma } from '@/lib/prisma';
 import { UserPlan } from '@/lib/prisma/generated/client';
+import { addCreditsAndUpdateCreditHistoryTransaction } from '@/services/repositories/credit-history';
+import { updateUserByStripeCustomerId } from '@/services/repositories/user';
 import Stripe from 'stripe';
 import { stripe } from './stripe';
 import { getLinePriceId, getPeriodEndFromSubscriptionItems } from './utils';
@@ -18,23 +19,17 @@ export const handleEventSubscriptionCreated = async (sub: Stripe.Subscription) =
   const periodEnd = getPeriodEndFromSubscriptionItems(sub);
 
   if (isActive) {
-    await prisma.user.updateMany({
-      where: { stripeCustomerId: customerId },
-      data: {
-        plan: UserPlan.PRO,
-        isOverDue: false,
-        planExpiringAt: periodEnd,
-      },
+    await updateUserByStripeCustomerId(customerId, {
+      plan: UserPlan.PRO,
+      isOverDue: false,
+      planExpiringAt: periodEnd,
     });
   } else {
-    await prisma.user.updateMany({
-      where: { stripeCustomerId: customerId },
-      data: {
-        plan: UserPlan.FREE,
-        isOverDue: isOverdue,
-        planExpiringAt: null,
-        credits: 0,
-      },
+    await updateUserByStripeCustomerId(customerId, {
+      plan: UserPlan.FREE,
+      isOverDue: isOverdue,
+      planExpiringAt: null,
+      credits: 0,
     });
   }
 };
@@ -42,9 +37,11 @@ export const handleEventSubscriptionCreated = async (sub: Stripe.Subscription) =
 export const handleEventSubscriptionDeleted = async (sub: Stripe.Subscription) => {
   const customerId = (sub.customer as string) || null;
   if (!customerId) return;
-  await prisma.user.updateMany({
-    where: { stripeCustomerId: customerId },
-    data: { plan: UserPlan.FREE, isOverDue: false, planExpiringAt: null, credits: 0 },
+  await updateUserByStripeCustomerId(customerId, {
+    plan: UserPlan.FREE,
+    isOverDue: false,
+    planExpiringAt: null,
+    credits: 0,
   });
 };
 
@@ -89,35 +86,11 @@ export const handleEventInvoicePaymentSucceeded = async (invoice: Stripe.Invoice
   }
 
   // Idempotency: ensure we do not credit twice for the same invoice
-  await prisma.$transaction(async tx => {
-    const existing = await tx.creditHistory.findFirst({
-      where: { objectId: invoiceId },
-      select: { id: true },
-    });
-    if (existing) return;
-
-    const user = await tx.user.findFirst({
-      where: { stripeCustomerId: customerId },
-      select: { id: true, credits: true },
-    });
-    if (!user) return;
-
-    // If this invoice includes a pro subscription renewal, reset credits to 0 for new cycle
-    const baseCredits = proCreditsToAdd > 0 ? 0 : user.credits || 0;
-    const newBalance = baseCredits + proCreditsToAdd + packCreditsToAdd;
-
-    await tx.user.update({ where: { id: user.id }, data: { credits: newBalance } });
-    await tx.creditHistory.create({
-      data: {
-        userId: user.id,
-        type: 'CREDIT',
-        operation: 'INITIAL_CREDITS',
-        amount: proCreditsToAdd + packCreditsToAdd,
-        balanceAfter: newBalance,
-        objectId: invoiceId,
-        description: `Credit purchase via Stripe invoice`,
-      },
-    });
+  await addCreditsAndUpdateCreditHistoryTransaction({
+    invoiceId,
+    customerId,
+    proCreditsToAdd,
+    packCreditsToAdd,
   });
 };
 
@@ -125,9 +98,10 @@ export const handleEventInvoicePaymentFailed = async (invoice: Stripe.Invoice) =
   const customerId = (invoice.customer as string) || null;
   if (!customerId) return;
 
-  await prisma.user.updateMany({
-    where: { stripeCustomerId: customerId },
-    data: { plan: UserPlan.FREE, isOverDue: true, planExpiringAt: null },
+  await updateUserByStripeCustomerId(customerId, {
+    plan: UserPlan.FREE,
+    isOverDue: true,
+    planExpiringAt: null,
   });
 };
 
@@ -141,12 +115,9 @@ export const handleEventCheckoutSessionCompleted = async (session: Stripe.Checko
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   const periodEnd = getPeriodEndFromSubscriptionItems(subscription as any);
 
-  await prisma.user.updateMany({
-    where: { stripeCustomerId: customerId },
-    data: {
-      plan: UserPlan.PRO,
-      isOverDue: false,
-      planExpiringAt: periodEnd,
-    },
+  await updateUserByStripeCustomerId(customerId, {
+    plan: UserPlan.PRO,
+    isOverDue: false,
+    planExpiringAt: periodEnd,
   });
 };

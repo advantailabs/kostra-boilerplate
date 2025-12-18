@@ -22,7 +22,7 @@ export interface UpdateUserData {
   plan?: UserPlan;
   isOverDue?: boolean;
   stripeCustomerId?: string;
-  planExpiringAt?: string;
+  planExpiringAt?: string | null | Date;
   password?: string;
 }
 
@@ -282,6 +282,16 @@ const restoreUserById = async (userId: number) => {
   });
 };
 
+const updateUserByStripeCustomerId = async (
+  stripeCustomerId: string,
+  updateData: UpdateUserData
+) => {
+  return prisma.user.updateMany({
+    where: { stripeCustomerId },
+    data: updateData,
+  });
+};
+
 export {
   createUser,
   deleteUser,
@@ -298,6 +308,7 @@ export {
   setUserStripeCustomerId,
   updateUserByEmail,
   updateUserById,
+  updateUserByStripeCustomerId,
   updateUserGoogleId,
   upsertUser,
 };
