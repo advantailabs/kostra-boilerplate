@@ -1,5 +1,5 @@
 {
-  "name": "peon",
+  "name": "kostra",
   "version": "0.1.0",
   "private": true,
   "instrumentation": {
@@ -25,7 +25,7 @@
     "test": "jest --verbose --no-coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:local": "POSTGRES_URL=postgresql://postgres:postgres@127.0.0.1:5433/peon_test?schema=public TEST_APP_URL=http://localhost:3001 NODE_ENV=test npm run test",
+    "test:local": "POSTGRES_URL=postgresql://postgres:postgres@127.0.0.1:5433/kostra_test?schema=public TEST_APP_URL=http://localhost:3001 NODE_ENV=test npm run test",
     "verify-sitemap": "echo '✅ Checking sitemap generation...' && ls -la .next/server/app/sitemap.xml* && echo '✅ Sitemap generated successfully!' || echo '❌ Sitemap generation failed!'",
     "preview-sitemap": "cat .next/server/app/sitemap.xml.body 2>/dev/null || echo 'No sitemap found. Run npm run build first.'",
     "preview-robots": "cat .next/server/app/robots.txt.body 2>/dev/null || echo 'No robots.txt found. Run npm run build first.'"

@@ -7,7 +7,7 @@ alwaysApply: true
 # Project Structure
 
 **Description:**
-Defines the directory and file organization for the SaaS Boilerplate project. Ensures consistency and maintainability across the codebase. Make sure any file you create follows the structure below. Make sure you don't put components outside of this directory structure unless they don't fit
+Defines the directory and file organization for the Kostra project. Ensures consistency and maintainability across the codebase. Make sure any file you create follows the structure below. Make sure you don't put components outside of this directory structure unless they don't fit
 
 **Auto Attachments:**
 

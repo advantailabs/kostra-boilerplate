@@ -39,7 +39,7 @@ export function SecuritySection() {
           <h2 className="mb-4 text-3xl font-light text-white sm:mb-6 sm:text-4xl md:text-5xl">
             Security & Compliance First
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-gray-800 sm:text-xl">
+          <p className="mx-auto max-w-3xl text-lg text-gray-400 sm:text-xl">
             Built with enterprise security in mind. Your data stays secure whether hosted on our
             infrastructure or your own private cloud.
           </p>
@@ -54,18 +54,18 @@ export function SecuritySection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 group relative overflow-hidden rounded-2xl border p-4 backdrop-blur-sm transition-all sm:p-6"
+              className="border-gray-500/20  bg-white/5 hover:border-white/20 hover:bg-white/10 group relative overflow-hidden rounded-2xl border p-4 backdrop-blur-sm transition-all sm:p-6"
               whileHover={{ y: -5 }}
             >
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="from-emerald-500/20 to-green-500/20 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-primary sm:h-12 sm:w-12">
+                <div className=" flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl  text-primary sm:h-12 sm:w-12">
                   <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
                   <h3 className="mb-2 text-base font-semibold text-white sm:text-lg">
                     {feature.title}
                   </h3>
-                  <p className="text-xs text-gray-800 sm:text-sm">{feature.description}</p>
+                  <p className="text-xs text-gray-400 sm:text-sm">{feature.description}</p>
                 </div>
               </div>
             </motion.div>

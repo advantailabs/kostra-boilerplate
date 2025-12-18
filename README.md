@@ -504,10 +504,10 @@ saas-boilerplate/
 │   │   └── web-app-manifest-512x512.png # 512x512 manifest icon
 │   ├── logos/               # Application logos
 │   │   ├── dark-full-logo.svg # Dark full logo
-│   │   ├── dark-logo.svg    # Dark logo
+│   │   ├── dark-logo.png    # Dark logo
 │   │   ├── dark-symbol.png  # Dark symbol
 │   │   ├── light-full-logo.svg # Light full logo
-│   │   ├── light-logo.svg   # Light logo
+│   │   ├── light-logo.png   # Light logo
 │   │   └── light-symbol.png # Light symbol
 │   └── screenshots/         # Application screenshots
 │       ├── answers-with-citations.png # Answers with citations

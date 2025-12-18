@@ -101,7 +101,7 @@ export function EmailSignInForm({
           type="button"
           variant="ghost"
           onClick={onForgotPassword}
-          className="!h-auto !min-w-0 !border-0 !bg-transparent !p-0 text-sm text-primary !shadow-none hover:!bg-transparent hover:text-primary-hover focus:!bg-transparent"
+          className="!h-auto !min-w-0 !border-0 !bg-transparent !p-0 text-sm !text-primary !shadow-none hover:!bg-transparent hover:text-primary-hover focus:!bg-transparent"
         >
           Forgot Password?
         </Button>
@@ -111,7 +111,7 @@ export function EmailSignInForm({
       <Button
         type="submit"
         disabled={isLoading}
-        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
+        className=" focus:ring-primary/20 h-12 w-full rounded-lg bg-primary/90 hover:bg-primary-hover font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>

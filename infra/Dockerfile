@@ -2,7 +2,7 @@
 # Stage 1: Base Image
 # =============================================================================
 # Use Node.js 20 Alpine for smaller image size
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Install system dependencies needed for some npm packages
 RUN apk add --no-cache libc6-compat

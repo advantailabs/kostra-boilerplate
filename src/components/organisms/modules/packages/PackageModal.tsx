@@ -362,8 +362,8 @@ export function PackageModal({
                 {formData.features.map((feature, index) => (
                   <Badge
                     key={index}
-                    variant="default"
-                    className="inline-flex items-center gap-1 px-3 py-1"
+                    variant="neutral"
+                    className="inline-flex items-center gap-1 px-3 py-1 !bg-primary/30 !text-primary !ring-primary"
                   >
                     <span className="text-sm">{feature}</span>
                     <button

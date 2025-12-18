@@ -1,5 +1,5 @@
 export type Plan = {
-  id: 'free' | 'pro' | 'enterprise';
+  id: 'free' | 'pro' | 'enterprise' | 'lifetime';
   name: string;
   price: string;
   period?: string;
@@ -9,6 +9,19 @@ export type Plan = {
 };
 
 export const PLANS: Plan[] = [
+  {
+    id: 'lifetime',
+    name: 'Lifetime Access',
+    price: '$150',
+    description: 'One-time payment for lifetime access to all updates and features.',
+    features: [
+      'Regular git version updates',
+      'Access to all variants in future',
+      'Bug Fixes and Patches',
+      'Technical Support over email',
+    ],
+    badge: 'Best Value',
+  },
   {
     id: 'free',
     name: 'Starter',
@@ -49,7 +62,12 @@ export const PLANS: Plan[] = [
       'SSO integration',
       'Custom branding',
       'SLA guarantee',
+      'Regular git version updates',
+      'Access to all variants in future',
+      'Bug Fixes and Patches',
+      'Technical Support over email',
     ],
+    badge: 'Best Value',
   },
 ];
 

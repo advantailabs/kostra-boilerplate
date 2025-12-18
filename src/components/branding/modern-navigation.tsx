@@ -39,7 +39,7 @@ export function ModernNavigation() {
 
       // Only track sections when on landing page and after initialization
       if (pathname === '/' && hasInitialized) {
-        const sections = ['home', 'product', 'features', 'security', 'pricing', 'cta'];
+        const sections = ['home', 'product', 'features', 'architecture', 'pricing', 'cta'];
         const scrollPosition = window.scrollY + 100; // Offset for fixed header
 
         let currentSection = '';
@@ -74,15 +74,15 @@ export function ModernNavigation() {
     }
 
     // Return empty cleanup function for cases where no event listener is added
-    return () => {};
+    return () => { };
   }, [pathname, hasInitialized]);
 
   const navItems = [
-    { name: 'Pricing', href: '/#pricing', section: 'pricing' },
-    { name: 'Product', href: '/#product', section: 'product' },
+    { name: 'Home', href: '/', section: 'home' },
     { name: 'Features', href: '/#features', section: 'features' },
-    { name: 'Security', href: '/#security', section: 'security' },
-  ];
+    { name: 'Why Kostra', href: '/#architecture', section: 'architecture' },
+    { name: 'Blog', href: '/blog', section: '' },
+    { name: 'Pricing', href: '/#pricing', section: 'pricing' },]
 
   const isActive = (item: { href: string; section: string }) => {
     // For anchor links on landing page, check if this section is currently in view
@@ -94,11 +94,10 @@ export function ModernNavigation() {
 
   return (
     <motion.nav
-      className={`fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300 ${
-        isScrolled
-          ? 'border-white/10 bg-black/80 backdrop-blur-md'
-          : 'border-transparent bg-transparent'
-      }`}
+      className={`fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300 ${isScrolled
+        ? 'border-gray-500/20  bg-black/80 backdrop-blur-md'
+        : 'border-transparent bg-transparent'
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
@@ -124,7 +123,7 @@ export function ModernNavigation() {
           >
             <div className="h-6 w-6 sm:h-8 sm:w-8">
               <Image
-                src="/logos/light-logo.svg"
+                src="/logos/light-logo.png"
                 alt="Next.js Boilerplate Logo"
                 width={32}
                 height={32}
@@ -140,9 +139,8 @@ export function ModernNavigation() {
               return (
                 <Link key={item.name} href={item.href}>
                   <motion.span
-                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${
-                      active ? 'text-primary' : 'text-text hover:text-primary-hover'
-                    }`}
+                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${active ? 'text-primary' : 'text-text hover:text-primary-hover'
+                      }`}
                     whileHover={{ y: -1 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -188,7 +186,7 @@ export function ModernNavigation() {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <motion.div
-            className="border-white/10 bg-black/95 border-t backdrop-blur-md md:hidden"
+            className="border-gray-500/20  bg-black/95 border-t backdrop-blur-md md:hidden"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -201,11 +199,10 @@ export function ModernNavigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-                      active
-                        ? 'bg-white/10 text-white'
-                        : 'hover:bg-white/5 text-gray-200 hover:text-white'
-                    }`}
+                    className={`px-4 py-3 text-sm font-medium transition-colors duration-200 ${active
+                      ? 'bg-white/10 text-white'
+                      : 'hover:bg-white/5 text-gray-200 hover:text-white'
+                      }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
@@ -214,7 +211,7 @@ export function ModernNavigation() {
               })}
 
               {/* Legal Links */}
-              <div className="border-white/10 flex flex-col gap-1 border-t px-4 pt-4">
+              <div className="border-gray-500/20  flex flex-col gap-1 border-t px-4 pt-4">
                 <Link
                   href={siteConfig.baseLinks.privacy}
                   className="py-2 text-xs font-medium text-gray-200 underline transition-colors duration-200 hover:text-white"
@@ -231,7 +228,7 @@ export function ModernNavigation() {
                 </Link>
               </div>
 
-              <div className="border-white/10 flex flex-col gap-3 border-t px-4 pt-4">
+              <div className="border-gray-500/20  flex flex-col gap-3 border-t px-4 pt-4">
                 {user ? (
                   <div className="py-2">
                     <UserProfile />

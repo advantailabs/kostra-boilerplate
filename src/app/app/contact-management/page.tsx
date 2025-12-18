@@ -144,7 +144,7 @@ export default function ContactManagementPage() {
             <Button
               variant="ghost"
               onClick={clearFilters}
-              className="border px-2 py-1 text-indigo-600 sm:border-0 dark:text-indigo-500"
+              className="border px-2 py-1 text-primary sm:border-0"
             >
               Clear filters
             </Button>
@@ -157,7 +157,7 @@ export default function ContactManagementPage() {
             <TableBody>
               {submissions.length === 0 ? (
                 <TableRow className="border-b border-border-light bg-background-light">
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center !text-text-muted">
                     No contact submissions found.
                   </TableCell>
                 </TableRow>

@@ -2,7 +2,7 @@ export default function OnboardingPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background-light">
       <div className="w-full max-w-md rounded-lg bg-background p-8 shadow-md">
-        <h1 className="mb-4 text-center text-2xl font-bold">Welcome to Peon!</h1>
+        <h1 className="mb-4 text-center text-2xl font-bold">Welcome to Kostra!</h1>
         <p className="mb-6 text-center text-text-muted">
           Let's get you set up. Please complete your onboarding to continue.
         </p>

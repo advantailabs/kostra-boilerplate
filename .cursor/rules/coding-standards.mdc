@@ -7,7 +7,7 @@ alwaysApply: true
 # Coding Standards
 
 **Description:**
-Defines coding conventions and best practices for the Peon project. Ensures code quality and consistency across the codebase.
+Defines coding conventions and best practices for the Kostra project. Ensures code quality and consistency across the codebase.
 
 **Auto Attachments:**
 

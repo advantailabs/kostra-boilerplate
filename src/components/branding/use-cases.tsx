@@ -101,7 +101,7 @@ export function UseCases() {
             Perfect For Every Team
           </h2>
           <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-300">
-            Whether you're in HR, support, sales, engineering, or compliance - Peon adapts to your
+            Whether you're in HR, support, sales, engineering, or compliance - Kostra adapts to your
             team's unique needs
           </p>
         </motion.div>
@@ -110,7 +110,7 @@ export function UseCases() {
           {useCases.map((useCase, index) => (
             <motion.div
               key={useCase.title}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10"
+              className="group relative overflow-hidden rounded-3xl border border-gray-500/20  bg-white/5 p-8 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}

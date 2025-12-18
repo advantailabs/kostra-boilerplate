@@ -17,31 +17,19 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pub-1c83380c5e270f0d584e576e038edc6b.r2.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-af1e06f43a504834a771308801881057.r2.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-e93e4a1737574e22a77941480819d550.r2.dev',
-      },
-      {
-        protocol: 'https',
         hostname: `${process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL.split('//')[1]}`,
       },
       {
         protocol: 'https',
-        hostname: 'peon.sh',
+        hostname: 'kostra.io',
       },
       {
         protocol: 'https',
-        hostname: 'public-storage.peon.sh',
+        hostname: 'public-storage.kostra.io',
       },
       {
         protocol: 'https',
-        hostname: 'private-storage.peon.sh',
+        hostname: 'private-storage.kostra.io',
       },
       {
         protocol: 'https',
@@ -49,15 +37,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pub-9289de1e12e7471b88dd293bc200f4f0.r2.dev',
+        hostname: 'kostra-data.s3.amazonaws.com',
       },
       {
         protocol: 'https',
-        hostname: 'peon-data.s3.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'peon-data-public.s3.amazonaws.com',
+        hostname: 'kostra-data-public.s3.amazonaws.com',
       },
     ],
   },
@@ -122,7 +106,7 @@ export default withSentryConfig(nextConfig, {
 
   org: 'advant-xi',
 
-  project: 'peon',
+  project: 'kostra',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

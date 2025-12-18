@@ -10,7 +10,7 @@ export class ResendDriver implements EmailDriver {
 
   async send(message: EmailMessage): Promise<void> {
     const { error } = await this.resend.emails.send({
-      from: message.from || 'Peon <noreply@example.com>',
+      from: message.from || 'Kostra <noreply@example.com>',
       to: Array.isArray(message.to) ? message.to : [message.to],
       subject: message.subject,
       html: message.html,

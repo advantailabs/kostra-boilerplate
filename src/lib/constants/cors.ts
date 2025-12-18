@@ -1,1 +1,5 @@
-export const ALLOWED_ORIGINS = ['https://www.peon.sh', 'https://peon.sh', 'http://localhost:3000'];
+export const ALLOWED_ORIGINS = [
+  'https://demo.kostra.io',
+  'https://kostra.io',
+  'http://localhost:3000',
+];

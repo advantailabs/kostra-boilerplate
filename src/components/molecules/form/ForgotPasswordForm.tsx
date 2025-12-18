@@ -61,7 +61,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
       <Button
         type="submit"
         disabled={isLoading}
-        className="hover:bg-background-dark/80 focus:ring-primary/20 h-12 w-full rounded-lg bg-background-dark font-medium text-white transition-all duration-200 focus:ring-2"
+        className="focus:ring-primary/20 h-12 w-full rounded-lg bg-primary/90 hover:bg-primary-hover font-medium text-white transition-all duration-200 focus:ring-2"
       >
         {isLoading ? 'Sending...' : 'Send Reset Code'}
       </Button>

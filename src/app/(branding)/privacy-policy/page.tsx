@@ -1,18 +1,18 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Peon',
+  title: 'Privacy Policy - Kostra',
   description:
-    'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+    'Privacy Policy for Kostra - Modern Next.js SaaS Boilerplate. Learn how we collect, use, and protect your personal information.',
   openGraph: {
-    title: 'Privacy Policy - Peon',
+    title: 'Privacy Policy - Kostra',
     description:
-      'Privacy Policy for Peon - Your Personal AI Assistant. Learn how we collect, use, and protect your personal information.',
+      'Privacy Policy for Kostra - Modern Next.js SaaS Boilerplate. Learn how we collect, use, and protect your personal information.',
     type: 'article',
-    url: 'https://peon.sh/privacy-policy',
+    url: 'https://kostra.io/privacy-policy',
   },
   alternates: {
-    canonical: 'https://peon.sh/privacy-policy',
+    canonical: 'https://kostra.io/privacy-policy',
   },
   robots: {
     index: true,
@@ -47,13 +47,13 @@ export default function PrivacyPolicyPage() {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'Privacy Policy',
-            description: 'Privacy Policy for Peon - Your Personal AI Assistant',
-            url: 'https://peon.sh/privacy-policy',
+            description: 'Privacy Policy for Kostra - Modern Next.js SaaS Boilerplate',
+            url: 'https://kostra.io/privacy-policy',
             dateModified: lastUpdated,
             isPartOf: {
               '@type': 'WebSite',
-              name: 'Peon',
-              url: 'https://peon.sh',
+              name: 'Kostra',
+              url: 'https://kostra.io',
             },
             mainEntity: {
               '@type': 'Article',
@@ -62,8 +62,8 @@ export default function PrivacyPolicyPage() {
               dateModified: lastUpdated,
               author: {
                 '@type': 'Organization',
-                name: 'Peon',
-                url: 'https://peon.sh',
+                name: 'Kostra',
+                url: 'https://kostra.io',
               },
             },
           }),
@@ -95,10 +95,10 @@ export default function PrivacyPolicyPage() {
                   1. Introduction
                 </h2>
                 <p className="text-sm sm:text-base">
-                  At Peon, we are committed to protecting your privacy and ensuring the security of
-                  your personal information. This Privacy Policy explains how we collect, use,
-                  process, and protect your information when you use our AI-powered knowledge
-                  management platform.
+                  At Kostra, we are committed to protecting your privacy and ensuring the security
+                  of your personal information. This Privacy Policy explains how we collect, use,
+                  process, and protect your information when you use our Next.js SaaS boilerplate
+                  platform.
                 </p>
               </section>
 
@@ -179,9 +179,9 @@ export default function PrivacyPolicyPage() {
                   <p className="text-sm sm:text-base">We use your information to:</p>
                   <ul className="list-disc space-y-2 pl-4 text-sm sm:pl-6 sm:text-base">
                     <li>
-                      Provide, maintain, and improve our AI-powered knowledge management services
+                      Provide, maintain, and improve our SaaS boilerplate platform and services
                     </li>
-                    <li>Process and analyze your content to deliver personalized AI assistance</li>
+                    <li>Process and analyze your content to deliver platform functionality</li>
                     <li>Authenticate your identity and provide secure access to your account</li>
                     <li>Process payments and manage your subscription</li>
                     <li>Send service updates, security alerts, and administrative messages</li>
@@ -436,7 +436,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
                   <p className="text-sm sm:text-base">
-                    <strong>Email:</strong> hi@peon.sh
+                    <strong>Email:</strong> hi@kostra.io
                   </p>
                 </div>
               </section>

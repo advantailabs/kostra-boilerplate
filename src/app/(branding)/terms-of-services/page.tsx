@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - Peon',
+  title: 'Terms of Service - Kostra',
   description:
-    'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+    'Terms of Service for Kostra - Modern Next.js SaaS Boilerplate. Read our terms and conditions for using our SaaS boilerplate platform.',
   openGraph: {
-    title: 'Terms of Service - Peon',
+    title: 'Terms of Service - Kostra',
     description:
-      'Terms of Service for Peon - Your Personal AI Assistant. Read our terms and conditions for using our AI-powered knowledge management platform.',
+      'Terms of Service for Kostra - Modern Next.js SaaS Boilerplate. Read our terms and conditions for using our SaaS boilerplate platform.',
     type: 'article',
   },
 };
@@ -56,7 +56,7 @@ export default function TermsOfServicePage() {
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-sm sm:text-base">
-                  By accessing and using Peon ("the Service"), you accept and agree to be bound by
+                  By accessing and using Kostra ("the Service"), you accept and agree to be bound by
                   the terms and provision of this agreement. If you do not agree to abide by the
                   above, please do not use this service.
                 </p>
@@ -67,9 +67,9 @@ export default function TermsOfServicePage() {
                   2. Description of Service
                 </h2>
                 <p className="text-sm sm:text-base">
-                  Peon is an AI-powered knowledge management platform that helps organizations
-                  transform scattered information into actionable intelligence through AI
-                  assistants, document organization, and intelligent automation features.
+                  Kostra is a modern Next.js SaaS boilerplate that provides a comprehensive
+                  foundation for building scalable web applications with authentication, file
+                  management, billing integration, and modern development practices.
                 </p>
               </section>
 
@@ -151,7 +151,7 @@ export default function TermsOfServicePage() {
                 </h2>
                 <p className="text-sm sm:text-base">
                   The Service, including its design, functionality, and underlying technology, is
-                  owned by Peon and protected by copyright, trademark, and other intellectual
+                  owned by Kostra and protected by copyright, trademark, and other intellectual
                   property laws. You may not copy, modify, distribute, or create derivative works
                   based on the Service without our explicit written permission.
                 </p>
@@ -184,10 +184,10 @@ export default function TermsOfServicePage() {
                   9. Limitation of Liability
                 </h2>
                 <p className="text-sm sm:text-base">
-                  To the maximum extent permitted by law, Peon shall not be liable for any indirect,
-                  incidental, special, consequential, or punitive damages, or any loss of profits or
-                  revenues, whether incurred directly or indirectly, or any loss of data, use,
-                  goodwill, or other intangible losses resulting from your use of the Service.
+                  To the maximum extent permitted by law, Kostra shall not be liable for any
+                  indirect, incidental, special, consequential, or punitive damages, or any loss of
+                  profits or revenues, whether incurred directly or indirectly, or any loss of data,
+                  use, goodwill, or other intangible losses resulting from your use of the Service.
                 </p>
               </section>
 
@@ -241,7 +241,7 @@ export default function TermsOfServicePage() {
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
                 <div className="mt-4 rounded-lg border border-border bg-background-light p-4 sm:p-6">
-                  <p className="text-sm sm:text-base">Email: hi@peon.sh</p>
+                  <p className="text-sm sm:text-base">Email: hi@kostra.io</p>
                 </div>
               </section>
             </div>

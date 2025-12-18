@@ -15,8 +15,8 @@
   --border: hsl(220 10% 75%); /* Main border */
   --border-muted: hsl(220 10% 65%); /* Muted border */
 
-  --primary: hsl(264 50% 45%); /* Primary color - blue/indigo */
-  --primary-hover: hsl(264 50% 40%); /* Primary hover */
+  --primary: 0 100% 67%; /* Primary color */
+  --primary-hover: hsl(0, 100%, 72%); /* Primary hover */
   --secondary: hsl(84 50% 45%); /* Secondary color - yellow-green */
   --secondary-hover: hsl(84 50% 40%); /* Secondary hover */
 
@@ -51,8 +51,8 @@
   --indigo-200: oklch(0.8 0.08 264);
   --indigo-300: oklch(0.7 0.1 264);
   --indigo-400: oklch(0.6 0.12 264);
-  --indigo-500: var(--primary);
-  --indigo-600: var(--primary-hover);
+  --indigo-500: hsl(264 50% 45%); /* Primary color - blue/indigo */
+  --indigo-600: hsl(264 50% 40%);
   --indigo-700: oklch(0.4 0.15 264);
   --indigo-800: oklch(0.3 0.15 264);
   --indigo-900: oklch(0.2 0.15 264);
@@ -152,8 +152,8 @@
   --border: hsl(220 15% 20%); /* Main border */
   --border-muted: hsl(220 15% 15%); /* Muted border */
 
-  --primary: hsl(264 50% 60%); /* Primary color */
-  --primary-hover: hsl(264 50% 65%); /* Primary hover */
+  --primary: 0 100% 67%; /* Primary color */
+  --primary-hover: hsl(0, 100%, 72%); /* Primary hover */
   --secondary: hsl(84 50% 70%); /* Secondary color */
   --secondary-hover: hsl(84 50% 75%); /* Secondary hover */
 
@@ -188,8 +188,8 @@
   --indigo-200: hsl(264 10% 12%);
   --indigo-300: hsl(264 10% 15%);
   --indigo-400: hsl(264 10% 20%);
-  --indigo-500: var(--primary);
-  --indigo-600: var(--primary-hover);
+  --indigo-500: hsl(264 50% 60%);
+  --indigo-600: hsl(264 50% 65%);
   --indigo-700: hsl(264 50% 50%);
   --indigo-800: hsl(264 50% 70%);
   --indigo-900: hsl(264 50% 90%);
@@ -276,7 +276,7 @@
 
 /* Utility classes for easy access to color variables */
 .bg-primary {
-  background-color: var(--primary);
+  background-color: hsl(var(--primary));
 }
 .bg-secondary {
   background-color: var(--secondary);

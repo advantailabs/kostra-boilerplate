@@ -18,15 +18,15 @@ import { ADMIN_ROLES } from '@/lib/constants/admin';
 export interface UserFilters {
   search?: string;
   sortBy?:
-    | 'id'
-    | 'name'
-    | 'email'
-    | 'role'
-    | 'plan'
-    | 'isOnboarded'
-    | 'credits'
-    | 'createdAt'
-    | 'updatedAt';
+  | 'id'
+  | 'name'
+  | 'email'
+  | 'role'
+  | 'plan'
+  | 'isOnboarded'
+  | 'credits'
+  | 'createdAt'
+  | 'updatedAt';
   sortOrder?: 'asc' | 'desc';
   role?: 'USER' | 'ADMIN';
   plan?: 'FREE' | 'PRO';
@@ -202,7 +202,7 @@ export function UserFilterModal({
               id="include-deleted"
               checked={localFilters.includeDeleted || false}
               onChange={e => handleIncludeDeleted(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
             <label htmlFor="include-deleted" className="text-sm font-medium text-text">
               Include deleted users

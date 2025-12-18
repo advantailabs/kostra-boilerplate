@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: 'SaaS Boilerplate',
-  url: 'https://your-domain.com',
-  description: 'Modern SaaS Application Boilerplate',
+  name: 'Kostra',
+  url: 'https://kostra.io',
+  description: 'Modern Next.js Boilerplate',
   baseLinks: {
     // Public routes
     landing: '/',

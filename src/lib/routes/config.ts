@@ -12,6 +12,8 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/privacy-policy', isPublic: true },
   { path: '/terms-of-services', isPublic: true },
   { path: '/contact', isPublic: true },
+  { path: '/blog', isPublic: true },
+  { path: '/blog/[slug]', isPublic: true },
 
   // Static files and assets (should be handled by Next.js but included for safety)
   { path: '/favicon.ico', isPublic: true },

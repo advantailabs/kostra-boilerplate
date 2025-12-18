@@ -1,6 +1,6 @@
 # File Upload and Download System
 
-This document describes the file upload and download system for the Peon application.
+This document describes the file upload and download system for the Kostra application.
 
 ## Overview
 
@@ -111,8 +111,8 @@ NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://your-public-bucket.your-subdomain.r2.clou
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
-S3_PUBLIC_BUCKET_NAME=peon-data-public
-S3_PRIVATE_BUCKET_NAME=peon-data-private
+S3_PUBLIC_BUCKET_NAME=kostra-data-public
+S3_PRIVATE_BUCKET_NAME=kostra-data-private
 NEXT_PUBLIC_S3_PUBLIC_BASE_URL=https://your-public-bucket.s3.amazonaws.com
 ```
 

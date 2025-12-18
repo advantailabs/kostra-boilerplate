@@ -22,7 +22,7 @@ export function UnifiedSearchBar({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-1 flex-wrap items-center gap-1.5 overflow-x-auto overflow-y-visible">
           {/* Search bar */}
-          <div className="h-8 min-w-[200px]">
+          <div className="h-10 min-w-[200px] p-1">
             <Input
               placeholder={placeholder}
               value={value}

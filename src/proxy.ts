@@ -1,12 +1,12 @@
 import { getAuthUser, JWT_KEY } from '@/lib/auth/jwt';
 import {
-    applyCorsHeaders,
-    checkAccess,
-    findMatchingRoute,
-    handleCorsPreflightRequest,
-    isPublicRoute,
-    isRouteConfigured,
-    requiresRoleAccess,
+  applyCorsHeaders,
+  checkAccess,
+  findMatchingRoute,
+  handleCorsPreflightRequest,
+  isPublicRoute,
+  isRouteConfigured,
+  requiresRoleAccess,
 } from '@/lib/routes';
 import { NextRequest, NextResponse } from 'next/server';
 import { forbiddenResponse } from './lib/utils/response/response';
@@ -125,6 +125,6 @@ export default proxy;
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next/static|_next/image|favicon.ico|favicon/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest)$).*)',
+    '/((?!monitoring|_next/static|_next/image|favicon.ico|favicon/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest)$).*)',
   ],
 };

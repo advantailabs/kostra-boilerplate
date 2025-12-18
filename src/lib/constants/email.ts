@@ -5,8 +5,8 @@
 export const EMAIL_CONSTANTS = {
   // OTP Email Subjects
   SUBJECTS: {
-    SIGNUP: 'Verify Your Email - Peon',
-    PASSWORD_RESET: 'Reset Your Password - Peon',
+    SIGNUP: 'Verify Your Email - Kostra',
+    PASSWORD_RESET: 'Reset Your Password - Kostra',
   },
 
   // OTP Email Headers
