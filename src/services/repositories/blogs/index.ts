@@ -1,13 +1,25 @@
 import { prisma } from '@/lib/prisma';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 
-// Helper function to get blog by slug
 export const getBlogBySlug = async (slug: string) => {
   return prisma.blog.findUnique({
     where: { slug },
+    include: {
+      categories: {
+        include: {
+          category: true,
+        },
+      },
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
   });
 };
-
 // Helper function to generate a unique slug
 const generateUniqueSlug = async (title: string, currentSlug?: string): Promise<string> => {
   const baseSlug =

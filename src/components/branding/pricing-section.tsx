@@ -32,7 +32,7 @@ export function PricingSection() {
         </motion.div>
 
         <div className="mx-auto max-w-md">
-          {PLANS.map((plan, index) => (
+          {PLANS.filter(plan => plan.id === 'lifetime').map((plan, index) => (
             <div key={plan.id} className="relative">
               {/* Subtle halo behind the card */}
               <div className="from-indigo-600/40 pointer-events-none absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-r to-violet-600/40 opacity-30 blur-2xl dark:opacity-40" />
