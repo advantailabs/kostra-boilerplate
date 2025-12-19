@@ -31,8 +31,8 @@ export function PricingSection() {
           </p>
         </motion.div>
 
-        <div className="mx-auto max-w-md">
-          {PLANS.filter(plan => plan.id === 'lifetime').map((plan, index) => (
+        <div className="grid gap-8 lg:grid-cols-3">
+          {PLANS.filter(plan => plan.id !== 'lifetime').map((plan, index) => (
             <div key={plan.id} className="relative">
               {/* Subtle halo behind the card */}
               <div className="from-indigo-600/40 pointer-events-none absolute -inset-2 -z-10 rounded-3xl bg-gradient-to-r to-violet-600/40 opacity-30 blur-2xl dark:opacity-40" />
@@ -44,27 +44,26 @@ export function PricingSection() {
                   </span>
                 </div>
               )}
-
               <motion.div
-                className="relative flex flex-col overflow-hidden rounded-3xl border border-indigo-400/60 bg-white/90 p-8 shadow-lg ring-1 ring-indigo-500/40 transition-all hover:scale-[1.02] dark:border-indigo-300/20 dark:bg-white/[0.06]"
+                className={`relative flex flex-col overflow-hidden rounded-3xl h-[550px] border p-8 transition-all hover:scale-[1.02] ${plan.id === 'pro'
+                  ? 'border-primary/60 bg-white/90 ring-primary/40 shadow-lg ring-1'
+                  : 'bg-white/80 dark:border-gray-500/20  dark:bg-white/5 dark:hover:border-white/20 border-gray-200 shadow-sm hover:border-gray-300'
+                  }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
                 {/* Plan header */}
-                <div className="mb-8 text-center">
+                <div className="mb-8">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
                   <p className="mt-2 text-gray-400">{plan.description}</p>
 
-                  <div className="mt-6 flex items-baseline justify-center">
-                    <span className="text-5xl font-bold text-gray-900 dark:text-white">
+                  <div className="mt-6 flex items-baseline">
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white">
                       {plan.price}
                     </span>
                     {plan.period && <span className="ml-2 text-gray-400">/{plan.period}</span>}
-                    {!plan.period && (
-                      <span className="ml-2 text-lg text-gray-400">lifetime updates</span>
-                    )}
                   </div>
                 </div>
 
@@ -83,14 +82,19 @@ export function PricingSection() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-400/80">{feature}</span>
+                      <span className="text-gray-400">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 {/* CTA buttons pinned at the bottom for consistent layout */}
                 <div className="mt-auto flex flex-col gap-3">
-                  <button className="w-full rounded-full bg-gradient-to-r from-primary to-primary-hover px-6 py-4 text-lg font-semibold text-white transition-all hover:from-primary-hover hover:to-primary">
+                  <button
+                    className={`w-full rounded-full px-6 py-4 text-lg font-semibold transition-all ${plan.id === 'pro'
+                      ? 'bg-gradient-to-r from-primary to-primary-hover text-white hover:from-primary-hover hover:to-primary'
+                      : 'border bg-white text-gray-900'
+                      }`}
+                  >
                     {getButtonText(plan.id)}
                   </button>
                 </div>
