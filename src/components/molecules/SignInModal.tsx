@@ -73,13 +73,13 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative mx-4 w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-background shadow-2xl transition-all duration-300"
+        className="relative mx-4 w-full max-w-sm overflow-hidden rounded-2xl border border-neutral-900 bg-[#080a0c] shadow-2xl transition-all duration-300"
       >
         {/* Close button */}
         <Button
           onClick={onClose}
           variant="ghost"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-background-light text-text transition-colors hover:bg-background hover:text-text p-0"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#080a0c] text-gray-50 transition-colors hover:bg-neutral-900 hover:text-gray-100 p-0"
           aria-label="Close modal"
         >
           <svg
@@ -107,14 +107,14 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 className="drop-shadow-sm"
               />
             </div>
-            <h1 id="modal-title" className="mb-2 text-2xl font-bold text-text">
+            <h1 id="modal-title" className="mb-2 text-2xl font-bold text-gray-100">
               {authMode === 'signin' && 'Welcome to Kostra'}
               {authMode === 'signup' && 'Sign Up'}
               {authMode === 'otp-verification' && 'Verify Your Email'}
               {authMode === 'forgot-password' && 'Reset Password'}
               {authMode === 'reset-password' && 'Enter New Password'}
             </h1>
-            <p className="text-center text-xs text-text-muted">
+            <p className="text-center text-xs text-gray-400">
               {authMode === 'signin' && 'Join thousands of teams already using Kostra'}
               {authMode === 'signup' && 'Start your journey with us'}
               {authMode === 'otp-verification' && 'Complete your account setup'}
@@ -133,9 +133,9 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
               />
 
               <div className="mt-3 flex items-center justify-center gap-2">
-                <div className="h-px flex-1 bg-border" />
-                <span className="text-sm text-text-muted">or</span>
-                <div className="h-px flex-1 bg-border" />
+                <div className="h-px flex-1 bg-gray-500" />
+                <span className="text-sm text-gray-400">or</span>
+                <div className="h-px flex-1 bg-gray-500" />
               </div>
 
               <div className="mt-3">
@@ -183,7 +183,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
             />
           )}
 
-          <div className="mt-6 flex items-center justify-center gap-2 border-t border-border pt-6 text-center">
+          <div className="mt-6 flex items-center justify-center gap-2 border-t border-gray-500 pt-6 text-center">
             <div className="flex items-center justify-center gap-1">
               <svg
                 width="12"
@@ -192,13 +192,13 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                className="text-text-muted"
+                className="text-gray-400"
               >
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <circle cx="12" cy="16" r="1" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              <span className="text-sm text-text-muted">
+              <span className="text-sm text-gray-400">
                 Secured by{' '}
                 <Image
                   src="/logos/dark-logo.png"

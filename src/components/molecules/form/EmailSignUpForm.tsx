@@ -45,7 +45,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {/* Name Field */}
       <div>
-        <Label htmlFor="name" className="mb-2 block text-sm font-medium text-text">
+        <Label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-400">
           Name
         </Label>
         <Input
@@ -53,7 +53,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
           type="text"
           placeholder="Enter your name"
           {...form.register('name')}
-          inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
+          inputClassName="h-12 w-full rounded-lg border-border bg-background text-gray-400 px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         {form.formState.errors.name && (
           <span className="text-sm text-danger">{form.formState.errors.name.message}</span>
@@ -62,7 +62,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
 
       {/* Email Field */}
       <div>
-        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-text">
+        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-400">
           Email
         </Label>
         <Input
@@ -70,7 +70,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
           type="email"
           placeholder="Enter your email"
           {...form.register('email')}
-          inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
+          inputClassName="h-12 w-full rounded-lg border-border bg-background text-gray-400 px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         {form.formState.errors.email && (
           <span className="text-sm text-danger">{form.formState.errors.email.message}</span>
@@ -88,7 +88,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
 
       {/* Switch to Sign In */}
       <div className="text-center">
-        <span className="text-sm text-text-muted">Already have an account? </span>
+        <span className="text-sm text-gray-500">Already have an account? </span>
         <button
           type="button"
           onClick={onSwitchToSignIn}

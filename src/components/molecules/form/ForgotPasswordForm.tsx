@@ -42,7 +42,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {/* Email Field */}
       <div>
-        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-text">
+        <Label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-400">
           Email
         </Label>
         <Input
@@ -50,7 +50,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
           type="email"
           placeholder="Enter your email address"
           {...form.register('email')}
-          inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
+          inputClassName="h-12 w-full rounded-lg border-border bg-background text-gray-400 px-4 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         {form.formState.errors.email && (
           <span className="text-sm text-danger">{form.formState.errors.email.message}</span>
@@ -68,7 +68,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
 
       {/* Back to Sign In */}
       <div className="text-center">
-        <span className="text-sm text-text-muted">Remember your password? </span>
+        <span className="text-sm text-gray-500">Remember your password? </span>
         <button
           type="button"
           onClick={onBackToSignIn}
