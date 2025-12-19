@@ -214,6 +214,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
         />
 
         <BlogGrid
+          searchInput={debouncedSearch || ''}
           blogs={blogs || []}
           onEdit={handleEditBlog}
           onDelete={handleDeleteBlog}

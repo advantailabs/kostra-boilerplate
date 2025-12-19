@@ -1,9 +1,10 @@
 import { Button } from '@/components/atom/Button';
 import { BlogResponseType } from '@/types/blog.type';
-import { RiAddLine } from '@remixicon/react';
+import { RiAddLine, RiSearch2Line } from '@remixicon/react';
 import { BlogCard } from './BlogCard';
 
 interface BlogGridProps {
+  searchInput: string;
   blogs: BlogResponseType[];
   onEdit?: (blog: BlogResponseType) => void;
   onDelete?: (blog: BlogResponseType) => void;
@@ -13,6 +14,7 @@ interface BlogGridProps {
 }
 
 export function BlogGrid({
+  searchInput,
   blogs,
   onEdit,
   onDelete,
@@ -20,7 +22,7 @@ export function BlogGrid({
   onBlogClick,
   className,
 }: BlogGridProps) {
-  if (blogs.length === 0) {
+  if (blogs.length === 0 && searchInput.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center py-12 ${className}`}>
         <div className="text-center">
@@ -42,6 +44,19 @@ export function BlogGrid({
     );
   }
 
+  if (blogs.length === 0 && searchInput.length > 0) {
+    return <div className={`flex flex-col items-center justify-center py-12 ${className}`}>
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-background-light">
+          <RiSearch2Line className="h-12 w-12 text-text-muted" />
+        </div>
+        <h3 className="mb-2 text-lg font-semibold text-text">No Blogs Found</h3>
+        <p className="mb-6 text-sm text-text-muted">
+          No results found for your search. Try searching for a different title.
+        </p>
+      </div>
+    </div>
+  }
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Add Button */}
