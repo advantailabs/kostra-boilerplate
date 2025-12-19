@@ -167,14 +167,14 @@ export function InnovativeHero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="flex flex-col items-center gap-2 text-gray-900"
+          className="flex flex-col items-center gap-2 text-gray-400"
         >
           <span className="text-xs uppercase tracking-wide">Scroll</span>
-          <div className="flex h-6 w-4 justify-center rounded-full border border-gray-800">
+          <div className="flex h-6 w-4 justify-center rounded-full border border-gray-500">
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-              className="mt-1 h-2 w-0.5 rounded-full bg-gray-800"
+              className="mt-1 h-2 w-0.5 rounded-full bg-gray-400"
             />
           </div>
         </motion.div>
