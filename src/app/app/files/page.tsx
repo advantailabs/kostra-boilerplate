@@ -101,9 +101,8 @@ export default function FilesPage() {
             <Button
               onClick={() => setShowFilterModal(true)}
               variant="secondary"
-              className={`w-auto justify-center px-3 py-2 ${
-                hasActiveFilters ? 'ring-2 ring-primary' : ''
-              }`}
+              className={`w-auto justify-center px-3 py-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''
+                }`}
             >
               <RiFilterLine className="mr-1 h-4 w-4" />
               Filter
@@ -117,7 +116,7 @@ export default function FilesPage() {
             </Button>
           </div>
         </div>
-        {files.length === 0 ? (
+        {files.length === 0 && Object.values(filters).length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-sm max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
               <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
@@ -133,6 +132,16 @@ export default function FilesPage() {
                   Upload Files
                 </Button>
               </div>
+            </div>
+          </div>
+        ) : files.length === 0 && Object.values(filters).length > 0 ? (
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-sm max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
+            <div className="text-center">
+              <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
+              <h3 className="mt-2 text-sm font-medium text-text">No Files Found</h3>
+              <p className="mt-1 text-sm text-text-muted">
+                No files were found that matched your filters
+              </p>
             </div>
           </div>
         ) : (
