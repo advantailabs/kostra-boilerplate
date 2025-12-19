@@ -47,7 +47,7 @@ export function PricingSection() {
               <motion.div
                 className={`relative flex flex-col overflow-hidden rounded-3xl h-[550px] border p-8 transition-all hover:scale-[1.02] ${plan.id === 'pro'
                   ? 'border-primary/60 bg-white/90 ring-primary/40 shadow-lg ring-1'
-                  : 'bg-white/80 dark:border-gray-500/20  dark:bg-white/5 dark:hover:border-white/20 border-gray-200 shadow-sm hover:border-gray-300'
+                  : 'bg-white/80   dark:bg-white/5  border-gray-500/20 shadow-sm hover:border-gray-400/50'
                   }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -56,11 +56,11 @@ export function PricingSection() {
               >
                 {/* Plan header */}
                 <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+                  <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
                   <p className="mt-2 text-gray-400">{plan.description}</p>
 
                   <div className="mt-6 flex items-baseline">
-                    <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                    <span className="text-4xl font-bold text-white">
                       {plan.price}
                     </span>
                     {plan.period && <span className="ml-2 text-gray-400">/{plan.period}</span>}
