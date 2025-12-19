@@ -192,19 +192,19 @@ export function MinimalFooter() {
             <span>© {new Date().getFullYear()} Next.js Boilerplate. All rights reserved.</span>
             <Link
               href={siteConfig.baseLinks.privacy}
-              className="font-medium text-text underline transition-colors hover:text-white"
+              className="font-medium text-gray-50 underline transition-colors hover:text-white"
             >
               Privacy Policy
             </Link>
             <Link
               href={siteConfig.baseLinks.terms}
-              className="font-medium text-text underline transition-colors hover:text-white"
+              className="font-medium text-gray-50 underline transition-colors hover:text-white"
             >
               Terms of Service
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-text sm:text-sm">
+          <div className="flex items-center gap-2 text-xs text-gray-50 sm:text-sm">
             <div className="h-2 w-2 rounded-full bg-success" />
             <span>All systems operational</span>
           </div>
