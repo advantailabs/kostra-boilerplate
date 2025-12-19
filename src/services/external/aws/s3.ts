@@ -8,10 +8,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
 
 // Client-side environment variables (available in browser)
-export const S3_PUBLIC_BASE_URL =
-  process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER === 's3'
-    ? process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL
-    : process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
+export const S3_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL;
 
 function createS3Client() {
   const driver = process.env.NEXT_PUBLIC_FILE_STORAGE_DRIVER || 'r2';
