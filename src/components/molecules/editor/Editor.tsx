@@ -302,7 +302,13 @@ function Editor({
     const prevStyles = editor.getAttributes('image').style;
 
     // filters out previous margins
-    const finalPrevStyles = prevStyles.split(";").filter((style: string) => { console.log(style); return !style.startsWith("margin"); }).join(";");
+    const finalPrevStyles = prevStyles.split(";").filter((style: string) => {
+      // strips white space and checks if the current CSS delaration is a margin
+      return !style
+        .trim()
+        .startsWith("margin");
+    })
+      .join(";");
 
     // Alignment via Margin
     editor.chain().focus().updateAttributes('image', { style: `${finalPrevStyles}${styleMap[align]}!important;` }).run();
