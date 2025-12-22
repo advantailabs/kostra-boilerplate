@@ -91,7 +91,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
             onClose();
           }}
         >
-          Subscribe to Pro ($15/mo)
+          Subscribe to Pro ({PLANS[2].price})
         </Button>
       </div>
     </div>
