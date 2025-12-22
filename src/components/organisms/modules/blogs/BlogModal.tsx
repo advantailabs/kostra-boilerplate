@@ -100,7 +100,7 @@ export function BlogModal({
 
                 {/* Right Side - Editor */}
                 <div
-                  className="flex h-[740px] min-w-0 flex-1 p-0"
+                  className="flex h-[740px] 2xl:h-[88vh] min-w-0 flex-1 p-0"
                   onClick={e => e.stopPropagation()}
                 >
                   <div

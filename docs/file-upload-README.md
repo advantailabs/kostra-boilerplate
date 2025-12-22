@@ -101,7 +101,7 @@ NEXT_PUBLIC_FILE_STORAGE_DRIVER=r2
 R2_ACCESS_KEY_ID=your_access_key
 R2_SECRET_ACCESS_KEY=your_secret_key
 R2_ACCOUNT_ID=your_account_id
-NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://your-public-bucket.your-subdomain.r2.cloudflarestorage.com
+S3_PUBLIC_BASE_URL=https://your-public-bucket.your-subdomain.r2.cloudflarestorage.com
 ```
 
 #### S3 Configuration

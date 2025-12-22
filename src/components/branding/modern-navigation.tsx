@@ -139,7 +139,7 @@ export function ModernNavigation() {
               return (
                 <Link key={item.name} href={item.href}>
                   <motion.span
-                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${active ? 'text-primary' : 'text-text hover:text-primary-hover'
+                    className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${active ? 'text-primary' : 'text-gray-50 hover:text-primary-hover'
                       }`}
                     whileHover={{ y: -1 }}
                     transition={{ duration: 0.2 }}

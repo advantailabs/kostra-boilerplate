@@ -91,7 +91,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
             onClose();
           }}
         >
-          Subscribe to Pro ($15/mo)
+          Subscribe to Pro ({PLANS[2].price})
         </Button>
       </div>
     </div>
@@ -128,7 +128,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {PLANS.map((plan, idx) => {
+          {PLANS.filter(plan => plan.id !== 'lifetime').map((plan, idx) => {
             return (
               <motion.div
                 key={plan.id}

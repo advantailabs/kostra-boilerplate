@@ -117,6 +117,12 @@
     clear: both;
   }
 
+  /* Disables image align attribute */
+  .tiptap-image {
+    float: none !important;
+    vertical-align: baseline !important;
+  }
+
   /* Task list spacing */
   .tiptap-editor-content ul[data-type='taskList'] {
     @apply list-none space-y-2;

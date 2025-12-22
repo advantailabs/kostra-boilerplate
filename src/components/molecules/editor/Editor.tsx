@@ -98,9 +98,9 @@ const ImageResize = Image.extend({
       ...this.parent?.(),
       setImageAlign:
         (align: 'left' | 'center' | 'right') =>
-        ({ commands }: { commands: any }) => {
-          return commands.updateAttributes('image', { align });
-        },
+          ({ commands }: { commands: any }) => {
+            return commands.updateAttributes('image', { align });
+          },
     };
   },
 });
@@ -127,7 +127,7 @@ function Editor({
     uploadPurpose: 'BlogImage',
     objectName: 'blog',
     objectId: 0,
-    onSuccess: () => {},
+    onSuccess: () => { },
   });
 
   // Close dropdowns when clicking outside
@@ -294,7 +294,25 @@ function Editor({
   };
 
   const setImageAlign = (align: 'left' | 'center' | 'right') => {
+    const styleMap = { left: "margin-right: auto", right: "margin-left:auto", center: "margin: 0 auto" }
+
+    // align attribute kept for toolbar button active state
     editor.chain().focus().updateAttributes('image', { align }).run();
+
+    const prevStyles = editor.getAttributes('image').style;
+
+    // filters out previous margins
+    const finalPrevStyles = prevStyles.split(";").filter((style: string) => {
+      // strips white space and checks if the current CSS delaration is a margin
+      return !style
+        .trim()
+        .startsWith("margin");
+    })
+      .join(";");
+
+    // Alignment via Margin
+    editor.chain().focus().updateAttributes('image', { style: `${finalPrevStyles}${styleMap[align]}!important;` }).run();
+
   };
 
   const setTextColor = (color: string) => {

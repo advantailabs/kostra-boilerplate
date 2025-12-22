@@ -142,7 +142,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       {/* Verification Code Section */}
       <div>
-        <Label className="mb-2 block text-sm font-medium text-text">Verification Code</Label>
+        <Label className="mb-2 block text-sm font-medium text-gray-400">Verification Code</Label>
         <div className="flex gap-2">
           {[0, 1, 2, 3].map(index => (
             <Input
@@ -151,7 +151,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
               maxLength={1}
               inputMode="numeric"
               pattern="[0-9]*"
-              inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-border bg-background text-text focus:border-primary focus:ring-2 focus:ring-primary/20"
+              inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-border bg-background text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
               {...form.register(`otp${index}` as any, {
                 onChange: e => handleOTPChange(index, e.target.value, e),
               })}
@@ -160,7 +160,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
             />
           ))}
         </div>
-        <p className="mt-2 text-xs text-text-muted">Enter the 4-digit code sent to your email.</p>
+        <p className="mt-2 text-xs text-gray-500">Enter the 4-digit code sent to your email.</p>
         {(form.formState.errors.otp0 ||
           form.formState.errors.otp1 ||
           form.formState.errors.otp2 ||
@@ -171,7 +171,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       {/* New Password Field */}
       <div>
-        <Label htmlFor="newPassword" className="mb-2 block text-sm font-medium text-text">
+        <Label htmlFor="newPassword" className="mb-2 block text-sm font-medium text-gray-400">
           New Password
         </Label>
         <div className="relative">
@@ -180,13 +180,13 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
             type={showNewPassword ? 'text' : 'password'}
             placeholder="Enter your new password"
             {...form.register('newPassword')}
-            inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
+            inputClassName="h-12 w-full rounded-lg border-border bg-background text-gray-400 px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <Button
             type="button"
             variant="ghost"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 text-text-muted shadow-none hover:bg-background-light hover:text-text"
+            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 text-gray-500 shadow-none hover:bg-background-light hover:text-gray-400"
           >
             {showNewPassword ? (
               <EyeSlashIcon className="h-4 w-4" />
@@ -202,7 +202,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       {/* Confirm Password Field */}
       <div>
-        <Label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-text">
+        <Label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-400">
           Confirm New Password
         </Label>
         <div className="relative">
@@ -211,13 +211,13 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="Re-enter your new password"
             {...form.register('confirmPassword')}
-            inputClassName="h-12 w-full rounded-lg border-border bg-background text-text px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
+            inputClassName="h-12 w-full rounded-lg border-border bg-background text-gray-400 px-4 pr-12 placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <Button
             type="button"
             variant="ghost"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 text-text-muted shadow-none hover:bg-background-light hover:text-text"
+            className="absolute right-3 top-1/2 flex h-5 w-5 min-w-0 -translate-y-1/2 items-center justify-center rounded-md border-0 p-0 text-gray-500 shadow-none hover:bg-background-light hover:text-gray-400"
           >
             {showConfirmPassword ? (
               <EyeSlashIcon className="h-4 w-4" />
@@ -244,7 +244,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       {/* Resend OTP */}
       <div className="text-center">
-        <span className="text-sm text-text-muted">Didn't receive the code? </span>
+        <span className="text-sm text-gray-500">Didn't receive the code? </span>
         <button
           type="button"
           onClick={async () => {
@@ -263,7 +263,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       {/* Back to Sign In */}
       <div className="text-center">
-        <span className="text-sm text-text-muted">Remember your password? </span>
+        <span className="text-sm text-gray-500">Remember your password? </span>
         <button
           type="button"
           onClick={onBackToSignIn}
