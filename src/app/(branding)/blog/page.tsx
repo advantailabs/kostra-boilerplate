@@ -5,6 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Make this page dynamic to avoid database calls at build time
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 export const metadata: Metadata = {
   title: 'Blog - Kostra',
   description: 'Read our latest blog posts about Next.js, development, and best practices.',

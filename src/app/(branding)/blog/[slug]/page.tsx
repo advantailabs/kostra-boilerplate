@@ -5,6 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Make this page dynamic to avoid database calls at build time
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -24,19 +28,6 @@ type BlogCategory = {
     name: string;
   };
 };
-
-export async function generateStaticParams() {
-  const result = await getAllBlogs({
-    published: true,
-    limit: 100, // Adjust based on expected number of blog posts
-  });
-
-  return (
-    result?.data?.map((blog: { slug: string }) => ({
-      slug: blog.slug,
-    })) || []
-  );
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
