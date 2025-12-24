@@ -1,0 +1,9 @@
+[phases.install]
+cmds = ["pnpm install prisma @prisma/client", "pnpm run generate"]
+
+[phases.build]
+cmds = ["pnpm run build"]
+
+[start]
+cmd = "pnpm start"
+

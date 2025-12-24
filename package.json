@@ -2,6 +2,9 @@
   "name": "kostra",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "instrumentation": {
     "client": "./src/instrumentation-client.ts",
     "server": "./src/instrumentation.ts"
