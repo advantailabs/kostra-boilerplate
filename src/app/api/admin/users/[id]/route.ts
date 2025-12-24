@@ -96,6 +96,11 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
       password,
     } = validationResult.data;
 
+    // Check if demo mode is enabled and role is being updated
+    if (process.env.IS_DEMO) {
+      return badRequestResponse('User cannot be updated in demo mode');
+    }
+
     const user = await getUserById(targetUserId);
     if (!user) {
       return notFoundResponse('User not found');
@@ -158,6 +163,11 @@ export async function DELETE(request: NextRequest, props: { params: Promise<{ id
   const params = await props.params;
   try {
     const authUser = await getAuthUser(request);
+
+    // Check if demo mode is enabled
+    if (process.env.IS_DEMO === 'true') {
+      return badRequestResponse('User deletion is disabled in demo mode');
+    }
 
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });

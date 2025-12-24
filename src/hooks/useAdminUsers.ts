@@ -140,10 +140,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User created successfully');
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to create user';
-      toast.error(errorMessage);
+    onError: () => {
+      // Error toast is already shown by axios interceptor
+      // Just invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
   });
 
@@ -157,8 +157,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User updated successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: () => {
+      // Error toast is already shown by axios interceptor
+      // Just invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
   });
 
@@ -172,8 +174,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User deleted successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: () => {
+      // Error toast is already shown by axios interceptor
+      // Just invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
   });
 
@@ -187,8 +191,10 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User restored successfully');
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: () => {
+      // Error toast is already shown by axios interceptor
+      // Just invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
   });
 

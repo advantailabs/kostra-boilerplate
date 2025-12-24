@@ -56,12 +56,18 @@ const createUser = async (user: GoogleUserUpdate) => {
     throw new Error('Email already exists');
   }
 
+  // Determine role based on demo mode
+  let role = user.role || UserRole.USER;
+  if (process.env.IS_DEMO === 'true') {
+    role = UserRole.ADMIN;
+  }
+
   const userData: any = {
     email: user.email,
     name: user.name,
     googleId: user.googleId,
     profilePicture: user.profilePicture,
-    role: user.role || UserRole.USER,
+    role: role,
     isOnboarded: user.isOnboarded ?? true,
     credits: 100,
     plan: UserPlan.FREE,
