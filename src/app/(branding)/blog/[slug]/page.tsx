@@ -5,6 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Enable ISR - regenerate page every hour
+export const revalidate = 3600;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -25,17 +28,25 @@ type BlogCategory = {
   };
 };
 
+// Generate static pages for all blogs at build time
 export async function generateStaticParams() {
-  const result = await getAllBlogs({
-    published: true,
-    limit: 100, // Adjust based on expected number of blog posts
-  });
+  try {
+    const result = await getAllBlogs({
+      published: true,
+      limit: 100,
+    });
 
-  return (
-    result?.data?.map((blog: { slug: string }) => ({
-      slug: blog.slug,
-    })) || []
-  );
+    return (
+      result?.data?.map((blog: { slug: string }) => ({
+        slug: blog.slug,
+      })) || []
+    );
+  } catch (error) {
+    // If database is not available during build, return empty array
+    // Pages will be generated on-demand with ISR
+    console.warn('Failed to generate static params for blog pages:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -103,7 +114,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {blog.categories.map(({ category }: BlogCategory) => (
                   <span
                     key={category.id}
-                    className="bg-primary/20 rounded-full px-3 py-1 text-xs font-medium text-primary"
+                    className="rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary"
                   >
                     {category.name}
                   </span>
@@ -146,7 +157,7 @@ export default async function BlogPostPage({ params }: Props) {
                   {blog.tags.map((tag: string) => (
                     <span
                       key={tag}
-                      className="bg-primary/60 rounded-full px-3 py-1 text-xs text-white"
+                      className="rounded-full bg-primary/60 px-3 py-1 text-xs text-white"
                     >
                       #{tag}
                     </span>

@@ -5,6 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Enable ISR - regenerate page every hour
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Blog - Kostra',
   description: 'Read our latest blog posts about Next.js, development, and best practices.',
@@ -98,7 +101,7 @@ export default async function BlogListPage({ searchParams }: Props) {
                   {blog.categories.map(({ category }: BlogCategory) => (
                     <span
                       key={category.id}
-                      className="bg-primary/20 rounded-full px-3 py-1 text-xs font-medium text-primary"
+                      className="rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary"
                     >
                       {category.name}
                     </span>
@@ -141,7 +144,7 @@ export default async function BlogListPage({ searchParams }: Props) {
                 href={`/blog?page=${pageNum}`}
                 className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
                   pageNum === currentPage
-                    ? 'bg-primary/20 border-primary text-primary'
+                    ? 'border-primary bg-primary/20 text-primary'
                     : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 text-white'
                 }`}
               >
