@@ -75,7 +75,7 @@ export default function ContactPage() {
         <div className="mb-10 text-center">
           <h1 className="mb-3 text-3xl font-semibold text-white">Contact Us</h1>
           <p className="mx-auto max-w-2xl text-base text-text-muted">
-            We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            We&apos;d love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
 

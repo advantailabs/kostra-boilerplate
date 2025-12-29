@@ -61,6 +61,7 @@ export default [
       react: reactPlugin,
       'jsx-a11y': jsxA11yPlugin,
       import: importPlugin,
+      '@next/next': nextConfig,
     },
     languageOptions: {
       globals: {
@@ -205,3 +206,41 @@ export default [
     },
   },
 ];
+
+/* ESLINT CONFIG FROM NEXTJS DOCS  */
+// import nextVitals from 'eslint-config-next/core-web-vitals';
+// import nextTs from 'eslint-config-next/typescript';
+// import { defineConfig, globalIgnores } from 'eslint/config';
+
+// import prettier from 'eslint-config-prettier/flat';
+
+// const eslintConfig = defineConfig([
+//   ...nextVitals,
+//   ...nextTs,
+//   prettier,
+//   { rules: { '@typescript-eslint/no-explicit-any': 'off' } },
+//   // Override default ignores of eslint-config-next.
+//   globalIgnores([
+//     '**/.next/',
+//     '**/out/',
+//     '**/build/',
+//     '**/dist/',
+//     '**/infra/',
+//     '**/node_modules/',
+//     '**/.cache/',
+//     '**/.eslintcache',
+//     '**/*.generated.*',
+//     '**/*.min.*',
+//     '**/package-lock.json',
+//     '**/pnpm-lock.yaml',
+//     '**/yarn.lock',
+//     'prisma/*.db',
+//     'prisma/migrations/',
+//     '**/.DS_Store',
+//     '**/*.pem',
+//     '**/src/lib/prisma/generated',
+//     'next.config.mjs', // Stops 'process' is not defined eslint error by ignoring
+//   ]),
+// ]);
+
+// export default eslintConfig;
