@@ -44,9 +44,7 @@ export { Card, type CardProps };
 
 // Additional card building blocks to match common API usage
 
-interface CardHeaderProps extends React.ComponentPropsWithoutRef<'div'> {}
-
-const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
+const CardHeader = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<'div'>>(
   ({ className, ...props }, forwardedRef) => {
     return (
       <div ref={forwardedRef} className={cx('px-4 py-3 sm:px-6 sm:py-4', className)} {...props} />
@@ -56,12 +54,10 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
 
 CardHeader.displayName = 'CardHeader';
 
-interface CardTitleProps extends React.ComponentPropsWithoutRef<'h3'> {}
-
-const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+const CardTitle = React.forwardRef<HTMLHeadingElement, React.ComponentPropsWithoutRef<'h3'>>(
   ({ className, ...props }, forwardedRef) => {
     return (
-       
+
       <h3
         ref={forwardedRef}
         className={cx('text-base font-semibold text-text', className)}
@@ -73,9 +69,8 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
 
 CardTitle.displayName = 'CardTitle';
 
-interface CardDescriptionProps extends React.ComponentPropsWithoutRef<'p'> {}
 
-const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
+const CardDescription = React.forwardRef<HTMLParagraphElement, React.ComponentPropsWithoutRef<'p'>>(
   ({ className, ...props }, forwardedRef) => {
     return (
       <p ref={forwardedRef} className={cx('mt-1 text-sm text-text-muted', className)} {...props} />
@@ -85,9 +80,8 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionPr
 
 CardDescription.displayName = 'CardDescription';
 
-interface CardContentProps extends React.ComponentPropsWithoutRef<'div'> {}
 
-const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+const CardContent = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<'div'>>(
   ({ className, ...props }, forwardedRef) => {
     return (
       <div
@@ -105,9 +99,6 @@ export {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-  type CardContentProps,
-  type CardDescriptionProps,
-  type CardHeaderProps,
-  type CardTitleProps,
+  CardTitle
 };
+
