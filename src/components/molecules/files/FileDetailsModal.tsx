@@ -30,7 +30,7 @@ export function FileDetailsModal({
         hour: '2-digit',
         minute: '2-digit',
       });
-    } catch (error) {
+    } catch (_error) {
       return 'Invalid Date';
     }
   };

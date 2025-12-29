@@ -1,14 +1,14 @@
 import { generateJWT, setAuthCookie } from '@/lib/auth/jwt';
 import { badRequestResponse, internalServerErrorResponse, successResponse } from '@/lib/utils';
 import {
-    extractGoogleUserInfo,
-    validateGoogleResponse,
-    verifyGoogleToken,
+  extractGoogleUserInfo,
+  validateGoogleResponse,
+  verifyGoogleToken,
 } from '@/services/external/google/auth';
 import {
-    createUser,
-    getUserByGoogleIdOrEmail,
-    updateUserGoogleId,
+  createUser,
+  getUserByGoogleIdOrEmail,
+  updateUserGoogleId,
 } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     try {
       userInfo = await verifyGoogleToken(credential);
     } catch (error) {
+      console.error(error);
       return badRequestResponse('Invalid Google access token');
     }
 

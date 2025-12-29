@@ -1,3 +1,5 @@
+ 
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { EmailDriver, EmailMessage } from '../types';
 
 export interface TestEmailDriverConfig {
@@ -9,13 +11,11 @@ export interface TestEmailDriverConfig {
 }
 
 export class TestDriver implements EmailDriver {
-   
   constructor(_config?: TestEmailDriverConfig) {
     // Test driver doesn't need any configuration
     // Accept config parameter for interface consistency
   }
 
-   
   async send(_message: EmailMessage): Promise<void> {
     // Simulate async operation
     await Promise.resolve();

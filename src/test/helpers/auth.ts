@@ -125,6 +125,7 @@ export function extractJWTClaims(token: string) {
     const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
     return payload;
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to extract JWT claims');
   }
 }

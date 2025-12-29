@@ -33,7 +33,7 @@ export function ForgotPasswordForm({ onSuccess, onBackToSignIn }: ForgotPassword
     try {
       await forgotPassword(data);
       onSuccess(data.email);
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the hook
     }
   };

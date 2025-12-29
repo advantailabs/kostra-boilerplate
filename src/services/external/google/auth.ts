@@ -35,6 +35,7 @@ export async function verifyGoogleToken(accessToken: string) {
     });
     return data;
   } catch (error) {
+    console.error(error);
     throw new Error('Invalid Google access token');
   }
 }

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       if (authUser?.userId) {
         userId = parseInt(authUser.userId.toString(), 10);
       }
-    } catch (error) {
+    } catch (_error) {
       // User not authenticated, continue without userId
       console.log('No authenticated user for contact submission');
     }

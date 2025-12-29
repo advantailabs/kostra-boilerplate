@@ -84,6 +84,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
             )
           );
         } catch (error) {
+          console.error(error)
           setUploadingFiles(prev =>
             prev.map(f =>
               f.id === uploadingFile.id

@@ -75,7 +75,7 @@ export default function ContactPage() {
         <div className="mb-10 text-center">
           <h1 className="mb-3 text-3xl font-semibold text-white">Contact Us</h1>
           <p className="mx-auto max-w-2xl text-base text-text-muted">
-            We&apos;d love to hear from you. Send us a message and we'll respond as soon as possible.
+            We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
           </p>
         </div>
 
@@ -135,7 +135,7 @@ export default function ContactPage() {
               <CardHeader>
                 <CardTitle className="text-white">Send us a Message</CardTitle>
                 <CardDescription className="text-text-muted">
-                  Fill out the form below and we'll get back to you soon.
+                  Fill out the form below and we&apos;ll get back to you soon.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -224,7 +224,7 @@ export default function ContactPage() {
                   <Alert className="border-success/50 bg-success/20 mt-6">
                     <CheckCircle className="h-4 w-4 text-success" />
                     <AlertDescription className="text-success">
-                      Thank you! Your message has been sent successfully. We'll get back to you
+                      Thank you! Your message has been sent successfully. We&apos;ll get back to you
                       soon.
                     </AlertDescription>
                   </Alert>

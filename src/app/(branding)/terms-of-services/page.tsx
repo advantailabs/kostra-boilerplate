@@ -56,7 +56,7 @@ export default function TermsOfServicePage() {
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-sm sm:text-base">
-                  By accessing and using Kostra ("the Service"), you accept and agree to be bound by
+                  By accessing and using Kostra (&quot;the Service&quot;), you accept and agree to be bound by
                   the terms and provision of this agreement. If you do not agree to abide by the
                   above, please do not use this service.
                 </p>
@@ -103,7 +103,7 @@ export default function TermsOfServicePage() {
                       violates third-party rights
                     </li>
                     <li>
-                      Attempt to gain unauthorized access to our systems or other users' accounts
+                      Attempt to gain unauthorized access to our systems or other users&apos; accounts
                     </li>
                     <li>
                       Use the Service for any commercial purpose without our explicit written

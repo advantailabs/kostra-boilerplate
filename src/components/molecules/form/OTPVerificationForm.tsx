@@ -138,7 +138,7 @@ export function OTPVerificationForm({
         otp,
       });
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the mutation
     }
   };
@@ -287,14 +287,14 @@ export function OTPVerificationForm({
 
       {/* Resend OTP */}
       <div className="text-center">
-        <span className="text-sm text-gray-500">Didn't receive the code? </span>
+        <span className="text-sm text-gray-500">Didn&apos;t receive the code? </span>
         <button
           type="button"
           onClick={async () => {
             try {
               await resendOTP({ email, purpose: 'SIGNUP' });
               onResendOTP();
-            } catch (error) {
+            } catch (_error) {
               // Error is handled by the hook
             }
           }}

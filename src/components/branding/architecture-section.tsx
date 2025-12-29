@@ -74,7 +74,7 @@ export function ArchitectureSection() {
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-gray-400 sm:text-xl">
             Clean architecture, proven design patterns, and developer-friendly structure. Build faster
-            with code that's maintainable, testable, and easy to extend.
+            with code that&apos;s maintainable, testable, and easy to extend.
           </p>
         </motion.div>
 
@@ -146,7 +146,7 @@ export function ArchitectureSection() {
             <div>
               <h4 className="mb-2 font-medium text-white">Maintainability</h4>
               <p className="text-sm text-gray-400/80">
-                Separation of concerns and modular design ensure changes are isolated and don't
+                Separation of concerns and modular design ensure changes are isolated and don&apos;t
                 break existing functionality.
               </p>
             </div>

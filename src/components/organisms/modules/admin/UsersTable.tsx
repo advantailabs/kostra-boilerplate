@@ -109,7 +109,7 @@ export function UsersTable({
   const handleRoleChange = async (userId: number, newRole: string) => {
     try {
       await updateUser({ userId, userData: { role: newRole as UserRole } });
-    } catch (error) {
+    } catch (_error) {
       // Error handling is done in the hook
     }
   };

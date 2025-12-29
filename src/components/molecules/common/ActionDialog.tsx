@@ -187,7 +187,7 @@ export function ActionDialog({
         {showNameConfirmation && (
           <div className="mt-4">
             <label htmlFor="confirmation-name" className="text-sm font-medium text-text">
-              Type "{itemName}" to confirm {actionType}
+              Type &quot;{itemName}&quot; to confirm {actionType}
             </label>
             <Input
               id="confirmation-name"

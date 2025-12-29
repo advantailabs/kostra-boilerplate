@@ -88,7 +88,7 @@ export function FeaturesSection() {
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-gray-400 sm:text-xl">
             Everything you need to build a modern SaaS application. From content management to
-            payments, email, and user administration - it's all included.
+            payments, email, and user administration - it&apos;s all included.
           </p>
         </motion.div>
 

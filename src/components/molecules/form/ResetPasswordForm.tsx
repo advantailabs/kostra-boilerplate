@@ -133,7 +133,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
         otp,
       });
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the hook
     }
   };
@@ -244,13 +244,13 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       {/* Resend OTP */}
       <div className="text-center">
-        <span className="text-sm text-gray-500">Didn't receive the code? </span>
+        <span className="text-sm text-gray-500">Didn&apos;t receive the code? </span>
         <button
           type="button"
           onClick={async () => {
             try {
               await resendOTP({ email, purpose: 'PASSWORD_RESET' });
-            } catch (error) {
+            } catch (_error) {
               // Error is handled by the hook
             }
           }}
