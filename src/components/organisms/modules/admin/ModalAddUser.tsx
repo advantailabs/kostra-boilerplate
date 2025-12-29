@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 // React import not needed as we use hooks directly; remove empty import
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, useWatch, type SubmitHandler } from 'react-hook-form';
 
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
@@ -34,7 +34,6 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(createUserSchema) as any,
@@ -47,9 +46,9 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
     },
   });
 
-  const emailVal = watch('email');
-  const passwordVal = watch('password');
-  const roleVal = watch('role');
+  const emailVal = useWatch({ control, name: 'email' });
+  const passwordVal = useWatch({ control, name: 'password' });
+  const roleVal = useWatch({ control, name: 'role' });
   const isAllFieldsPresent = Boolean(emailVal && passwordVal && roleVal);
 
   const onSubmit: SubmitHandler<FormData> = async data => {
