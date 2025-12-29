@@ -234,7 +234,6 @@ const eslintConfig = defineConfig([
         },
       ],
       // REMOVE ALL THIS WHEN NO-UNUSED-VARS ETC ARE FIXED
-      'react-hooks/set-state-in-effect': 'off',
       'react-hooks/preserve-manual-memoization': 'off',
     },
   },
