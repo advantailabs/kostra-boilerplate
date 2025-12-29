@@ -120,7 +120,7 @@ export function CategoriesTable({
                       </div>
                     </TableCell>
                     <TableCell className="py-1">
-                      {/* eslint-disable-next-line no-underscore-dangle */}
+                      { }
                       <Badge variant="neutral">{category._count?.blogs || 0} blogs</Badge>
                     </TableCell>
                     <TableCell className="py-1 text-text-muted">

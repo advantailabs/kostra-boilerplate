@@ -10,7 +10,7 @@ export default function GlobalError({ error }: { error: Error & { digest?: strin
   }, [error]);
 
   return (
-    // eslint-disable-next-line jsx-a11y/html-has-lang
+     
     <html>
       <body>
         {/* `NextError` is the default Next.js error page component. Its type

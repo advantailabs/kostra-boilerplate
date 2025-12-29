@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+ 
 // Tremor Date Picker [v1.0.5]
 
 'use client';
@@ -765,7 +765,7 @@ function RangeDatePicker({
   };
 
   const onTimeChange = (time: TimeValue | null, pos: 'start' | 'end') => {
-    // eslint-disable-next-line default-case
+     
     switch (pos) {
       case 'start':
         setStartTime(time);

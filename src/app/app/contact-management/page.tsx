@@ -54,7 +54,7 @@ export default function ContactManagementPage() {
 
   useEffect(() => {
     // Debug the response shape
-    // eslint-disable-next-line no-console
+     
     console.log('Contacts query data:', data);
   }, [data]);
 

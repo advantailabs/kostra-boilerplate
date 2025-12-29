@@ -44,7 +44,7 @@ export default function BrandingLayout({
         <main className="relative pt-12 md:pt-16">{children}</main>
         <MinimalFooter />
         <script
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{
             __html: `
               // Prevent browser scroll restoration on page load

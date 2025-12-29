@@ -61,7 +61,7 @@ interface CardTitleProps extends React.ComponentPropsWithoutRef<'h3'> {}
 const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className, ...props }, forwardedRef) => {
     return (
-      // eslint-disable-next-line jsx-a11y/heading-has-content
+       
       <h3
         ref={forwardedRef}
         className={cx('text-base font-semibold text-text', className)}

@@ -9,13 +9,13 @@ export interface TestEmailDriverConfig {
 }
 
 export class TestDriver implements EmailDriver {
-  // eslint-disable-next-line no-useless-constructor
+   
   constructor(_config?: TestEmailDriverConfig) {
     // Test driver doesn't need any configuration
     // Accept config parameter for interface consistency
   }
 
-  // eslint-disable-next-line class-methods-use-this
+   
   async send(_message: EmailMessage): Promise<void> {
     // Simulate async operation
     await Promise.resolve();

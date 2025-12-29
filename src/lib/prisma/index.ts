@@ -1,14 +1,14 @@
 /* eslint-env node */
-/* eslint-disable vars-on-top */
-/* eslint-disable no-undef */
-/* eslint-disable no-var */
+ 
+ 
+ 
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/client';
 declare global {
-  // eslint-disable-next-line no-var
-  // eslint-disable-next-line no-unused-vars
+   
+   
   var prisma: PrismaClient | undefined;
-  // eslint-disable-next-line no-var
+   
   var prismaListenersRegistered: boolean | undefined;
 }
 
