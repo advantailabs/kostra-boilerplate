@@ -17,7 +17,7 @@ import { UploadPurpose } from '@/types/file-upload';
 
 // Polyfill for File in Node.js environment
 if (typeof global.File === 'undefined') {
-  const { Blob } = require('buffer');
+  const { Blob } = await import('buffer');
 
   class FilePolyfill extends Blob {
     name: string;
