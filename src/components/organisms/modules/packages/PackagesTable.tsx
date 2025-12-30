@@ -56,10 +56,17 @@ export function PackagesTable({
 
   // Handle smart pagination after deletion
   useEffect(() => {
+    console.log("Packages Len in Page " + packages.length)
+    console.log("Total Pages " + totalPages)
+    console.log("Page num " + page)
+
     // If current page is empty and we're not on page 1, go to previous page
-    if (packages.length === 0 && page > 1 && !isLoading && totalPages > 1) {
-      setPage(page - 1);
+    if (packages.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+      console.log("in if block")
+      setPage(prevPage => prevPage - 1);
     }
+    console.log("Page num " + page)
+
   }, [packages.length, page, isLoading, totalPages]);
 
   // Notify parent of page changes
