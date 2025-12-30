@@ -15,29 +15,14 @@ import {
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, UserRole } from '@/lib/constants/admin';
 import { ModalEditUserProps } from '@/types/user';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
   const { updateUser, isUpdating } = useAdminUsers();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'USER' as UserRole,
-    isOnboarded: false,
-    credits: 0,
-    stripeCustomerId: '',
-    plan: 'FREE' as 'FREE' | 'PRO',
-    isOverDue: false,
-    planExpiringAt: '',
-    password: '',
-  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Initialize form data when user changes
-  useEffect(() => {
+  const initializeFormData = () => {
     if (user) {
-      setFormData({
+      return {
         name: user.name || '',
         email: user.email || '',
         role: user.role || 'USER',
@@ -48,10 +33,24 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
         isOverDue: user.isOverDue ?? false,
         planExpiringAt: user.planExpiringAt || '',
         password: '',
-      });
-      setErrors({});
+      }
+    } return {
+      name: '',
+      email: '',
+      role: 'USER' as UserRole,
+      isOnboarded: false,
+      credits: 0,
+      stripeCustomerId: '',
+      plan: 'FREE' as 'FREE' | 'PRO',
+      isOverDue: false,
+      planExpiringAt: '',
+      password: '',
     }
-  }, [user]);
+  }
+
+  const [formData, setFormData] = useState(initializeFormData);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -320,11 +319,10 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
             <div>
               <span className="">Current Role:</span>
               <span
-                className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                  user.role === 'ADMIN'
-                    ? 'dark:bg-purple-900/20 bg-purple-100 text-purple-800 dark:text-purple-300'
-                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-                }`}
+                className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${user.role === 'ADMIN'
+                  ? 'dark:bg-purple-900/20 bg-purple-100 text-purple-800 dark:text-purple-300'
+                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
+                  }`}
               >
                 {user.role}
               </span>
