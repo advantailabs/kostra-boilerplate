@@ -54,7 +54,7 @@ export default function ContactManagementPage() {
 
   useEffect(() => {
     // Debug the response shape
-     
+
     console.log('Contacts query data:', data);
   }, [data]);
 
@@ -261,6 +261,7 @@ export default function ContactManagementPage() {
             setSelected(null);
           }}
           contact={selected}
+          key={selected ? selected.id : ''}
           onSave={handleSaveDetails}
           isSaving={isUpdating}
         />

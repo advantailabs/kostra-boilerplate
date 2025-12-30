@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
@@ -33,15 +33,8 @@ export function ContactDetailsModal({
   onSave,
   isSaving,
 }: ContactDetailsModalProps) {
-  const [status, setStatus] = useState<string | undefined>(undefined);
-  const [adminNotes, setAdminNotes] = useState('');
-
-  useEffect(() => {
-    if (contact) {
-      setStatus(contact.status as unknown as string);
-      setAdminNotes(contact.adminNotes || '');
-    }
-  }, [contact]);
+  const [status, setStatus] = useState<string | undefined>(() => contact?.status ? contact.status : '');
+  const [adminNotes, setAdminNotes] = useState(() => contact?.adminNotes ? contact.adminNotes : '');
 
   const purposeLabel = useMemo(() => {
     if (!contact) return '';
