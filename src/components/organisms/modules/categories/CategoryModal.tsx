@@ -5,7 +5,7 @@ import { Label } from '@/components/atom/Label';
 import { Modal } from '@/components/molecules/common/Modal';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryResponseType } from '@/types/blog.type';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -28,9 +28,17 @@ export function CategoryModal({
   currentLimit = 10,
   currentSearch,
 }: CategoryModalProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    slug: '',
+  const [formData, setFormData] = useState(() => {
+    if (mode === 'edit' && category) {
+      return {
+        name: category.name || '',
+        slug: category.slug || '',
+      }
+    }
+    return {
+      name: '',
+      slug: '',
+    }
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -41,20 +49,6 @@ export function CategoryModal({
     name: currentSearch,
   });
   const isLoading = mode === 'create' ? isCreating : isUpdating;
-
-  useEffect(() => {
-    if (mode === 'edit' && category) {
-      setFormData({
-        name: category.name || '',
-        slug: category.slug || '',
-      });
-    } else if (mode === 'create') {
-      setFormData({
-        name: '',
-        slug: '',
-      });
-    }
-  }, [mode, category]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
