@@ -100,6 +100,7 @@ export function PackagesPage({ className }: PackagesPageProps) {
         onClose={handlePackageModalClose}
         onSubmit={handlePackageSuccess}
         package={editingPackage}
+        key={editingPackage ? editingPackage.id : ''} // when key changes, component is destroyed and remounted, negating need for useEffect to set editing or create form data
         mode={modalMode}
         currentPage={currentPage}
       />

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/atom/Textarea';
 import { Modal } from '@/components/molecules/common/Modal';
 import { usePackages } from '@/hooks/usePackages';
 import { RiCloseLine } from '@remixicon/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 interface Package {
   id: number;
@@ -43,18 +43,35 @@ export function PackageModal({
   currentLimit = 10,
   currentSearch,
 }: PackageModalProps) {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    isFeatured: false,
-    price: 0,
-    currencySymbol: '$',
-    features: [] as string[],
-  });
+
+  const initializeFormData = () => {
+    if (mode === 'edit' && pkg) {
+      // Convert Decimal string to number if needed
+      const priceValue = typeof pkg.price === 'string' ? parseFloat(pkg.price) : pkg.price;
+      return {
+        title: pkg.title || '',
+        description: pkg.description || '',
+        isFeatured: pkg.isFeatured || false,
+        price: priceValue || 0,
+        currencySymbol: pkg.currencySymbol || '$',
+        features: pkg.features || [],
+      }
+    }
+    return {
+      title: '',
+      description: '',
+      isFeatured: false,
+      price: 0,
+      currencySymbol: '$',
+      features: [],
+    }
+  }
+
+  const [formData, setFormData] = useState(initializeFormData);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [featureInput, setFeatureInput] = useState('');
-  const [priceDisplay, setPriceDisplay] = useState('');
+  const [priceDisplay, setPriceDisplay] = useState(() => pkg ? pkg.price.toString() : '');
 
   const { createPackage, updatePackage, isCreating, isUpdating } = usePackages({
     page: currentPage,
@@ -62,32 +79,6 @@ export function PackageModal({
     title: currentSearch,
   });
   const isLoading = mode === 'create' ? isCreating : isUpdating;
-
-  useEffect(() => {
-    if (mode === 'edit' && pkg) {
-      // Convert Decimal string to number if needed
-      const priceValue = typeof pkg.price === 'string' ? parseFloat(pkg.price) : pkg.price;
-      setFormData({
-        title: pkg.title || '',
-        description: pkg.description || '',
-        isFeatured: pkg.isFeatured || false,
-        price: priceValue || 0,
-        currencySymbol: pkg.currencySymbol || '$',
-        features: pkg.features || [],
-      });
-      setPriceDisplay(priceValue === 0 ? '' : priceValue.toString());
-    } else if (mode === 'create') {
-      setFormData({
-        title: '',
-        description: '',
-        isFeatured: false,
-        price: 0,
-        currencySymbol: '$',
-        features: [],
-      });
-      setPriceDisplay('');
-    }
-  }, [mode, pkg]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
