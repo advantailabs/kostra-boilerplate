@@ -233,8 +233,6 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      // REMOVE ALL THIS WHEN NO-UNUSED-VARS ETC ARE FIXED
-      'react-hooks/preserve-manual-memoization': 'off',
     },
   },
   // Override default ignores of eslint-config-next.
