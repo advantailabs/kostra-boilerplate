@@ -100,7 +100,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
         fileInputRef.current.value = '';
       }
     },
-    [user?.id]
+    [user]
   );
 
   const handleClose = useCallback(() => {
