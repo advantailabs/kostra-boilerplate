@@ -55,14 +55,10 @@ export function PackagesTable({
   const totalPages = pagination?.totalPages || 1;
 
   // Handle smart pagination after deletion
-  console.log("Packages Len in Page " + packages.length)
-  console.log("Total Pages " + totalPages)
-  console.log("Page num " + page)
+  // If current page is empty and we're not on page 1, go to previous page
   if (packages.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
-    console.log("in if block")
     setPage(prevPage => prevPage - 1);
   }
-  console.log("Page num " + page)
 
 
   // Notify parent of page changes
