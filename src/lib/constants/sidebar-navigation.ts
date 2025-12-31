@@ -1,5 +1,6 @@
 import { siteConfig } from '@/app/siteConfig';
 import {
+  RemixiconComponentType,
   RiArticleLine,
   RiCustomerService2Line,
   RiFileLine,
@@ -16,7 +17,7 @@ import { ADMIN, USER, UserRole } from '../routes/types';
 export interface NavigationItem {
   name: string;
   href: string;
-  icon: any; // Icon component type
+  icon: RemixiconComponentType; // Icon component type
   section: string;
   roles: UserRole[]; // Roles that can access this navigation item
 }

@@ -12,7 +12,6 @@ const eslintConfig = defineConfig([
   prettier,
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': [
         // ignores unused variables starting with _, e.g _error
         'error',
@@ -27,6 +26,7 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   globalIgnores([
     '**/.next/',
+    '**/test/',
     '**/out/',
     '**/build/',
     '**/dist/',

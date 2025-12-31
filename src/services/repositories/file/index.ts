@@ -1,6 +1,12 @@
 import { prisma as sharedPrisma } from '@/lib/prisma';
 import { File, PrismaClient } from '@/lib/prisma/generated/client';
+import {
+  FileOrderByWithRelationInput,
+  FileWhereInput,
+  InputJsonValue,
+} from '@/lib/prisma/generated/internal/prismaNamespace';
 import type { File as FileType } from '@/types/file';
+import { JsonValue } from '@prisma/client/runtime/client';
 
 // Repository result type
 interface RepositoryResult<T> {
@@ -33,7 +39,7 @@ export interface CreateFileData {
   mimeType: string;
   size: number;
   url?: string;
-  metadata?: any;
+  metadata?: InputJsonValue;
 }
 
 export interface UpdateFileData {
@@ -42,7 +48,7 @@ export interface UpdateFileData {
   mimeType?: string;
   size?: number;
   url?: string;
-  metadata?: any;
+  metadata?: InputJsonValue;
 }
 
 export interface FileFilters {
@@ -88,7 +94,9 @@ export async function findFileByIdInternal(id: number): Promise<RepositoryResult
 }
 
 // Public function for client responses
-export async function findFileById(id: number): Promise<RepositoryResult<FileType | null>> {
+export async function findFileById(
+  id: number
+): Promise<RepositoryResult<(Omit<FileType, 'metadata'> & { metadata: JsonValue }) | null>> {
   try {
     const file = await prisma.file.findFirst({
       where: { id, deletedAt: null },
@@ -112,7 +120,7 @@ export async function findFilesByUserId(
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const whereClause: any = {
+    const whereClause: FileWhereInput = {
       userId,
       deletedAt: null,
     };
@@ -129,7 +137,7 @@ export async function findFilesByUserId(
     }
 
     // Build order by clause
-    let orderBy: any = { createdAt: 'desc' };
+    let orderBy: FileOrderByWithRelationInput = { createdAt: 'desc' };
     if (filters?.sortBy) {
       orderBy = { [filters.sortBy]: filters.sortOrder || 'desc' };
     }

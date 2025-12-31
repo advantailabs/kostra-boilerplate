@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { ContactPurpose, ContactStatus, ContactSubmission } from '@/lib/prisma/generated/client';
+import { ContactSubmissionScalarWhereInput } from '@/lib/prisma/generated/models';
 import { ContactSubmissionFilters, ContactSubmissionResponse } from '@/types/contact';
 
 export interface ContactRepository {
@@ -81,7 +82,7 @@ export const contactRepository: ContactRepository = {
     const limitNum = parseInt(limit, 10);
     const skip = (pageNum - 1) * limitNum;
 
-    const where: any = {
+    const where: ContactSubmissionScalarWhereInput = {
       deletedAt: null,
     };
 

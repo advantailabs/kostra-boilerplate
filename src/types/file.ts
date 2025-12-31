@@ -1,3 +1,5 @@
+import { InputJsonValue, JsonValue } from '@prisma/client/runtime/client';
+
 export interface File {
   id: number;
   userId: number | null;
@@ -6,7 +8,7 @@ export interface File {
   mimeType: string;
   size: number;
   url: string | null;
-  metadata: any;
+  metadata: InputJsonValue | JsonValue;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
