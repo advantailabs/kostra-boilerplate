@@ -2,15 +2,17 @@
 import axios from 'axios';
 
 export interface GoogleUserInfo {
-  id: string;
+  id: string | undefined;
   email: string;
   name: string;
   picture?: string;
   verified_email: boolean;
+  sub?: string;
+  email_verified?: boolean;
 }
 
 // Helper function to extract user info from Google OAuth response
-export const extractGoogleUserInfo = (response: any): GoogleUserInfo => {
+export const extractGoogleUserInfo = (response: GoogleUserInfo): GoogleUserInfo => {
   return {
     id: response.id || response.sub,
     email: response.email,
@@ -21,7 +23,7 @@ export const extractGoogleUserInfo = (response: any): GoogleUserInfo => {
 };
 
 // Helper function to validate Google OAuth response
-export const validateGoogleResponse = (response: any): boolean => {
+export const validateGoogleResponse = (response: GoogleUserInfo): boolean => {
   return !!(response && response.email && (response.id || response.sub));
 };
 

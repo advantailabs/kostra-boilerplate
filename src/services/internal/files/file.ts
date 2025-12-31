@@ -1,3 +1,4 @@
+import type { File } from '@/lib/prisma/generated/client';
 import { inferUploadPurposeFromKey } from '@/services/internal/files/file-upload/file-utils';
 
 import {
@@ -26,14 +27,14 @@ if (typeof global.File === 'undefined') {
 
     webkitRelativePath: string = '';
 
-    constructor(chunks: any[], filename: string, options: any = {}) {
+    constructor(chunks: ArrayBuffer[], filename: string, options: BlobPropertyBag = {}) {
       super(chunks, options);
       this.name = filename;
       this.lastModified = Date.now();
     }
   }
 
-  (global as any).File = FilePolyfill;
+  global.File = FilePolyfill as unknown as typeof File;
 }
 
 export interface FileServiceResult<T> {
@@ -44,7 +45,7 @@ export interface FileServiceResult<T> {
 
 export interface UploadFileData {
   userId: number;
-  file: File;
+  file: { name: string; type: string; size: number };
   s3Key: string;
   uploadPurpose?: UploadPurpose;
 }
@@ -94,7 +95,7 @@ const getUserFilesService = async (
   }
 };
 
-const uploadFileService = async (data: UploadFileData): Promise<FileServiceResult<any>> => {
+const uploadFileService = async (data: UploadFileData): Promise<FileServiceResult<File>> => {
   try {
     // Create file record in database
     const fileData: CreateFileData = {
@@ -160,7 +161,7 @@ const getFileByIdService = async (id: number): Promise<FileServiceResult<FileTyp
 const updateFileService = async (
   id: number,
   data: UpdateFileData
-): Promise<FileServiceResult<any>> => {
+): Promise<FileServiceResult<File>> => {
   try {
     const result = await updateFile(id, data);
 

@@ -1,5 +1,6 @@
 import { UploadPurpose } from '@/types/file-upload';
 import {
+  RemixiconComponentType,
   RiFile3Line,
   RiFileCodeLine,
   RiFileExcelLine,
@@ -141,7 +142,7 @@ export const getFileTypeIconWithColor = (mimeType: string) => {
  * Returns icon and color for file type categories (not mime types)
  */
 export const getFileTypeCategoryIcon = (type: string) => {
-  const fileTypeConfig: Record<string, { icon: any; color: string }> = {
+  const fileTypeConfig: Record<string, { icon: RemixiconComponentType; color: string }> = {
     PDF: {
       icon: FileText,
       color: 'bg-red-500 text-white',

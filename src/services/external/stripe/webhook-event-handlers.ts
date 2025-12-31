@@ -62,7 +62,7 @@ export const handleEventInvoicePaymentSucceeded = async (invoice: Stripe.Invoice
 
   // Map recognized lines (pro subscription renewals and credit pack top-ups)
   const planLines = fullInvoice.lines.data
-    .map((line: any) => {
+    .map((line: Stripe.InvoiceLineItem) => {
       const priceId = getLinePriceId(line);
       if (priceId === configuredProPriceId) {
         return { plan: 'pro' as const, quantity: line.quantity || 1 };
@@ -113,7 +113,7 @@ export const handleEventCheckoutSessionCompleted = async (session: Stripe.Checko
 
   // Retrieve the subscription to access items
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  const periodEnd = getPeriodEndFromSubscriptionItems(subscription as any);
+  const periodEnd = getPeriodEndFromSubscriptionItems(subscription as Stripe.Subscription);
 
   await updateUserByStripeCustomerId(customerId, {
     plan: UserPlan.PRO,
