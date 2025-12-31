@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { AppError, ERRORS } from '../error/errors';
 
-export const successResponse = (data: any, status: number = 200) => {
+export const successResponse = (data: unknown, status: number = 200) => {
   return NextResponse.json({ success: true, data }, { status });
 };
 
@@ -88,7 +88,7 @@ export const validationErrorResponse = (
  * @param error The error to check
  * @returns A NextResponse with a 400 status code and friendly error message, or null if not a FormData error
  */
-export const handleFormDataError = (error: any) => {
+export const handleFormDataError = (error: Error) => {
   if (error instanceof TypeError) {
     const errorMessage = error.message || '';
     if (

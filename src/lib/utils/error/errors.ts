@@ -3,6 +3,8 @@
  * Used across both frontend and backend for consistency
  */
 
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+
 export interface AppError {
   code: string;
   message: string;
@@ -210,15 +212,16 @@ export class AppErrorClass extends Error {
 /**
  * Map Prisma error codes to application errors
  */
-export function mapPrismaError(prismaError: any): AppError {
+// Prisma Error referrence https://www.prisma.io/docs/orm/reference/error-reference
+export function mapPrismaError(prismaError: PrismaClientKnownRequestError): AppError {
   switch (prismaError.code) {
     case 'P2002':
       // Unique constraint violation
-      if (prismaError.meta?.target?.includes('name')) {
+      if ((prismaError.meta?.target as Array<string>).includes('name')) {
         // Could be package title, knowledge base title, etc.
         return ERRORS.DB_CONSTRAINT_VIOLATION;
       }
-      if (prismaError.meta?.target?.includes('email')) {
+      if ((prismaError.meta?.target as Array<string>).includes('email')) {
         return ERRORS.VALIDATION_EMAIL_INVALID;
       }
       return ERRORS.DB_CONSTRAINT_VIOLATION;
@@ -257,6 +260,12 @@ export function getErrorByCode(code: string): AppError | null {
 /**
  * Check if error is an application error
  */
-export function isAppError(error: any): error is AppErrorClass {
-  return error instanceof AppErrorClass || (error?.code && error?.httpStatus);
+export function isAppError(error: { code: string; httpStatus: number }): error is AppErrorClass {
+  return (
+    error instanceof AppErrorClass ||
+    (typeof error?.code === 'string' &&
+      !!error.code &&
+      typeof error?.httpStatus === 'number' &&
+      Number.isFinite(error.httpStatus))
+  );
 }

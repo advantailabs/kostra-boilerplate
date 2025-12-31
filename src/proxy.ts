@@ -1,4 +1,4 @@
-import { getAuthUser, JWT_KEY } from '@/lib/auth/jwt';
+import { getAuthUser, JWT_KEY, JWTPayload } from '@/lib/auth/jwt';
 import {
   applyCorsHeaders,
   checkAccess,
@@ -9,6 +9,7 @@ import {
   requiresRoleAccess,
 } from '@/lib/routes';
 import { NextRequest, NextResponse } from 'next/server';
+import { UserRole } from './lib/prisma/generated/enums';
 import { forbiddenResponse } from './lib/utils/response/response';
 
 // Middleware is now called Proxy
@@ -20,13 +21,13 @@ const proxy = async (request: NextRequest) => {
   const { pathname: path } = new URL(request.url);
   const { method } = request;
 
-  let authUser: any = null;
-  let userRole: any = null;
+  let authUser: JWTPayload | null = null;
+  let userRole: UserRole | null = null;
 
   try {
     authUser = await getAuthUser(request);
     if (authUser) {
-      userRole = authUser.role.toUpperCase();
+      userRole = authUser.role.toUpperCase() as UserRole;
     }
   } catch (error) {
     console.error('Auth error:', error);

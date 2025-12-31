@@ -79,7 +79,7 @@ export const millionFormatter = (number: number, decimals = 1) => {
 /**
  * Common formatters collection
  */
-export const formatters: { [key: string]: any } = {
+export const formatters: { [key: string]: unknown } = {
   currency: (number: number, currency: string = 'USD') =>
     new Intl.NumberFormat('en-US', {
       style: 'currency',
