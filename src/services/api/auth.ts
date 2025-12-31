@@ -19,7 +19,10 @@ interface AuthResponse {
 export const getAuth = async (): Promise<AuthResponse> => {
   const response = await axios.get<AuthResponse>('/auth');
   // Standardized API returns { success: true, data: { user, token } }
-  return (response.data as any).data as AuthResponse;
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as AuthResponse;
 };
 
 export const googleSignIn = async (credential: string): Promise<AuthResponse> => {
@@ -27,7 +30,10 @@ export const googleSignIn = async (credential: string): Promise<AuthResponse> =>
     credential,
   });
   // Standardized API returns { success: true, data: { user, token } }
-  return (response.data as any).data as AuthResponse;
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as AuthResponse;
 };
 
 export const logout = async () => {
@@ -37,12 +43,18 @@ export const logout = async () => {
 
 export const login = async (data: { email: string; password: string }): Promise<AuthResponse> => {
   const response = await axios.post('/auth/login', data);
-  return (response.data as any).data as AuthResponse;
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as AuthResponse;
 };
 
 export const signup = async (data: { email: string }): Promise<{ message: string }> => {
   const response = await axios.post('/auth/signup', data);
-  return (response.data as any).data as { message: string };
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as { message: string };
 };
 
 export const verifySignup = async (data: {
@@ -52,7 +64,10 @@ export const verifySignup = async (data: {
   otp: string;
 }): Promise<AuthResponse> => {
   const response = await axios.post('/auth/verify-signup', data);
-  return (response.data as any).data as AuthResponse;
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as AuthResponse;
 };
 
 export const resendOTP = async (data: {
@@ -60,12 +75,18 @@ export const resendOTP = async (data: {
   purpose: 'SIGNUP' | 'PASSWORD_RESET';
 }): Promise<{ message: string }> => {
   const response = await axios.post('/auth/resend-otp', data);
-  return (response.data as any).data as { message: string };
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as { message: string };
 };
 
 export const forgotPassword = async (data: { email: string }): Promise<{ message: string }> => {
   const response = await axios.post('/auth/forgot-password', data);
-  return (response.data as any).data as { message: string };
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as { message: string };
 };
 
 export const resetPassword = async (data: {
@@ -74,7 +95,10 @@ export const resetPassword = async (data: {
   otp: string;
 }): Promise<{ message: string }> => {
   const response = await axios.post('/auth/reset-password', data);
-  return (response.data as any).data as { message: string };
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as { message: string };
 };
 
 export const authApi = {

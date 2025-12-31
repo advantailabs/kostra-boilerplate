@@ -4,20 +4,29 @@ interface UserCreditsResponse {
   credits: number;
 }
 
-export const getUserCredits = async (): Promise<number> => {
+export const getUserCredits = async (): Promise<UserCreditsResponse> => {
   const response = await axios.get<UserCreditsResponse>('/users/credits');
   // Standardized API returns { success: true, data: { credits } }
-  return (response.data as any).data.credits as number;
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as UserCreditsResponse;
 };
 
 export const createBillingPortalSession = async (): Promise<string> => {
-  const response = await axios.post<{ url: string } | any>('/billing/portal');
-  return ((response.data as any).data?.url || (response.data as any).url) as string;
+  const response = await axios.post('/billing/portal');
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as string;
 };
 
 export const createCheckoutSession = async (plan: string = 'pro'): Promise<string> => {
-  const response = await axios.post<{ url: string } | any>('/billing/checkout', { plan });
-  return ((response.data as any).data?.url || (response.data as any).url) as string;
+  const response = await axios.post('/billing/checkout', { plan });
+  if (!response.data) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data as string;
 };
 
 export interface CreditHistoryItem {
@@ -42,5 +51,8 @@ export const getCreditHistory = async (limit = 50): Promise<CreditHistoryItem[]>
   const response = await axios.get<{ history: CreditHistoryItem[] }>(
     `/users/credits/history?limit=${limit}`
   );
-  return (response.data as any).data.history as CreditHistoryItem[];
+  if (!response.data.history) {
+    throw new Error('No Data was sent in Response');
+  }
+  return response.data.history as CreditHistoryItem[];
 };
