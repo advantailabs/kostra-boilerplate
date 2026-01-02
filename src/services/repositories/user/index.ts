@@ -6,6 +6,16 @@ import {
   UserWhereInput,
 } from '@/lib/prisma/generated/models';
 
+export interface CreateUserData {
+  email: string;
+  name: string;
+  googleId?: string;
+  password: string;
+  role: UserRole;
+  isOnboarded: boolean;
+  profilePicture?: string;
+}
+
 export interface GoogleUserUpdate {
   googleId?: string;
   name: string;
@@ -57,7 +67,7 @@ const getUserByEmail = async (email: string, includeDeleted: boolean = false) =>
   });
 };
 
-const createUser = async (user: GoogleUserUpdate) => {
+const createUser = async (user: CreateUserData) => {
   // Check if user already exists (including soft deleted users)
   const existingUser = await getUserByEmail(user.email, true);
   if (existingUser) {

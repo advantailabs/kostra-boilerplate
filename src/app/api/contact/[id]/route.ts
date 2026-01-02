@@ -10,8 +10,9 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils';
-import { contactIdSchema, contactUpdateSchema } from '@/schemas/contact.schema';
+import { contactIdSchema, ContactUpdateInput, contactUpdateSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
@@ -74,10 +75,10 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     }
 
     // Accept both Date and ISO string for resolvedAt
-    const { status, adminNotes, resolvedAt } = validationResult.data as any;
+    const { status, adminNotes, resolvedAt } = validationResult.data as ContactUpdateInput;
     const parsedResolvedAt = typeof resolvedAt === 'string' ? new Date(resolvedAt) : resolvedAt;
     const submission = await contactService.updateContactSubmission(id, {
-      status: status as any,
+      status: status as ContactUpdateInput['status'],
       adminNotes: adminNotes as string | undefined,
       resolvedAt: parsedResolvedAt as Date | undefined,
     });
@@ -95,7 +96,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
 
     // Handle Prisma errors
     if (error && typeof error === 'object' && 'code' in error) {
-      const appError = mapPrismaError(error);
+      const appError = mapPrismaError(error as PrismaClientKnownRequestError);
       return errorResponse(appError);
     }
 

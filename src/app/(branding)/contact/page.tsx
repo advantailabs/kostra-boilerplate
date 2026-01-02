@@ -60,9 +60,11 @@ export default function ContactPage() {
       });
       setSubmitStatus('success');
       reset();
-    } catch (error: any) {
+    } catch (error) {
       setSubmitStatus('error');
-      setErrorMessage(error?.message || 'Failed to submit contact form');
+      if (error instanceof Error) {
+        setErrorMessage(error?.message || 'Failed to submit contact form');
+      }
     } finally {
       setIsSubmitting(false);
     }

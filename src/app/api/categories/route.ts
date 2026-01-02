@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     const validationResult = categoryFiltersSchema.safeParse(filters);
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err: any) => ({
+      const errors = validationResult.error.issues.map(err => ({
         field: err.path.join('.'),
         message: err.message,
       }));

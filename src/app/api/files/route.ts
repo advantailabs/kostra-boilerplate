@@ -29,14 +29,14 @@ if (typeof global.File === 'undefined') {
 
     webkitRelativePath: string = '';
 
-    constructor(chunks: any[], filename: string, options: any = {}) {
+    constructor(chunks: ArrayBuffer[], filename: string, options: BlobPropertyBag = {}) {
       super(chunks, options);
       this.name = filename;
       this.lastModified = Date.now();
     }
   }
 
-  (global as any).File = FilePolyfill;
+  global.File = FilePolyfill as unknown as typeof File;
 }
 
 export async function GET(request: NextRequest) {
