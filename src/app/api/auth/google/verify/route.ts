@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const googleUser = extractGoogleUserInfo(userInfo);
 
     // Find existing user by googleId or email
-    let user = await getUserByGoogleIdOrEmail(googleUser.id, googleUser.email);
+    let user = await getUserByGoogleIdOrEmail(googleUser.id as string, googleUser.email);
 
     // If user doesn't exist, create a new user
     if (!user) {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         profilePicture: googleUser.picture,
       });
     } else if (!user.googleId) {
-      user = await updateUserGoogleId(user.id, googleUser.id);
+      user = await updateUserGoogleId(user.id, googleUser.id as string);
     }
 
     // Generate JWT token

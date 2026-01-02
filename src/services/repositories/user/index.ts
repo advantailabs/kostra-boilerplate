@@ -10,9 +10,9 @@ export interface CreateUserData {
   email: string;
   name: string;
   googleId?: string;
-  password: string;
-  role: UserRole;
-  isOnboarded: boolean;
+  password?: string;
+  role?: UserRole;
+  isOnboarded?: boolean;
   profilePicture?: string;
 }
 

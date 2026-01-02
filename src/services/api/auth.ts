@@ -22,7 +22,7 @@ export const getAuth = async (): Promise<AuthResponse> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data.data as AuthResponse;
+  return response.data as AuthResponse;
 };
 
 export const googleSignIn = async (credential: string): Promise<AuthResponse> => {

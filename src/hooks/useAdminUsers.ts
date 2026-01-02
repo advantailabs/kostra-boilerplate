@@ -79,7 +79,7 @@ export const useAdminUsers = (options?: UseAdminUsersOptions) => {
     data: usersData,
     isLoading,
     error,
-  } = useQuery<{ users: User[]; totalCount: number; pagination?: number | undefined }>({
+  } = useQuery<{ users: User[]; totalCount: number; pagination?: { totalPages: number } }>({
     queryKey: [
       'admin-users',
       search,
