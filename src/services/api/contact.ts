@@ -29,7 +29,7 @@ export const contactClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as ContactSubmissionResponse;
+    return response.data.data as ContactSubmissionResponse;
   },
 
   async getById(id: number): Promise<ContactSubmissionResponse> {
@@ -37,7 +37,7 @@ export const contactClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as ContactSubmissionResponse;
+    return response.data.data as ContactSubmissionResponse;
   },
 
   async create(data: CreateContactSubmissionRequest) {
@@ -46,7 +46,7 @@ export const contactClient = {
       if (!response.data) {
         throw new Error('No Data was sent in Response');
       }
-      return response.data as ContactSubmissionResponse;
+      return response.data.data as ContactSubmissionResponse;
     } catch (error) {
       // If the error has a response with data, extract the message
       if (
@@ -69,7 +69,7 @@ export const contactClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as ContactSubmissionResponse;
+    return response.data.data as ContactSubmissionResponse;
   },
 
   async remove(id: number) {
@@ -77,6 +77,6 @@ export const contactClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as ContactSubmissionResponse;
+    return response.data.data as ContactSubmissionResponse;
   },
 };

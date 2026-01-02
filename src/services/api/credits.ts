@@ -10,7 +10,7 @@ export const getUserCredits = async (): Promise<UserCreditsResponse> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as UserCreditsResponse;
+  return response.data.data as UserCreditsResponse;
 };
 
 export const createBillingPortalSession = async (): Promise<string> => {
@@ -18,7 +18,7 @@ export const createBillingPortalSession = async (): Promise<string> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as string;
+  return response.data.data as string;
 };
 
 export const createCheckoutSession = async (plan: string = 'pro'): Promise<string> => {
@@ -26,7 +26,7 @@ export const createCheckoutSession = async (plan: string = 'pro'): Promise<strin
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as string;
+  return response.data.data as string;
 };
 
 export interface CreditHistoryItem {

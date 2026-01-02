@@ -22,7 +22,7 @@ export const getAuth = async (): Promise<AuthResponse> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as AuthResponse;
+  return response.data.data as AuthResponse;
 };
 
 export const googleSignIn = async (credential: string): Promise<AuthResponse> => {
@@ -30,10 +30,11 @@ export const googleSignIn = async (credential: string): Promise<AuthResponse> =>
     credential,
   });
   // Standardized API returns { success: true, data: { user, token } }
+  console.log(response.data);
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as AuthResponse;
+  return response.data.data as AuthResponse;
 };
 
 export const logout = async () => {
@@ -46,7 +47,7 @@ export const login = async (data: { email: string; password: string }): Promise<
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as AuthResponse;
+  return response.data.data as AuthResponse;
 };
 
 export const signup = async (data: { email: string }): Promise<{ message: string }> => {
@@ -54,7 +55,7 @@ export const signup = async (data: { email: string }): Promise<{ message: string
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as { message: string };
+  return response.data.data as { message: string };
 };
 
 export const verifySignup = async (data: {
@@ -67,7 +68,7 @@ export const verifySignup = async (data: {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as AuthResponse;
+  return response.data.data as AuthResponse;
 };
 
 export const resendOTP = async (data: {
@@ -78,7 +79,7 @@ export const resendOTP = async (data: {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as { message: string };
+  return response.data.data as { message: string };
 };
 
 export const forgotPassword = async (data: { email: string }): Promise<{ message: string }> => {
@@ -86,7 +87,7 @@ export const forgotPassword = async (data: { email: string }): Promise<{ message
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as { message: string };
+  return response.data.data as { message: string };
 };
 
 export const resetPassword = async (data: {
@@ -98,7 +99,7 @@ export const resetPassword = async (data: {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as { message: string };
+  return response.data.data as { message: string };
 };
 
 export const authApi = {

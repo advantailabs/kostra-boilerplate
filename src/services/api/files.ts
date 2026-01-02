@@ -69,7 +69,7 @@ export const filesApi: FilesApiClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as FileListResponse;
+    return response.data.data as FileListResponse;
   },
 
   async getFile(_id: number): Promise<FileServiceResult<File>> {
@@ -82,7 +82,7 @@ export const filesApi: FilesApiClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as FileServiceResult<File>;
+    return response.data.data as FileServiceResult<File>;
   },
 
   async updateFile(_id: number, _data: UpdateFileRequest): Promise<FileServiceResult<File>> {
@@ -90,7 +90,7 @@ export const filesApi: FilesApiClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as FileServiceResult<File>;
+    return response.data.data as FileServiceResult<File>;
   },
 
   async deleteFile(_id: number): Promise<FileServiceResult<File>> {
@@ -98,7 +98,7 @@ export const filesApi: FilesApiClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as FileServiceResult<File>;
+    return response.data.data as FileServiceResult<File>;
   },
 };
 
@@ -107,5 +107,5 @@ export async function generateFileDownloadUrl(fileId: number): Promise<FileDownl
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as FileDownloadUrl;
+  return response.data.data as FileDownloadUrl;
 }

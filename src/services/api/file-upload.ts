@@ -11,6 +11,6 @@ export const fileUploadApi: FileUploadApiClient = {
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data as FileUploadResponse;
+    return response.data.data as FileUploadResponse;
   },
 };
