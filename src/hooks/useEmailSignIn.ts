@@ -27,8 +27,16 @@ export function useEmailSignIn() {
       toast.success('Successfully signed in!');
       closeModal();
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to sign in');
+    onError: (error: unknown) => {
+      // Attempt to extract a message safely, otherwise use the fallback
+      let message = 'Failed to sign in';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const response = (error as { response?: { data?: { message?: string } } }).response;
+        if (response?.data?.message) {
+          message = response.data.message;
+        }
+      }
+      toast.error(message);
     },
   });
 
