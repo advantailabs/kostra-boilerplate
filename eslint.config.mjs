@@ -44,6 +44,7 @@ const eslintConfig = defineConfig([
     '**/*.pem',
     '**/src/lib/prisma/generated',
     'next.config.mjs', // Stops 'process' is not defined eslint error by ignoring
+    'jest.config.js',
   ]),
 ]);
 
