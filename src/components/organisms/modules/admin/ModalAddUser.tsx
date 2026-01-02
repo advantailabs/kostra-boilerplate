@@ -24,7 +24,7 @@ export type ModalAddUserProps = {
 type FormData = {
   email: string;
   password: string;
-  role: string; // keep as string for empty default, validated by schema
+  role: UserRole | undefined; // keep as string for empty default, validated by schema
 };
 
 export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
@@ -35,14 +35,14 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(createUserSchema) as any,
+  } = useForm<typeof createUserSchema._type>({
+    resolver: zodResolver(createUserSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
-      role: '',
+      role: undefined,
     },
   });
 

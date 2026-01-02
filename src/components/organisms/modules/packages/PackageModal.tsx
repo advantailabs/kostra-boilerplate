@@ -25,7 +25,7 @@ interface Package {
 interface PackageModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (_data: any) => void;
+  onSubmit: (_data: unknown) => void;
   package?: Package | null;
   mode: 'create' | 'edit';
   currentPage?: number;
@@ -80,7 +80,7 @@ export function PackageModal({
   });
   const isLoading = mode === 'create' ? isCreating : isUpdating;
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (formErrors[field]) {
       setFormErrors(prev => ({ ...prev, [field]: '' }));

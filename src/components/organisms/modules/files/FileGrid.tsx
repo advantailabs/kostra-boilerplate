@@ -4,9 +4,10 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { FileCard } from '@/components/molecules/files/FileCard';
 import { useFileDownload } from '@/hooks/useFiles';
+import { File } from '@/lib/prisma/generated/browser';
 
 interface FileGridProps {
-  files: any[];
+  files: File[];
   onFileDeleted: () => void;
   onLoadMore: () => void;
   hasMore: boolean;
@@ -36,7 +37,7 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
   }, [hasMore, loading, onLoadMore]);
 
   const handleDelete = useCallback(
-    (_file: any) => {
+    (_file: File) => {
       // The delete functionality is now handled directly in the FileCard component
       // This callback is called after successful deletion to refresh the list
       onFileDeleted();
@@ -44,13 +45,13 @@ export function FileGrid({ files, onFileDeleted, onLoadMore, hasMore, loading }:
     [onFileDeleted]
   );
 
-  const handleView = useCallback((_file: any) => {
+  const handleView = useCallback((_file: File) => {
     // View functionality is now handled in the FileDetailsModal
     console.log('View file:', _file);
   }, []);
 
   const handleDownload = useCallback(
-    (file: any) => {
+    (file: File) => {
       // Handle download at the grid level
       downloadFileMutation.mutate(file.id);
     },

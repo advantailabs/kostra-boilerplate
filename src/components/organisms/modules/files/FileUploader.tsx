@@ -145,7 +145,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
       onUploaded();
       setFilesBeingSaved(0);
       handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to save files to database:', error);
 
       // Mark ready files as error with generic message

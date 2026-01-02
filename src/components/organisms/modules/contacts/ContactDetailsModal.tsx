@@ -46,7 +46,7 @@ export function ContactDetailsModal({
     if (!contact) return { label: '', variant: 'neutral' as const };
     const s = CONTACT_STATUSES.find(s => s.value === (contact.status as unknown as string));
     return s
-      ? { label: s.label, variant: s.variant === 'secondary' ? 'neutral' : (s.variant as any) }
+      ? { label: s.label, variant: s.variant === 'secondary' ? 'neutral' : (s.variant as string) }
       : { label: String(contact.status), variant: 'neutral' };
   }, [contact]);
 
@@ -142,13 +142,16 @@ export function ContactDetailsModal({
             <div>
               <Label className="font-medium">Current Status</Label>
               <div className="mt-1">
-                <Badge variant={statusMeta.variant as any}>{statusMeta.label}</Badge>
+                <Badge variant={statusMeta.variant as React.ComponentProps<typeof Badge>['variant']}>
+                  {statusMeta.label}
+                </Badge>
               </div>
             </div>
           </div>
         </div>
-      )}
-    </Modal>
+      )
+      }
+    </Modal >
   );
 }
 

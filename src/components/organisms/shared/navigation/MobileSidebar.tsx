@@ -12,6 +12,7 @@ import {
   DrawerTrigger,
 } from '@/components/molecules/common/Drawer';
 import { NAVIGATION_ITEMS } from '@/lib/constants/sidebar-navigation';
+import { UserRole } from '@/lib/prisma/generated/enums';
 import { cx, focusRing } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 
@@ -55,7 +56,7 @@ export default function MobileSidebar() {
               <span className="text-sm font-medium leading-6 text-text-muted sm:text-xs">Main</span>
               <ul role="list" className="space-y-1.5">
                 {NAVIGATION_ITEMS.filter(
-                  item => item.section === 'Main' && item.roles.includes(userRole as any)
+                  item => item.section === 'Main' && item.roles.includes(userRole as UserRole)
                 ).map(item => (
                   <li key={item.name}>
                     <DrawerClose asChild>
@@ -83,7 +84,7 @@ export default function MobileSidebar() {
                 </span>
                 <ul role="list" className="space-y-1.5">
                   {NAVIGATION_ITEMS.filter(
-                    item => item.section === 'Admin' && item.roles.includes(userRole as any)
+                    item => item.section === 'Admin' && item.roles.includes(userRole as UserRole)
                   ).map(item => (
                     <li key={item.name}>
                       <DrawerClose asChild>
