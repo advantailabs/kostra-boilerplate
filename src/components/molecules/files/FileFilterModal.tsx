@@ -34,11 +34,12 @@ export function FileFilterModal({
     setLocalFilters(prev => ({ ...prev, search: value }));
   };
 
-  const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    setLocalFilters(prev => ({ ...prev, sortBy: sortBy as any, sortOrder }));
+  const handleSort = (sortBy: FileFilters["sortBy"]
+    , sortOrder: FileFilters["sortOrder"]) => {
+    setLocalFilters(prev => ({ ...prev, sortBy, sortOrder }));
   };
 
-  const handleFilter = (key: string, value: string) => {
+  const handleFilter = (key: keyof FileFilters, value: string) => {
     setLocalFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -129,7 +130,7 @@ export function FileFilterModal({
             </label>
             <Select
               value={localFilters.sortBy || 'createdAt'}
-              onValueChange={value => handleSort(value, localFilters.sortOrder || 'desc')}
+              onValueChange={value => handleSort(value as FileFilters["sortBy"], localFilters.sortOrder || 'desc')}
               aria-label="Select sort by"
             >
               <SelectTrigger id="sort-by-filter">

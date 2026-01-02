@@ -9,13 +9,14 @@ import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWi
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
+import { File } from '@/lib/prisma/generated/browser';
 import { FileFilters, filesApi } from '@/services/api/files';
 import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
 import { useAuthStore } from '@/store/auth';
 
 export default function FilesPage() {
   const { user } = useAuthStore();
-  const [files, setFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

@@ -1,4 +1,4 @@
- 
+
 // Tremor Date Picker [v1.0.5]
 
 'use client';
@@ -274,10 +274,10 @@ function PresetContainer<TPreset extends Preset, TValue>({
   // Currently selected preset
   currentValue,
 }: PresetContainerProps<TPreset, TValue>) {
-  const isDateRangePresets = (preset: any): preset is DateRangePreset => {
+  const isDateRangePresets = (preset: Preset): preset is DateRangePreset => {
     return 'dateRange' in preset;
   };
-  const isDatePresets = (preset: any): preset is DatePreset => {
+  const isDatePresets = (preset: Preset): preset is DatePreset => {
     return 'date' in preset;
   };
 
@@ -765,7 +765,7 @@ function RangeDatePicker({
   };
 
   const onTimeChange = (time: TimeValue | null, pos: 'start' | 'end') => {
-     
+
     switch (pos) {
       case 'start':
         setStartTime(time);
@@ -846,9 +846,8 @@ function RangeDatePicker({
       return null;
     }
 
-    return `${range.from ? formatDate(range.from, locale, showTimePicker) : ''} - ${
-      range.to ? formatDate(range.to, locale, showTimePicker) : ''
-    }`;
+    return `${range.from ? formatDate(range.from, locale, showTimePicker) : ''} - ${range.to ? formatDate(range.to, locale, showTimePicker) : ''
+      }`;
   }, [range, locale, showTimePicker]);
 
   const onApply = () => {
@@ -1069,8 +1068,7 @@ const validatePresets = (presets: DateRangePreset[] | DatePreset[], rules: Picke
 
           if (presetDay && presetDay < fromDay.getDate()) {
             throw new Error(
-              `Preset ${
-                preset.dateRange.from
+              `Preset ${preset.dateRange.from
               }'s 'from' is before fromDay ${format(fromDay, 'MMM dd, yyyy')}.`
             );
           }

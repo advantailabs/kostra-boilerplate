@@ -21,6 +21,7 @@ import {
 import { Table, TableBody, TableCell, TableRow } from '@/components/molecules/common/Table';
 import { ContactDetailsModal } from '@/components/organisms/modules/contacts/ContactDetailsModal';
 import { useContacts, useDeleteContact, useUpdateContact } from '@/hooks/useContacts';
+import { ContactPurpose, ContactStatus } from '@/lib/prisma/generated/enums';
 import { CONTACT_PURPOSES, CONTACT_STATUSES, ContactSubmission } from '@/types/contact';
 
 export default function ContactManagementPage() {
@@ -32,8 +33,8 @@ export default function ContactManagementPage() {
   const [purpose, setPurpose] = useState<string | undefined>(undefined);
 
   const { data, isLoading, refetch } = useContacts({
-    status: status as any,
-    purpose: purpose as any,
+    status: status as ContactStatus,
+    purpose: purpose as ContactPurpose,
     search: debouncedSearch,
     page: page.toString(),
     limit: limit.toString(),
@@ -196,7 +197,7 @@ export default function ContactManagementPage() {
                         </div>
                       </TableCell>
                       <TableCell className="py-1">
-                        <Badge variant={badgeVariant as any}>{statusMeta?.label || s.status}</Badge>
+                        <Badge variant={badgeVariant as React.ComponentProps<typeof Badge>['variant']}>{statusMeta?.label || s.status}</Badge>
                       </TableCell>
                       <TableCell className="py-1 text-text-muted">
                         <div className="text-xs text-text-muted">Submitted:</div>

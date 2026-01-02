@@ -58,7 +58,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
       const digit = value.replace(/\D/g, '');
 
       // Update the form value
-      form.setValue(`otp${index}` as any, digit);
+      form.setValue(`otp${index}` as keyof ResetPasswordFormData, digit);
 
       // Move to next input if value is entered
       if (digit && index < 3) {
@@ -112,7 +112,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
 
       if (otpDigits.length === 4) {
         otpDigits.split('').forEach((digit, i) => {
-          form.setValue(`otp${i}` as any, digit);
+          form.setValue(`otp${i}` as keyof ResetPasswordFormData, digit);
         });
         // Focus on the last input
         const currentInput = e.target as HTMLInputElement;
@@ -152,7 +152,7 @@ export function ResetPasswordForm({ email, onSuccess, onBackToSignIn }: ResetPas
               inputMode="numeric"
               pattern="[0-9]*"
               inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-border bg-background text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...form.register(`otp${index}` as any, {
+              {...form.register(`otp${index}` as keyof ResetPasswordFormData, {
                 onChange: e => handleOTPChange(index, e.target.value, e),
               })}
               onKeyDown={e => handleOTPKeyDown(index, e)}

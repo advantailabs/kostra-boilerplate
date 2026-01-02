@@ -4,7 +4,7 @@ import { Button } from '@/components/atom/Button';
 import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
 import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { useAuthStore } from '@/store/auth';
-import { useGoogleLogin } from '@react-oauth/google';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'sonner';
 
 interface GoogleSignInButtonProps {
@@ -16,7 +16,7 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
   const { setAuth } = useAuthStore();
   const { closeModal } = useSignInModalContext();
 
-  const handleSuccess = async (tokenResponse: any) => {
+  const handleSuccess = async (tokenResponse: TokenResponse) => {
     try {
       const response = await googleSignInMutation.mutateAsync(tokenResponse.access_token);
 

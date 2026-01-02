@@ -27,7 +27,7 @@ export function FormTagInput<T extends FieldValues>({
       <Controller
         name={name}
         control={control}
-        defaultValue={[] as any}
+        defaultValue={[] as unknown as T[FieldPath<T>]}
         rules={{ required: required ? `${label} is required` : false }}
         render={({ field: { onChange, value } }) => (
           <TagInput
@@ -37,9 +37,8 @@ export function FormTagInput<T extends FieldValues>({
               const updatedTags = Array.isArray(newTags) ? newTags : [];
               onChange(updatedTags);
             }}
-            className={`w-full border-none bg-background ${
-              error ? 'border-danger focus:ring-danger' : 'focus:border-primary'
-            }`}
+            className={`w-full border-none bg-background ${error ? 'border-danger focus:ring-danger' : 'focus:border-primary'
+              }`}
           />
         )}
       />

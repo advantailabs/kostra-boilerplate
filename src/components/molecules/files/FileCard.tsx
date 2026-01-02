@@ -14,6 +14,7 @@ import {
 import { FileDetailsModal } from '@/components/molecules/files/FileDetailsModal';
 import { DeleteFileDialog } from '@/components/organisms/modules/files/DeleteFileDialog';
 import { useDeleteFile } from '@/hooks/useFiles';
+import { File } from '@/lib/prisma/generated/browser';
 import {
   formatFileSize,
   formatMimeType,
@@ -21,7 +22,7 @@ import {
 } from '@/services/internal/files/file-upload/file-utils';
 
 interface FileCardProps {
-  file: any;
+  file: File;
   onDelete: () => void;
   onView?: () => void;
   onDownload?: () => void;
@@ -61,6 +62,10 @@ export function FileCard({
   const handleDeleteFileSuccess = () => {
     onDelete();
     setShowDeleteDialog(false);
+  };
+
+  const handleDeleteFile = async ({ id }: { id: number }): Promise<void> => {
+    await deleteFileMutation.mutateAsync({ id });
   };
 
   return (
@@ -181,7 +186,7 @@ export function FileCard({
         fileId={file?.id || null}
         fileName={file?.originalName || ''}
         onSuccess={handleDeleteFileSuccess}
-        deleteFile={deleteFileMutation.mutateAsync}
+        deleteFile={handleDeleteFile}
         isDeleting={deleteFileMutation.isPending}
       />
     </>

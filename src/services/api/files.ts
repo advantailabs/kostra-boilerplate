@@ -50,7 +50,7 @@ interface FilesApiClient {
   getFile(_id: number): Promise<FileServiceResult<File>>;
   uploadFiles(_data: UploadFilesRequest): Promise<FileServiceResult<File>>;
   updateFile(_id: number, _data: UpdateFileRequest): Promise<FileServiceResult<File>>;
-  deleteFile(_id: number, _permanent?: boolean): Promise<FileServiceResult<File>>;
+  deleteFile(_id: number, _permanent?: boolean): Promise<void>;
 }
 
 export const filesApi: FilesApiClient = {
@@ -93,12 +93,11 @@ export const filesApi: FilesApiClient = {
     return response.data.data as FileServiceResult<File>;
   },
 
-  async deleteFile(_id: number): Promise<FileServiceResult<File>> {
+  async deleteFile(_id: number): Promise<void> {
     const response = await axios.delete(`/files/${_id}`);
     if (!response.data) {
       throw new Error('No Data was sent in Response');
     }
-    return response.data.data as FileServiceResult<File>;
   },
 };
 

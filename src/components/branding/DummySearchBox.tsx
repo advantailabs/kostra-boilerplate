@@ -55,7 +55,7 @@ export function DummySearchBox() {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSearch(e as any);
+                  handleSearch(e);
                 }
               }}
             />
@@ -66,7 +66,7 @@ export function DummySearchBox() {
               <div className="flex flex-wrap items-center gap-2">
                 <PillSelect
                   value="demo-kb"
-                  onValueChange={() => {}}
+                  onValueChange={() => { }}
                   icon={<RiUserLine className="h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />}
                   placeholder="Select knowledge base"
                   displayValue="File Analyzer"
