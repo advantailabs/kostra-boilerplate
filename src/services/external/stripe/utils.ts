@@ -2,6 +2,13 @@
 
 import Stripe from 'stripe';
 
+// Type Predicate to distinguish between two types to preserve code
+function isSubscriptionItem(
+  item: Stripe.InvoiceItem | Stripe.SubscriptionItem
+): item is Stripe.SubscriptionItem {
+  return 'price' in item; // ...
+}
+
 // Helper: read period end directly from subscription items
 export const getPeriodEndFromSubscriptionItems = (sub: Stripe.Subscription): Date | null => {
   try {
@@ -17,13 +24,17 @@ export const getPeriodEndFromSubscriptionItems = (sub: Stripe.Subscription): Dat
   }
 };
 
-export const getLinePriceId = (line: Stripe.InvoiceLineItem): string | null => {
-  /* InvoiceLineItem does not have price property */
+export const getLinePriceId = (
+  line: Stripe.SubscriptionItem | Stripe.InvoiceItem
+): string | null => {
   // // Standard subscription/checkout price object
-  // if (line?.price?.id) return line.price.id as string;
-  // // Price id as string
-  // if (typeof line?.price === 'string') return line.price as string;
-  // Manual invoice line shape
-  if (line?.pricing?.price_details?.price) return line.pricing.price_details.price as string;
+  if (isSubscriptionItem(line)) {
+    if (line?.price?.id) return line.price.id as string;
+    // Price id as string
+    if (typeof line?.price === 'string') return line.price as string;
+  } else if (line?.pricing?.price_details?.price) {
+    /* InvoiceLineItem does not have price property */
+    return line.pricing.price_details.price as string;
+  }
   return null;
 };
