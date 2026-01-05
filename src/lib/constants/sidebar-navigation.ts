@@ -6,6 +6,8 @@ import {
   RiFileLine,
   RiHomeLine,
   RiListCheck,
+  RiMailLine,
+  RiMailSendLine,
   RiShoppingBagLine,
   RiTeamLine,
 } from '@remixicon/react';
@@ -39,7 +41,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     name: 'Files',
     href: siteConfig.baseLinks.files,
     section: 'Main',
-    roles: [USER, ADMIN],
+    roles: [ADMIN],
     icon: RiFileLine,
   },
 
@@ -64,6 +66,20 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     section: 'Admin',
     roles: [ADMIN],
     icon: RiListCheck,
+  },
+  {
+    name: 'Email Templates',
+    href: '/app/email-templates',
+    icon: RiMailLine,
+    section: 'Admin',
+    roles: ['ADMIN'],
+  },
+  {
+    name: 'Email Campaigns',
+    href: '/app/email-campaigns',
+    icon: RiMailSendLine,
+    section: 'Admin',
+    roles: ['ADMIN'],
   },
   {
     name: 'Users',

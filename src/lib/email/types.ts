@@ -10,6 +10,7 @@ export interface EmailMessage {
   html: string;
   text?: string;
   from?: string;
+  replyTo?: string;
 }
 
 export interface EmailDriver {

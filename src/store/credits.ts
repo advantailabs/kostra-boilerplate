@@ -34,7 +34,7 @@ export const useCreditStore = create<CreditState>()(
       syncCredits: async () => {
         try {
           const creditsResponse = await getUserCredits();
-          set({ credits: creditsResponse.credits, initialized: true });
+          set({ credits: creditsResponse.data.credits, initialized: true });
         } catch (error) {
           console.error('Failed to sync credits:', error);
         }

@@ -10,7 +10,7 @@ export const getUserCredits = async (): Promise<UserCreditsResponse> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data.data.credits as unknown as UserCreditsResponse;
+  return response.data.data as unknown as UserCreditsResponse;
 };
 
 export const createBillingPortalSession = async (): Promise<string> => {

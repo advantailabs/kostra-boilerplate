@@ -44,7 +44,8 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/contact-management', isPublic: false, accessTo: { GET: [ADMIN] } },
-
+  { path: '/app/email-templates', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/email-campaigns', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings/general', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
@@ -218,6 +219,76 @@ export const ALL_ROUTES: RouteConfig[] = [
     isPublic: false,
     accessTo: {
       POST: [ADMIN],
+    },
+  },
+
+  // API routes - email templates
+  {
+    path: '/api/email-templates',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+  {
+    path: '/api/email-templates/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+
+  // API routes - Email Campaigns
+  {
+    path: '/api/campaigns',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaigns/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaigns/[id]/recipients',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+
+  // API routes - campaign recipients
+  {
+    path: '/api/campaign-recipients',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaign-recipients/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
+    },
+  },
+
+  // API routes - campaign email sending
+  {
+    path: '/api/campaigns/process-scheduled',
+    isPublic: true, // Public for cron job access
+    accessTo: {
+      POST: [], // No role required (cron job endpoint)
     },
   },
 
