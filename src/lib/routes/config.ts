@@ -44,7 +44,8 @@ export const ALL_ROUTES: RouteConfig[] = [
   { path: '/app/blogs', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/categories', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/contact-management', isPublic: false, accessTo: { GET: [ADMIN] } },
-
+  { path: '/app/email-templates', isPublic: false, accessTo: { GET: [ADMIN] } },
+  { path: '/app/email-campaigns', isPublic: false, accessTo: { GET: [ADMIN] } },
   { path: '/app/credit-history', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
   { path: '/app/settings/general', isPublic: false, accessTo: { GET: [USER, ADMIN] } },
