@@ -1,5 +1,6 @@
 'use client';
 
+import { EmailType } from '@/lib/prisma/generated/enums';
 import Bold from '@tiptap/extension-bold';
 import BulletList from '@tiptap/extension-bullet-list';
 import Color from '@tiptap/extension-color';
@@ -68,58 +69,6 @@ export function EmailTemplateEditorModal({
   template,
   mode,
 }: EmailTemplateEditorModalProps) {
-  // Form state
-  const [formData, setFormData] = useState({
-    name: '',
-    subject: '',
-    fromEmail: '',
-    fromName: '',
-    replyToEmail: '',
-    emailType: 'TRANSACTIONAL' as 'TRANSACTIONAL' | 'PROMOTIONAL',
-    body: '',
-  });
-
-  // Editor state
-  const [isSourceMode, setIsSourceMode] = useState(false);
-  const [sourceContent, setSourceContent] = useState('');
-
-  // Variables state - now stored as array of field names
-  const [variables, setVariables] = useState<string[]>([]);
-  const [newVariableName, setNewVariableName] = useState('');
-
-  // Heading state
-  const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
-
-  // Dynamic height calculation based on variables
-  const getDynamicHeight = () => {
-    const variableHeight = variables.length * 40; // 40px per variable
-    return `calc(100vh - 200px + ${variableHeight}px)`;
-  };
-
-  // Refs
-  const sourceTextareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // Available user fields for email templates (exact fields from User table in Prisma schema)
-  const availableFields = [
-    'name',
-    'email',
-    'profilePicture',
-    'role',
-    'isOnboarded',
-    'credits',
-    'stripeCustomerId',
-    'plan',
-    'isOverDue',
-    'planExpiringAt',
-  ];
-
-  // Helper function to format field names for display
-  const formatFieldName = (field: string) => {
-    return field
-      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-      .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-      .trim();
-  };
 
   // Tiptap editor
   const editor = useEditor({
@@ -179,79 +128,114 @@ export function EmailTemplateEditorModal({
     },
   });
 
-  // Initialize form data when modal opens or template changes
+  const initializeTemplateData = () => {
+    if (isOpen) {
+      if (template && mode === 'edit') {
+        return {
+          name: template.name || '',
+          subject: template.subject || '',
+          fromEmail: template.fromEmail || '',
+          fromName: template.fromName || '',
+          replyToEmail: template.replyToEmail || '',
+          emailType: template.emailType as EmailType || 'TRANSACTIONAL',
+          body: template.body || '',
+        }
+      }
+    }
+    return {
+      name: '',
+      subject: '',
+      fromEmail: '',
+      fromName: '',
+      replyToEmail: '',
+      emailType: 'TRANSACTIONAL',
+      body: '',
+    }
+
+  }
+  const initializeTemplateVariables = () => {
+    if (isOpen) {
+      if (template && mode === 'edit') {
+        if (template.variables) {
+          if (Array.isArray(template.variables)) {
+            // New array format
+            return template.variables
+          } else if (typeof template.variables === 'object') {
+            // Old object format - convert to array of keys
+            return Object.keys(template.variables);
+          } else {
+            // Fallback for any other format
+            return [];
+          }
+        }
+      }
+    }
+    return [];
+  }
+
+  // Form state
+  const [formData, setFormData] = useState(initializeTemplateData);
+
+  // Editor state
+  const [isSourceMode, setIsSourceMode] = useState(false);
+  const [sourceContent, setSourceContent] = useState(() => {
+    if (isOpen) {
+      if (template && mode === 'edit') {
+        return template.body || '';
+      }
+    }
+    return '';
+  }
+  );
+
+  // Variables state - now stored as array of field names
+  const [variables, setVariables] = useState<string[]>(initializeTemplateVariables);
+  const [newVariableName, setNewVariableName] = useState('');
+
+  // Heading state
+  const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
+
+  // Dynamic height calculation based on variables
+  const getDynamicHeight = () => {
+    const variableHeight = variables.length * 40; // 40px per variable
+    return `calc(100vh - 200px + ${variableHeight}px)`;
+  };
+
+  // Refs
+  const sourceTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Available user fields for email templates (exact fields from User table in Prisma schema)
+  const availableFields = [
+    'name',
+    'email',
+    'profilePicture',
+    'role',
+    'isOnboarded',
+    'credits',
+    'stripeCustomerId',
+    'plan',
+    'isOverDue',
+    'planExpiringAt',
+  ];
+
+  // Helper function to format field names for display
+  const formatFieldName = (field: string) => {
+    return field
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+      .trim();
+  };
+
+  // Initializes editor with existing template content
   useEffect(() => {
     if (isOpen) {
       if (template && mode === 'edit') {
-        // setFormData({
-        //   name: template.name || '',
-        //   subject: template.subject || '',
-        //   fromEmail: template.fromEmail || '',
-        //   fromName: template.fromName || '',
-        //   replyToEmail: template.replyToEmail || '',
-        //   emailType: template.emailType || 'TRANSACTIONAL',
-        //   body: template.body || '',
-        // });
-
         // Set editor content
         if (editor) {
           editor.commands.setContent(template.body || '');
           setSourceContent(template.body || '');
         }
-
-        // Set variables - handle both old object format and new array format
-        if (template.variables) {
-          if (Array.isArray(template.variables)) {
-            // New array format
-            setVariables(template.variables);
-          } else if (typeof template.variables === 'object') {
-            // Old object format - convert to array of keys
-            setVariables(Object.keys(template.variables));
-          } else {
-            // Fallback for any other format
-            setVariables([]);
-          }
-        } else {
-          setVariables([]);
-        }
-      } else {
-        // Reset form for create mode
-        setFormData({
-          name: '',
-          subject: '',
-          fromEmail: '',
-          fromName: '',
-          replyToEmail: '',
-          emailType: 'TRANSACTIONAL',
-          body: '',
-        });
-
-        if (editor) {
-          editor.commands.setContent('');
-          setSourceContent('');
-        }
-
-        setVariables([]);
       }
-    } else {
-      // Reset form data when modal closes with proper cleanup
-      setFormData({
-        name: '',
-        subject: '',
-        fromEmail: '',
-        fromName: '',
-        replyToEmail: '',
-        emailType: 'TRANSACTIONAL',
-        body: '',
-      });
-      if (editor) {
-        // Properly destroy editor content and clear any lingering state
-        editor.commands.clearContent();
-        editor.commands.blur();
-      }
-      setSourceContent('');
-      setVariables([]);
-      setIsSourceMode(false); // Reset to design mode
     }
   }, [isOpen, template, mode, editor]);
 
@@ -492,6 +476,7 @@ export function EmailTemplateEditorModal({
 
       const templateData = {
         ...formData,
+        emailType: formData.emailType as EmailType,
         body,
         variables, // Store as array of variable names
       };
