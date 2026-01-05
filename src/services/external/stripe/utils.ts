@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 // Type Predicate to distinguish between two types to preserve code
 function isSubscriptionItem(
-  item: Stripe.InvoiceItem | Stripe.SubscriptionItem
+  item: Stripe.InvoiceLineItem | Stripe.SubscriptionItem
 ): item is Stripe.SubscriptionItem {
   return 'price' in item; // ...
 }
@@ -25,7 +25,7 @@ export const getPeriodEndFromSubscriptionItems = (sub: Stripe.Subscription): Dat
 };
 
 export const getLinePriceId = (
-  line: Stripe.SubscriptionItem | Stripe.InvoiceItem
+  line: Stripe.SubscriptionItem | Stripe.InvoiceLineItem
 ): string | null => {
   // // Standard subscription/checkout price object
   if (isSubscriptionItem(line)) {
