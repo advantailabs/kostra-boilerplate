@@ -17,12 +17,12 @@ interface AuthResponse {
 }
 
 export const getAuth = async (): Promise<AuthResponse> => {
-  const response = await axios.get<AuthResponse>('/auth');
+  const response = await axios.get<{ data: AuthResponse }>('/auth');
   // Standardized API returns { success: true, data: { user, token } }
-  if (!response.data) {
+  if (!response.data.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as AuthResponse;
+  return response.data.data as AuthResponse;
 };
 
 export const googleSignIn = async (credential: string): Promise<AuthResponse> => {
