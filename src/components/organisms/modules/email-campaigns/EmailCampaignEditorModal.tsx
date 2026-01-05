@@ -336,7 +336,7 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
           <div className="max-h-[60vh] max-w-full flex-1 space-y-4 overflow-y-auto overflow-x-hidden px-4 py-0 sm:max-h-none sm:space-y-6 sm:px-6 min-[660px]:max-h-[70vh]">
             <div className="grid h-full grid-cols-1 gap-4 sm:gap-6 lg:min-w-0 lg:grid-cols-2 lg:gap-8 ">
               {/* Left Column - Campaign Details */}
-              <div className="min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8 lg:border-r lg:border-gray-300 lg:pr-8 dark:lg:border-gray-700">
+              <div className="min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8 lg:border-r lg:border-gray-300 lg:pl-2 lg:pr-6 dark:lg:border-gray-700">
                 {/* Campaign Details Section */}
                 <div className="mt-2 space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">

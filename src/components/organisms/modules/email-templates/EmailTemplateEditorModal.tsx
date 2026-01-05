@@ -628,7 +628,7 @@ export function EmailTemplateEditorModal({
                       <RadioCardItem
                         value="TRANSACTIONAL"
                         id="transactional"
-                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
+                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-white dark:bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
                       >
                         <RadioCardGroupIndicator />
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
@@ -638,7 +638,7 @@ export function EmailTemplateEditorModal({
                       <RadioCardItem
                         value="PROMOTIONAL"
                         id="promotional"
-                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
+                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-white dark:bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
                       >
                         <RadioCardGroupIndicator />
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
@@ -802,7 +802,7 @@ export function EmailTemplateEditorModal({
                         </div>
                       </div>
                     ) : (
-                      <div className="email-template-editor flex min-h-0 flex-1 flex-col rounded-lg border border-gray-300 dark:border-gray-700">
+                      <div className="email-template-editor flex min-h-0 flex-1 flex-col bg-white dark:bg-background rounded-lg border border-gray-300 dark:border-gray-700">
                         {/* Editor Toolbar */}
                         <div className="flex flex-wrap items-center gap-1 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-background-light">
                           {/* Heading Dropdown */}
@@ -964,7 +964,7 @@ export function EmailTemplateEditorModal({
                         style={{ maxHeight: getDynamicHeight() }}
                       >
                         <div
-                          className="prose prose-sm dark:docs-prose-dark min-h-full w-full max-w-none p-4"
+                          className="prose prose-sm dark:docs-prose-dark min-h-full w-full  bg-white dark:bg-background max-w-none p-4"
                           dangerouslySetInnerHTML={{
                             __html: sanitizePreviewHTML(generatePreviewHTML()),
                           }}

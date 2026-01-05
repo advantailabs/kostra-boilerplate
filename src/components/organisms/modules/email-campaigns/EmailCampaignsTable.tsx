@@ -408,7 +408,7 @@ export function EmailCampaignsTable({
         </div>
 
         {/* Desktop Table */}
-        <div className="relative hidden overflow-hidden overflow-x-auto bg-background rounded-lg md:block table-cell-box-shadow dark:border-gray-800">
+        <div className="relative hidden overflow-hidden overflow-x-auto bg-background rounded-lg md:block table-cell-box-shadow dark:border-gray-800 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
           <Table className="min-w-full border-0">
             <TableBody>
               {(() => {
