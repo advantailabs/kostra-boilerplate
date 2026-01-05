@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { UserSelectionModal } from '@/components/molecules/common/UserSelectionModal';
 import { CampaignStatus } from '@/lib/prisma/generated/browser';
 import { CampaignFormData, type EmailCampaignEditorModalProps } from '@/types/campaign';
 import { UserSelection } from '@/types/user';
@@ -24,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../molecules/common/Select';
-import { UserSelectionModal } from '../../../molecules/common/UserSelectionModal';
 
 // Validation schema
 const campaignSchema = z
@@ -304,7 +304,7 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
           if (isValid) {
             try {
               await handleSubmit(onSubmit)();
-            } catch (error) {
+            } catch (_error) {
               // Error handling is done in onSubmit
             }
           }

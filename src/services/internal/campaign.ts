@@ -1,4 +1,4 @@
-import { CampaignStatus } from '@/lib/prisma/generated/client';
+import { CampaignRecipient, CampaignStatus } from '@/lib/prisma/generated/client';
 import {
   createCampaign,
   deleteCampaign,
@@ -207,7 +207,7 @@ export class CampaignService {
 
   private static async removeRecipients(
     recipientIdsToRemove: number[],
-    currentRecipients: any[]
+    currentRecipients: CampaignRecipient[]
   ): Promise<void> {
     // Find all campaign recipient IDs to delete
     const campaignRecipientIdsToDelete = currentRecipients

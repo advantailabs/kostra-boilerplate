@@ -178,19 +178,11 @@ export function EmailTemplatesTable({
   const endIndex = startIndex + limit;
   const paginatedTemplates = filteredTemplates.slice(startIndex, endIndex);
 
+
   // Handle smart pagination after deletion
-  useEffect(() => {
-    // Don't run pagination logic while loading
-    if (isLoading) return;
-    const maxPage = Math.max(totalPages, 1);
-    if (page > maxPage) {
-      setPage(maxPage);
-      return;
-    }
-    if (page > 1 && paginatedTemplates.length === 0) {
-      setPage(prev => Math.max(1, prev - 1));
-    }
-  }, [page, paginatedTemplates.length, totalPages, isLoading]);
+  if (paginatedTemplates.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+    setPage(prev => Math.max(1, prev - 1));
+  }
 
   // Notify parent of page changes
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { CampaignRecipient } from '@/lib/prisma/generated/browser';
 import { axiosInstance } from '@/lib/utils/http/axios';
 import {
   CampaignWithRelations,
@@ -48,7 +49,7 @@ export const campaignsApi = {
   /**
    * Get campaign recipients
    */
-  async getCampaignRecipients(id: number): Promise<any[]> {
+  async getCampaignRecipients(id: number): Promise<CampaignRecipient[]> {
     const response = await axiosInstance.get(`/campaigns/${id}/recipients`);
     return response.data.data?.recipients || [];
   },

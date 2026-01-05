@@ -30,29 +30,29 @@ export function replaceEmailVariables(emailBodyContent: string, userData: UserDa
   processedContent = processedContent.replace(/\{\{email\}\}/g, userData.email || '');
   processedContent = processedContent.replace(
     /\{\{profilePicture\}\}/g,
-    userData.profilePicture || '',
+    userData.profilePicture || ''
   );
   processedContent = processedContent.replace(/\{\{role\}\}/g, userData.role || '');
   processedContent = processedContent.replace(
     /\{\{isOnboarded\}\}/g,
-    userData.isOnboarded ? 'Yes' : 'No',
+    userData.isOnboarded ? 'Yes' : 'No'
   );
   processedContent = processedContent.replace(
     /\{\{credits\}\}/g,
-    userData.credits?.toString() || '0',
+    userData.credits?.toString() || '0'
   );
   processedContent = processedContent.replace(
     /\{\{stripeCustomerId\}\}/g,
-    userData.stripeCustomerId || '',
+    userData.stripeCustomerId || ''
   );
   processedContent = processedContent.replace(/\{\{plan\}\}/g, userData.plan || '');
   processedContent = processedContent.replace(
     /\{\{isOverDue\}\}/g,
-    userData.isOverDue ? 'Yes' : 'No',
+    userData.isOverDue ? 'Yes' : 'No'
   );
   processedContent = processedContent.replace(
     /\{\{planExpiringAt\}\}/g,
-    userData.planExpiringAt ? userData.planExpiringAt.toLocaleDateString() : '',
+    userData.planExpiringAt ? userData.planExpiringAt.toLocaleDateString() : ''
   );
 
   return processedContent;
@@ -66,7 +66,7 @@ export function replaceEmailVariables(emailBodyContent: string, userData: UserDa
  */
 export function generateEmailHtmlWithUserData(
   emailBodyContent: string,
-  userData: UserData,
+  userData: UserData
 ): string {
   // First replace variables in the body content
   const processedBodyContent = replaceEmailVariables(emailBodyContent, userData);
@@ -160,7 +160,7 @@ export function isValidHtml(html: string): boolean {
     // Basic HTML validation - check for proper opening and closing tags
     // Simple validation - this could be enhanced with a proper HTML parser
     return html.includes('<') && html.includes('>');
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
