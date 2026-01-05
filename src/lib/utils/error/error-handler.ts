@@ -13,7 +13,7 @@ interface ApiErrorResponse {
 
 interface ApiSuccessResponse {
   success: true;
-  data: any;
+  data: unknown;
   message?: string;
 }
 
@@ -148,8 +148,8 @@ export function getApiErrorMessage(
   fallbackMessage = 'An unexpected error occurred'
 ) {
   if (error instanceof AxiosError) {
-    const apiMessage = (error.response?.data as any)?.message;
-    return apiMessage || fallbackMessage;
+    // nullish coalesce operator, if the left of ?? is undefined, the right value is returned
+    return error.response?.data?.message ?? fallbackMessage;
   }
   if (error instanceof Error) {
     return error.message || fallbackMessage;
@@ -175,14 +175,16 @@ export function handleApiSuccess(
 /**
  * Utility function to check if a response is successful
  */
-export function isApiSuccessResponse(response: any): response is ApiSuccessResponse {
+export function isApiSuccessResponse(response: {
+  success: boolean;
+}): response is ApiSuccessResponse {
   return response && response.success === true;
 }
 
 /**
  * Utility function to check if a response is an error
  */
-export function isApiErrorResponse(response: any): response is ApiErrorResponse {
+export function isApiErrorResponse(response: { success: boolean }): response is ApiErrorResponse {
   return response && response.success === false;
 }
 

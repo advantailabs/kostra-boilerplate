@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unstable-nested-components */
+
 // Tremor Raw Calendar [v0.0.4]
 
 'use client';
@@ -74,14 +74,14 @@ type RangeProps = OmitKeys<DayPickerRangeProps, KeysToOmit>;
 
 type CalendarProps =
   | ({
-      mode: 'single';
-    } & SingleProps)
+    mode: 'single';
+  } & SingleProps)
   | ({
-      mode?: undefined;
-    } & SingleProps)
+    mode?: undefined;
+  } & SingleProps)
   | ({
-      mode: 'range';
-    } & RangeProps);
+    mode: 'range';
+  } & RangeProps);
 
 function Calendar({
   mode = 'single',
@@ -222,7 +222,7 @@ function Calendar({
           const { activeModifiers, buttonProps, divProps, isButton, isHidden } = useDayRender(
             date,
             displayMonth,
-            buttonRef
+            buttonRef as React.RefObject<HTMLButtonElement>
           );
 
           const { selected, today, disabled, range_middle } = activeModifiers;

@@ -26,25 +26,40 @@ export const contactClient = {
     if (filters.search) params.append('search', filters.search);
 
     const response = await axios.get(`/contact?${params.toString()}`);
-    const payload = (response.data as any).data;
-    return (payload && (payload as any).data) ?? payload;
+    if (!response.data) {
+      throw new Error('No Data was sent in Response');
+    }
+    console.log(response.data);
+    // Axios Response data -> standard response data -> contact submission response data
+    return response.data.data.data as ContactSubmissionResponse;
   },
 
-  async getById(id: number) {
+  async getById(id: number): Promise<ContactSubmissionResponse> {
     const response = await axios.get(`/contact/${id}`);
-    const payload = (response.data as any).data;
-    return (payload && (payload as any).data) ?? payload;
+    if (!response.data) {
+      throw new Error('No Data was sent in Response');
+    }
+    return response.data.data.data as ContactSubmissionResponse;
   },
 
   async create(data: CreateContactSubmissionRequest) {
     try {
       const response = await axios.post(`/contact`, data);
-      const payload = (response.data as any).data;
-      return (payload && (payload as any).data) ?? payload;
-    } catch (error: any) {
+      if (!response.data) {
+        throw new Error('No Data was sent in Response');
+      }
+      return response.data.data.data as ContactSubmissionResponse;
+    } catch (error) {
       // If the error has a response with data, extract the message
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        (error as { response?: { data?: { message?: string } } }).response?.data?.message
+      ) {
+        throw new Error(
+          (error as { response?: { data: { message: string } } }).response!.data.message
+        );
       }
       // Otherwise, re-throw the original error
       throw error;
@@ -53,13 +68,17 @@ export const contactClient = {
 
   async update(id: number, data: UpdateContactSubmissionRequest) {
     const response = await axios.put(`/contact/${id}`, data);
-    const payload = (response.data as any).data;
-    return (payload && (payload as any).data) ?? payload;
+    if (!response.data) {
+      throw new Error('No Data was sent in Response');
+    }
+    return response.data.data.data as ContactSubmissionResponse;
   },
 
   async remove(id: number) {
     const response = await axios.delete(`/contact/${id}`);
-    const payload = (response.data as any).data;
-    return (payload && (payload as any).data) ?? payload;
+    if (!response.data) {
+      throw new Error('No Data was sent in Response');
+    }
+    return response.data.data.data as ContactSubmissionResponse;
   },
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Badge } from '@/components/atom/Badge';
 import { Button } from '@/components/atom/Button';
@@ -33,15 +33,8 @@ export function ContactDetailsModal({
   onSave,
   isSaving,
 }: ContactDetailsModalProps) {
-  const [status, setStatus] = useState<string | undefined>(undefined);
-  const [adminNotes, setAdminNotes] = useState('');
-
-  useEffect(() => {
-    if (contact) {
-      setStatus(contact.status as unknown as string);
-      setAdminNotes(contact.adminNotes || '');
-    }
-  }, [contact]);
+  const [status, setStatus] = useState<string | undefined>(() => contact?.status ? contact.status : '');
+  const [adminNotes, setAdminNotes] = useState(() => contact?.adminNotes ? contact.adminNotes : '');
 
   const purposeLabel = useMemo(() => {
     if (!contact) return '';
@@ -53,7 +46,7 @@ export function ContactDetailsModal({
     if (!contact) return { label: '', variant: 'neutral' as const };
     const s = CONTACT_STATUSES.find(s => s.value === (contact.status as unknown as string));
     return s
-      ? { label: s.label, variant: s.variant === 'secondary' ? 'neutral' : (s.variant as any) }
+      ? { label: s.label, variant: s.variant === 'secondary' ? 'neutral' : (s.variant as string) }
       : { label: String(contact.status), variant: 'neutral' };
   }, [contact]);
 
@@ -149,13 +142,16 @@ export function ContactDetailsModal({
             <div>
               <Label className="font-medium">Current Status</Label>
               <div className="mt-1">
-                <Badge variant={statusMeta.variant as any}>{statusMeta.label}</Badge>
+                <Badge variant={statusMeta.variant as React.ComponentProps<typeof Badge>['variant']}>
+                  {statusMeta.label}
+                </Badge>
               </div>
             </div>
           </div>
         </div>
-      )}
-    </Modal>
+      )
+      }
+    </Modal >
   );
 }
 

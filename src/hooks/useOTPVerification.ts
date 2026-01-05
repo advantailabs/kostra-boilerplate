@@ -1,6 +1,7 @@
 import { useSignInModalContext } from '@/providers/SignInModalProvider';
 import { authApi } from '@/services/api/auth';
 import { useAuthStore } from '@/store/auth';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { useApiMutation } from './useApiMutation';
 
@@ -29,8 +30,9 @@ export function useOTPVerification() {
       toast.success('Account created successfully!');
       closeModal();
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to verify OTP');
+    onError: (error: unknown) => {
+      const castedError = error as AxiosError<{ message: string }>;
+      toast.error(castedError.response?.data?.message ?? 'Failed to verify OTP');
     },
   });
 }

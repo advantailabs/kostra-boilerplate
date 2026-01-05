@@ -388,7 +388,7 @@ export default function PrivacyPolicyPage() {
 
               <section>
                 <h2 className="mb-3 text-xl font-semibold text-text sm:mb-4 sm:text-2xl">
-                  10. Children's Privacy
+                  10. Children&apos;s Privacy
                 </h2>
                 <p className="text-sm sm:text-base">
                   Our services are not designed for or directed to children under 13 years of age.
@@ -420,7 +420,7 @@ export default function PrivacyPolicyPage() {
                   <ul className="list-disc space-y-2 pl-4 text-sm sm:pl-6 sm:text-base">
                     <li>General Data Protection Regulation (GDPR)</li>
                     <li>California Consumer Privacy Act (CCPA)</li>
-                    <li>Children's Online Privacy Protection Act (COPPA)</li>
+                    <li>Children&apos;s Online Privacy Protection Act (COPPA)</li>
                     <li>Other applicable local and international privacy laws</li>
                   </ul>
                 </div>

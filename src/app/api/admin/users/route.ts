@@ -130,10 +130,10 @@ export async function POST(request: NextRequest) {
     };
 
     return successResponse(response, 201);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating user', error);
 
-    if (error.message === 'Email already exists') {
+    if (error instanceof Error && error.message === 'Email already exists') {
       return errorResponse('Email already exists');
     }
 

@@ -6,6 +6,7 @@ import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWi
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
 import { useBlogs } from '@/hooks/useBlogs';
+import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 import { useCallback, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { BlogModal } from './BlogModal';
@@ -101,7 +102,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
    * Callback when a blog is successfully created or updated
    */
   const handleBlogSuccess = useCallback(
-    async (data: any) => {
+    async (data: CreateBlogInput | UpdateBlogInput) => {
       try {
         if (modalMode === 'create') {
           await createBlog(data);

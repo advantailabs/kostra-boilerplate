@@ -23,14 +23,15 @@ export function ModernNavigation() {
   const { openModal } = useSignInModalContext();
 
   // Ensure we start at top on page load
+  if (pathname === '/' && !hasInitialized) {
+    setActiveSection('home');
+    setHasInitialized(true);
+  }
+
   useEffect(() => {
-    if (pathname === '/' && !hasInitialized) {
-      // Force scroll to top on initial load and clear any hash
-      window.scrollTo({ top: 0 });
-      window.history.replaceState(null, '', '/');
-      setActiveSection('home');
-      setHasInitialized(true);
-    }
+    // Force scroll to top on initial load and clear any hash
+    window.scrollTo({ top: 0 });
+    window.history.replaceState(null, '', '/');
   }, [pathname, hasInitialized]);
 
   useEffect(() => {

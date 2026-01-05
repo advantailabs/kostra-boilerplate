@@ -18,7 +18,8 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL
-          ? process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL.split('//')[1]
+          ? (process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL.split('//')[1] ??
+            process.env.NEXT_PUBLIC_S3_PUBLIC_BASE_URL)
           : 'placeholder.s3.amazonaws.com',
       },
       {

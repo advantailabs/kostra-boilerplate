@@ -1,14 +1,14 @@
 import { generateJWT, setAuthCookie } from '@/lib/auth/jwt';
 import { badRequestResponse, internalServerErrorResponse, successResponse } from '@/lib/utils';
 import {
-    extractGoogleUserInfo,
-    validateGoogleResponse,
-    verifyGoogleToken,
+  extractGoogleUserInfo,
+  validateGoogleResponse,
+  verifyGoogleToken,
 } from '@/services/external/google/auth';
 import {
-    createUser,
-    getUserByGoogleIdOrEmail,
-    updateUserGoogleId,
+  createUser,
+  getUserByGoogleIdOrEmail,
+  updateUserGoogleId,
 } from '@/services/repositories/user';
 import { NextRequest } from 'next/server';
 
@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     try {
       userInfo = await verifyGoogleToken(credential);
     } catch (error) {
+      console.error(error);
       return badRequestResponse('Invalid Google access token');
     }
 
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     const googleUser = extractGoogleUserInfo(userInfo);
 
     // Find existing user by googleId or email
-    let user = await getUserByGoogleIdOrEmail(googleUser.id, googleUser.email);
+    let user = await getUserByGoogleIdOrEmail(googleUser.id as string, googleUser.email);
 
     // If user doesn't exist, create a new user
     if (!user) {
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
         profilePicture: googleUser.picture,
       });
     } else if (!user.googleId) {
-      user = await updateUserGoogleId(user.id, googleUser.id);
+      user = await updateUserGoogleId(user.id, googleUser.id as string);
     }
 
     // Generate JWT token

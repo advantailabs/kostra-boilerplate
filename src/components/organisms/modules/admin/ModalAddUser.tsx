@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 // React import not needed as we use hooks directly; remove empty import
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, useWatch, type SubmitHandler } from 'react-hook-form';
 
 import { Input } from '@/components/atom/Input';
 import { Label } from '@/components/atom/Label';
@@ -24,7 +24,7 @@ export type ModalAddUserProps = {
 type FormData = {
   email: string;
   password: string;
-  role: string; // keep as string for empty default, validated by schema
+  role: UserRole | undefined; // keep as string for empty default, validated by schema
 };
 
 export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
@@ -34,22 +34,21 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(createUserSchema) as any,
+  } = useForm<typeof createUserSchema._type>({
+    resolver: zodResolver(createUserSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
-      role: '',
+      role: undefined,
     },
   });
 
-  const emailVal = watch('email');
-  const passwordVal = watch('password');
-  const roleVal = watch('role');
+  const emailVal = useWatch({ control, name: 'email' });
+  const passwordVal = useWatch({ control, name: 'password' });
+  const roleVal = useWatch({ control, name: 'role' });
   const isAllFieldsPresent = Boolean(emailVal && passwordVal && roleVal);
 
   const onSubmit: SubmitHandler<FormData> = async data => {

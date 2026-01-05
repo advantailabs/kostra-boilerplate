@@ -59,10 +59,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     // Create filters object from searchParams
-    const filters = Array.from(searchParams).reduce((acc: Record<string, any>, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
+    const filters = Array.from(searchParams).reduce(
+      (acc: Record<string, unknown>, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      },
+      {}
+    );
 
     // Validate filters using Zod
     const validationResult = blogFiltersSchema.safeParse(filters);

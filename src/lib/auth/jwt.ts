@@ -42,6 +42,7 @@ export const verifyJWT = async (token: string): Promise<JWTPayload> => {
 
     return payload as unknown as JWTPayload;
   } catch (error) {
+    console.error(error);
     throw new Error('Invalid JWT token');
   }
 };
@@ -60,6 +61,7 @@ export const getAuthUser = async (request: NextRequest): Promise<JWTPayload | nu
 
     return await verifyJWT(token);
   } catch (error) {
+    console.error(error);
     return null;
   }
 };

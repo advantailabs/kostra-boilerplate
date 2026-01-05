@@ -229,21 +229,6 @@ export interface UserFormErrors {
 }
 
 // ============================================================================
-// Navigation Types
-// ============================================================================
-
-/**
- * Navigation item interface for role-based access control
- */
-export interface NavigationItem {
-  name: string;
-  href: string;
-  icon: any; // Icon component type
-  section: string;
-  roles: UserRole[];
-}
-
-// ============================================================================
 // Route Protection Types
 // ============================================================================
 

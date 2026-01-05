@@ -62,7 +62,7 @@ export function OTPVerificationForm({
       const digit = value.replace(/\D/g, '');
 
       // Update the form value
-      form.setValue(`otp${index}` as any, digit);
+      form.setValue(`otp${index}` as keyof OTPVerificationFormData, digit);
 
       // Move to next input if value is entered
       if (digit && index < 3) {
@@ -116,7 +116,7 @@ export function OTPVerificationForm({
 
       if (otpDigits.length === 4) {
         otpDigits.split('').forEach((digit, i) => {
-          form.setValue(`otp${i}` as any, digit);
+          form.setValue(`otp${i}` as keyof OTPVerificationFormData, digit);
         });
         // Focus on the last input
         const currentInput = e.target as HTMLInputElement;
@@ -138,7 +138,7 @@ export function OTPVerificationForm({
         otp,
       });
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the mutation
     }
   };
@@ -157,7 +157,7 @@ export function OTPVerificationForm({
               inputMode="numeric"
               pattern="[0-9]*"
               inputClassName="h-12 w-12 text-center text-lg font-semibold rounded-lg border-border bg-background text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...form.register(`otp${index}` as any, {
+              {...form.register(`otp${index}` as keyof OTPVerificationFormData, {
                 onChange: e => handleOTPChange(index, e.target.value, e),
               })}
               onKeyDown={e => handleOTPKeyDown(index, e)}
@@ -287,14 +287,14 @@ export function OTPVerificationForm({
 
       {/* Resend OTP */}
       <div className="text-center">
-        <span className="text-sm text-gray-500">Didn't receive the code? </span>
+        <span className="text-sm text-gray-500">Didn&apos;t receive the code? </span>
         <button
           type="button"
           onClick={async () => {
             try {
               await resendOTP({ email, purpose: 'SIGNUP' });
               onResendOTP();
-            } catch (error) {
+            } catch (_error) {
               // Error is handled by the hook
             }
           }}

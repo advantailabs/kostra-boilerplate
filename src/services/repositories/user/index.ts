@@ -1,5 +1,20 @@
 import { prisma } from '@/lib/prisma';
 import { UserPlan, UserRole } from '@/lib/prisma/generated/client';
+import {
+  UserFindManyArgs,
+  UserOrderByWithRelationInput,
+  UserWhereInput,
+} from '@/lib/prisma/generated/models';
+
+export interface CreateUserData {
+  email: string;
+  name: string;
+  googleId?: string;
+  password?: string;
+  role?: UserRole;
+  isOnboarded?: boolean;
+  profilePicture?: string;
+}
 
 export interface GoogleUserUpdate {
   googleId?: string;
@@ -9,6 +24,9 @@ export interface GoogleUserUpdate {
   isOnboarded?: boolean;
   password?: string;
   role?: UserRole;
+  credits: number;
+  plan: UserPlan;
+  isOverDue: boolean;
 }
 
 // Interface for updating user by ID (admin operations)
@@ -38,7 +56,7 @@ const upsertUser = async (user: GoogleUserUpdate) => {
 };
 
 const getUserByEmail = async (email: string, includeDeleted: boolean = false) => {
-  const whereClause: any = { email };
+  const whereClause: UserWhereInput = { email };
 
   if (!includeDeleted) {
     whereClause.deletedAt = null;
@@ -49,7 +67,7 @@ const getUserByEmail = async (email: string, includeDeleted: boolean = false) =>
   });
 };
 
-const createUser = async (user: GoogleUserUpdate) => {
+const createUser = async (user: CreateUserData) => {
   // Check if user already exists (including soft deleted users)
   const existingUser = await getUserByEmail(user.email, true);
   if (existingUser) {
@@ -62,7 +80,7 @@ const createUser = async (user: GoogleUserUpdate) => {
     role = UserRole.ADMIN;
   }
 
-  const userData: any = {
+  const userData: GoogleUserUpdate = {
     email: user.email,
     name: user.name,
     googleId: user.googleId,
@@ -146,7 +164,7 @@ const getUsersWithFilters = async (options: UserFilterOptions = {}) => {
   } = options;
 
   // Build where clause
-  const whereClause: any = {};
+  const whereClause: UserWhereInput = {};
 
   // Search filter
   if (search) {
@@ -177,11 +195,11 @@ const getUsersWithFilters = async (options: UserFilterOptions = {}) => {
   }
 
   // Build orderBy clause
-  const orderBy: any = {};
+  const orderBy: UserOrderByWithRelationInput = {};
   orderBy[sortBy] = sortOrder;
 
   // Execute query
-  const queryOptions: any = {
+  const queryOptions: UserFindManyArgs = {
     where: whereClause,
     orderBy,
   };

@@ -15,7 +15,7 @@ export default function NotFound() {
       <p className="mt-6 text-4xl font-semibold text-primary sm:text-5xl">404</p>
       <h1 className="mt-4 text-2xl font-semibold text-text">Page not found</h1>
       <p className="mt-2 text-sm text-text-muted">
-        Sorry, we couldn't find the page you're looking for.
+        Sorry, we couldn&apos;t find the page you&apos;re looking for.
       </p>
       <Button asChild className="group mt-8" variant="light">
         <Link href={siteConfig.baseLinks.home}>

@@ -3,12 +3,13 @@
 import { Calendar, HardDrive } from 'lucide-react';
 
 import { Modal } from '@/components/molecules/common/Modal';
+import { File } from '@/lib/prisma/generated/browser';
 import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
 
 interface FileDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  file: any;
+  file: File;
   onDownload?: () => void;
   isDownloading?: boolean;
 }
@@ -30,7 +31,7 @@ export function FileDetailsModal({
         hour: '2-digit',
         minute: '2-digit',
       });
-    } catch (error) {
+    } catch (_error) {
       return 'Invalid Date';
     }
   };
@@ -73,7 +74,7 @@ export function FileDetailsModal({
               <Calendar className="h-4 w-4 text-text-muted" />
               <span className="font-medium text-text">Uploaded</span>
             </div>
-            <p className="ml-6 text-sm text-text-muted">{formatDate(file.createdAt)}</p>
+            <p className="ml-6 text-sm text-text-muted">{formatDate(String(file.createdAt))}</p>
           </div>
         </div>
       </div>

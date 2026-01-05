@@ -1,5 +1,7 @@
+import { ContactStatus } from '@/lib/prisma/generated/enums';
 import { AppErrorClass, ERRORS } from '@/lib/utils';
 import {
+  ContactFormData,
   ContactSubmission,
   ContactSubmissionFilters,
   ContactSubmissionResponse,
@@ -13,11 +15,11 @@ export interface ContactService {
     email: string;
     purpose: string;
     message: string;
-  }): Promise<any>;
+  }): Promise<ContactSubmission>;
 
   getContactSubmission(_id: number): Promise<ContactSubmission>;
 
-  getContactSubmissionByUuid(_uuid: string): Promise<any>;
+  getContactSubmissionByUuid(_uuid: string): Promise<ContactSubmission>;
 
   getContactSubmissions(_filters: ContactSubmissionFilters): Promise<ContactSubmissionResponse>;
 
@@ -28,7 +30,7 @@ export interface ContactService {
       adminNotes?: string;
       resolvedAt?: Date;
     }
-  ): Promise<any>;
+  ): Promise<ContactSubmission>;
 
   deleteContactSubmission(_id: number): Promise<void>;
 }
@@ -45,7 +47,7 @@ export async function createContactSubmission(data: {
     name: data.name.trim(),
     email: data.email.trim(),
     message: data.message.trim(),
-  } as any);
+  } as ContactFormData);
 }
 
 export async function getContactSubmission(id: number) {
@@ -71,7 +73,7 @@ export async function getContactSubmissions(filters: ContactSubmissionFilters) {
 export async function updateContactSubmission(
   id: number,
   data: {
-    status?: string;
+    status?: ContactStatus;
     adminNotes?: string;
     resolvedAt?: Date;
   }
@@ -84,7 +86,7 @@ export async function updateContactSubmission(
   return contactRepository.update(id, {
     ...data,
     adminNotes: data.adminNotes?.trim(),
-  } as any);
+  });
 }
 
 export async function deleteContactSubmission(id: number) {

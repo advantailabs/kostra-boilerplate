@@ -1,4 +1,5 @@
 import { authApi } from '@/services/api/auth';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { useApiMutation } from './useApiMutation';
 
@@ -15,8 +16,9 @@ export function useEmailSignUp() {
     onSuccess: () => {
       toast.success('Verification code sent to your email!');
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to send verification code');
+    onError: (error: unknown) => {
+      const castedError = error as AxiosError<{ message: string }>;
+      toast.error(castedError.response?.data?.message ?? 'Failed to send verification code');
     },
   });
 

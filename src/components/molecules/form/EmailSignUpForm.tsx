@@ -36,7 +36,7 @@ export function EmailSignUpForm({ onSuccess, onSwitchToSignIn }: EmailSignUpForm
       // Only send email to the API, but keep name for the next step
       await signUp({ email: data.email });
       onSuccess(data); // Pass full data (including name) to onSuccess
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the hook
     }
   };

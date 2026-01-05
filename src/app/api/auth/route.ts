@@ -1,4 +1,4 @@
-import { generateJWT, getAuthUser } from '@/lib/auth/jwt';
+import { generateJWT, getAuthUser, JWTPayload } from '@/lib/auth/jwt';
 import { NextRequest } from 'next/server';
 // No direct NextResponse usage; use standardized responses
 import { internalServerErrorResponse, successResponse, unauthorizedResponse } from '@/lib/utils';
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Generate a new token (refresh)
-    const token = await generateJWT(user as any);
+    const token = await generateJWT(user as unknown as JWTPayload);
 
     return successResponse({
       user: serializableUser,

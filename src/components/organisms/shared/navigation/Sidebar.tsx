@@ -16,6 +16,7 @@ import { cx, focusRing } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
 import { useUiModalsStore } from '@/store/ui/modals';
 
+import { UserRole } from '@/lib/prisma/generated/enums';
 import MobileSidebar from './MobileSidebar';
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
 
@@ -62,7 +63,7 @@ export function Sidebar() {
               </span>
               <ul role="list" className="space-y-0.5">
                 {NAVIGATION_ITEMS.filter(
-                  item => item.section === 'Main' && item.roles.includes(userRole as any)
+                  item => item.section === 'Main' && item.roles.includes(userRole as UserRole)
                 ).map(item => (
                   <li key={item.name}>
                     <Link
@@ -88,7 +89,7 @@ export function Sidebar() {
                 </span>
                 <ul role="list" className="space-y-0.5">
                   {NAVIGATION_ITEMS.filter(
-                    item => item.section === 'Admin' && item.roles.includes(userRole as any)
+                    item => item.section === 'Admin' && item.roles.includes(userRole as UserRole)
                   ).map(item => (
                     <li key={item.name}>
                       <Link

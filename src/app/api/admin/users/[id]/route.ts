@@ -21,7 +21,7 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
     if (!paramValidation.success) {
-      const errors = paramValidation.error.issues.map((err: any) => ({
+      const errors = paramValidation.error.issues.map(err => ({
         field: err.path.join('.'),
         message: err.message,
       }));
@@ -66,7 +66,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
     if (!paramValidation.success) {
-      const errors = paramValidation.error.issues.map((err: any) => ({
+      const errors = paramValidation.error.issues.map(err => ({
         field: err.path.join('.'),
         message: err.message,
       }));
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     }
 
     // Prepare update data
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
 
     // Add fields to updateData if defined
     Object.entries({
@@ -172,7 +172,7 @@ export async function DELETE(request: NextRequest, props: { params: Promise<{ id
     // Validate user ID parameter
     const paramValidation = userIdParamSchema.safeParse({ id: params.id });
     if (!paramValidation.success) {
-      const errors = paramValidation.error.issues.map((err: any) => ({
+      const errors = paramValidation.error.issues.map(err => ({
         field: err.path.join('.'),
         message: err.message,
       }));

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const { plan = 'pro' } = body as { plan?: keyof typeof PLANS_CONFIG };
     const priceId =
-      // eslint-disable-next-line no-nested-ternary
+       
       plan === 'pro'
         ? process.env.STRIPE_PRO_PRICE_ID
         : plan === 'creditPack'

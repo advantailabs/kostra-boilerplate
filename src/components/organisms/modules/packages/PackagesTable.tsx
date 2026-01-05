@@ -55,12 +55,11 @@ export function PackagesTable({
   const totalPages = pagination?.totalPages || 1;
 
   // Handle smart pagination after deletion
-  useEffect(() => {
-    // If current page is empty and we're not on page 1, go to previous page
-    if (packages.length === 0 && page > 1 && !isLoading && totalPages > 1) {
-      setPage(page - 1);
-    }
-  }, [packages.length, page, isLoading, totalPages]);
+  // If current page is empty and we're not on page 1, go to previous page
+  if (packages.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+    setPage(prevPage => prevPage - 1);
+  }
+
 
   // Notify parent of page changes
   useEffect(() => {

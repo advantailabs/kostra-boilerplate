@@ -28,7 +28,7 @@ axiosInstance.interceptors.request.use(
 
     // If we have a token, add it to the request headers
     if (token) {
-      // eslint-disable-next-line no-param-reassign
+       
       config.headers['x-custom-token'] = token;
     }
 

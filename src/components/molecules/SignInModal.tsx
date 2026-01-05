@@ -7,7 +7,7 @@ import { ForgotPasswordForm } from '@/components/molecules/form/ForgotPasswordFo
 import { OTPVerificationForm } from '@/components/molecules/form/OTPVerificationForm';
 import { ResetPasswordForm } from '@/components/molecules/form/ResetPasswordForm';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GoogleSignInButton } from './common/GoogleSignInButton';
 
 type AuthMode = 'signin' | 'signup' | 'otp-verification' | 'forgot-password' | 'reset-password';
@@ -22,11 +22,20 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
   const [signupData, setSignupData] = useState<{ name: string; email: string } | null>(null);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>('');
 
+  // Resets state and closes
+  const handleOnClose = useCallback(() => {
+    setAuthMode('signin');
+    setSignupData(null);
+    setForgotPasswordEmail('');
+    onClose();
+  }, [onClose]);
+
+
   // Handle escape key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleOnClose();
       }
     };
 
@@ -39,16 +48,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
-
-  // Reset modal state when closed
-  useEffect(() => {
-    if (!isOpen) {
-      setAuthMode('signin');
-      setSignupData(null);
-      setForgotPasswordEmail('');
-    }
-  }, [isOpen]);
+  }, [isOpen, handleOnClose]);
 
   if (!isOpen) return null;
 
@@ -56,12 +56,12 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
     <div
       onClick={e => {
         if (e.target === e.currentTarget) {
-          onClose();
+          handleOnClose();
         }
       }}
       onKeyDown={e => {
         if (e.key === 'Escape') {
-          onClose();
+          handleOnClose();
         }
       }}
       className="bg-black/50 fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-md"
@@ -77,7 +77,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
       >
         {/* Close button */}
         <Button
-          onClick={onClose}
+          onClick={handleOnClose}
           variant="ghost"
           className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#080a0c] text-gray-50 transition-colors hover:bg-neutral-900 hover:text-gray-100 p-0"
           aria-label="Close modal"
@@ -127,7 +127,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
           {authMode === 'signin' && (
             <>
               <EmailSignInForm
-                onSuccess={() => onClose()}
+                onSuccess={() => handleOnClose()}
                 onSwitchToSignUp={() => setAuthMode('signup')}
                 onForgotPassword={() => setAuthMode('forgot-password')}
               />
@@ -158,7 +158,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <OTPVerificationForm
               email={signupData.email}
               name={signupData.name}
-              onSuccess={() => onClose()}
+              onSuccess={() => handleOnClose()}
               onResendOTP={() => {
                 // Resend OTP is handled by the OTPVerificationForm component
               }}
@@ -178,7 +178,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
           {authMode === 'reset-password' && forgotPasswordEmail && (
             <ResetPasswordForm
               email={forgotPasswordEmail}
-              onSuccess={() => onClose()}
+              onSuccess={() => handleOnClose()}
               onBackToSignIn={() => setAuthMode('signin')}
             />
           )}

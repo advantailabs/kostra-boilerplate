@@ -6,7 +6,7 @@ import {
 } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 // Type for the form data (proper types)
@@ -28,8 +28,6 @@ interface UseBlogFormProps {
 }
 
 export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) {
-  const [formInitialized, setFormInitialized] = useState(false);
-
   const schema = mode === 'create' ? createBlogSchema : updateBlogSchema;
 
   const form = useForm<BlogFormData>({
@@ -49,7 +47,6 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
   useEffect(() => {
     if (!isOpen) {
       form.reset();
-      setFormInitialized(false);
     }
   }, [isOpen, form]);
 
@@ -59,7 +56,6 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
 
     // Reset form and initialization state when mode changes
     form.reset();
-    setFormInitialized(false);
 
     // If in edit mode and we have blog data, populate the form
     if (mode === 'edit' && blog) {
@@ -78,7 +74,6 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
           keepTouched: false,
         }
       );
-      setFormInitialized(true);
     } else if (mode === 'create') {
       // For create mode, just reset to default values
       form.reset({
@@ -90,7 +85,6 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
         categories: [],
         published: false,
       });
-      setFormInitialized(true);
     }
   }, [mode, blog, isOpen, form]);
 
@@ -110,13 +104,11 @@ export function useBlogForm({ blog, mode, isOpen, onSubmit }: UseBlogFormProps) 
 
   const resetForm = () => {
     form.reset();
-    setFormInitialized(false);
   };
 
   return {
     form,
     handleSubmit: form.handleSubmit(handleSubmit),
     resetForm,
-    formInitialized,
   };
 }

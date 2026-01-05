@@ -10,6 +10,8 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from '@/lib/utils';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+
 import { contactFiltersSchema } from '@/schemas/contact.schema';
 import { contactService } from '@/services/internal/contact';
 import { contactFormSchema } from '@/validations/contact';
@@ -39,7 +41,7 @@ export async function POST(request: NextRequest) {
       if (authUser?.userId) {
         userId = parseInt(authUser.userId.toString(), 10);
       }
-    } catch (error) {
+    } catch (_error) {
       // User not authenticated, continue without userId
       console.log('No authenticated user for contact submission');
     }
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     // Handle Prisma errors
     if (error && typeof error === 'object' && 'code' in error) {
-      const appError = mapPrismaError(error);
+      const appError = mapPrismaError(error as PrismaClientKnownRequestError);
       return errorResponse(appError);
     }
 
@@ -84,10 +86,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     // Create filters object from searchParams
-    const filters = Array.from(searchParams).reduce((acc: Record<string, any>, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
+    const filters = Array.from(searchParams).reduce(
+      (acc: Record<string, unknown>, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      },
+      {}
+    );
 
     // Validate filters using Zod
     const validationResult = contactFiltersSchema.safeParse(filters);

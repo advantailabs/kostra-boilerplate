@@ -53,11 +53,11 @@ export function UserFilterModal({
     setLocalFilters(prev => ({ ...prev, search: value }));
   };
 
-  const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    setLocalFilters(prev => ({ ...prev, sortBy: sortBy as any, sortOrder }));
+  const handleSort = (sortBy: UserFilters["sortBy"], sortOrder: UserFilters["sortOrder"]) => {
+    setLocalFilters(prev => ({ ...prev, sortBy, sortOrder }));
   };
 
-  const handleFilter = (key: string, value: string) => {
+  const handleFilter = (key: keyof UserFilters, value: string) => {
     if (value === 'all') {
       setLocalFilters(prev => {
         const newFilters = { ...prev };
@@ -219,7 +219,7 @@ export function UserFilterModal({
             </label>
             <Select
               value={localFilters.sortBy || 'id'}
-              onValueChange={value => handleSort(value, localFilters.sortOrder || 'desc')}
+              onValueChange={value => handleSort(value as UserFilters["sortBy"], localFilters.sortOrder || 'desc')}
               aria-label="Select sort by"
             >
               <SelectTrigger id="sort-by-filter">

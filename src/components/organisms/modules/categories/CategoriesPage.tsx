@@ -89,6 +89,7 @@ export function CategoriesPage({ className }: CategoriesPageProps) {
         onClose={handleCategoryModalClose}
         onSubmit={handleCategorySuccess}
         category={editingCategory}
+        key={editingCategory ? editingCategory.id : ''}
         mode={modalMode}
         currentPage={currentPage}
       />

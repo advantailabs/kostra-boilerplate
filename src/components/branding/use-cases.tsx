@@ -101,8 +101,8 @@ export function UseCases() {
             Perfect For Every Team
           </h2>
           <p className="mx-auto mt-6 max-w-3xl text-xl text-gray-300">
-            Whether you're in HR, support, sales, engineering, or compliance - Kostra adapts to your
-            team's unique needs
+            Whether you&apos;re in HR, support, sales, engineering, or compliance - Kostra adapts to your
+            team&apos;s unique needs
           </p>
         </motion.div>
 
@@ -172,7 +172,7 @@ export function UseCases() {
           viewport={{ once: true }}
         >
           <p className="mb-8 text-lg text-gray-300">
-            Ready to transform your team's knowledge management?
+            Ready to transform your team&apos;s knowledge management?
           </p>
           <a
             href={siteConfig.baseLinks.home}

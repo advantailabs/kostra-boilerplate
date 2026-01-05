@@ -21,7 +21,7 @@ type BlogItem = {
 };
 
 type BlogCategory = {
-  /* eslint-disable-next-line react/no-unused-prop-types */
+   
   category: {
     id: number;
     name: string;

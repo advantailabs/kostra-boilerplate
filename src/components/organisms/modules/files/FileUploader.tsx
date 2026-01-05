@@ -84,6 +84,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
             )
           );
         } catch (error) {
+          console.error(error)
           setUploadingFiles(prev =>
             prev.map(f =>
               f.id === uploadingFile.id
@@ -99,7 +100,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
         fileInputRef.current.value = '';
       }
     },
-    [user?.id]
+    [user]
   );
 
   const handleClose = useCallback(() => {
@@ -144,7 +145,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
       onUploaded();
       setFilesBeingSaved(0);
       handleClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to save files to database:', error);
 
       // Mark ready files as error with generic message

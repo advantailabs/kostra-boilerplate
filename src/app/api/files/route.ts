@@ -20,7 +20,7 @@ export const dynamic = 'force-dynamic';
 
 // Polyfill for File in Node.js environment
 if (typeof global.File === 'undefined') {
-  const { Blob } = require('buffer');
+  const { Blob } = await import('buffer');
 
   class FilePolyfill extends Blob {
     name: string;
@@ -29,14 +29,14 @@ if (typeof global.File === 'undefined') {
 
     webkitRelativePath: string = '';
 
-    constructor(chunks: any[], filename: string, options: any = {}) {
+    constructor(chunks: ArrayBuffer[], filename: string, options: BlobPropertyBag = {}) {
       super(chunks, options);
       this.name = filename;
       this.lastModified = Date.now();
     }
   }
 
-  (global as any).File = FilePolyfill;
+  global.File = FilePolyfill as unknown as typeof File;
 }
 
 export async function GET(request: NextRequest) {

@@ -44,7 +44,7 @@ export function EmailSignInForm({
     try {
       await signIn(data);
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the hook
     }
   };
@@ -118,7 +118,7 @@ export function EmailSignInForm({
 
       {/* Switch to Sign Up */}
       <div className="text-center">
-        <span className="text-sm text-gray-500">Don't have an account? </span>
+        <span className="text-sm text-gray-500">Don&apos;t have an account? </span>
         <button
           type="button"
           onClick={onSwitchToSignUp}

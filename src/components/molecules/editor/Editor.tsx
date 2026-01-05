@@ -16,7 +16,7 @@ import TaskList from '@tiptap/extension-task-list';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, SingleCommands, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
   AlignCenter,
@@ -98,7 +98,7 @@ const ImageResize = Image.extend({
       ...this.parent?.(),
       setImageAlign:
         (align: 'left' | 'center' | 'right') =>
-          ({ commands }: { commands: any }) => {
+          ({ commands }: { commands: SingleCommands }) => {
             return commands.updateAttributes('image', { align });
           },
     };

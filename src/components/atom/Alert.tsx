@@ -2,9 +2,8 @@ import React from 'react';
 
 import { cx } from '@/lib/utils';
 
-export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
+export const Alert = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     return (
       <div
@@ -25,9 +24,8 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 
 Alert.displayName = 'Alert';
 
-export interface AlertDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
-export const AlertDescription = React.forwardRef<HTMLParagraphElement, AlertDescriptionProps>(
+export const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, children, ...props }, ref) => {
     return (
       <p ref={ref} className={cx('text-sm', className)} {...props}>

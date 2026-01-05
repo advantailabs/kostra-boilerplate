@@ -45,12 +45,10 @@ export function CategoriesTable({
   // React Query will fetch when queryKey changes (debouncedSearch/page)
 
   // Handle smart pagination after deletion
-  useEffect(() => {
-    // If current page is empty and we're not on page 1, go to previous page
-    if (categories.length === 0 && page > 1 && !isLoading && totalPages > 1) {
-      setPage(page - 1);
-    }
-  }, [categories.length, page, isLoading, totalPages]);
+  // If current page is empty and we're not on page 1, go to previous page
+  if (categories.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+    setPage(prevPage => prevPage - 1);
+  }
 
   // Notify parent of page changes
   useEffect(() => {
@@ -120,7 +118,7 @@ export function CategoriesTable({
                       </div>
                     </TableCell>
                     <TableCell className="py-1">
-                      {/* eslint-disable-next-line no-underscore-dangle */}
+                      { }
                       <Badge variant="neutral">{category._count?.blogs || 0} blogs</Badge>
                     </TableCell>
                     <TableCell className="py-1 text-text-muted">

@@ -2,25 +2,25 @@ import { JWT_KEY } from '@/lib/auth/jwt';
 import { PrismaClient } from '@/lib/prisma/generated/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-/* eslint-disable no-var, vars-on-top, no-underscore-dangle */
+ 
 // Global test setup
 declare global {
   var __PRISMA_TEST__: PrismaClient | undefined;
 }
-/* eslint-enable no-var, vars-on-top, no-underscore-dangle */
+ 
 
 const adapter = new PrismaPg({ connectionString: process.env.POSTGRES_URL });
 
 // Test database client
 export const testPrisma =
-  // eslint-disable-next-line no-underscore-dangle
+   
   global.__PRISMA_TEST__ ??
   new PrismaClient({
     adapter,
   });
 
 if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line no-underscore-dangle
+   
   global.__PRISMA_TEST__ = testPrisma;
 }
 

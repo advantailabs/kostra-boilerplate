@@ -91,13 +91,12 @@ export function UsersTable({
   const total = totalCount;
   const totalPages = pagination?.totalPages || Math.ceil(total / limit);
 
+
   // Handle smart pagination after deletion
-  useEffect(() => {
-    // If current page is empty and we're not on page 1, go to previous page
-    if (users.length === 0 && page > 1 && !isLoading && totalPages > 1) {
-      setPage(page - 1);
-    }
-  }, [users.length, page, isLoading, totalPages]);
+  // If current page is empty and we're not on page 1, go to previous page
+  if (users.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+    setPage(prevPage => prevPage - 1);
+  }
 
   // Notify parent of page changes
   useEffect(() => {
@@ -109,7 +108,7 @@ export function UsersTable({
   const handleRoleChange = async (userId: number, newRole: string) => {
     try {
       await updateUser({ userId, userData: { role: newRole as UserRole } });
-    } catch (error) {
+    } catch (_error) {
       // Error handling is done in the hook
     }
   };

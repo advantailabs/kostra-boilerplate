@@ -89,7 +89,11 @@ export function UsersPage({ className }: UsersPageProps) {
         onClose={handleCloseDetailsModal}
         user={selectedUser}
       />
-      <ModalEditUser isOpen={isEditModalOpen} onClose={handleCloseEditModal} user={selectedUser} />
+      <ModalEditUser isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        user={selectedUser}
+        key={selectedUser ? selectedUser.id : ''}
+      />
       <ModalRestoreUser
         isOpen={isRestoreModalOpen}
         onClose={() => setIsRestoreModalOpen(false)}

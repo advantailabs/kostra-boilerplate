@@ -36,13 +36,19 @@ export default function CreditHistoryPage() {
           <div className="rounded-xl bg-background-light p-3 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
             <div className="text-xs text-text-muted">Total Credits</div>
             <div className="mt-1 flex items-center gap-2 text-lg font-semibold text-emerald-600 dark:text-emerald-400">
-              <RiCoinLine className="h-5 w-5" /> {formatters.unit(totals.credit)}
+              <RiCoinLine className="h-5 w-5" />
+              {typeof formatters.unit === 'function'
+                ? formatters.unit(totals.credit)
+                : totals.credit}
             </div>
           </div>
           <div className="rounded-xl bg-background-light p-3 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
             <div className="text-xs text-text-muted">Total Debits</div>
             <div className="mt-1 flex items-center gap-2 text-lg font-semibold text-rose-600 dark:text-rose-400">
-              <RiCoinLine className="h-5 w-5" /> {formatters.unit(totals.debit)}
+              <RiCoinLine className="h-5 w-5" />
+              {typeof formatters.unit === 'function'
+                ? formatters.unit(totals.debit)
+                : totals.debit}
             </div>
           </div>
           {user?.plan !== 'PRO' && (

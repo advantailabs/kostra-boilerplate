@@ -229,7 +229,7 @@ const DropdownMenuRadioItem = React.forwardRef<
     {...props}
   >
     {
-      // eslint-disable-next-line no-nested-ternary
+       
       iconType === 'radio' ? (
         <span className="absolute left-2 flex size-4 items-center justify-center">
           <RiRadioButtonFill
