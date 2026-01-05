@@ -183,15 +183,15 @@ export function EmailTemplateEditorModal({
   useEffect(() => {
     if (isOpen) {
       if (template && mode === 'edit') {
-        setFormData({
-          name: template.name || '',
-          subject: template.subject || '',
-          fromEmail: template.fromEmail || '',
-          fromName: template.fromName || '',
-          replyToEmail: template.replyToEmail || '',
-          emailType: template.emailType || 'TRANSACTIONAL',
-          body: template.body || '',
-        });
+        // setFormData({
+        //   name: template.name || '',
+        //   subject: template.subject || '',
+        //   fromEmail: template.fromEmail || '',
+        //   fromName: template.fromName || '',
+        //   replyToEmail: template.replyToEmail || '',
+        //   emailType: template.emailType || 'TRANSACTIONAL',
+        //   body: template.body || '',
+        // });
 
         // Set editor content
         if (editor) {

@@ -316,18 +316,10 @@ export function EmailCampaignsTable({
   const paginatedCampaigns = filteredCampaigns.slice(startIndex, endIndex);
 
   // Handle smart pagination after deletion
-  useEffect(() => {
-    // Don't run pagination logic while loading
-    if (isLoading) return;
-    const maxPage = Math.max(totalPages, 1);
-    if (page > maxPage) {
-      setPage(maxPage);
-      return;
-    }
-    if (page > 1 && paginatedCampaigns.length === 0) {
-      setPage(prev => Math.max(1, prev - 1));
-    }
-  }, [page, paginatedCampaigns.length, totalPages, isLoading]);
+  if (paginatedCampaigns.length === 0 && page > 1 && !isLoading && totalPages >= 1) {
+    setPage(prev => Math.max(1, prev - 1));
+  }
+
 
   // Notify parent of page changes
   useEffect(() => {

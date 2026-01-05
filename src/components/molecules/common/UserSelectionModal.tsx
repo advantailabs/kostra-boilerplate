@@ -2,7 +2,7 @@
 
 import { RiSearchLine } from '@remixicon/react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { UserSelection, UserSelectionModalProps } from '@/types/user';
@@ -22,14 +22,6 @@ export function UserSelectionModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeletedUsers, setShowDeletedUsers] = useState(false);
   const [debouncedSearch] = useDebounce(searchQuery, 300);
-
-  // Update temp selection when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setTempSelectedUsers(selectedUsers);
-    }
-  }, [isOpen, selectedUsers]);
-
   // Filter users based on search and deleted status
   const filteredUsers = allUsers.filter(user => {
     const matchesSearch =

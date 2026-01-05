@@ -248,3 +248,21 @@ export interface UseRouteProtectionReturn {
   userRole: UserRole | null;
   canAccessCurrentRoute: boolean;
 }
+
+export interface UserSelection {
+  id: number;
+  name: string;
+  email: string;
+  profilePicture?: string;
+  role: string;
+  deletedAt?: string | null;
+}
+
+export interface UserSelectionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (_users: UserSelection[]) => void;
+  allUsers: UserSelection[];
+  selectedUsers: UserSelection[];
+  isLoading: boolean;
+}

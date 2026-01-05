@@ -528,13 +528,13 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
           {/* Submit button inside form */}
         </form>
       </Modal>
-
       {/* User Selection Modal - Moved outside the form to prevent event conflicts */}
       <UserSelectionModal
         isOpen={showUserSelectionModal}
         onClose={() => setShowUserSelectionModal(false)}
         onConfirm={handleUserSelection}
         allUsers={allUsers || []}
+        key={showUserSelectionModal ? selectedRecipients.map(item => item.id).toString() : ''}
         selectedUsers={selectedRecipients}
         isLoading={isLoadingUsers}
       />
