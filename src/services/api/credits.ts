@@ -1,7 +1,7 @@
 import { axios } from '@/lib/utils';
 
 interface UserCreditsResponse {
-  credits: number;
+  data: { credits: number };
 }
 
 export const getUserCredits = async (): Promise<UserCreditsResponse> => {
@@ -10,7 +10,7 @@ export const getUserCredits = async (): Promise<UserCreditsResponse> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data as UserCreditsResponse;
+  return response.data.data.credits as unknown as UserCreditsResponse;
 };
 
 export const createBillingPortalSession = async (): Promise<string> => {
@@ -18,7 +18,7 @@ export const createBillingPortalSession = async (): Promise<string> => {
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data.data as string;
+  return response.data.data.url as string;
 };
 
 export const createCheckoutSession = async (plan: string = 'pro'): Promise<string> => {
@@ -26,7 +26,7 @@ export const createCheckoutSession = async (plan: string = 'pro'): Promise<strin
   if (!response.data) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data.data as string;
+  return response.data.data.url as string;
 };
 
 export interface CreditHistoryItem {
@@ -48,11 +48,11 @@ export interface CreditHistoryItem {
 }
 
 export const getCreditHistory = async (limit = 50): Promise<CreditHistoryItem[]> => {
-  const response = await axios.get<{ history: CreditHistoryItem[] }>(
+  const response = await axios.get<{ data: { history: CreditHistoryItem[] } }>(
     `/users/credits/history?limit=${limit}`
   );
-  if (!response.data.history) {
+  if (!response.data.data.history) {
     throw new Error('No Data was sent in Response');
   }
-  return response.data.history as CreditHistoryItem[];
+  return response.data.data.history as CreditHistoryItem[];
 };
