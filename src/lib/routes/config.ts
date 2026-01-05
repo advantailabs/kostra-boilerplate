@@ -222,6 +222,76 @@ export const ALL_ROUTES: RouteConfig[] = [
     },
   },
 
+  // API routes - email templates
+  {
+    path: '/api/email-templates',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+  {
+    path: '/api/email-templates/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+
+  // API routes - Email Campaigns
+  {
+    path: '/api/campaigns',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaigns/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaigns/[id]/recipients',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+    },
+  },
+
+  // API routes - campaign recipients
+  {
+    path: '/api/campaign-recipients',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      POST: [ADMIN],
+    },
+  },
+  {
+    path: '/api/campaign-recipients/[id]',
+    isPublic: false,
+    accessTo: {
+      GET: [ADMIN],
+      PUT: [ADMIN],
+      DELETE: [ADMIN],
+    },
+  },
+
+  // API routes - campaign email sending
+  {
+    path: '/api/campaigns/process-scheduled',
+    isPublic: true, // Public for cron job access
+    accessTo: {
+      POST: [], // No role required (cron job endpoint)
+    },
+  },
+
   // Legacy route for backward compatibility
   {
     path: '/api/onboard',
