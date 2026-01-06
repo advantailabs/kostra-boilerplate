@@ -16,8 +16,10 @@ export class EmailDriverFactory {
         }
         return new ResendDriver(config.resend);
 
+      case 'demo':
       case 'test':
-        return new TestDriver();
+        console.log('in Test/Demo branch');
+        return new TestDriver(); // This Driver does nothing, no email is sent, but no error is thrown either
 
       default:
         throw new Error(`Unsupported email driver: ${config.driver}`);
@@ -30,9 +32,14 @@ let emailDriver: EmailDriver | null = null;
 
 export function getEmailDriver(): EmailDriver {
   const isTest = process.env.TEST_MODE === 'true';
+  const isDemo = process.env.IS_DEMO === 'true';
   if (!emailDriver) {
     const config: EmailConfig = {
-      driver: isTest ? 'test' : (process.env.EMAIL_DRIVER as EmailDriverType) || 'resend',
+      driver: isDemo
+        ? 'demo'
+        : isTest
+          ? 'test'
+          : (process.env.EMAIL_DRIVER as EmailDriverType) || 'resend',
       awsSes:
         process.env.EMAIL_DRIVER === 'aws-ses'
           ? {
