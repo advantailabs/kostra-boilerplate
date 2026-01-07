@@ -1,5 +1,6 @@
 import { UserRole } from '@/lib/prisma/generated/enums';
 import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/auth';
+import { createPackage } from '@/test/helpers/packages';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
 import request from 'supertest';
 
@@ -69,10 +70,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
         currencySymbol: '$',
       };
 
-      const response = await request(appUrl)
-        .post('/api/packages')
-        .set('Cookie', authCookie)
-        .send(packageData);
+      const response = await createPackage(appUrl, authCookie, packageData);
 
       expect(response.status).toEqual(200);
 
@@ -94,10 +92,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
         currencySymbol: '$',
       };
 
-      const response = await request(appUrl)
-        .post('/api/packages')
-        .set('Cookie', authCookie)
-        .send(packageData);
+      const response = await createPackage(appUrl, authCookie, packageData);
 
       expect(response.status).toEqual(400);
 
@@ -112,17 +107,57 @@ describe('Packages API Endpoints - Integration Tests', () => {
       // Missing description field
       const packageData = {
         title: 'Test Title',
+        description: 'Test Description',
         price: 8.99,
         currencySymbol: '$',
       };
 
-      const response = await request(appUrl).post('/api/packages').send(packageData);
+      const response = await createPackage(appUrl, '', packageData);
 
       expect(response.status).toEqual(401);
 
       const responseData = response.body;
       expect(responseData.success).toBe(false);
       expect(responseData.message).toContain('Authentication required');
+    });
+  });
+
+  describe('DELETE /api/packages/:id', () => {
+    it('should delete an existing package', async () => {
+      const authCookie = await getAdminUserCookie(appUrl);
+
+      const createPackageRes = await createPackage(appUrl, authCookie, {
+        title: 'Test Title',
+        description: 'Test Description',
+        price: 8.99,
+        currencySymbol: '$',
+      });
+
+      const packageId = createPackageRes.body.data.id;
+
+      const response = await request(appUrl)
+        .delete(`/api/packages/${packageId}`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(200);
+
+      // Confirm if Package is deleted from DB
+      const findDeletedPackage = await testPrisma.package.findUnique({
+        where: {
+          id: packageId,
+        },
+      });
+      expect(findDeletedPackage).toBeNull();
+    });
+
+    it('should fail with HTTP 404 when attempting to delete a non-existing package', async () => {
+      const authCookie = await getAdminUserCookie(appUrl);
+
+      const response = await request(appUrl)
+        .delete(`/api/v1/todo/123456`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(404);
     });
   });
 });
