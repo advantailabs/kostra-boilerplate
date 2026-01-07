@@ -25,7 +25,7 @@ jest.mock('next/headers', () => ({
   })),
 }));
 
-describe('POST /api/packages - Integration Tests', () => {
+describe('Packages API Endpoints - Integration Tests', () => {
   const appUrl = process.env.TEST_APP_URL || 'http://localhost:3001';
 
   beforeAll(async () => {
@@ -57,29 +57,73 @@ describe('POST /api/packages - Integration Tests', () => {
     await testPrisma.$disconnect();
   });
 
-  it('should create package successfully with title, description, price and currency symbol', async () => {
-    // Only Admin has access to Packages API
-    const authCookie = await getAdminUserCookie(appUrl);
+  describe('POST /api/packages', () => {
+    it('should create a new package', async () => {
+      // Only Admin has access to Packages API
+      const authCookie = await getAdminUserCookie(appUrl);
 
-    const packageData = {
-      title: 'Test Title',
-      description: 'Test Description',
-      price: 8.99,
-      currencySymbol: '$',
-    };
+      const packageData = {
+        title: 'Test Title',
+        description: 'Test Description',
+        price: 8.99,
+        currencySymbol: '$',
+      };
 
-    const response = await request(appUrl)
-      .post('/api/packages')
-      .set('Cookie', authCookie)
-      .send(packageData)
-      .expect(200);
+      const response = await request(appUrl)
+        .post('/api/packages')
+        .set('Cookie', authCookie)
+        .send(packageData)
+        .expect(200);
 
-    const responseData = response.body;
-    // Validate response content
-    expect(responseData.success).toBe(true);
-    expect(responseData.data.title).toBe(packageData.title);
-    expect(responseData.data.description).toBe(packageData.description);
-    expect(responseData.data.price).toBe(String(packageData.price));
-    expect(responseData.data.currencySymbol).toBe('$');
+      const responseData = response.body;
+      // Validate response content
+      expect(responseData.success).toBe(true);
+      expect(responseData.data.title).toBe(packageData.title);
+      expect(responseData.data.description).toBe(packageData.description);
+      expect(responseData.data.price).toBe(String(packageData.price));
+      expect(responseData.data.currencySymbol).toBe('$');
+    });
+
+    it('should fail to create new package if required fields are missing', async () => {
+      const authCookie = await getAdminUserCookie(appUrl);
+
+      // Missing description field
+      const packageData = {
+        title: 'Test Title',
+        price: 8.99,
+        currencySymbol: '$',
+      };
+
+      const response = await request(appUrl)
+        .post('/api/packages')
+        .set('Cookie', authCookie)
+        .send(packageData)
+        .expect(400);
+
+      const responseData = response.body;
+      // Validate response content
+      console.log(responseData);
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Validation failed');
+      expect(responseData.errors).toBeDefined();
+      expect(responseData.errors).toEqual([{ field: 'description', message: 'Required' }]);
+    });
+
+    it('should fail to create new package if unauthorized', async () => {
+      // Missing description field
+      const packageData = {
+        title: 'Test Title',
+        price: 8.99,
+        currencySymbol: '$',
+      };
+
+      const response = await request(appUrl).post('/api/packages').send(packageData).expect(401);
+
+      const responseData = response.body;
+      // Validate response content
+      console.log(responseData);
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Authentication required');
+    });
   });
 });
