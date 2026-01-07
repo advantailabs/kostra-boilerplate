@@ -72,11 +72,11 @@ describe('Packages API Endpoints - Integration Tests', () => {
       const response = await request(appUrl)
         .post('/api/packages')
         .set('Cookie', authCookie)
-        .send(packageData)
-        .expect(200);
+        .send(packageData);
+
+      expect(response.status).toEqual(200);
 
       const responseData = response.body;
-      // Validate response content
       expect(responseData.success).toBe(true);
       expect(responseData.data.title).toBe(packageData.title);
       expect(responseData.data.description).toBe(packageData.description);
@@ -97,12 +97,11 @@ describe('Packages API Endpoints - Integration Tests', () => {
       const response = await request(appUrl)
         .post('/api/packages')
         .set('Cookie', authCookie)
-        .send(packageData)
-        .expect(400);
+        .send(packageData);
+
+      expect(response.status).toEqual(400);
 
       const responseData = response.body;
-      // Validate response content
-      console.log(responseData);
       expect(responseData.success).toBe(false);
       expect(responseData.message).toContain('Validation failed');
       expect(responseData.errors).toBeDefined();
@@ -117,11 +116,11 @@ describe('Packages API Endpoints - Integration Tests', () => {
         currencySymbol: '$',
       };
 
-      const response = await request(appUrl).post('/api/packages').send(packageData).expect(401);
+      const response = await request(appUrl).post('/api/packages').send(packageData);
+
+      expect(response.status).toEqual(401);
 
       const responseData = response.body;
-      // Validate response content
-      console.log(responseData);
       expect(responseData.success).toBe(false);
       expect(responseData.message).toContain('Authentication required');
     });
