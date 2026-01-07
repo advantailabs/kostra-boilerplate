@@ -17,7 +17,7 @@ export interface EmailDriver {
   send(message: EmailMessage): Promise<void>;
 }
 
-export type EmailDriverType = 'aws-ses' | 'resend' | 'test';
+export type EmailDriverType = 'aws-ses' | 'resend' | 'test' | 'demo';
 
 export type OtpPurpose = 'SIGNUP' | 'PASSWORD_RESET';
 
