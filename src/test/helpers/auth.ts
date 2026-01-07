@@ -324,3 +324,17 @@ export async function initiateSignupAndGetOTP(email: string, appUrl: string): Pr
 
   return otpEntry.otp;
 }
+
+export async function getAdminUserCookie(appUrl: string): Promise<string> {
+  const loginData = {
+    email: 'admin@example.com',
+    password: 'AdminPassword123!',
+  };
+
+  const loginResponse = await makeLoginRequest(appUrl, loginData, 200);
+
+  // Extract Cookie from headers
+  const authCookie = loginResponse.headers['set-cookie'][0];
+
+  return authCookie;
+}

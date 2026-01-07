@@ -1,5 +1,5 @@
 import { UserRole } from '@/lib/prisma/generated/enums';
-import { createTestUserWithPassword, makeLoginRequest } from '@/test/helpers/auth';
+import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/auth';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
 import request from 'supertest';
 
@@ -59,15 +59,7 @@ describe('POST /api/packages - Integration Tests', () => {
 
   it('should create package successfully with title, description, price and currency symbol', async () => {
     // Only Admin has access to Packages API
-    const loginData = {
-      email: 'admin@example.com',
-      password: 'AdminPassword123!',
-    };
-
-    const loginResponse = await makeLoginRequest(appUrl, loginData, 200);
-
-    // Extract Cookie from headers
-    const authCookie = loginResponse.headers['set-cookie'][0];
+    const authCookie = await getAdminUserCookie(appUrl);
 
     const packageData = {
       title: 'Test Title',
@@ -83,7 +75,6 @@ describe('POST /api/packages - Integration Tests', () => {
       .expect(200);
 
     const responseData = response.body;
-
     // Validate response content
     expect(responseData.success).toBe(true);
     expect(responseData.data.title).toBe(packageData.title);
