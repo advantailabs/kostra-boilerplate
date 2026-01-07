@@ -25,7 +25,7 @@ jest.mock('next/headers', () => ({
   })),
 }));
 
-describe('Should perform CRUD on article Service', () => {
+describe('POST /api/packages - Integration Tests', () => {
   const appUrl = process.env.TEST_APP_URL || 'http://localhost:3001';
 
   beforeAll(async () => {
@@ -37,14 +37,7 @@ describe('Should perform CRUD on article Service', () => {
     // Clean up database before each test
     await cleanupDatabase();
 
-    // Create test users for each test
-    await createTestUserWithPassword({
-      email: 'testuser@example.com',
-      password: 'TestPassword123!',
-      name: 'Test User',
-      role: UserRole.USER,
-    });
-
+    // Create Admin User
     await createTestUserWithPassword({
       email: 'admin@example.com',
       password: 'AdminPassword123!',
@@ -64,15 +57,16 @@ describe('Should perform CRUD on article Service', () => {
     await testPrisma.$disconnect();
   });
 
-  it('should logout successfully with valid auth token', async () => {
-    // First login to get a token
+  it('should create package successfully with title, description, price and currency symbol', async () => {
+    // Only Admin has access to Packages API
     const loginData = {
       email: 'admin@example.com',
       password: 'AdminPassword123!',
     };
 
     const loginResponse = await makeLoginRequest(appUrl, loginData, 200);
-    console.log(loginResponse.headers);
+
+    // Extract Cookie from headers
     const authCookie = loginResponse.headers['set-cookie'][0];
 
     const packageData = {
@@ -88,8 +82,6 @@ describe('Should perform CRUD on article Service', () => {
       .send(packageData)
       .expect(200);
 
-    console.log(response.body);
-    // Now logout with the token
     const responseData = response.body;
 
     // Validate response content
@@ -97,5 +89,6 @@ describe('Should perform CRUD on article Service', () => {
     expect(responseData.data.title).toBe(packageData.title);
     expect(responseData.data.description).toBe(packageData.description);
     expect(responseData.data.price).toBe(String(packageData.price));
+    expect(responseData.data.currencySymbol).toBe('$');
   });
 });
