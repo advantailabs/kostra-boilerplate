@@ -263,18 +263,30 @@ describe('Packages API Endpoints - Integration Tests', () => {
       });
       const response = await request(appUrl).get('/api/packages').set('Cookie', authCookie);
       expect(response.status).toEqual(200);
-      // expect(response.body.data.data).toEqual([testPackageList.map(pkg => pkg.title)]);
+
       expect(response.body.data.data).toHaveLength(3);
 
+      console.log(testPackageList);
       expect(response.body.data.data).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            title: expect.any(String),
-            price: expect.any(String),
-            description: expect.any(String),
-          }),
-        ])
+        testPackageList.map(pkg => {
+          return {
+            ...pkg,
+            price: String(pkg.price),
+            createdAt: pkg.createdAt.toISOString(), // prisma returns JS Date object
+            updatedAt: pkg.updatedAt.toISOString(), // while API returns
+          };
+        })
       );
+
+      // expect(response.body.data.data).toEqual(
+      //   expect.arrayContaining([
+      //     expect.objectContaining({
+      //       title: expect.any(String),
+      //       price: expect.any(String),
+      //       description: expect.any(String),
+      //     }),
+      //   ])
+      // );
     });
   });
 });
