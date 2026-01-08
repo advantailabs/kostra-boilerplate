@@ -28,14 +28,10 @@ jest.mock('next/headers', () => ({
 
 describe('Packages API Endpoints - Integration Tests', () => {
   const appUrl = process.env.TEST_APP_URL || 'http://localhost:3001';
+  let authCookie = '';
 
   beforeAll(async () => {
     // Ensure database is clean before starting tests
-    await cleanupDatabase();
-  });
-
-  beforeEach(async () => {
-    // Clean up database before each test
     await cleanupDatabase();
 
     // Create Admin User
@@ -45,6 +41,14 @@ describe('Packages API Endpoints - Integration Tests', () => {
       name: 'Admin User',
       role: UserRole.ADMIN,
     });
+
+    // Log in with Admin User, only Admin has access to Packages API
+    authCookie = await getAdminUserCookie(appUrl);
+  });
+
+  beforeEach(async () => {
+    // Clean up package table before each test
+    await testPrisma.package.deleteMany({});
   });
 
   afterEach(async () => {
@@ -61,8 +65,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
   describe('POST /api/packages', () => {
     it('should create a new package', async () => {
       // Only Admin has access to Packages API
-      const authCookie = await getAdminUserCookie(appUrl);
-
       const packageData = {
         title: 'Test Title',
         description: 'Test Description',
@@ -83,8 +85,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
     });
 
     it('should fail to create new package if required fields are missing', async () => {
-      const authCookie = await getAdminUserCookie(appUrl);
-
       // Missing description field
       const packageData = {
         title: 'Test Title',
@@ -124,8 +124,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
 
   describe('DELETE /api/packages/:id', () => {
     it('should delete an existing package', async () => {
-      const authCookie = await getAdminUserCookie(appUrl);
-
       const createPackageRes = await createPackage(appUrl, authCookie, {
         title: 'Test Title',
         description: 'Test Description',
@@ -151,8 +149,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
     });
 
     it('should fail with HTTP 404 when attempting to delete a non-existing package', async () => {
-      const authCookie = await getAdminUserCookie(appUrl);
-
       const response = await request(appUrl)
         .delete(`/api/v1/todo/123456`)
         .set('Cookie', authCookie);
