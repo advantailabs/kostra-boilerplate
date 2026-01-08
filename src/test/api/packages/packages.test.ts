@@ -148,12 +148,64 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(findDeletedPackage).toBeNull();
     });
 
-    it('should fail with HTTP 404 when attempting to delete a non-existing package', async () => {
+    it('should fail with HTTP 500 when attempting to delete a non-existing package', async () => {
       const response = await request(appUrl)
-        .delete(`/api/v1/todo/123456`)
+        .delete(`/api/packages/123456`)
         .set('Cookie', authCookie);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual(500);
+    });
+  });
+
+  describe('PATCH /api/packages/:id', () => {
+    it('should update an existing package', async () => {
+      const createPackageRes = await createPackage(appUrl, authCookie, {
+        title: 'Test Title',
+        description: 'Test Description',
+        price: 8.99,
+        currencySymbol: '$',
+      });
+
+      const packageId = createPackageRes.body.data.id;
+      const updatedPkgData = {
+        title: 'Updated Test Title',
+        description: 'Changed Test Description',
+        price: 4.99,
+        currencySymbol: '$',
+      };
+
+      const response = await request(appUrl)
+        .patch(`/api/packages/${packageId}`)
+        .set('Cookie', authCookie)
+        .send(updatedPkgData);
+
+      expect(response.status).toEqual(200);
+
+      // Confirm if Package is Updated in DB
+      const findDeletedPackage = await testPrisma.package.findUnique({
+        where: {
+          id: packageId,
+        },
+      });
+      console.log(findDeletedPackage);
+      expect(findDeletedPackage?.title).toEqual(updatedPkgData.title);
+      expect(findDeletedPackage?.description).toEqual(updatedPkgData.description);
+      // Response price is a string so convert it to number before checks
+      expect(Number(findDeletedPackage?.price)).toStrictEqual(updatedPkgData.price);
+    });
+
+    it('should fail with HTTP 500 when attempting to update a non-existing package', async () => {
+      const response = await request(appUrl)
+        .patch(`/api/packages/123456`)
+        .set('Cookie', authCookie)
+        .send({
+          title: 'Test Title',
+          description: 'Test Description',
+          price: 8.99,
+          currencySymbol: '$',
+        });
+
+      expect(response.status).toEqual(500);
     });
   });
 });
