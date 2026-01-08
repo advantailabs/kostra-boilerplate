@@ -1,6 +1,6 @@
 import { UserRole } from '@/lib/prisma/generated/enums';
 import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/auth';
-import { createPackage } from '@/test/helpers/packages';
+import { createPackage, createPackageForUpdate } from '@/test/helpers/packages';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
 import request from 'supertest';
 
@@ -159,14 +159,8 @@ describe('Packages API Endpoints - Integration Tests', () => {
 
   describe('PATCH /api/packages/:id', () => {
     it('should update an existing package', async () => {
-      const createPackageRes = await createPackage(appUrl, authCookie, {
-        title: 'Test Title',
-        description: 'Test Description',
-        price: 8.99,
-        currencySymbol: '$',
-      });
+      const packageId = await createPackageForUpdate(appUrl, authCookie);
 
-      const packageId = createPackageRes.body.data.id;
       const updatedPkgData = {
         title: 'Updated Test Title',
         description: 'Changed Test Description',
@@ -206,6 +200,32 @@ describe('Packages API Endpoints - Integration Tests', () => {
         });
 
       expect(response.status).toEqual(500);
+    });
+
+    it('should fail to update package if required fields are missing or of incorrect type', async () => {
+      const packageId = await createPackageForUpdate(appUrl, authCookie);
+
+      const updatedPkgData = {
+        title: 'Updated Test Title',
+        price: 'some-price-string',
+      };
+
+      const response = await request(appUrl)
+        .patch(`/api/packages/${packageId}`)
+        .set('Cookie', authCookie)
+        .send(updatedPkgData);
+
+      expect(response.status).toEqual(400);
+
+      const responseData = response.body;
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Validation failed');
+      expect(responseData.errors).toBeDefined();
+      expect(responseData.errors).toEqual([
+        { field: 'description', message: 'Required' },
+        { field: 'price', message: 'Expected number, received string' },
+        { field: 'currencySymbol', message: 'Required' },
+      ]);
     });
   });
 });

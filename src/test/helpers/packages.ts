@@ -7,3 +7,14 @@ export const createPackage = async (appUrl: string, authCookie: string, packageD
     .set('Cookie', authCookie)
     .send(packageData as Package);
 };
+
+export const createPackageForUpdate = async (appUrl: string, authCookie: string) => {
+  const response = await createPackage(appUrl, authCookie, {
+    title: 'Test Title',
+    description: 'Test Description',
+    price: 8.99,
+    currencySymbol: '$',
+  });
+
+  return response.body.data.id;
+};
