@@ -8,7 +8,7 @@ export const createPackage = async (appUrl: string, authCookie: string, packageD
     .send(packageData as Package);
 };
 
-export const createPackageForUpdate = async (appUrl: string, authCookie: string) => {
+export const createDefaultPackageAndReturnId = async (appUrl: string, authCookie: string) => {
   const response = await createPackage(appUrl, authCookie, {
     title: 'Test Title',
     description: 'Test Description',

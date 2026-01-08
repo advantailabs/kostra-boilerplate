@@ -1,6 +1,10 @@
 import { UserRole } from '@/lib/prisma/generated/enums';
 import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/auth';
-import { createPackage, createPackageForUpdate, updatePackage } from '@/test/helpers/packages';
+import {
+  createDefaultPackageAndReturnId,
+  createPackage,
+  updatePackage,
+} from '@/test/helpers/packages';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
 import request from 'supertest';
 
@@ -103,7 +107,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(responseData.errors).toEqual([{ field: 'description', message: 'Required' }]);
     });
 
-    it('should fail to create new package if unauthorized', async () => {
+    it('should fail to create new package if unauthenticated', async () => {
       // Missing description field
       const packageData = {
         title: 'Test Title',
@@ -124,14 +128,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
 
   describe('DELETE /api/packages/:id', () => {
     it('should delete an existing package', async () => {
-      const createPackageRes = await createPackage(appUrl, authCookie, {
-        title: 'Test Title',
-        description: 'Test Description',
-        price: 8.99,
-        currencySymbol: '$',
-      });
-
-      const packageId = createPackageRes.body.data.id;
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
 
       const response = await request(appUrl)
         .delete(`/api/packages/${packageId}`)
@@ -155,18 +152,30 @@ describe('Packages API Endpoints - Integration Tests', () => {
 
       expect(response.status).toEqual(500);
     });
+
+    it('should fail to delete package if unauthenticated', async () => {
+      const packageId = createDefaultPackageAndReturnId(appUrl, authCookie);
+
+      const response = await request(appUrl).delete(`/api/packages/${packageId}`);
+
+      expect(response.status).toEqual(401);
+
+      const responseData = response.body;
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Authentication required');
+    });
   });
 
   describe('PATCH /api/packages/:id', () => {
-    it('should update an existing package', async () => {
-      const packageId = await createPackageForUpdate(appUrl, authCookie);
+    const updatedPkgData = {
+      title: 'Updated Test Title',
+      description: 'Changed Test Description',
+      price: 4.99,
+      currencySymbol: '$',
+    };
 
-      const updatedPkgData = {
-        title: 'Updated Test Title',
-        description: 'Changed Test Description',
-        price: 4.99,
-        currencySymbol: '$',
-      };
+    it('should update an existing package', async () => {
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
 
       const response = await updatePackage(appUrl, authCookie, packageId, updatedPkgData);
 
@@ -178,7 +187,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
           id: packageId,
         },
       });
-      console.log(findDeletedPackage);
       expect(findDeletedPackage?.title).toEqual(updatedPkgData.title);
       expect(findDeletedPackage?.description).toEqual(updatedPkgData.description);
       // Response price is a string so convert it to number before checks
@@ -186,26 +194,20 @@ describe('Packages API Endpoints - Integration Tests', () => {
     });
 
     it('should fail with HTTP 500 when attempting to update a non-existing package', async () => {
-      const updatedPkgData = {
-        title: 'Updated Test Title',
-        description: 'Changed Test Description',
-        price: 4.99,
-        currencySymbol: '$',
-      };
       const response = await updatePackage(appUrl, authCookie, 123456, updatedPkgData);
 
       expect(response.status).toEqual(500);
     });
 
     it('should fail to update package if required fields are missing or of incorrect type', async () => {
-      const packageId = await createPackageForUpdate(appUrl, authCookie);
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
 
-      const updatedPkgData = {
+      const ValidationFailingPkgData = {
         title: 'Updated Test Title',
         price: 'some-price-string',
       };
 
-      const response = await updatePackage(appUrl, authCookie, packageId, updatedPkgData);
+      const response = await updatePackage(appUrl, authCookie, packageId, ValidationFailingPkgData);
 
       expect(response.status).toEqual(400);
 
@@ -218,6 +220,17 @@ describe('Packages API Endpoints - Integration Tests', () => {
         { field: 'price', message: 'Expected number, received string' },
         { field: 'currencySymbol', message: 'Required' },
       ]);
+    });
+    it('should fail to delete package if unauthenticated', async () => {
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
+
+      const response = await updatePackage(appUrl, '', packageId, updatedPkgData);
+
+      expect(response.status).toEqual(401);
+
+      const responseData = response.body;
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Authentication required');
     });
   });
 });
