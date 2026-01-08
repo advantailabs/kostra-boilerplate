@@ -233,4 +233,48 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(responseData.message).toContain('Authentication required');
     });
   });
+
+  describe('GET /api/packages', () => {
+    it('should get a list of packages', async () => {
+      const testPackageList = await testPrisma.package.createManyAndReturn({
+        data: [
+          {
+            title: 'First Package',
+            description: 'Test Description',
+            price: 1,
+            currencySymbol: '$',
+            features: [],
+          },
+          {
+            title: 'Second Package',
+            description: 'Test Description',
+            price: 2,
+            currencySymbol: '$',
+            features: [],
+          },
+          {
+            title: 'Third Package',
+            description: 'Test Description',
+            price: 3,
+            currencySymbol: '$',
+            features: [],
+          },
+        ],
+      });
+      const response = await request(appUrl).get('/api/packages').set('Cookie', authCookie);
+      expect(response.status).toEqual(200);
+      // expect(response.body.data.data).toEqual([testPackageList.map(pkg => pkg.title)]);
+      expect(response.body.data.data).toHaveLength(3);
+
+      expect(response.body.data.data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            title: expect.any(String),
+            price: expect.any(String),
+            description: expect.any(String),
+          }),
+        ])
+      );
+    });
+  });
 });
