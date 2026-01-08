@@ -18,3 +18,15 @@ export const createPackageForUpdate = async (appUrl: string, authCookie: string)
 
   return response.body.data.id;
 };
+
+export const updatePackage = async (
+  appUrl: string,
+  authCookie: string,
+  packageId: number,
+  packageData: unknown
+) => {
+  return request(appUrl)
+    .patch(`/api/packages/${packageId}`)
+    .set('Cookie', authCookie)
+    .send(packageData as Package);
+};

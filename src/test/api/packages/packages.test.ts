@@ -1,6 +1,6 @@
 import { UserRole } from '@/lib/prisma/generated/enums';
 import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/auth';
-import { createPackage, createPackageForUpdate } from '@/test/helpers/packages';
+import { createPackage, createPackageForUpdate, updatePackage } from '@/test/helpers/packages';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
 import request from 'supertest';
 
@@ -168,10 +168,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
         currencySymbol: '$',
       };
 
-      const response = await request(appUrl)
-        .patch(`/api/packages/${packageId}`)
-        .set('Cookie', authCookie)
-        .send(updatedPkgData);
+      const response = await updatePackage(appUrl, authCookie, packageId, updatedPkgData);
 
       expect(response.status).toEqual(200);
 
@@ -189,15 +186,13 @@ describe('Packages API Endpoints - Integration Tests', () => {
     });
 
     it('should fail with HTTP 500 when attempting to update a non-existing package', async () => {
-      const response = await request(appUrl)
-        .patch(`/api/packages/123456`)
-        .set('Cookie', authCookie)
-        .send({
-          title: 'Test Title',
-          description: 'Test Description',
-          price: 8.99,
-          currencySymbol: '$',
-        });
+      const updatedPkgData = {
+        title: 'Updated Test Title',
+        description: 'Changed Test Description',
+        price: 4.99,
+        currencySymbol: '$',
+      };
+      const response = await updatePackage(appUrl, authCookie, 123456, updatedPkgData);
 
       expect(response.status).toEqual(500);
     });
@@ -210,10 +205,7 @@ describe('Packages API Endpoints - Integration Tests', () => {
         price: 'some-price-string',
       };
 
-      const response = await request(appUrl)
-        .patch(`/api/packages/${packageId}`)
-        .set('Cookie', authCookie)
-        .send(updatedPkgData);
+      const response = await updatePackage(appUrl, authCookie, packageId, updatedPkgData);
 
       expect(response.status).toEqual(400);
 
