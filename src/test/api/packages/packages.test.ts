@@ -311,7 +311,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
         .set('Cookie', authCookie);
 
       expect(response.status).toEqual(400);
-      console.log(response.body);
       expect(response.body.success).toBe(false);
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors).toEqual([
@@ -341,7 +340,6 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(response.status).toEqual(200);
 
       const responseData = response.body.data;
-      console.log('Response Data:', responseData);
       // Confirm if Package is in DB
       const findPackage = await testPrisma.package.findUnique({
         where: {
