@@ -329,4 +329,55 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(responseData.message).toContain('Authentication required');
     });
   });
+
+  describe('GET /api/packages/:id', () => {
+    it('should get a specific package by ID', async () => {
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
+
+      const response = await request(appUrl)
+        .get(`/api/packages/${packageId}`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(200);
+
+      const responseData = response.body.data;
+      console.log('Response Data:', responseData);
+      // Confirm if Package is in DB
+      const findPackage = await testPrisma.package.findUnique({
+        where: {
+          id: packageId,
+        },
+      });
+      expect(findPackage?.title).toEqual(responseData.title);
+      expect(findPackage?.description).toEqual(responseData.description);
+      // Response price is a string so convert it to number before checks
+      expect(Number(findPackage?.price)).toStrictEqual(Number(responseData.price));
+    });
+
+    it('should fail with HTTP 404 when attempting to get a non-existing package', async () => {
+      const response = await request(appUrl).get(`/api/packages/123456`).set('Cookie', authCookie);
+
+      expect(response.status).toEqual(404);
+    });
+
+    it('should fail with validation error when sending an invalid package id', async () => {
+      const response = await request(appUrl)
+        .get(`/api/packages/1AbC@xyz`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(400);
+    });
+
+    it('should fail to delete package if unauthenticated', async () => {
+      const packageId = await createDefaultPackageAndReturnId(appUrl, authCookie);
+
+      const response = await request(appUrl).get(`/api/packages/${packageId}`);
+
+      expect(response.status).toEqual(401);
+
+      const responseData = response.body;
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Authentication required');
+    });
+  });
 });
