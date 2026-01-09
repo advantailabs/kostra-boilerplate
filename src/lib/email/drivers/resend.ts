@@ -8,8 +8,8 @@ export class ResendDriver implements EmailDriver {
     this.resend = new Resend(config.apiKey);
   }
 
-  async send(message: EmailMessage): Promise<void> {
-    const { error } = await this.resend.emails.send({
+  async send(message: EmailMessage): Promise<unknown> {
+    const { data, error } = await this.resend.emails.send({
       from: message.from || 'Kostra <noreply@example.com>',
       to: Array.isArray(message.to) ? message.to : [message.to],
       subject: message.subject,
@@ -20,5 +20,8 @@ export class ResendDriver implements EmailDriver {
     if (error) {
       throw new Error(`Resend API error: ${error.message || 'Failed to send email'}`);
     }
+
+    // Added to test in Jest
+    return data;
   }
 }

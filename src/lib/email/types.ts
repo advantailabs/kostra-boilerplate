@@ -14,7 +14,7 @@ export interface EmailMessage {
 }
 
 export interface EmailDriver {
-  send(message: EmailMessage): Promise<void>;
+  send(message: EmailMessage): Promise<void | unknown>;
 }
 
 export type EmailDriverType = 'aws-ses' | 'resend' | 'test';
