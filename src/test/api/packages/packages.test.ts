@@ -3,6 +3,7 @@ import { createTestUserWithPassword, getAdminUserCookie } from '@/test/helpers/a
 import {
   createDefaultPackageAndReturnId,
   createPackage,
+  createPackagesInPrisma,
   updatePackage,
 } from '@/test/helpers/packages';
 import { cleanupDatabase, testPrisma } from '@/test/setup';
@@ -236,37 +237,15 @@ describe('Packages API Endpoints - Integration Tests', () => {
 
   describe('GET /api/packages', () => {
     it('should get a list of packages', async () => {
-      const testPackageList = await testPrisma.package.createManyAndReturn({
-        data: [
-          {
-            title: 'First Package',
-            description: 'Test Description',
-            price: 1,
-            currencySymbol: '$',
-            features: [],
-          },
-          {
-            title: 'Second Package',
-            description: 'Test Description',
-            price: 2,
-            currencySymbol: '$',
-            features: [],
-          },
-          {
-            title: 'Third Package',
-            description: 'Test Description',
-            price: 3,
-            currencySymbol: '$',
-            features: [],
-          },
-        ],
-      });
+      const testPackageList = await createPackagesInPrisma();
+
       const response = await request(appUrl).get('/api/packages').set('Cookie', authCookie);
+
       expect(response.status).toEqual(200);
 
       expect(response.body.data.data).toHaveLength(3);
 
-      console.log(testPackageList);
+      // Compares API response to Prisma output
       expect(response.body.data.data).toEqual(
         testPackageList.map(pkg => {
           return {
@@ -277,16 +256,52 @@ describe('Packages API Endpoints - Integration Tests', () => {
           };
         })
       );
+    });
 
-      // expect(response.body.data.data).toEqual(
-      //   expect.arrayContaining([
-      //     expect.objectContaining({
-      //       title: expect.any(String),
-      //       price: expect.any(String),
-      //       description: expect.any(String),
-      //     }),
-      //   ])
-      // );
+    it('should get a single package in a list matching the Title filter', async () => {
+      const testPackageList = await createPackagesInPrisma();
+
+      // Title is "Second Package" but this test should succeeed with partial match "Second"
+      const response = await request(appUrl)
+        .get(`/api/packages?title=Second`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.data.data).toHaveLength(1);
+
+      // Compares API response to Prisma output
+      const compareObj = {
+        ...testPackageList[1],
+        price: String(testPackageList[1].price),
+        createdAt: testPackageList[1].createdAt.toISOString(),
+        updatedAt: testPackageList[1].updatedAt.toISOString(),
+      };
+
+      expect(response.body.data.data[0]).toEqual(compareObj);
+    });
+
+    it('should get a list of packages matching the isFeatured filter', async () => {
+      await createPackagesInPrisma();
+      const response = await request(appUrl)
+        .get(`/api/packages?isFeatured=true`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(200);
+
+      // Checks if API response array contains only featured packages
+      expect(response.body.data.data).toEqual(
+        expect.arrayContaining([expect.objectContaining({ isFeatured: true })])
+      );
+    });
+
+    it('should return an empty list when filter matches no packages', async () => {
+      await createPackagesInPrisma();
+      const response = await request(appUrl)
+        .get(`/api/packages?title=NonExistingTitle`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.data.data).toEqual([]);
     });
   });
 });
