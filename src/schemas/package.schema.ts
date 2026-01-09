@@ -28,14 +28,16 @@ export const packageIdSchema = z.object({
   id: z.coerce.number().int().positive(),
 });
 
-export const packageFiltersSchema = z.object({
-  title: z.string().optional(),
-  isFeatured: z.string().optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
-  page: z.string().optional(),
-  limit: z.string().optional(),
-});
+export const packageFiltersSchema = z
+  .object({
+    title: z.string().optional(),
+    isFeatured: z.string().optional(),
+    sortBy: z.string().optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional(),
+    page: z.string().optional(),
+    limit: z.string().optional(),
+  })
+  .strict(); // Fails validation if additional keys are present in input
 
 export type CreatePackageInput = z.infer<typeof createPackageSchema>;
 export type UpdatePackageInput = z.infer<typeof updatePackageSchema>;

@@ -303,5 +303,30 @@ describe('Packages API Endpoints - Integration Tests', () => {
       expect(response.status).toEqual(200);
       expect(response.body.data.data).toEqual([]);
     });
+
+    it('should return an error with invalid filter', async () => {
+      await createPackagesInPrisma();
+      const response = await request(appUrl)
+        .get(`/api/packages?InvalidFilter=SomeValue`)
+        .set('Cookie', authCookie);
+
+      expect(response.status).toEqual(400);
+      console.log(response.body);
+      expect(response.body.success).toBe(false);
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors).toEqual([
+        { field: '', message: "Unrecognized key(s) in object: 'InvalidFilter'" },
+      ]);
+    });
+    it('should fail to get a list of packages if unauthenticated', async () => {
+      await createPackagesInPrisma();
+      const response = await request(appUrl).get(`/api/packages`);
+
+      expect(response.status).toEqual(401);
+
+      const responseData = response.body;
+      expect(responseData.success).toBe(false);
+      expect(responseData.message).toContain('Authentication required');
+    });
   });
 });
