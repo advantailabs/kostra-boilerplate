@@ -45,10 +45,16 @@ describe('S3 Download URL Generation', () => {
     expect(result).toHaveProperty('presignedUrl');
     expect(result).toHaveProperty('key');
     expect(result).toHaveProperty('bucket');
-
     expect(result.presignedUrl).toContain('test-bucket');
     expect(result.presignedUrl).toContain('test-file.pdf');
-    expect(result.key).toContain('test-file.pdf');
+    expect(result.key).toContain('users/documents/test-file.pdf/12345');
     expect(result.bucket).toBe('test-bucket');
+  });
+
+  it('should throw an error for Invalid Purpose in generatePresignedUrl', async () => {
+    // Wrapped in expect to catch the async error
+    await expect(() =>
+      generatePresignedUrl('pdf/open', 'InvalidPurposeString' as any, 'test-file.pdf', '12345')
+    ).rejects.toThrow('Invalid upload purpose');
   });
 });
