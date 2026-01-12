@@ -1,8 +1,9 @@
-// emailService.test.js
+// Tests the Resend email driver to ensure it correctly sends emails and handles errors.
 import { ResendDriver } from '@/lib/email/drivers/resend';
 import { Resend } from 'resend';
 
 // 1. Mock the entire 'resend' module
+// Other imported modules using Resend will get the mocked version
 jest.mock('resend');
 
 describe('sendWelcomeEmail', () => {
@@ -46,7 +47,6 @@ describe('sendWelcomeEmail', () => {
     // 4. Call the function under test
     const result = await resendDriver.send(expectedResponse);
 
-    console.log('Result:', result);
     // 5. Assertions
     // Check the result matches the mock data
     expect(result).toEqual(mockSuccessResponse);
@@ -59,11 +59,14 @@ describe('sendWelcomeEmail', () => {
   });
 
   it('should handle API errors and throw an exception', async () => {
-    const mockError = new Error('Error Sending Email');
+    const mockErrorObj = new Error('Resend API error: Failed to send email');
 
     (Resend as jest.Mock).mockImplementation(() => ({
       emails: {
-        send: jest.fn().mockResolvedValue({ data: null, error: mockError }),
+        send: jest.fn().mockResolvedValue({
+          data: null,
+          error: mockErrorObj,
+        }),
       },
     }));
 
@@ -72,6 +75,8 @@ describe('sendWelcomeEmail', () => {
     });
 
     // Test that the function rejects with the expected error
-    await expect(resendDriver.send(expectedResponse)).rejects.toThrow('Error Sending Email');
+    await expect(resendDriver.send(expectedResponse)).rejects.toThrow(
+      'Resend API error: Failed to send email'
+    );
   });
 });
