@@ -31,11 +31,10 @@ services:
       - "3001:3000"
     volumes:
       - ..:/app
-      - /app/node_modules
     depends_on:
       postgres-test:
         condition: service_healthy
-    command: sh -lc "npx prisma migrate reset --force --skip-seed && npm run migrate:prod && npm run dev"
+    command: sh -lc "pnpm run migrate:prod && pnpm run dev"
 
 volumes:
   pgdata_test:
