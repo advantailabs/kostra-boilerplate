@@ -126,7 +126,7 @@ export function Sidebar() {
         </aside>
       </nav>
       {/* top navbar (xs-lg) */}
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-2 shadow-sm sm:gap-x-6 sm:px-4 lg:hidden">
+      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-2 shadow-xs sm:gap-x-6 sm:px-4 lg:hidden">
         <div className="flex h-8 items-center">
           <Image src={logoSrc} alt="Kostra Logo" width={120} height={32} className="h-8 w-auto" />
         </div>

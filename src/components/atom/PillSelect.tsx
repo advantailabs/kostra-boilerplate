@@ -34,7 +34,7 @@ export function PillSelect({
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger
-        className={`h-5 w-auto min-w-fit rounded-full border border-border bg-background-light px-2 py-0.5 text-xs shadow-sm hover:bg-background focus:ring-0 ${className}`}
+        className={`h-5 w-auto min-w-fit rounded-full border border-border bg-background-light px-2 py-0.5 text-xs shadow-xs hover:bg-background focus:ring-0 ${className}`}
       >
         <div className="flex items-center space-x-1">
           {icon && <span className="flex-shrink-0">{icon}</span>}

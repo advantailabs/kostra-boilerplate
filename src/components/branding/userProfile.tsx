@@ -47,7 +47,7 @@ function UserProfile() {
     <div className="user-profile-container relative">
       <button
         onClick={toggleMenu}
-        className="flex items-center rounded-full ring-2 ring-transparent transition-all hover:ring-gray-200 focus:outline-none focus:ring-blue-200"
+        className="flex items-center rounded-full ring-2 ring-transparent transition-all hover:ring-gray-200 focus:outline-hidden focus:ring-blue-200"
       >
         {user?.profilePicture ? (
           <Image

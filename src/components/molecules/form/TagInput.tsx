@@ -77,7 +77,7 @@ export function TagInput({
         onBlur={addTag}
         placeholder={tags.length >= maxTags ? `Maximum ${maxTags} tags allowed` : placeholder}
         disabled={tags.length >= maxTags}
-        className="w-full rounded-md border border-border bg-background-light px-3 py-2 text-sm text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:bg-background-light disabled:text-text-muted"
+        className="w-full rounded-md border border-border bg-background-light px-3 py-2 text-sm text-text placeholder-text-muted focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:bg-background-light disabled:text-text-muted"
       />
 
       {/* Helper Text */}

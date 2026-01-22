@@ -79,7 +79,7 @@ export function BlogModal({
                   ? 'Create a new blog post with content, images, and metadata.'
                   : 'Update your blog post with new content and settings.'}
               </DialogDescription>
-              <DialogClose className="focus:ring-primary/20 absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-none focus:ring-2">
+              <DialogClose className="focus:ring-primary/20 absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-hidden focus:ring-2">
                 <RiCloseLine className="h-5 w-5" />
                 <span className="sr-only">Close</span>
               </DialogClose>

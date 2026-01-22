@@ -115,7 +115,7 @@ export function EmailTemplateEditorModal({
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm max-w-none focus:outline-none min-h-full p-4 text-gray-900 dark:text-white',
+          'prose prose-sm max-w-none focus:outline-hidden min-h-full p-4 text-gray-900 dark:text-white',
         'data-placeholder': 'Start writing your email template...',
       },
     },
@@ -571,7 +571,7 @@ export function EmailTemplateEditorModal({
               <DialogTitle className="text-lg font-medium text-gray-900 max-sm:pr-12 dark:text-gray-100">
                 {mode === 'create' ? 'Create Email Template' : 'Edit Email Template'}
               </DialogTitle>
-              <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
+              <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close</span>
               </DialogClose>
@@ -926,7 +926,7 @@ export function EmailTemplateEditorModal({
                         <div className="flex min-h-0 flex-1 overflow-hidden">
                           <EditorContent
                             editor={editor}
-                            className="h-full max-h-full w-full overflow-y-auto [&_.ProseMirror:empty:before]:pointer-events-none [&_.ProseMirror:empty:before]:float-left [&_.ProseMirror:empty:before]:h-0 [&_.ProseMirror:empty:before]:text-gray-400! [&_.ProseMirror:empty:before]:content-[attr(data-placeholder)] [&_.ProseMirror]:h-full [&_.ProseMirror]:max-h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-4 [&_.ProseMirror]:text-gray-900 [&_.ProseMirror]:outline-none [&_.ProseMirror]:dark:text-white"
+                            className="h-full max-h-full w-full overflow-y-auto [&_.ProseMirror:empty:before]:pointer-events-none [&_.ProseMirror:empty:before]:float-left [&_.ProseMirror:empty:before]:h-0 [&_.ProseMirror:empty:before]:text-gray-400! [&_.ProseMirror:empty:before]:content-[attr(data-placeholder)] [&_.ProseMirror]:h-full [&_.ProseMirror]:max-h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-4 [&_.ProseMirror]:text-gray-900 [&_.ProseMirror]:outline-hidden [&_.ProseMirror]:dark:text-white"
                             style={{ maxHeight: getDynamicHeight() }}
                           />
                         </div>

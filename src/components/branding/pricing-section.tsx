@@ -47,7 +47,7 @@ export function PricingSection() {
               <motion.div
                 className={`relative flex flex-col overflow-hidden rounded-3xl h-[550px] border p-8 transition-all hover:scale-[1.02] ${plan.id === 'pro'
                   ? 'border-primary/60 bg-white/90 ring-primary/40 shadow-lg ring-1'
-                  : 'bg-white/80   dark:bg-white/5  border-gray-500/20 shadow-sm hover:border-gray-400/50'
+                  : 'bg-white/80   dark:bg-white/5  border-gray-500/20 shadow-xs hover:border-gray-400/50'
                   }`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}

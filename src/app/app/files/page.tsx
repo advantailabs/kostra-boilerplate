@@ -118,7 +118,7 @@ export default function FilesPage() {
           </div>
         </div>
         {files.length === 0 && Object.values(filters).length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-sm max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
               <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
               <h3 className="mt-2 text-sm font-medium text-text">No files</h3>
@@ -136,7 +136,7 @@ export default function FilesPage() {
             </div>
           </div>
         ) : files.length === 0 && Object.values(filters).length > 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-sm max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
+          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
               <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
               <h3 className="mt-2 text-sm font-medium text-text">No Files Found</h3>

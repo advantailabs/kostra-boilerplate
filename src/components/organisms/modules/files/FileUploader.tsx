@@ -236,7 +236,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           {/* Drop Zone */}
           <div
             ref={dropZoneRef}
-            className="hover:border-primary/50 rounded-lg border-2 border-dashed border-border p-8 text-center shadow-sm transition-all duration-200 hover:shadow-md"
+            className="hover:border-primary/50 rounded-lg border-2 border-dashed border-border p-8 text-center shadow-xs transition-all duration-200 hover:shadow-md"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}

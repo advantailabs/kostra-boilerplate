@@ -143,7 +143,7 @@ export function Modal({
               {description}
             </DialogDescription>
           )}
-          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-none focus:ring-2 focus:ring-primary">
+          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-hidden focus:ring-2 focus:ring-primary">
             <RiCloseLine className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </DialogClose>

@@ -27,7 +27,7 @@ const RadioCardGroupIndicator = React.forwardRef<
     <div
       className={cx(
         // base
-        'relative flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border shadow-sm outline-none',
+        'relative flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border shadow-xs outline-hidden',
         // border color
         'border-border',
         // background color
@@ -72,7 +72,7 @@ const RadioCardItem = React.forwardRef<
       ref={forwardedRef}
       className={cx(
         // base
-        'group relative w-full rounded-md border p-4 text-left shadow-sm transition-all focus:outline-none',
+        'group relative w-full rounded-md border p-4 text-left shadow-xs transition-all focus:outline-hidden',
         // background color
         'bg-background',
         // border color

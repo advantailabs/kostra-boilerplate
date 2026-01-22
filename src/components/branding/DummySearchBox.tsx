@@ -37,7 +37,7 @@ export function DummySearchBox() {
 
   return (
     <div className="space-y-2">
-      <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm sm:p-3 dark:border-gray-800 dark:bg-gray-900">
+      <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-xs sm:p-3 dark:border-gray-800 dark:bg-gray-900">
         <form onSubmit={handleSearch} className="space-y-0">
           {/* Input Container */}
           <div className="relative">

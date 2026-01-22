@@ -109,7 +109,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       <div className="px-4 pb-4 pt-5">
         <div className="mb-4 rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]">
           <div
-            className="flex items-center justify-between rounded-md px-4 py-2 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
+            className="flex items-center justify-between rounded-md px-4 py-2 shadow-xs dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
             style={{
               backgroundColor: 'var(--bg-light)',
               border: '1px solid var(--border)',
@@ -138,12 +138,12 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
                 className={
                   plan.id === 'pro'
                     ? 'rounded-lg bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]'
-                    : 'min-w-0 rounded-lg border border-border p-0 shadow-sm transition-colors'
+                    : 'min-w-0 rounded-lg border border-border p-0 shadow-xs transition-colors'
                 }
               >
                 {plan.id === 'pro' ? (
                   <div
-                    className="h-full min-w-0 rounded-lg p-4 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
+                    className="h-full min-w-0 rounded-lg p-4 shadow-xs dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
                     style={{
                       backgroundColor: 'var(--bg-light)',
                       border: '1px solid var(--border)',
