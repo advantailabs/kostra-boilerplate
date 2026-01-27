@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/molecules/common/Dialog';
+} from '@/components/ui/dialog';
 import { RiCloseLine } from '@remixicon/react';
 import { ReactNode } from 'react';
 
@@ -135,7 +135,9 @@ export function Modal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}>
+      <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}
+      showCloseButton={false}
+      >
         <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
           <DialogTitle className="text-base max-sm:pr-12">{title}</DialogTitle>
           {description && (

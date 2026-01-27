@@ -1,18 +1,19 @@
 'use client';
 
-import { RiSortAsc, RiSortDesc } from '@remixicon/react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
-import { Input } from '@/components/atom/Input';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/molecules/common/Select';
+} from '@/components/ui/select';
 import { FileFilters } from '@/services/api/files';
 
 interface FileFilterModalProps {
@@ -79,16 +80,16 @@ export function FileFilterModal({
     >
       {/* Search - Full Width */}
       <div className="mb-4">
-        <label htmlFor="search-files" className="mb-2 block text-sm font-medium text-text">
-          Search Files
-        </label>
-        <Input
-          id="search-files"
-          type="text"
-          placeholder="Search files by name..."
-          value={localFilters.search || ''}
-          onChange={e => handleSearch(e.target.value)}
-        />
+        <Field>
+          <FieldLabel htmlFor="search-files">Search Files</FieldLabel>
+          <Input
+            id="search-files"
+            type="text"
+            placeholder="Search files by name..."
+            value={localFilters.search || ''}
+            onChange={e => handleSearch(e.target.value)}
+          />
+        </Field>
       </div>
 
       {/* Two Column Layout for Filters */}
@@ -96,14 +97,11 @@ export function FileFilterModal({
         {/* Left Column */}
         <div className="space-y-4">
           {/* File Type Filter */}
-          <div>
-            <label htmlFor="file-type-filter" className="mb-2 block text-sm font-medium text-text">
-              File Type
-            </label>
+          <Field>
+            <FieldLabel htmlFor="file-type-filter">File Type</FieldLabel>
             <Select
               value={localFilters.mimeType || 'all'}
               onValueChange={value => handleFilter('mimeType', value === 'all' ? '' : value)}
-              aria-label="Select file type"
             >
               <SelectTrigger id="file-type-filter">
                 <SelectValue placeholder="All Types" />
@@ -118,20 +116,17 @@ export function FileFilterModal({
                 <SelectItem value="image/png">PNG</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Field>
         </div>
 
         {/* Right Column */}
         <div className="space-y-4">
           {/* Sort Options */}
-          <div>
-            <label htmlFor="sort-by-filter" className="mb-2 block text-sm font-medium text-text">
-              Sort By
-            </label>
+          <Field>
+            <FieldLabel htmlFor="sort-by-filter">Sort By</FieldLabel>
             <Select
               value={localFilters.sortBy || 'createdAt'}
               onValueChange={value => handleSort(value as FileFilters["sortBy"], localFilters.sortOrder || 'desc')}
-              aria-label="Select sort by"
             >
               <SelectTrigger id="sort-by-filter">
                 <SelectValue placeholder="Sort by" />
@@ -143,12 +138,10 @@ export function FileFilterModal({
                 <SelectItem value="mimeType">Type</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
-          <div>
-            <label htmlFor="sort-order-button" className="mb-2 block text-sm font-medium text-text">
-              Sort Order
-            </label>
+          <Field>
+            <FieldLabel htmlFor="sort-order-button">Sort Order</FieldLabel>
             <Button
               id="sort-order-button"
               variant="secondary"
@@ -161,13 +154,13 @@ export function FileFilterModal({
               className="flex w-full items-center justify-center gap-2"
             >
               {localFilters.sortOrder === 'asc' ? (
-                <RiSortAsc className="h-4 w-4" />
+                <ArrowUp className="h-4 w-4" />
               ) : (
-                <RiSortDesc className="h-4 w-4" />
+                <ArrowDown className="h-4 w-4" />
               )}
               {localFilters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
             </Button>
-          </div>
+          </Field>
         </div>
       </div>
     </Modal>
