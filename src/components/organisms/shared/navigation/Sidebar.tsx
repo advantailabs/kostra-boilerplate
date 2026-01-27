@@ -16,7 +16,7 @@ import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import GradientCtaButton from '@/components/molecules/common/GradientCtaButton';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Sidebar as ShadcnSidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
+import { Sidebar as ShadcnSidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from '@/components/ui/sidebar';
 import { useUiModalsStore } from '@/store/ui/modals';
 import { RiVipCrownLine } from '@remixicon/react';
 import { ChevronRightIcon, ChevronsUpDownIcon } from 'lucide-react';
@@ -28,6 +28,8 @@ export function Sidebar() {
   const openCreditPurchase = useUiModalsStore(state => state.openCreditPurchase);
   const handleOpenPurchase = useCallback(() => openCreditPurchase(), [openCreditPurchase]);
   const userPlan = useAuthStore(state => state.user?.plan);
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   const { user } = useAuthStore();
   const userRole = user?.role;
@@ -63,104 +65,103 @@ export function Sidebar() {
   const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   return (
-    <SidebarProvider>
-      <ShadcnSidebar collapsible="icon">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground data-[size='lg']:group-data-[collapsible=icon]:p-0!"
-                  >
-                    <Image
-                      src={logoSrc}
-                      alt="KostraLogo"
-                      width={32}
-                      height={32}
-                      className="size-8 shrink-0"
-                    />
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">
-                        {activeTeam.name}
-                      </span>
-                      <span className="truncate text-xs">
-                        {activeTeam.plan}
-                      </span>
-                    </div>
-                    <ChevronsUpDownIcon />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Teams</DropdownMenuLabel>
-                    {teams.map((team) => (
-                      <DropdownMenuItem
-                        key={team.name}
-                        onClick={() => setActiveTeam(team)}
+    <ShadcnSidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground data-[size='lg']:group-data-[collapsible=icon]:p-0!"
+                >
+                  <Image
+                    src={logoSrc}
+                    alt="KostraLogo"
+                    width={32}
+                    height={32}
+                    className="size-8 shrink-0"
+                  />
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">
+                      {activeTeam.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {activeTeam.plan}
+                    </span>
+                  </div>
+                  <ChevronsUpDownIcon />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Teams</DropdownMenuLabel>
+                  {teams.map((team) => (
+                    <DropdownMenuItem
+                      key={team.name}
+                      onClick={() => setActiveTeam(team)}
+                    >
+                      {team.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        {NAVIGATION_ITEMS.map((section) => {
+          // Filter items by user role
+          const filteredItems = section.items.filter((item) => {
+            if (!item.roles || item.roles.length === 0) return true;
+            return userRole && item.roles.includes(userRole as UserRole);
+          });
+
+          // Don't render section if no items after filtering
+          if (filteredItems.length === 0) return null;
+
+          // Don't render Admin section if user is not ADMIN
+          if (section.label === 'Admin' && userRole !== 'ADMIN') return null;
+
+          return (
+            <SidebarGroup key={section.label}>
+              {!isCollapsed && <SidebarGroupLabel>{section.label}</SidebarGroupLabel>}
+              <SidebarMenu>
+                {filteredItems.map((item) => {
+                  const IconComponent = item.icon;
+
+                  if (section.type === 'collapsible' && item.items) {
+                    // Collapsible item with nested items
+                    return (
+                      <Collapsible
+                        key={item.title}
+                        asChild
+                        defaultOpen={item.isActive}
+                        className="group/collapsible"
                       >
-                        {team.name}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          {NAVIGATION_ITEMS.map((section) => {
-            // Filter items by user role
-            const filteredItems = section.items.filter((item) => {
-              if (!item.roles || item.roles.length === 0) return true;
-              return userRole && item.roles.includes(userRole as UserRole);
-            });
-
-            // Don't render section if no items after filtering
-            if (filteredItems.length === 0) return null;
-
-            // Don't render Admin section if user is not ADMIN
-            if (section.label === 'Admin' && userRole !== 'ADMIN') return null;
-
-            return (
-              <SidebarGroup key={section.label}>
-                <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {filteredItems.map((item) => {
-                    const IconComponent = item.icon;
-
-                    if (section.type === 'collapsible' && item.items) {
-                      // Collapsible item with nested items
-                      return (
-                        <Collapsible
-                          key={item.title}
-                          asChild
-                          defaultOpen={item.isActive}
-                          className="group/collapsible"
-                        >
-                          <SidebarMenuItem>
-                            <SidebarMenuButton tooltip={item.title} className="font-normal!" asChild>
-                              <CollapsibleTrigger>
-                                <IconComponent className="size-4 shrink-0" />
-                                <span>{item.title}</span>
-                                <ChevronRightIcon className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-90" />
-                              </CollapsibleTrigger>
-                            </SidebarMenuButton>
-                            <CollapsibleContent>
-                              <SidebarMenuSub>
-                                {item.items?.map((subItem) => (
-                                  <SidebarMenuSubItem key={subItem.title}>
-                                    <SidebarMenuSubButton asChild>
-                                      <Link href={subItem.url}>{subItem.title}</Link>
-                                    </SidebarMenuSubButton>
-                                  </SidebarMenuSubItem>
-                                ))}
-                              </SidebarMenuSub>
-                            </CollapsibleContent>
-                          </SidebarMenuItem>
-                        </Collapsible>
-                      );
+                        <SidebarMenuItem>
+                          <SidebarMenuButton tooltip={item.title} className="font-normal!" asChild>
+                            <CollapsibleTrigger>
+                              <IconComponent className="size-4 shrink-0" />
+                              <span>{item.title}</span>
+                              <ChevronRightIcon className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-90" />
+                            </CollapsibleTrigger>
+                          </SidebarMenuButton>
+                          <CollapsibleContent>
+                            <SidebarMenuSub>
+                              {item.items?.map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.title}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link href={subItem.url}>{subItem.title}</Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    );
                     } else {
                       // Link item
                       return (
@@ -169,6 +170,7 @@ export function Sidebar() {
                             className="font-normal!"
                             asChild
                             isActive={isActive(item.url)}
+                            tooltip={item.title}
                           >
                             <Link href={item.url || '#'}>
                               <IconComponent className="size-4 shrink-0" />
@@ -178,42 +180,26 @@ export function Sidebar() {
                         </SidebarMenuItem>
                       );
                     }
-                  })}
-                </SidebarMenu>
-              </SidebarGroup>
-            );
-          })}
-        </SidebarContent>
-        <SidebarFooter>
-          <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5 group-data-[collapsible=icon]:hidden">
-            <CreditDisplay size="sm" />
-            {userPlan === 'PRO' ? (
-              <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
-                <RiVipCrownLine className="size-3.5" /> Pro User
-              </span>
-            ) : (
-              <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
-            )}
-          </div>
-          <UserProfileDropdown />
-        </SidebarFooter>
-        <SidebarRail />
-      </ShadcnSidebar>
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-          </div>
-          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min" />
+                })}
+              </SidebarMenu>
+            </SidebarGroup>
+          );
+        })}
+      </SidebarContent>
+      <SidebarFooter>
+        <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5 group-data-[collapsible=icon]:hidden">
+          <CreditDisplay size="sm" />
+          {userPlan === 'PRO' ? (
+            <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
+              <RiVipCrownLine className="size-3.5" /> Pro User
+            </span>
+          ) : (
+            <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
+          )}
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <UserProfileDropdown />
+      </SidebarFooter>
+      {/* <SidebarRail /> */}
+    </ShadcnSidebar>
   );
 }
