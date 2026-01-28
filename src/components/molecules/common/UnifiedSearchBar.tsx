@@ -1,13 +1,12 @@
 'use client';
 
-import { Input } from '@/components/atom/Input';
+import { Input } from '@/components/ui/input';
 
 interface UnifiedSearchBarProps {
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   className?: string;
-  inputClassName?: string;
 }
 
 export function UnifiedSearchBar({
@@ -15,7 +14,6 @@ export function UnifiedSearchBar({
   value,
   onChange,
   className = '',
-  inputClassName = '',
 }: UnifiedSearchBarProps) {
   return (
     <div className={`flex flex-col gap-2 pb-2 ${className}`}>
@@ -28,7 +26,6 @@ export function UnifiedSearchBar({
               value={value}
               onChange={e => onChange(e.target.value)}
               className="h-full"
-              inputClassName={`h-full py-0 ${inputClassName}`}
             />
           </div>
         </div>
