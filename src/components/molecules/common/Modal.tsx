@@ -1,13 +1,12 @@
-import { Button } from '@/components/atom/Button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '@/components/ui/dialog';
-import { RiCloseLine } from '@remixicon/react';
 import { ReactNode } from 'react';
 
 export interface ModalProps {
@@ -135,34 +134,31 @@ export function Modal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}
-      showCloseButton={false}
+      <DialogContent className={`${maxWidth} gap-0 p-0 ${contentClassName}`}
       >
         <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
-          <DialogTitle className="text-base max-sm:pr-12">{title}</DialogTitle>
+          <DialogTitle className=" max-sm:pr-12">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="-mt-1 text-sm max-sm:pr-12">
+            <DialogDescription className="-mt-1 max-sm:pr-12">
               {description}
             </DialogDescription>
           )}
-          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-hidden focus:ring-2 focus:ring-primary">
-            <RiCloseLine className="h-5 w-5" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
         </DialogHeader>
 
-        <div className={removePadding ? 'p-0' : 'px-4 pt-4 max-sm:px-3 max-sm:pt-3'}>
+        <div className={removePadding ? 'p-0' : 'px-4 py-4 max-sm:px-3 max-sm:py-3'}>
           {/* Main content */}
           <div className="mb-4 max-sm:mb-3">{children}</div>
 
-          {/* Footer with action buttons */}
-          {(footer || defaultFooter) && (
-            <>
-              <div className="-mx-4 border-t border-border" />
-              <div className="py-4 max-sm:py-3">{footer || defaultFooter}</div>
-            </>
-          )}
         </div>
+        {/* Footer with action buttons */}
+        {(footer || defaultFooter) && (
+          <>
+            <div className="border-t border-border" />
+            <DialogFooter className='px-4 py-4 max-sm:px-3 max-sm:py-3'>
+              {footer || defaultFooter}
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
