@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { Modal } from '@/components/molecules/common/Modal';
 import { Button } from '@/components/ui/button';
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,6 +23,16 @@ interface FileFilterModalProps {
   filters: FileFilters;
   onFiltersChange: (_filters: FileFilters) => void;
 }
+
+const FILE_TYPE_OPTIONS = [
+  { value: 'all', label: 'All Types' },
+  { value: 'application/pdf', label: 'PDF' },
+  { value: 'text/plain', label: 'Text' },
+  { value: 'application/json', label: 'JSON' },
+  { value: 'text/markdown', label: 'Markdown' },
+  { value: 'image/jpeg', label: 'JPEG' },
+  { value: 'image/png', label: 'PNG' },
+];
 
 export function FileFilterModal({
   isOpen,
@@ -99,23 +110,38 @@ export function FileFilterModal({
           {/* File Type Filter */}
           <Field>
             <FieldLabel htmlFor="file-type-filter">File Type</FieldLabel>
-            <Select
-              value={localFilters.mimeType || 'all'}
-              onValueChange={value => handleFilter('mimeType', value === 'all' ? '' : value)}
+            <Combobox
+              items={FILE_TYPE_OPTIONS}
+              value={FILE_TYPE_OPTIONS.find(
+                (o) => o.value === (localFilters.mimeType ?? 'all')
+              )}
+              onValueChange={(item) => {
+                console.log(item)
+                setLocalFilters(prev => {
+                  const next = { ...prev, mimeType: item?.value }
+                  console.log(next)
+                  return next
+                })
+              }}
+              itemToStringValue={(item) => item.label}
             >
-              <SelectTrigger id="file-type-filter">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="application/pdf">PDF</SelectItem>
-                <SelectItem value="text/plain">Text</SelectItem>
-                <SelectItem value="application/json">JSON</SelectItem>
-                <SelectItem value="text/markdown">Markdown</SelectItem>
-                <SelectItem value="image/jpeg">JPEG</SelectItem>
-                <SelectItem value="image/png">PNG</SelectItem>
-              </SelectContent>
-            </Select>
+              <ComboboxInput placeholder="Select a file type" />
+
+              <ComboboxContent>
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem
+                      key={item.value}
+                      value={item}
+                    >
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </Field>
         </div>
 
