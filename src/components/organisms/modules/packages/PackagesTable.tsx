@@ -1,16 +1,16 @@
 'use client';
 
-import { RiCheckLine, RiCloseLine, RiDeleteBinLine, RiEditLine } from '@remixicon/react';
+import { Check, Edit, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { Badge } from '@/components/atom/Badge';
-import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { Table, TableBody, TableCell, TableRow } from '@/components/molecules/common/Table';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { usePackages } from '@/hooks/usePackages';
 
 interface Package {
@@ -136,19 +136,19 @@ export function PackagesTable({
                     </TableCell>
                     <TableCell className="py-1">
                       <Badge
-                        variant={pkg.isFeatured ? 'primary' : 'neutral'}
+                        variant={pkg.isFeatured ? 'default' : 'outline'}
                         className={`inline-flex items-center gap-1 font-medium ${!pkg.isFeatured ? 'opacity-50' : ''}`}
                       >
                         {pkg.isFeatured ? (
-                          <RiCheckLine className="h-3 w-3" />
+                          <Check className="h-3 w-3" />
                         ) : (
-                          <RiCloseLine className="h-3 w-3" />
+                          <X className="h-3 w-3" />
                         )}
                         Featured
                       </Badge>
                     </TableCell>
                     <TableCell className="py-1">
-                      <Badge variant="neutral" className="text-xs">
+                      <Badge variant="outline" className="text-xs">
                         {pkg.features.length} features
                       </Badge>
                     </TableCell>
@@ -170,7 +170,7 @@ export function PackagesTable({
                           }}
                           className="group size-8 hover:border hover:border-border hover:bg-background-light"
                         >
-                          <RiEditLine size={14} className="shrink-0" />
+                          <Edit size={14} className="shrink-0" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -180,7 +180,7 @@ export function PackagesTable({
                           }}
                           className="group size-8 hover:border hover:border-border hover:bg-background-light"
                         >
-                          <RiDeleteBinLine size={14} className="shrink-0 text-danger" />
+                          <Trash2 size={14} className="shrink-0 text-danger" />
                         </Button>
                       </div>
                     </TableCell>
