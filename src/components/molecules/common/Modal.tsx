@@ -132,9 +132,33 @@ export function Modal({
     </div>
   );
 
+  const isInsideCombobox = (event: Event & { detail?: { originalEvent?: Event } }) => {
+    const target =
+      (event.target as HTMLElement) ??
+      (event.detail?.originalEvent?.target as HTMLElement);
+    return Boolean(
+      target?.closest?.('[data-slot="combobox-content"], [data-slot="combobox-list"]')
+    );
+  };
+
+  const handlePointerDownOutside = (event: Event) => {
+    if (isInsideCombobox(event)) {
+      event.preventDefault();
+    }
+  };
+
+  const handleInteractOutside = (event: Event) => {
+    if (isInsideCombobox(event)) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${maxWidth} gap-0 p-0 ${contentClassName}`}
+      <DialogContent
+        className={`${maxWidth} gap-0 p-0 ${contentClassName}`}
+        onPointerDownOutside={handlePointerDownOutside}
+        onInteractOutside={handleInteractOutside}
       >
         <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
           <DialogTitle className=" max-sm:pr-12">{title}</DialogTitle>
