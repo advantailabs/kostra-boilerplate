@@ -70,7 +70,7 @@ const DrawerContent = React.forwardRef<
           ref={forwardedRef}
           className={cx(
             // base
-            'fixed inset-y-2 z-[9999] mx-auto flex w-[95vw] flex-1 flex-col overflow-y-auto rounded-md border p-4 shadow-lg focus:outline-none max-sm:inset-x-2 sm:inset-y-2 sm:right-2 sm:max-w-lg sm:p-6',
+            'fixed inset-y-2 z-[9999] mx-auto flex w-[95vw] flex-1 flex-col overflow-y-auto rounded-md border p-4 shadow-lg focus:outline-hidden max-sm:inset-x-2 sm:inset-y-2 sm:right-2 sm:max-w-lg sm:p-6',
             // border color
             'border-border',
             // background color

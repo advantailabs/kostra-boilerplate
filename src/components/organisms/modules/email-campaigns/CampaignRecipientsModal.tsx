@@ -331,7 +331,7 @@ export function CampaignRecipientsModal({
           <DialogDescription className="-mt-1 text-sm">
             View all recipients for this campaign
           </DialogDescription>
-          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
+          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
             <RiCloseLine className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </DialogClose>

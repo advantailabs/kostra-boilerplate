@@ -39,7 +39,7 @@ const NavigationButton = React.forwardRef<HTMLButtonElement, NavigationButtonPro
         type="button"
         disabled={disabled}
         className={cx(
-          'flex size-8 shrink-0 select-none items-center justify-center rounded border p-1 outline-none transition sm:size-[30px]',
+          'flex size-8 shrink-0 select-none items-center justify-center rounded border p-1 outline-hidden transition sm:size-[30px]',
           // text color
           'text-text-muted hover:text-text',
           // border color

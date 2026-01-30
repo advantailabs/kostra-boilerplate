@@ -218,7 +218,7 @@ function Editor({
     content: initialContent,
     editorProps: {
       attributes: {
-        class: 'mx-auto focus:outline-none min-h-[150px] cursor-text text-text text-sm',
+        class: 'mx-auto focus:outline-hidden min-h-[150px] cursor-text text-text text-sm',
         'data-placeholder': 'Write something here...',
       },
     },
@@ -822,7 +822,7 @@ function Editor({
       >
         <EditorContent
           editor={editor}
-          className="tiptap-editor-content cursor-text focus:outline-none"
+          className="tiptap-editor-content cursor-text focus:outline-hidden"
         />
       </div>
     </div>

@@ -100,7 +100,7 @@ export function ActionDialog({
       case 'restore':
         return {
           buttonClass:
-            'rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            'rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           loadingText: 'Restoring...',
           actionText: 'Restore',
           primaryActionVariant: 'primary' as const,
@@ -109,7 +109,7 @@ export function ActionDialog({
       default:
         return {
           buttonClass:
-            'rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            'rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           loadingText: 'Deleting...',
           actionText: 'Delete',
           primaryActionVariant: 'destructive' as const,
@@ -124,7 +124,7 @@ export function ActionDialog({
     <div className="flex items-center justify-end gap-2">
       <button
         type="button"
-        className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-text hover:bg-background-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-text hover:bg-background-light focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handleClose}
         disabled={isLoading}
       >
