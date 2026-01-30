@@ -124,7 +124,7 @@ export const packageTableColumns: ColumnDef<PackageTableRow>[] = [
                     : 'N/A';
             return (
                 <div className="py-1 text-text-muted">
-                    <div className="text-xs text-text-muted">Last Modified:</div>
+                    {/* <div className="text-xs text-text-muted">Last Modified:</div> */}
                     <div className="text-sm text-text-muted">{formatted}</div>
                 </div>
             );
