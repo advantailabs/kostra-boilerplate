@@ -85,7 +85,7 @@ export function FileFilterModal({
       onClose={onClose}
       title="Filter Files"
       description="Set filters to find the files you need"
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-2xl!"
       contentClassName="max-h-[90vh] overflow-y-auto"
       footer={customFooter}
     >

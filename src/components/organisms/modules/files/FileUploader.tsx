@@ -228,7 +228,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
         onClose={handleClose}
         title="Upload Files"
         description="Upload files to your account"
-        maxWidth="max-w-2xl"
+        maxWidth="max-w-2xl!"
         contentClassName="max-h-[90vh] overflow-y-auto"
         footer={actionFooter}
       >
