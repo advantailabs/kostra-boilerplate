@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Filter, Plus } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -24,8 +24,7 @@ export function PageHeaderWithAction({
   actions,
   className,
 }: PageHeaderWithActionProps) {
-  const { state } = useSidebar();
-  const isCollapsed = state === 'collapsed';
+
 
   return (
     <header
@@ -35,7 +34,7 @@ export function PageHeaderWithAction({
         <SidebarTrigger className="-ml-1" />
         <div className="min-w-0">
           <h1 className="text-lg font-medium text-text truncate">{title}</h1>
-          {/* {description && !isCollapsed && <p className="text-xs text-text-muted truncate">{description}</p>} */}
+          {!description && <p className="text-xs text-text-muted truncate">{description}</p>}
         </div>
       </div>
       {(onAdd || onFilter || actions) && (
