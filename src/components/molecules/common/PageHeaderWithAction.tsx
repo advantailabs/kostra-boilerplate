@@ -1,5 +1,6 @@
-import { Button } from '@/components/atom/Button';
-import { RiAddLine, RiFilterLine } from '@remixicon/react';
+import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Filter, Plus } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface PageHeaderWithActionProps {
@@ -23,42 +24,43 @@ export function PageHeaderWithAction({
   actions,
   className,
 }: PageHeaderWithActionProps) {
+
+
   return (
-    <div
-      className={`flex items-center justify-between border-b border-border bg-background-light ${className || ''}`}
+    <header
+      className={`flex h-16 shrink-0 items-center justify-between gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${className || ''}`}
     >
-      <div className="relative min-w-0 flex-1 border-border px-4 py-3">
+      <div className="flex items-center gap-2 px-4 min-w-0 flex-1">
+        <SidebarTrigger className="-ml-1" />
         <div className="min-w-0">
-          <h1 className="text-lg font-medium text-text">{title}</h1>
-          {description && <p className="text-xs text-text-muted">{description}</p>}
+          <h1 className="text-lg font-medium text-text truncate">{title}</h1>
+          {!description && <p className="text-xs text-text-muted truncate">{description}</p>}
         </div>
       </div>
       {(onAdd || onFilter || actions) && (
-        <div className="px-4 py-3 max-sm:px-4 max-sm:py-3">
-          <div className="flex items-center gap-3">
-            {onFilter && (
-              <Button
-                onClick={onFilter}
-                variant="secondary"
-                className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''}`}
-              >
-                <RiFilterLine className="h-4 w-4" />
-                Filter
-                {hasActiveFilters && <span className="ml-1 flex h-2 w-2 rounded-full bg-primary" />}
-              </Button>
-            )}
-            {actions}
-            {onAdd && (
-              <Button
-                onClick={onAdd}
-                className="max-sm:w-auto max-sm:justify-center max-sm:px-3 max-sm:py-2"
-              >
-                <RiAddLine className="h-4 w-4" /> {addButtonText}
-              </Button>
-            )}
-          </div>
+        <div className="flex items-center gap-3 px-4 shrink-0">
+          {onFilter && (
+            <Button
+              onClick={onFilter}
+              variant="secondary"
+              className={`flex items-center gap-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''}`}
+            >
+              <Filter className="h-4 w-4" />
+              Filter
+              {hasActiveFilters && <span className="ml-1 flex h-2 w-2 rounded-full bg-primary" />}
+            </Button>
+          )}
+          {actions}
+          {onAdd && (
+            <Button
+              onClick={onAdd}
+              className="max-sm:w-auto max-sm:justify-center max-sm:px-3 max-sm:py-2"
+            >
+              <Plus className="h-4 w-4" /> {addButtonText}
+            </Button>
+          )}
         </div>
       )}
-    </div>
+    </header>
   );
 }

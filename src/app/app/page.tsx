@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 
 function AppPageContent() {
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4">
       <Button variant="default">Click me</Button>
     </div>
   );
