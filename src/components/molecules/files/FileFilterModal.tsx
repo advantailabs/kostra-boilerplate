@@ -8,13 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { FileFilters } from '@/services/api/files';
 
 interface FileFilterModalProps {
@@ -34,6 +27,13 @@ const FILE_TYPE_OPTIONS = [
   { value: 'image/png', label: 'PNG' },
 ];
 
+const SORT_BY_OPTIONS: { value: FileFilters['sortBy']; label: string }[] = [
+  { value: 'createdAt', label: 'Date Created' },
+  { value: 'originalName', label: 'Name' },
+  { value: 'size', label: 'Size' },
+  { value: 'mimeType', label: 'Type' },
+];
+
 export function FileFilterModal({
   isOpen,
   onClose,
@@ -49,10 +49,6 @@ export function FileFilterModal({
   const handleSort = (sortBy: FileFilters["sortBy"]
     , sortOrder: FileFilters["sortOrder"]) => {
     setLocalFilters(prev => ({ ...prev, sortBy, sortOrder }));
-  };
-
-  const handleFilter = (key: keyof FileFilters, value: string) => {
-    setLocalFilters(prev => ({ ...prev, [key]: value }));
   };
 
   const handleApply = () => {
@@ -111,6 +107,7 @@ export function FileFilterModal({
           <Field>
             <FieldLabel htmlFor="file-type-filter">File Type</FieldLabel>
             <Combobox
+              id='file-type-filter'
               items={FILE_TYPE_OPTIONS}
               value={FILE_TYPE_OPTIONS.find(
                 (o) => o.value === (localFilters.mimeType ?? 'all')
@@ -127,7 +124,7 @@ export function FileFilterModal({
             >
               <ComboboxInput placeholder="Select a file type" />
 
-              <ComboboxContent>
+              <ComboboxContent className="pointer-events-auto">
                 <ComboboxEmpty>No items found.</ComboboxEmpty>
 
                 <ComboboxList>
@@ -150,20 +147,31 @@ export function FileFilterModal({
           {/* Sort Options */}
           <Field>
             <FieldLabel htmlFor="sort-by-filter">Sort By</FieldLabel>
-            <Select
-              value={localFilters.sortBy || 'createdAt'}
-              onValueChange={value => handleSort(value as FileFilters["sortBy"], localFilters.sortOrder || 'desc')}
+            <Combobox
+              id="sort-by-filter"
+              items={SORT_BY_OPTIONS}
+              value={SORT_BY_OPTIONS.find(
+                (o) => o.value === (localFilters.sortBy ?? 'createdAt')
+              )}
+              onValueChange={(item) => {
+                if (item?.value) {
+                  handleSort(item.value, localFilters.sortOrder ?? 'desc');
+                }
+              }}
+              itemToStringValue={(item) => item.label}
             >
-              <SelectTrigger id="sort-by-filter">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="createdAt">Date Created</SelectItem>
-                <SelectItem value="originalName">Name</SelectItem>
-                <SelectItem value="size">Size</SelectItem>
-                <SelectItem value="mimeType">Type</SelectItem>
-              </SelectContent>
-            </Select>
+              <ComboboxInput placeholder="Sort by" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </Field>
 
           <Field>
