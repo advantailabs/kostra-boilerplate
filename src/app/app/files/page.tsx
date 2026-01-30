@@ -1,14 +1,14 @@
 'use client';
 
-import { RiAddLine, RiFileLine, RiFilterLine } from '@remixicon/react';
+import { File as FileIcon, Filter, Plus } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
 import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { FileFilterModal } from '@/components/molecules/files/FileFilterModal';
 import { FileGrid } from '@/components/organisms/modules/files/FileGrid';
 import { FileUploader } from '@/components/organisms/modules/files/FileUploader';
+import { Button } from '@/components/ui/button';
 import { File } from '@/lib/prisma/generated/browser';
 import { FileFilters, filesApi } from '@/services/api/files';
 import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
@@ -105,14 +105,14 @@ export default function FilesPage() {
               className={`w-auto justify-center px-3 py-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''
                 }`}
             >
-              <RiFilterLine className="mr-1 h-4 w-4" />
+              <Filter className="mr-1 h-4 w-4" />
               Filter
             </Button>
             <Button
               onClick={() => setShowUploader(true)}
               className="w-auto justify-center px-3 py-2"
             >
-              <RiAddLine className="mr-1 h-4 w-4" />
+              <Plus className="mr-1 h-4 w-4" />
               Upload
             </Button>
           </div>
@@ -120,7 +120,7 @@ export default function FilesPage() {
         {files.length === 0 && Object.values(filters).length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
-              <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
+              <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
               <h3 className="mt-2 text-sm font-medium text-text">No files</h3>
               <p className="mt-1 text-sm text-text-muted">
                 Get started by uploading your first file.
@@ -138,7 +138,7 @@ export default function FilesPage() {
         ) : files.length === 0 && Object.values(filters).length > 0 ? (
           <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
             <div className="text-center">
-              <RiFileLine className="mx-auto h-12 w-12 text-text-muted" />
+              <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
               <h3 className="mt-2 text-sm font-medium text-text">No Files Found</h3>
               <p className="mt-1 text-sm text-text-muted">
                 No files were found that matched your filters
