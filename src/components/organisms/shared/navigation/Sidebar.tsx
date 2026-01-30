@@ -1,24 +1,26 @@
 'use client';
 
-import { RiVipCrownLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { siteConfig } from '@/app/siteConfig';
-// import { Button } from '@/components/atom/Button';
-import { CreditDisplay } from '@/components/atom/CreditDisplay';
-import { GradientCtaButton } from '@/components/molecules/common/GradientCtaButton';
 import { NAVIGATION_ITEMS } from '@/lib/constants/sidebar-navigation';
-import { cx, focusRing } from '@/lib/utils';
+import { UserRole } from '@/lib/routes/types';
 import { useAuthStore } from '@/store/auth';
-import { useUiModalsStore } from '@/store/ui/modals';
 
-import { UserRole } from '@/lib/prisma/generated/enums';
-import MobileSidebar from './MobileSidebar';
-import { UserProfileDesktop, UserProfileMobile } from './UserProfile';
+
+import { CreditDisplay } from '@/components/atom/CreditDisplay';
+import GradientCtaButton from '@/components/molecules/common/GradientCtaButton';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sidebar as ShadcnSidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
+import { useUiModalsStore } from '@/store/ui/modals';
+import { RiVipCrownLine } from '@remixicon/react';
+import { ChevronRightIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { UserProfileDropdown } from './UserProfileDropdown';
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -30,111 +32,188 @@ export function Sidebar() {
   const { user } = useAuthStore();
   const userRole = user?.role;
 
-  const isActive = (itemHref: string) => {
+  const isActive = (itemUrl?: string) => {
+    if (!itemUrl) return false;
     // Exact match for home route to avoid highlighting when on sub-routes
-    if (itemHref === siteConfig.baseLinks.home) {
-      return pathname === itemHref;
+    if (itemUrl === siteConfig.baseLinks.home) {
+      return pathname === itemUrl;
     }
-    // For other routes, check if pathname matches or starts with the href
-    return pathname === itemHref || pathname.startsWith(itemHref);
+    // For other routes, check if pathname matches or starts with the url
+    return pathname === itemUrl || pathname.startsWith(itemUrl);
   };
 
   const currentTheme = resolvedTheme || theme;
   const logoSrc = currentTheme === 'dark' ? '/logos/light-logo.png' : '/logos/dark-logo.png';
+
+  const teams = [
+    {
+      name: "Acme Inc",
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      plan: "Free",
+    },
+  ];
+
+  const [activeTeam, setActiveTeam] = useState(teams[0]);
+
   return (
-    <>
-      {/* sidebar (lg+) */}
-      <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
-        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-border bg-background-light p-4">
-          <div className="flex h-8 items-center px-2">
-            <Image
-              src={logoSrc}
-              alt="KostraLogo"
-              width={120}
-              height={32}
-              className="h-8 w-auto"
-            />
-          </div>
-          <nav aria-label="core navigation links" className="flex flex-1 flex-col space-y-4">
-            {/* Main Section */}
-            <div>
-              <span className="text-xs font-semibold uppercase leading-6 tracking-wide text-text">
-                Main
-              </span>
-              <ul role="list" className="space-y-0.5">
-                {NAVIGATION_ITEMS.filter(
-                  item => item.section === 'Main' && item.roles.includes(userRole as UserRole)
-                ).map(item => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className={cx(
-                        isActive(item.href) ? 'text-primary' : 'text-text-muted hover:text-text',
-                        'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-background-light',
-                        focusRing
-                      )}
-                    >
-                      <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {/* Admin Section */}
-            {userRole === 'ADMIN' && (
-              <div>
-                <span className="text-xs font-semibold uppercase leading-6 tracking-wide text-text">
-                  Admin
-                </span>
-                <ul role="list" className="space-y-0.5">
-                  {NAVIGATION_ITEMS.filter(
-                    item => item.section === 'Admin' && item.roles.includes(userRole as UserRole)
-                  ).map(item => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={cx(
-                          isActive(item.href) ? 'text-primary' : 'text-text-muted hover:text-text',
-                          'flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition hover:bg-background-light',
-                          focusRing
-                        )}
+    <SidebarProvider>
+      <ShadcnSidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground data-[size='lg']:group-data-[collapsible=icon]:p-0!"
+                  >
+                    <Image
+                      src={logoSrc}
+                      alt="KostraLogo"
+                      width={32}
+                      height={32}
+                      className="size-8 shrink-0"
+                    />
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">
+                        {activeTeam.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {activeTeam.plan}
+                      </span>
+                    </div>
+                    <ChevronsUpDownIcon />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Teams</DropdownMenuLabel>
+                    {teams.map((team) => (
+                      <DropdownMenuItem
+                        key={team.name}
+                        onClick={() => setActiveTeam(team)}
                       >
-                        <item.icon className="size-4 shrink-0" aria-hidden="true" />
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                        {team.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          {NAVIGATION_ITEMS.map((section) => {
+            // Filter items by user role
+            const filteredItems = section.items.filter((item) => {
+              if (!item.roles || item.roles.length === 0) return true;
+              return userRole && item.roles.includes(userRole as UserRole);
+            });
+
+            // Don't render section if no items after filtering
+            if (filteredItems.length === 0) return null;
+
+            // Don't render Admin section if user is not ADMIN
+            if (section.label === 'Admin' && userRole !== 'ADMIN') return null;
+
+            return (
+              <SidebarGroup key={section.label}>
+                <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {filteredItems.map((item) => {
+                    const IconComponent = item.icon;
+
+                    if (section.type === 'collapsible' && item.items) {
+                      // Collapsible item with nested items
+                      return (
+                        <Collapsible
+                          key={item.title}
+                          asChild
+                          defaultOpen={item.isActive}
+                          className="group/collapsible"
+                        >
+                          <SidebarMenuItem>
+                            <SidebarMenuButton tooltip={item.title} className="font-normal!" asChild>
+                              <CollapsibleTrigger>
+                                <IconComponent className="size-4 shrink-0" />
+                                <span>{item.title}</span>
+                                <ChevronRightIcon className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-90" />
+                              </CollapsibleTrigger>
+                            </SidebarMenuButton>
+                            <CollapsibleContent>
+                              <SidebarMenuSub>
+                                {item.items?.map((subItem) => (
+                                  <SidebarMenuSubItem key={subItem.title}>
+                                    <SidebarMenuSubButton asChild>
+                                      <Link href={subItem.url}>{subItem.title}</Link>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
+                            </CollapsibleContent>
+                          </SidebarMenuItem>
+                        </Collapsible>
+                      );
+                    } else {
+                      // Link item
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton
+                            className="font-normal!"
+                            asChild
+                            isActive={isActive(item.url)}
+                          >
+                            <Link href={item.url || '#'}>
+                              <IconComponent className="size-4 shrink-0" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    }
+                  })}
+                </SidebarMenu>
+              </SidebarGroup>
+            );
+          })}
+        </SidebarContent>
+        <SidebarFooter>
+          <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5 group-data-[collapsible=icon]:hidden">
+            <CreditDisplay size="sm" />
+            {userPlan === 'PRO' ? (
+              <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
+                <RiVipCrownLine className="size-3.5" /> Pro User
+              </span>
+            ) : (
+              <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
             )}
-          </nav>
-          <div className="mt-auto">
-            {/* Credits + Purchase CTA pinned at bottom, above profile (no container background) */}
-            <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5">
-              <CreditDisplay size="sm" />
-              {userPlan === 'PRO' ? (
-                <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
-                  <RiVipCrownLine className="size-3.5" /> Pro User
-                </span>
-              ) : (
-                <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
-              )}
-            </div>
-            <UserProfileDesktop />
           </div>
-        </aside>
-      </nav>
-      {/* top navbar (xs-lg) */}
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-2 shadow-xs sm:gap-x-6 sm:px-4 lg:hidden">
-        <div className="flex h-8 items-center">
-          <Image src={logoSrc} alt="Kostra Logo" width={120} height={32} className="h-8 w-auto" />
+          <UserProfileDropdown />
+        </SidebarFooter>
+        <SidebarRail />
+      </ShadcnSidebar>
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="bg-muted/50 aspect-video rounded-xl" />
+            <div className="bg-muted/50 aspect-video rounded-xl" />
+            <div className="bg-muted/50 aspect-video rounded-xl" />
+          </div>
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min" />
         </div>
-        <div className="flex items-center gap-1 sm:gap-2">
-          <UserProfileMobile />
-          <MobileSidebar />
-        </div>
-      </div>
-    </>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

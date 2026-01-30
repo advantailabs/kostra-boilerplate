@@ -1,98 +1,128 @@
 import { siteConfig } from '@/app/siteConfig';
 import {
-  RemixiconComponentType,
-  RiArticleLine,
-  RiCustomerService2Line,
-  RiFileLine,
-  RiHomeLine,
-  RiListCheck,
-  RiMailLine,
-  RiMailSendLine,
-  RiShoppingBagLine,
-  RiTeamLine,
-} from '@remixicon/react';
+  File,
+  FileText,
+  Home,
+  ListChecks,
+  Mail,
+  MessageSquare,
+  Package,
+  Send,
+  Users,
+  type LucideIcon
+} from 'lucide-react';
 import { ADMIN, USER, UserRole } from '../routes/types';
 
 /**
  * Navigation item interface for role-based access control
  */
 export interface NavigationItem {
-  name: string;
-  href: string;
-  icon: RemixiconComponentType; // Icon component type
-  section: string;
-  roles: UserRole[]; // Roles that can access this navigation item
+  title: string;
+  url?: string;
+  icon: LucideIcon;
+  roles?: readonly UserRole[];
+  isActive?: boolean;
+  items?: readonly Array<{
+    title: string;
+    url: string;
+  }>;
+}
+
+/**
+ * Navigation section interface
+ */
+export interface NavigationSection {
+  label: string;
+  type: 'collapsible' | 'link';
+  hideWhenIcon?: boolean;
+  items: NavigationItem[];
 }
 
 /**
  * Role-based navigation configuration
  * Each navigation item specifies which roles can access it
  */
-export const NAVIGATION_ITEMS: NavigationItem[] = [
-  // Main section - accessible to both USER and ADMIN
+export const NAVIGATION_ITEMS: NavigationSection[] = [
+  /* {
+    label: "Platform",
+    type: "collapsible",
+    items: [
+      {
+        title: "Playground",
+        icon: TerminalSquare,
+        isActive: true,
+        items: [
+          { title: "History", url: "#" },
+          { title: "Starred", url: "#" },
+          { title: "Settings", url: "#" },
+        ],
+      },
+    ],
+  }, */
   {
-    name: 'Home',
-    href: siteConfig.baseLinks.home,
-    section: 'Main',
-    roles: [USER, ADMIN],
-    icon: RiHomeLine,
+    label: "Main",
+    type: "link",
+    items: [
+      {
+        title: "Home",
+        url: siteConfig.baseLinks.home,
+        icon: Home,
+        roles: [USER, ADMIN],
+      },
+      {
+        title: "Files",
+        url: siteConfig.baseLinks.files,
+        icon: File,
+        roles: [ADMIN],
+      },
+    ],
   },
   {
-    name: 'Files',
-    href: siteConfig.baseLinks.files,
-    section: 'Main',
-    roles: [ADMIN],
-    icon: RiFileLine,
+    label: "Admin",
+    type: "link",
+    items: [
+      {
+        title: "Packages",
+        url: siteConfig.baseLinks.packages,
+        icon: Package,
+        roles: [ADMIN],
+      },
+      {
+        title: "Blogs",
+        url: siteConfig.baseLinks.blogs,
+        icon: FileText,
+        roles: [ADMIN],
+      },
+      {
+        title: "Categories",
+        url: siteConfig.baseLinks.categories,
+        icon: ListChecks,
+        roles: [ADMIN],
+      },
+      {
+        title: "Email Templates",
+        url: '/app/email-templates',
+        icon: Mail,
+        roles: [ADMIN],
+      },
+      {
+        title: "Email Campaigns",
+        url: '/app/email-campaigns',
+        icon: Send,
+        roles: [ADMIN],
+      },
+      {
+        title: "Users",
+        url: siteConfig.baseLinks.admin.users,
+        icon: Users,
+        roles: [ADMIN],
+      },
+      {
+        title: "Contact Management",
+        url: '/app/contact-management',
+        icon: MessageSquare,
+        roles: [ADMIN],
+      },
+    ],
   },
-
-  // Admin section - accessible only to ADMIN
-  {
-    name: 'Packages',
-    href: siteConfig.baseLinks.packages,
-    section: 'Admin',
-    roles: [ADMIN],
-    icon: RiShoppingBagLine,
-  },
-  {
-    name: 'Blogs',
-    href: siteConfig.baseLinks.blogs,
-    section: 'Admin',
-    roles: [ADMIN],
-    icon: RiArticleLine,
-  },
-  {
-    name: 'Categories',
-    href: siteConfig.baseLinks.categories,
-    section: 'Admin',
-    roles: [ADMIN],
-    icon: RiListCheck,
-  },
-  {
-    name: 'Email Templates',
-    href: '/app/email-templates',
-    icon: RiMailLine,
-    section: 'Admin',
-    roles: ['ADMIN'],
-  },
-  {
-    name: 'Email Campaigns',
-    href: '/app/email-campaigns',
-    icon: RiMailSendLine,
-    section: 'Admin',
-    roles: ['ADMIN'],
-  },
-  {
-    name: 'Users',
-    href: siteConfig.baseLinks.admin.users,
-    section: 'Admin',
-    roles: [ADMIN],
-    icon: RiTeamLine,
-  },
-  {
-    name: 'Contact Management',
-    href: '/app/contact-management',
-    icon: RiCustomerService2Line,
-    section: 'Admin',
-    roles: [ADMIN],
-  },
-] as const;
+];
