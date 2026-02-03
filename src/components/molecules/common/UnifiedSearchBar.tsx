@@ -25,7 +25,7 @@ export function UnifiedSearchBar({
               placeholder={placeholder}
               value={value}
               onChange={e => onChange(e.target.value)}
-              className="h-full"
+              className="h-full bg-background"
             />
           </div>
         </div>

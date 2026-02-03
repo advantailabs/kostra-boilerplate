@@ -68,7 +68,7 @@ export function PackagesTable({
     isLoading && searchInput !== debouncedSearch;
 
   return (
-    <div className={`min-h-screen bg-background ${className || ''}`}>
+    <div className={`bg-muted/40 min-h-screen rounded-xl ${className || ''}`}>
       <PageHeaderWithAction
         title="Packages"
         description="Manage subscription packages"
@@ -84,7 +84,7 @@ export function PackagesTable({
           className="mb-2"
         />
 
-        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
+        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background  before:pointer-events-none before:inset-0 before:rounded-xl">
           <DataTable<PackageTableRow, unknown>
             columns={packageTableColumns}
             data={packages}

@@ -6,6 +6,14 @@ import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 import { EmailTemplate } from '@/services/api/email-templates';
 import { Badge } from '../../../atom/Badge';
 import { Button } from '../../../atom/Button';
@@ -16,15 +24,18 @@ import {
   DropdownMenuTrigger,
 } from '../../../molecules/common/Dropdown';
 import { Pagination } from '../../../molecules/common/Pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../molecules/common/Select';
 import { Table, TableBody, TableCell, TableRow } from '../../../molecules/common/Table';
 import { UnifiedSearchBar } from '../../../molecules/common/UnifiedSearchBar';
+
+type EmailTemplateTypeOption = {
+  value: 'ALL' | 'TRANSACTIONAL' | 'PROMOTIONAL';
+  label: string;
+};
+const TYPE_OPTIONS: EmailTemplateTypeOption[] = [
+  { value: 'ALL', label: 'All Types' },
+  { value: 'TRANSACTIONAL', label: 'Transactional' },
+  { value: 'PROMOTIONAL', label: 'Promotional' },
+];
 
 // Component for individual table row to manage DropdownMenu state
 interface EmailTemplateRowProps {
@@ -211,21 +222,24 @@ export function EmailTemplatesTable({
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</label>
-            <Select
-              value={filterType}
-              onValueChange={(value: 'ALL' | 'TRANSACTIONAL' | 'PROMOTIONAL') =>
-                setFilterType(value)
-              }
+            <Combobox
+              items={TYPE_OPTIONS}
+              value={TYPE_OPTIONS.find((o) => o.value === filterType) ?? TYPE_OPTIONS[0]}
+              onValueChange={(item) => setFilterType(item?.value ?? 'ALL')}
+              itemToStringValue={(item) => item.label}
             >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Types</SelectItem>
-                <SelectItem value="TRANSACTIONAL">Transactional</SelectItem>
-                <SelectItem value="PROMOTIONAL">Promotional</SelectItem>
-              </SelectContent>
-            </Select>
+              <ComboboxInput placeholder="All Types" className="w-40" />
+              <ComboboxContent>
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
         </div>
 

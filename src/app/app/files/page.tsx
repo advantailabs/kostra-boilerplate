@@ -84,7 +84,7 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/40 rounded-xl">
       <PageHeaderWithAction
         title="Files"
         description="Manage and organize your uploaded files"
@@ -95,7 +95,7 @@ export default function FilesPage() {
       />
 
       {/* Files Content */}
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="p-4 max-sm:p-3">
         {/* Mobile actions */}
         <div className="hidden max-sm:mb-3 max-sm:block">
           <div className="flex items-center gap-2">

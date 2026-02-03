@@ -120,7 +120,7 @@ export function Modal({
       {primaryActionText && (
         <Button
           type="button"
-          variant={primaryActionVariant}
+          variant={primaryActionVariant === 'primary' ? 'default' : primaryActionVariant}
           onClick={onPrimaryAction}
           disabled={isPrimaryActionDisabled}
           isLoading={isPrimaryActionLoading}

@@ -65,7 +65,7 @@ export function Sidebar() {
   const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   return (
-    <ShadcnSidebar collapsible="icon">
+    <ShadcnSidebar variant="inset" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -162,24 +162,24 @@ export function Sidebar() {
                         </SidebarMenuItem>
                       </Collapsible>
                     );
-                    } else {
-                      // Link item
-                      return (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton
-                            className="font-normal!"
-                            asChild
-                            isActive={isActive(item.url)}
-                            tooltip={item.title}
-                          >
-                            <Link href={item.url || '#'}>
-                              <IconComponent className="size-4 shrink-0" />
-                              <span>{item.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    }
+                  } else {
+                    // Link item
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          className="font-normal!"
+                          asChild
+                          isActive={isActive(item.url)}
+                          tooltip={item.title}
+                        >
+                          <Link href={item.url || '#'}>
+                            <IconComponent className="size-4 shrink-0" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  }
                 })}
               </SidebarMenu>
             </SidebarGroup>

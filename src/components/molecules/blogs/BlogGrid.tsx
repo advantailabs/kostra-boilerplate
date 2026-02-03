@@ -1,4 +1,4 @@
-import { Button } from '@/components/atom/Button';
+import { Button } from '@/components/ui/button';
 import { BlogResponseType } from '@/types/blog.type';
 import { RiAddLine, RiSearch2Line } from '@remixicon/react';
 import { BlogCard } from './BlogCard';

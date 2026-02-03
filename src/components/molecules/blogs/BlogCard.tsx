@@ -74,7 +74,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
 
   return (
     <div
-      className={`card-shadow group h-48 w-full cursor-pointer overflow-hidden rounded-xl bg-background transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${className}`}
+      className={`card-shadow relative group h-48 w-full cursor-pointer overflow-hidden rounded-xl bg-background transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${className}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       role="button"
