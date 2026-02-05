@@ -1,5 +1,16 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { EmailType } from '@/lib/prisma/generated/enums';
 import Bold from '@tiptap/extension-bold';
 import BulletList from '@tiptap/extension-bullet-list';
@@ -26,24 +37,12 @@ import {
   ListOrdered,
   Plus,
   Underline as UnderlineIcon,
-  X,
+  X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useEmailTemplates } from '../../../../hooks/useEmailTemplates';
 import { EmailTemplate } from '../../../../services/api/email-templates';
-import { Button } from '../../../atom/Button';
-import { Input } from '../../../atom/Input';
-import { Label } from '../../../atom/Label';
-import { RadioCardGroup, RadioCardGroupIndicator, RadioCardItem } from '../../../atom/RadioCard';
 import { Switch } from '../../../atom/Switch';
-import { Textarea } from '../../../atom/Textarea';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '../../../molecules/common/Dialog';
 import {
   Select,
   SelectContent,
@@ -51,6 +50,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../molecules/common/Select';
+import { Textarea } from '../../../ui/textarea';
 
 interface EmailTemplateEditorModalProps {
   isOpen: boolean;
@@ -564,17 +564,17 @@ export function EmailTemplateEditorModal({
         }
       `}</style>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="custom-modal-class max-w-screen z-[1000] flex h-screen max-h-screen w-screen flex-col border-gray-300 bg-white p-0 shadow-2xl dark:border-gray-800 bg-background">
+        <DialogContent className="fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none">
           <div className="flex h-full flex-col">
             {/* Header */}
             <DialogHeader className="relative bg-white border-b border-gray-300 p-4 max-sm:p-3 dark:border-gray-700 dark:bg-background">
               <DialogTitle className="text-lg font-medium text-gray-900 max-sm:pr-12 dark:text-gray-100">
                 {mode === 'create' ? 'Create Email Template' : 'Edit Email Template'}
               </DialogTitle>
-              <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
+              {/* <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close</span>
-              </DialogClose>
+              </DialogClose> */}
             </DialogHeader>
 
             {/* Main Content */}
@@ -587,107 +587,93 @@ export function EmailTemplateEditorModal({
                   </h3>
 
                   {/* Template Name */}
-                  <div>
-                    <Label htmlFor="name">
-                      Template Name <span className="text-red-500">*</span>
-                    </Label>
+                  <Field>
+                    <FieldLabel htmlFor="name">
+                      Template Name <span className="text-destructive">*</span>
+                    </FieldLabel>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={e => handleInputChange('name', e.target.value)}
                       placeholder="Enter template name"
-                      className="mt-1"
                     />
-                  </div>
+                  </Field>
 
                   {/* Email Type */}
-                  <div>
-                    <Label>
-                      Email Type <span className="text-red-500">*</span>
-                    </Label>
-                    <RadioCardGroup
+                  <Field>
+                    <FieldLabel>
+                      Email Type <span className="text-destructive">*</span>
+                    </FieldLabel>
+                    <RadioGroup
                       value={formData.emailType}
                       onValueChange={value => handleInputChange('emailType', value)}
-                      className="mt-2 flex flex-row gap-4"
-                    >
-                      <RadioCardItem
-                        value="TRANSACTIONAL"
-                        id="transactional"
-                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-white dark:bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
-                      >
-                        <RadioCardGroupIndicator />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                          Transactional
-                        </span>
-                      </RadioCardItem>
-                      <RadioCardItem
-                        value="PROMOTIONAL"
-                        id="promotional"
-                        className="flex items-center space-x-2 rounded-md border border-gray-300 px-2.5 py-2 bg-white dark:bg-background hover:bg-gray-200 dark:border-gray-800 dark:hover:bg-gray-900"
-                      >
-                        <RadioCardGroupIndicator />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                          Promotional
-                        </span>
-                      </RadioCardItem>
-                    </RadioCardGroup>
-                  </div>
+                      className="grid grid-cols-2 gap-2">
+                      <FieldLabel htmlFor="transactional">
+                        <Field orientation="horizontal">
+                          <RadioGroupItem value="TRANSACTIONAL" id="transactional" />
+                          <div className="font-medium">Transactional</div>
+                        </Field>
+                      </FieldLabel>
+                      <FieldLabel htmlFor="promotional">
+                        <Field orientation="horizontal">
+                          <RadioGroupItem value="PROMOTIONAL" id="promotional" />
+                          <div className="font-medium">Promotional</div>
+                        </Field>
+                      </FieldLabel>
+                    </RadioGroup>
+                  </Field>
 
                   {/* From Name */}
-                  <div>
-                    <Label htmlFor="fromName">
-                      From Name <span className="text-red-500">*</span>
-                    </Label>
+                  <Field>
+                    <FieldLabel htmlFor="fromName">
+                      From Name <span className="text-destructive">*</span>
+                    </FieldLabel>
                     <Input
                       id="fromName"
                       value={formData.fromName}
                       onChange={e => handleInputChange('fromName', e.target.value)}
                       placeholder="Enter sender name"
-                      className="mt-1"
                     />
-                  </div>
+                  </Field>
 
                   {/* From Email */}
-                  <div>
-                    <Label htmlFor="fromEmail">
-                      From Email <span className="text-red-500">*</span>
-                    </Label>
+                  <Field>
+                    <FieldLabel htmlFor="fromEmail">
+                      From Email <span className="text-destructive">*</span>
+                    </FieldLabel>
                     <Input
                       id="fromEmail"
                       type="email"
                       value={formData.fromEmail}
                       onChange={e => handleInputChange('fromEmail', e.target.value)}
                       placeholder="Enter sender email"
-                      className="mt-1"
                     />
-                  </div>
+                  </Field>
 
                   {/* Reply-To Email */}
-                  <div>
-                    <Label htmlFor="replyToEmail">Reply-To Email</Label>
+                  <Field>
+                    <FieldLabel htmlFor="replyToEmail">Reply-To Email</FieldLabel>
                     <Input
                       id="replyToEmail"
                       type="email"
                       value={formData.replyToEmail}
                       onChange={e => handleInputChange('replyToEmail', e.target.value)}
                       placeholder="Enter reply-to email"
-                      className="mt-1"
                     />
-                  </div>
+                  </Field>
 
                   {/* Subject */}
-                  <div>
-                    <Label htmlFor="subject">
+                  <Field>
+                    <FieldLabel htmlFor="subject">
                       Subject <span className="text-red-500">*</span>
-                    </Label>
+                    </FieldLabel>
                     <Input
                       id="subject"
                       value={formData.subject}
                       onChange={e => handleInputChange('subject', e.target.value)}
                       placeholder="Enter email subject"
-                      className="mt-1"
                     />
-                  </div>
+                  </Field>
                 </div>
 
                 {/* Variables Section */}
@@ -702,7 +688,7 @@ export function EmailTemplateEditorModal({
                       <SelectTrigger className="flex-1">
                         <SelectValue placeholder="Select a field" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[1001]">
                         {availableFields.map(field => (
                           <SelectItem key={field} value={field}>
                             {field}
