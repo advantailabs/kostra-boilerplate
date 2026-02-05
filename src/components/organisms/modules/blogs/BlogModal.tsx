@@ -1,21 +1,13 @@
 'use client';
 
-import { Button } from '@/components/atom/Button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
 import Editor from '@/components/molecules/editor/Editor';
 import { BlogFormFields } from '@/components/molecules/form/BlogFormFields';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useBlogForm } from '@/hooks/useBlogForm';
 import { useCategories } from '@/hooks/useCategories';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
-import { RiCloseLine } from '@remixicon/react';
 
 interface BlogModalProps {
   isOpen: boolean;
@@ -67,22 +59,21 @@ export function BlogModal({
           }
         }}
       >
-        <DialogContent className="custom-modal-class max-w-screen z-[1000] flex h-screen max-h-screen w-screen flex-col border-border bg-background  p-0 shadow-2xl">
-          <div className="flex h-full flex-col">
+        <DialogContent
+          className="fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none"
+
+        >
+          <div className="flex h-full flex-col overflow-hidden">
             {/* Header */}
-            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3 bg-white dark:bg-background-light">
-              <DialogTitle className="text-lg font-medium text-text max-sm:pr-12">
+            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
+              <DialogTitle className="max-sm:pr-12">
                 {mode === 'create' ? 'Create Blog' : 'Edit Blog'}
               </DialogTitle>
-              <DialogDescription className="-mt-1 text-xs text-text-muted max-sm:pr-12">
+              <DialogDescription className="-mt-1 max-sm:pr-12">
                 {mode === 'create'
                   ? 'Create a new blog post with content, images, and metadata.'
                   : 'Update your blog post with new content and settings.'}
               </DialogDescription>
-              <DialogClose className="focus:ring-primary/20 absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-hidden focus:ring-2">
-                <RiCloseLine className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </DialogClose>
             </DialogHeader>
 
             {/* Main Content */}
@@ -121,7 +112,7 @@ export function BlogModal({
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-2 border-t border-border bg-background-light px-6 py-4">
+              <DialogFooter className="flex justify-end gap-2 border-t border-border bg-background-light px-6 py-4">
                 <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
@@ -133,7 +124,7 @@ export function BlogModal({
                 >
                   {mode === 'create' ? 'Create Blog' : 'Update Blog'}
                 </Button>
-              </div>
+              </DialogFooter>
             </form>
           </div>
         </DialogContent>

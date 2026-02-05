@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/atom/Button';
+import { Button } from '@/components/ui/button';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import Bold from '@tiptap/extension-bold';
 import BulletList from '@tiptap/extension-bullet-list';
@@ -493,9 +493,8 @@ function Editor({
         {/* Bold */}
         <Button
           type="button"
-          variant={editor.isActive('bold') ? 'primary' : 'secondary'}
+          variant={editor.isActive('bold') ? 'default' : 'secondary'}
           onClick={toggleBold}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <BoldIcon className="h-4 w-4" />
         </Button>
@@ -503,9 +502,8 @@ function Editor({
         {/* Italic */}
         <Button
           type="button"
-          variant={editor.isActive('italic') ? 'primary' : 'secondary'}
+          variant={editor.isActive('italic') ? 'default' : 'secondary'}
           onClick={toggleItalic}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <ItalicIcon className="h-4 w-4" />
         </Button>
@@ -513,9 +511,8 @@ function Editor({
         {/* Underline */}
         <Button
           type="button"
-          variant={editor.isActive('underline') ? 'primary' : 'secondary'}
+          variant={editor.isActive('underline') ? 'default' : 'secondary'}
           onClick={toggleUnderline}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <UnderlineIcon className="h-4 w-4" />
         </Button>
@@ -523,9 +520,8 @@ function Editor({
         {/* Strike */}
         <Button
           type="button"
-          variant={editor.isActive('strike') ? 'primary' : 'secondary'}
+          variant={editor.isActive('strike') ? 'default' : 'secondary'}
           onClick={toggleStrike}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <StrikethroughIcon className="h-4 w-4" />
         </Button>
@@ -538,7 +534,6 @@ function Editor({
             type="button"
             variant="secondary"
             onClick={() => setShowColorPicker(!showColorPicker)}
-            className="flex items-center gap-1 px-2 py-1 text-xs"
           >
             <Palette className="h-4 w-4" />
           </Button>
@@ -567,7 +562,7 @@ function Editor({
                 />
                 <Button
                   type="button"
-                  variant="primary"
+                  variant="default"
                   onClick={() => setTextColor(selectedColor)}
                   className="px-2 py-1 text-xs"
                 >
@@ -583,27 +578,24 @@ function Editor({
         {/* Text Alignment Buttons */}
         <Button
           type="button"
-          variant={editor.isActive({ textAlign: 'left' }) ? 'primary' : 'secondary'}
+          variant={editor.isActive({ textAlign: 'left' }) ? 'default' : 'secondary'}
           onClick={() => setTextAlign('left')}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <AlignLeft className="h-4 w-4" />
         </Button>
 
         <Button
           type="button"
-          variant={editor.isActive({ textAlign: 'center' }) ? 'primary' : 'secondary'}
+          variant={editor.isActive({ textAlign: 'center' }) ? 'default' : 'secondary'}
           onClick={() => setTextAlign('center')}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <AlignCenter className="h-4 w-4" />
         </Button>
 
         <Button
           type="button"
-          variant={editor.isActive({ textAlign: 'right' }) ? 'primary' : 'secondary'}
+          variant={editor.isActive({ textAlign: 'right' }) ? 'default' : 'secondary'}
           onClick={() => setTextAlign('right')}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <AlignRight className="h-4 w-4" />
         </Button>
@@ -613,9 +605,8 @@ function Editor({
         {/* Code */}
         <Button
           type="button"
-          variant={editor.isActive('code') ? 'primary' : 'secondary'}
+          variant={editor.isActive('code') ? 'default' : 'secondary'}
           onClick={toggleCode}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <CodeIcon className="h-4 w-4" />
         </Button>
@@ -623,9 +614,8 @@ function Editor({
         {/* Code Block */}
         <Button
           type="button"
-          variant={editor.isActive('codeBlock') ? 'primary' : 'secondary'}
+          variant={editor.isActive('codeBlock') ? 'default' : 'secondary'}
           onClick={toggleCodeBlock}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <CodeIcon className="h-4 w-4" />
           <span>Block</span>
@@ -634,9 +624,8 @@ function Editor({
         {/* Blockquote */}
         <Button
           type="button"
-          variant={editor.isActive('blockquote') ? 'primary' : 'secondary'}
+          variant={editor.isActive('blockquote') ? 'default' : 'secondary'}
           onClick={toggleBlockquote}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <QuoteIcon className="h-4 w-4" />
         </Button>
@@ -647,9 +636,8 @@ function Editor({
         <div className="link-dropdown relative">
           <Button
             type="button"
-            variant={editor.isActive('link') ? 'primary' : 'secondary'}
+            variant={editor.isActive('link') ? 'default' : 'secondary'}
             onClick={handleLinkButtonClick}
-            className="flex items-center gap-1 px-2 py-1 text-xs"
           >
             <LinkIcon className="h-4 w-4" />
           </Button>
@@ -675,7 +663,7 @@ function Editor({
               <div className="mt-2 flex gap-1">
                 <Button
                   type="button"
-                  variant="primary"
+                  variant="default"
                   onClick={setLink}
                   className="px-2 py-1 text-xs"
                 >
@@ -700,7 +688,6 @@ function Editor({
           variant="secondary"
           onClick={triggerImageUpload}
           disabled={isUploading}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <ImageIcon className={`h-4 w-4 ${isUploading ? 'animate-spin' : ''}`} />
           {isUploading && <span>Uploading...</span>}
@@ -722,7 +709,6 @@ function Editor({
               type="button"
               variant="secondary"
               onClick={() => resizeImage(200)}
-              className="px-2 py-1 text-xs"
             >
               Small
             </Button>
@@ -730,7 +716,6 @@ function Editor({
               type="button"
               variant="secondary"
               onClick={() => resizeImage(400)}
-              className="px-2 py-1 text-xs"
             >
               Medium
             </Button>
@@ -738,7 +723,6 @@ function Editor({
               type="button"
               variant="secondary"
               onClick={() => resizeImage(600)}
-              className="px-2 py-1 text-xs"
             >
               Large
             </Button>
@@ -746,7 +730,6 @@ function Editor({
               type="button"
               variant="secondary"
               onClick={() => resizeImage(800)}
-              className="px-2 py-1 text-xs"
             >
               XL
             </Button>
@@ -755,25 +738,22 @@ function Editor({
             <div className="mx-2 h-6 w-px bg-gray-300" />
             <Button
               type="button"
-              variant={getCurrentImageAlign() === 'left' ? 'primary' : 'secondary'}
+              variant={getCurrentImageAlign() === 'left' ? 'default' : 'secondary'}
               onClick={() => setImageAlign('left')}
-              className="flex items-center gap-1 px-2 py-1 text-xs"
             >
               <AlignLeft className="h-4 w-4" />
             </Button>
             <Button
               type="button"
-              variant={getCurrentImageAlign() === 'center' ? 'primary' : 'secondary'}
+              variant={getCurrentImageAlign() === 'center' ? 'default' : 'secondary'}
               onClick={() => setImageAlign('center')}
-              className="flex items-center gap-1 px-2 py-1 text-xs"
             >
               <AlignCenter className="h-4 w-4" />
             </Button>
             <Button
               type="button"
-              variant={getCurrentImageAlign() === 'right' ? 'primary' : 'secondary'}
+              variant={getCurrentImageAlign() === 'right' ? 'default' : 'secondary'}
               onClick={() => setImageAlign('right')}
-              className="flex items-center gap-1 px-2 py-1 text-xs"
             >
               <AlignRight className="h-4 w-4" />
             </Button>
@@ -784,27 +764,24 @@ function Editor({
 
         <Button
           type="button"
-          variant={editor.isActive('bulletList') ? 'primary' : 'secondary'}
+          variant={editor.isActive('bulletList') ? 'default' : 'secondary'}
           onClick={toggleBulletList}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <List className="h-4 w-4" />
         </Button>
 
         <Button
           type="button"
-          variant={editor.isActive('orderedList') ? 'primary' : 'secondary'}
+          variant={editor.isActive('orderedList') ? 'default' : 'secondary'}
           onClick={toggleOrderedList}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
 
         <Button
           type="button"
-          variant={editor.isActive('taskList') ? 'primary' : 'secondary'}
+          variant={editor.isActive('taskList') ? 'default' : 'secondary'}
           onClick={toggleTaskList}
-          className="flex items-center gap-1 px-2 py-1 text-xs"
         >
           <CheckSquare className="h-4 w-4" />
         </Button>

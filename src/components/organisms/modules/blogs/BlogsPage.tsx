@@ -179,7 +179,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-background ${className || ''}`}>
+    <div className={`min-h-screen bg-muted/40 rounded-xl ${className || ''}`}>
       <BlogModal
         isOpen={isBlogModalOpen}
         onClose={handleBlogModalClose}
@@ -207,7 +207,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
         addButtonText="New"
       />
 
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="p-4 max-sm:p-3">
         <UnifiedSearchBar
           placeholder="Search by title..."
           value={searchInput}
