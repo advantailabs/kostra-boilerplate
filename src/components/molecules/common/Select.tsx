@@ -139,7 +139,7 @@ const SelectContent = React.forwardRef<
           className={cx(
             'p-1',
             position === 'popper' &&
-              'h-[var(--radix-select-trigger-height)] w-full min-w-[calc(var(--radix-select-trigger-width))]'
+            'h-[var(--radix-select-trigger-height)] w-full min-w-[calc(var(--radix-select-trigger-width))]'
           )}
         >
           {children}
@@ -282,5 +282,6 @@ export {
   SelectItemPeriod,
   SelectSeparator,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 };
+
