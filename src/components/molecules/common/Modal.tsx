@@ -171,7 +171,7 @@ export function Modal({
 
         <div className={removePadding ? 'p-0' : 'px-4 py-4 max-sm:px-3 max-sm:py-3'}>
           {/* Main content */}
-          <div className="mb-4 max-sm:mb-3">{children}</div>
+          <div className="">{children}</div>
 
         </div>
         {/* Footer with action buttons */}

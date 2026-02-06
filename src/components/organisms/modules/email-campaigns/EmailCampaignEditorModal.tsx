@@ -6,16 +6,26 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { UserSelectionModal } from '@/components/molecules/common/UserSelectionModal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { CampaignStatus } from '@/lib/prisma/generated/browser';
 import { CampaignFormData, type EmailCampaignEditorModalProps } from '@/types/campaign';
 import { UserSelection } from '@/types/user';
 import { useAdminUsers } from '../../../../hooks/useAdminUsers';
 import { useEmailCampaigns } from '../../../../hooks/useEmailCampaigns';
 import { useEmailTemplates } from '../../../../hooks/useEmailTemplates';
-import { Button } from '../../../atom/Button';
-import { Input } from '../../../atom/Input';
 import { Label } from '../../../atom/Label';
-import { Textarea } from '../../../atom/Textarea';
 import { DateTimePicker24hForm } from '../../../molecules/common/DateTimePicker24hForm';
 import { Modal } from '../../../molecules/common/Modal';
 import {
@@ -290,7 +300,7 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
     mode === 'create' ? 'Create a new email marketing campaign' : 'Update the campaign details';
 
   const modalFooter = (
-    <div className="flex p-3 justify-end gap-3">
+    <div className="flex justify-end gap-3">
       <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
         Cancel
       </Button>
@@ -309,7 +319,6 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
             }
           }
         }}
-        className="mr-4"
       >
         {(() => {
           if (isLoading && mode === 'create') return 'Creating Campaign...';
@@ -327,16 +336,16 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
         onClose={onClose}
         title={modalTitle}
         description={modalDescription}
-        maxWidth="max-w-6xl"
+        maxWidth="max-w-6xl!"
         footer={modalFooter}
         removePadding
         contentClassName="overflow-hidden mb-4 max-sm:mb-3"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="mb-0 min-h-0 flex-1 flex-col">
-          <div className="max-h-[60vh] max-w-full flex-1 space-y-4 overflow-y-auto overflow-x-hidden px-4 py-0 sm:max-h-none sm:space-y-6 sm:px-6 min-[660px]:max-h-[70vh]">
+          <div className="max-h-[60vh] max-w-full flex-1 space-y-4 overflow-y-auto overflow-x-hidden px-4 py-0 sm:max-h-none sm:space-y-6 sm:px-4 min-[660px]:max-h-[70vh]">
             <div className="grid h-full grid-cols-1 gap-4 sm:gap-6 lg:min-w-0 lg:grid-cols-2 lg:gap-8 ">
               {/* Left Column - Campaign Details */}
-              <div className="min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8 lg:border-r lg:border-gray-300 lg:pl-2 lg:pr-6 dark:lg:border-gray-700">
+              <div className="min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8 lg:border-r lg:border-gray-300 lg:pr-6 dark:lg:border-gray-700">
                 {/* Campaign Details Section */}
                 <div className="mt-2 space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -344,10 +353,10 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
                   </h3>
 
                   <div className="space-y-4">
-                    <div className="space-y-1">
-                      <Label htmlFor="name">
-                        Campaign Name <span className="text-red-500">*</span>
-                      </Label>
+                    <Field>
+                      <FieldLabel htmlFor="name">
+                        Campaign Name <span className="text-destructive">*</span>
+                      </FieldLabel>
                       <Input
                         id="name"
                         {...register('name', {
@@ -356,53 +365,62 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
                         placeholder="Enter campaign name"
                         className={errors.name ? 'border-red-500' : ''}
                       />
-                      {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-                    </div>
+                      <FieldError errors={errors.name ? [{ message: errors.name.message }] : []} />
+                    </Field>
 
-                    <div className="space-y-1">
-                      <Label htmlFor="description">Description (Optional)</Label>
+                    <Field>
+                      <FieldLabel htmlFor="description">Description (Optional)</FieldLabel>
                       <Textarea
                         id="description"
                         {...register('description')}
                         placeholder="Brief description of your campaign"
                         rows={14}
+                        className="h-40 max-h-40"
                       />
-                    </div>
+                    </Field>
 
-                    <div className="space-y-1 pb-4 sm:pb-6 lg:pb-8">
-                      <Label htmlFor="emailTemplateId">
-                        Template <span className="text-red-500">*</span>
-                      </Label>
-                      <Select
-                        value={watch('emailTemplateId')?.toString() || ''}
-                        onValueChange={value => {
-                          setValue('emailTemplateId', parseInt(value, 10));
+                    <Field className="pb-4 sm:pb-6 lg:pb-8">
+                      <FieldLabel htmlFor="emailTemplateId">
+                        Template <span className="text-destructive">*</span>
+                      </FieldLabel>
+                      <Combobox
+                        id="emailTemplateId"
+                        items={emailTemplates ?? []}
+                        value={
+                          emailTemplates?.find(t => t.id === watch('emailTemplateId')) ?? null
+                        }
+                        onValueChange={template => {
+                          setValue('emailTemplateId', template?.id);
                           clearErrors('emailTemplateId');
                         }}
+                        itemToStringLabel={template => template.name}
+                        isItemEqualToValue={(a, b) => a?.id === b?.id}
+                        itemToStringValue={template => template.name}
                       >
-                        <SelectTrigger
+                        <ComboboxInput
+                          id="emailTemplateId"
+                          placeholder="Select a template"
                           className={`w-full min-w-0 ${errors.emailTemplateId ? 'border-red-500' : ''}`}
-                        >
-                          <SelectValue placeholder="Select a template" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {emailTemplates.map(template => (
-                            <SelectItem key={template.id} value={template.id.toString()}>
-                              {template.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.emailTemplateId && (
-                        <p className="text-sm text-red-500">{errors.emailTemplateId.message}</p>
-                      )}
-                    </div>
+                        />
+                        <ComboboxContent className="pointer-events-auto">
+                          <ComboboxEmpty>No templates found.</ComboboxEmpty>
+                          <ComboboxList>
+                            {template => (
+                              <ComboboxItem key={template.id} value={template}>
+                                {template.name}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                      <FieldError errors={errors.emailTemplateId ? [{ message: errors.emailTemplateId.message }] : []} />
+                    </Field>
                   </div>
                 </div>
               </div>
 
               {/* Right Column - Recipients and Send Options */}
-              <div className="mt-2 min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8 lg:pl-2">
+              <div className="mt-2 min-w-0 space-y-4 overflow-hidden sm:space-y-6 lg:space-y-8">
                 {/* Recipients Section */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -411,16 +429,16 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
 
                   <div className="space-y-4">
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="inline-flex flex-shrink-0 items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      <Badge className="shrink-0 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                         Recipients: {selectedRecipients.length}
-                      </span>
-                      <button
+                      </Badge>
+                      <Button
                         type="button"
                         onClick={() => setShowUserSelectionModal(true)}
-                        className="flex-shrink-0 text-sm font-medium text-indigo-600 underline decoration-2 underline-offset-2 transition-all duration-200 hover:text-indigo-800 hover:decoration-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:decoration-indigo-300"
+                        variant="link"
                       >
                         Select Users
-                      </button>
+                      </Button>
                     </div>
 
                     {errors.recipients && (
