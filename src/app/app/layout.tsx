@@ -24,7 +24,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         <Sidebar />
         <SidebarInset>
-          <div className="flex flex-1 flex-col">
+          <div className="bg-muted/40 flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 md:gap-6">
                 {children}

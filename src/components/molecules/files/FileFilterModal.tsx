@@ -100,7 +100,7 @@ export function FileFilterModal({
       </div>
 
       {/* Two Column Layout for Filters */}
-      <div className="mb-4 grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {/* Left Column */}
         <div className="space-y-4">
           {/* File Type Filter */}

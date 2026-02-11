@@ -215,7 +215,7 @@ export function EmailCampaignsTable({
           </div>
         }
       />
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-full space-y-4 p-4 max-sm:p-3">
         {/* Mobile controls: Status + New Campaign (only on small screens) */}
         <div className="mb-4 flex flex-col gap-3 sm:hidden">
           <div className="flex items-center gap-3">
@@ -251,7 +251,7 @@ export function EmailCampaignsTable({
         </div>
 
         {/* Search */}
-        <div className="mb-2">
+        <div className="">
           <UnifiedSearchBar
             placeholder="Search by name..."
             value={searchInput}
@@ -261,7 +261,7 @@ export function EmailCampaignsTable({
         </div>
 
         {/* Desktop Table */}
-        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background">
+        <div className="relative overflow-hidden overflow-x-auto rounded-md bg-background">
           <DataTable<CampaignWithRelations, unknown>
             columns={emailCampaignsTableColumns}
             data={paginatedCampaigns}

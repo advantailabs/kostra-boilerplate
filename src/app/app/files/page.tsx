@@ -97,7 +97,7 @@ export default function FilesPage() {
       {/* Files Content */}
       <div className="p-4 max-sm:p-3">
         {/* Mobile actions */}
-        <div className="hidden max-sm:mb-3 max-sm:block">
+        <div className="hidden max-sm:mb-3">{/* max-sm:block */}
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setShowFilterModal(true)}

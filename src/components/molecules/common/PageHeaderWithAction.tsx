@@ -28,7 +28,7 @@ export function PageHeaderWithAction({
 
   return (
     <header
-      className={`flex h-16 shrink-0 items-center justify-between gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 sticky top-0 z-10 ${className || ''}`}
+      className={`flex h-16 shrink-0 items-center justify-between gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 sticky top-0 z-50 bg-background/40 backdrop-blur-md rounded-t-xl ${className || ''}`}
     >
       <div className="flex items-center gap-2 px-4 min-w-0 flex-1">
         <SidebarTrigger className="-ml-1" />

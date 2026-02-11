@@ -73,15 +73,15 @@ export function CategoriesTable({
         addButtonText="New"
       />
 
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-full space-y-4 p-4 max-sm:p-3">
         <UnifiedSearchBar
           placeholder="Search by name or slug..."
           value={searchInput}
           onChange={setSearchInput}
-          className="mb-2"
+          className=""
         />
 
-        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background  before:pointer-events-none before:inset-0 before:rounded-xl">
+        <div className="relative overflow-hidden overflow-x-auto rounded-md bg-background  before:pointer-events-none before:inset-0 before:rounded-md">
           <DataTable<CategoryTableRow, unknown>
             columns={categoryTableColumns}
             data={categories}

@@ -207,7 +207,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
         addButtonText="New"
       />
 
-      <div className="p-4 max-sm:p-3">
+      <div className="p-4 space-y-4 max-sm:p-3">
         <UnifiedSearchBar
           placeholder="Search by title..."
           value={searchInput}
@@ -220,7 +220,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
           onEdit={handleEditBlog}
           onDelete={handleDeleteBlog}
           onBlogClick={handleBlogClick}
-          className="mt-2"
+          className=""
         />
 
         {pagination && (

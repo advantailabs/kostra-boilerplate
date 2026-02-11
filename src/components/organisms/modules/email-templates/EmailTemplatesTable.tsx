@@ -17,6 +17,7 @@ import { EmailTemplate } from '@/services/api/email-templates';
 import { Pagination } from '../../../molecules/common/Pagination';
 import { UnifiedSearchBar } from '../../../molecules/common/UnifiedSearchBar';
 
+import { Field, FieldLabel } from '@/components/ui/field';
 import { emailTemplateTableColumns } from './emailTemplatesTableColumns';
 
 type EmailTemplateTypeOption = {
@@ -91,9 +92,9 @@ export function EmailTemplatesTable({
         onAdd={onAdd}
         addButtonText="New Template"
       />
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-full space-y-4 p-4 max-sm:p-3">
         {/* Search and Filter */}
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <UnifiedSearchBar
             placeholder="Search by title..."
             value={searchInput}
@@ -101,15 +102,15 @@ export function EmailTemplatesTable({
             className="flex-1"
           />
 
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</label>
+          <Field className="flex flex-row items-center gap-2 w-40">
+            <FieldLabel htmlFor="type-filter" className="w-auto!">Type:</FieldLabel>
             <Combobox
               items={TYPE_OPTIONS}
               value={TYPE_OPTIONS.find((o) => o.value === filterType) ?? TYPE_OPTIONS[0]}
               onValueChange={(item) => setFilterType(item?.value ?? 'ALL')}
               itemToStringValue={(item) => item.label}
             >
-              <ComboboxInput placeholder="All Types" className="w-40" />
+              <ComboboxInput placeholder="All Types" className="bg-background " />
               <ComboboxContent>
                 <ComboboxEmpty>No items found.</ComboboxEmpty>
                 <ComboboxList>
@@ -121,11 +122,11 @@ export function EmailTemplatesTable({
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>
-          </div>
+          </Field>
         </div>
 
         {/* Table */}
-        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background">
+        <div className="relative overflow-hidden overflow-x-auto rounded-md bg-background">
           <DataTable<EmailTemplate, unknown>
             columns={emailTemplateTableColumns}
             data={paginatedTemplates}

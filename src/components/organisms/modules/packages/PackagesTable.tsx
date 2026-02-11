@@ -76,15 +76,15 @@ export function PackagesTable({
         addButtonText="New Package"
       />
 
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-full p-4 space-y-4 max-sm:p-3">
         <UnifiedSearchBar
           placeholder="Search by title..."
           value={searchInput}
           onChange={setSearchInput}
-          className="mb-2"
+          className=""
         />
 
-        <div className="relative overflow-hidden overflow-x-auto rounded-xl bg-background  before:pointer-events-none before:inset-0 before:rounded-xl">
+        <div className="relative overflow-hidden overflow-x-auto rounded-md bg-background  before:pointer-events-none before:inset-0 before:rounded-md">
           <DataTable<PackageTableRow, unknown>
             columns={packageTableColumns}
             data={packages}
