@@ -65,7 +65,7 @@ export function CategoriesTable({
   }
 
   return (
-    <div className={`min-h-screen bg-muted/40 rounded-xl ${className || ''}`}>
+    <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
         title="Categories"
         description="Manage blog categories"

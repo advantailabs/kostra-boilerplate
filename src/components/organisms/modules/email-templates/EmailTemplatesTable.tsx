@@ -84,7 +84,7 @@ export function EmailTemplatesTable({
   }, [page, onPageChange]);
 
   return (
-    <div className={`min-h-screen bg-muted/40 rounded-xl ${className || ''}`}>
+    <div className={`min-h-screen  ${className || ''}`}>
       <PageHeaderWithAction
         title="Email Templates"
         description="Manage your reusable email templates"

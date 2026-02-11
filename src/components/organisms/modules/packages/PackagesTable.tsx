@@ -68,7 +68,7 @@ export function PackagesTable({
     isLoading && searchInput !== debouncedSearch;
 
   return (
-    <div className={`bg-muted/40 min-h-screen rounded-xl ${className || ''}`}>
+    <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
         title="Packages"
         description="Manage subscription packages"

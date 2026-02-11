@@ -184,7 +184,7 @@ export function EmailCampaignsTable({
   }, [page, onPageChange]);
 
   return (
-    <div className={`min-h-screen overflow-x-hidden rounded-xl bg-muted/40 ${className || ''}`}>
+    <div className={`min-h-screen overflow-x-hidden ${className || ''}`}>
       <PageHeaderWithAction
         title="Email Campaigns"
         description="Manage your email marketing campaigns"

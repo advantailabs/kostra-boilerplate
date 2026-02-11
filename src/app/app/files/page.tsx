@@ -84,7 +84,7 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/40 rounded-xl">
+    <div className="min-h-screen">
       <PageHeaderWithAction
         title="Files"
         description="Manage and organize your uploaded files"

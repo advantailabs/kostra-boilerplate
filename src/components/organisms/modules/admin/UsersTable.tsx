@@ -151,7 +151,7 @@ export function UsersTable({
   }
 
   return (
-    <div className={`min-h-screen bg-background ${className || ''}`}>
+    <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
         title="Users"
         description="Workspace administrators can add, manage, and remove users"
