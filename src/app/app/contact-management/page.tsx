@@ -102,7 +102,7 @@ export default function ContactManagementPage() {
                 placeholder="Search by name or email..."
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className=""
+                className="bg-background"
               />
             </Field>
             <Field className="sm:w-56">
@@ -113,7 +113,7 @@ export default function ContactManagementPage() {
                 onValueChange={item => setStatus(item?.value)}
                 itemToStringValue={item => item.label}
               >
-                <ComboboxInput placeholder="Status" showClear />
+                <ComboboxInput placeholder="Status" showClear className="bg-background" />
                 <ComboboxContent align="start">
                   <ComboboxEmpty>No items found.</ComboboxEmpty>
                   <ComboboxList>
@@ -134,7 +134,7 @@ export default function ContactManagementPage() {
                 onValueChange={item => setPurpose(item?.value)}
                 itemToStringValue={item => item.label}
               >
-                <ComboboxInput placeholder="Purpose" showClear />
+                <ComboboxInput placeholder="Purpose" showClear className="bg-background" />
                 <ComboboxContent align="start">
                   <ComboboxEmpty>No items found.</ComboboxEmpty>
                   <ComboboxList>
