@@ -237,7 +237,7 @@ export function CampaignRecipientsModal({
 
           {/* Desktop Table */}
           {!isLoading && !error && recipients.length > 0 && (
-            <div className="relative overflow-hidden overflow-x-auto rounded-lg border-gray-200 dark:border-gray-800">
+            <div className="relative overflow-hidden overflow-x-auto rounded-md border-gray-200 dark:border-gray-800">
               <DataTable<CampaignRecipientWithUserSimple, unknown>
                 columns={campaignRecipientsTableColumns}
                 data={recipients}

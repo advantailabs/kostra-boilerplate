@@ -78,18 +78,25 @@ export function DataTable<TData, TValue>({
                         table.getRowModel().rows.map((row) => {
                             const tableMeta = table.options.meta as {
                                 onEdit?: (data: TData) => void
+                                onRowClick?: (data: TData) => void
                             } | undefined
+                            const handleRowClick = () => {
+                                if (tableMeta?.onRowClick) {
+                                    tableMeta.onRowClick(row.original)
+                                } else {
+                                    tableMeta?.onEdit?.(row.original)
+                                }
+                            }
+                            const isClickable =
+                                Boolean(tableMeta?.onRowClick) ||
+                                Boolean(tableMeta?.onEdit)
                             return (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && 'selected'}
-                                    onClick={() =>
-                                        tableMeta?.onEdit?.(row.original)
-                                    }
+                                    onClick={handleRowClick}
                                     className={
-                                        tableMeta?.onEdit
-                                            ? 'cursor-pointer'
-                                            : undefined
+                                        isClickable ? 'cursor-pointer' : undefined
                                     }
                                 >
                                     {row.getVisibleCells().map((cell) => (

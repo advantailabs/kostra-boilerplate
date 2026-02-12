@@ -3,19 +3,33 @@
  * Allows admins to edit user details with a clean form layout
  */
 
-import { Input } from '@/components/atom/Input';
 import { Modal } from '@/components/molecules/common/Modal';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/molecules/common/Select';
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { Badge } from '@/components/ui/badge';
+import { Field, FieldContent, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, UserRole } from '@/lib/constants/admin';
 import { ModalEditUserProps } from '@/types/user';
 import { useState } from 'react';
+
+type PlanOption = { value: 'FREE' | 'PRO'; label: string };
+const PLAN_OPTIONS: PlanOption[] = [
+  { value: 'FREE', label: 'FREE' },
+  { value: 'PRO', label: 'PRO' },
+];
+
+const YES_NO_OPTIONS = [
+  { value: 'no', label: 'No' },
+  { value: 'yes', label: 'Yes' },
+];
 
 export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
   const { updateUser, isUpdating } = useAdminUsers();
@@ -117,7 +131,7 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
       isOpen={isOpen}
       onClose={onClose}
       title="Edit User"
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-2xl!"
       primaryActionText="Save changes"
       secondaryActionText="Close"
       onPrimaryAction={handleSubmit}
@@ -126,179 +140,202 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
       <div className="space-y-6">
         {/* Basic Information */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium">
-              Name
-            </label>
-            <Input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={e => handleInputChange('name', e.target.value)}
-              className={errors.name ? 'border-red-500' : ''}
-            />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-          </div>
+          <Field>
+            <FieldLabel htmlFor="name">Name</FieldLabel>
+            <FieldContent>
+              <Input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={e => handleInputChange('name', e.target.value)}
+                aria-invalid={!!errors.name}
+              />
+              {errors.name && <FieldError>{errors.name}</FieldError>}
+            </FieldContent>
+          </Field>
 
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium">
-              Email
-            </label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={e => handleInputChange('email', e.target.value)}
-              className={errors.email ? 'border-red-500' : ''}
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-          </div>
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <FieldContent>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={e => handleInputChange('email', e.target.value)}
+                aria-invalid={!!errors.email}
+              />
+              {errors.email && <FieldError>{errors.email}</FieldError>}
+            </FieldContent>
+          </Field>
         </div>
 
         {/* New Password and Role */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium">
-              New Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={e => handleInputChange('password', e.target.value)}
-              placeholder="Leave empty to keep current password"
-              className={errors.password ? 'border-red-500' : ''}
-            />
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-          </div>
+          <Field>
+            <FieldLabel htmlFor="password">New Password</FieldLabel>
+            <FieldContent>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={e => handleInputChange('password', e.target.value)}
+                placeholder="Leave empty to keep current password"
+                aria-invalid={!!errors.password}
+              />
+              {errors.password && <FieldError>{errors.password}</FieldError>}
+            </FieldContent>
+          </Field>
 
-          <div>
-            <label htmlFor="role" className="mb-1 block text-sm font-medium">
-              Role
-            </label>
-            <Select value={formData.role} onValueChange={value => handleInputChange('role', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                {ADMIN_ROLES.map(role => (
-                  <SelectItem key={role.value} value={role.value}>
-                    {role.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Field>
+            <FieldLabel htmlFor="role">Role</FieldLabel>
+            <Combobox
+              id="role"
+              items={ADMIN_ROLES}
+              value={ADMIN_ROLES.find(o => o.value === formData.role)}
+              onValueChange={item => handleInputChange('role', item?.value)}
+              itemToStringValue={item => item.label}
+            >
+              <ComboboxInput placeholder="Select role" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {item => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
         </div>
 
         {/* Plan and Plan Expiring Date */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="plan" className="mb-1 block text-sm font-medium">
-              Plan
-            </label>
-            <Select value={formData.plan} onValueChange={value => handleInputChange('plan', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="FREE">FREE</SelectItem>
-                <SelectItem value="PRO">PRO</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Field>
+            <FieldLabel htmlFor="plan">Plan</FieldLabel>
+            <Combobox<PlanOption>
+              id="plan"
+              items={PLAN_OPTIONS}
+              value={PLAN_OPTIONS.find(o => o.value === formData.plan) ?? undefined}
+              onValueChange={item => handleInputChange('plan', item?.value)}
+              itemToStringValue={item => item.label}
+            >
+              <ComboboxInput placeholder="Select plan" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {item => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
-          <div>
-            <label htmlFor="planExpiringAt" className="mb-1 block text-sm font-medium">
-              Plan Expiring Date
-            </label>
-            <Input
-              id="planExpiringAt"
-              type="datetime-local"
-              value={
-                formData.planExpiringAt
-                  ? new Date(formData.planExpiringAt).toISOString().slice(0, 16)
-                  : ''
-              }
-              onChange={e =>
-                handleInputChange(
-                  'planExpiringAt',
-                  e.target.value ? new Date(e.target.value).toISOString() : ''
-                )
-              }
-              placeholder="Optional"
-            />
-          </div>
+          <Field>
+            <FieldLabel htmlFor="planExpiringAt">Plan Expiring Date</FieldLabel>
+            <FieldContent>
+              <Input
+                id="planExpiringAt"
+                type="datetime-local"
+                value={
+                  formData.planExpiringAt
+                    ? new Date(formData.planExpiringAt).toISOString().slice(0, 16)
+                    : ''
+                }
+                onChange={e =>
+                  handleInputChange(
+                    'planExpiringAt',
+                    e.target.value ? new Date(e.target.value).toISOString() : ''
+                  )
+                }
+                placeholder="Optional"
+              />
+            </FieldContent>
+          </Field>
         </div>
 
         {/* Is Onboarded and Is Payment Due */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="isOnboarded" className="mb-1 block text-sm font-medium">
-              Is Onboarded?
-            </label>
-            <Select
-              value={formData.isOnboarded ? 'yes' : 'no'}
-              onValueChange={value => handleInputChange('isOnboarded', value === 'yes')}
+          <Field>
+            <FieldLabel htmlFor="isOnboarded">Is Onboarded?</FieldLabel>
+            <Combobox
+              id="isOnboarded"
+              items={YES_NO_OPTIONS}
+              value={YES_NO_OPTIONS.find(o => o.value === (formData.isOnboarded ? 'yes' : 'no'))}
+              onValueChange={item => handleInputChange('isOnboarded', item?.value === 'yes')}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="yes">Yes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="Select status" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {item => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
-          <div>
-            <label htmlFor="isOverDue" className="mb-1 block text-sm font-medium">
-              Is Payment Due?
-            </label>
-            <Select
-              value={formData.isOverDue ? 'yes' : 'no'}
-              onValueChange={value => handleInputChange('isOverDue', value === 'yes')}
+          <Field>
+            <FieldLabel htmlFor="isOverDue">Is Payment Due?</FieldLabel>
+            <Combobox
+              id="isOverDue"
+              items={YES_NO_OPTIONS}
+              value={YES_NO_OPTIONS.find(o => o.value === (formData.isOverDue ? 'yes' : 'no'))}
+              onValueChange={item => handleInputChange('isOverDue', item?.value === 'yes')}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select payment status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="yes">Yes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="Select payment status" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {item => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
         </div>
 
         {/* Credits and Stripe Customer ID */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="credits" className="mb-1 block text-sm font-medium">
-              Credits
-            </label>
-            <Input
-              id="credits"
-              type="number"
-              min="0"
-              value={formData.credits}
-              onChange={e => handleInputChange('credits', parseInt(e.target.value, 10) || 0)}
-              className={errors.credits ? 'border-red-500' : ''}
-            />
-            {errors.credits && <p className="mt-1 text-sm text-red-600">{errors.credits}</p>}
-          </div>
+          <Field>
+            <FieldLabel htmlFor="credits">Credits</FieldLabel>
+            <FieldContent>
+              <Input
+                id="credits"
+                type="number"
+                min={0}
+                value={formData.credits}
+                onChange={e => handleInputChange('credits', parseInt(e.target.value, 10) || 0)}
+                aria-invalid={!!errors.credits}
+              />
+              {errors.credits && <FieldError>{errors.credits}</FieldError>}
+            </FieldContent>
+          </Field>
 
-          <div>
-            <label htmlFor="stripeCustomerId" className="mb-1 block text-sm font-medium">
-              Stripe Customer ID
-            </label>
-            <Input
-              id="stripeCustomerId"
-              type="text"
-              value={formData.stripeCustomerId}
-              onChange={e => handleInputChange('stripeCustomerId', e.target.value)}
-              placeholder="Optional"
-            />
-          </div>
+          <Field>
+            <FieldLabel htmlFor="stripeCustomerId">Stripe Customer ID</FieldLabel>
+            <FieldContent>
+              <Input
+                id="stripeCustomerId"
+                type="text"
+                value={formData.stripeCustomerId}
+                onChange={e => handleInputChange('stripeCustomerId', e.target.value)}
+                placeholder="Optional"
+              />
+            </FieldContent>
+          </Field>
         </div>
 
         {/* Information Footer */}
@@ -318,14 +355,12 @@ export function ModalEditUser({ isOpen, onClose, user }: ModalEditUserProps) {
             </div>
             <div>
               <span className="">Current Role:</span>
-              <span
-                className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${user.role === 'ADMIN'
-                  ? 'dark:bg-purple-900/20 bg-purple-100 text-purple-800 dark:text-purple-300'
-                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-                  }`}
+              <Badge
+                variant={user.role === 'ADMIN' ? 'default' : 'info'}
+                className="ml-2"
               >
                 {user.role}
-              </span>
+              </Badge>
             </div>
           </div>
         </div>

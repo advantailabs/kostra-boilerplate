@@ -79,6 +79,7 @@ export function UsersPage({ className }: UsersPageProps) {
       />
 
       <ModalAddUser isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+
       <ModalDeleteUser
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
