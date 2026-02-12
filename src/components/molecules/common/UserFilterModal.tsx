@@ -1,19 +1,39 @@
 'use client';
 
-import { RiSortAsc, RiSortDesc } from '@remixicon/react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
-import { Input } from '@/components/atom/Input';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/molecules/common/Select';
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { ADMIN_ROLES } from '@/lib/constants/admin';
+
+const ROLE_OPTIONS = [
+  { value: 'all', label: 'All roles' },
+  ...ADMIN_ROLES,
+];
+
+const PLAN_OPTIONS = [
+  { value: 'all', label: 'All plans' },
+  { value: 'FREE', label: 'Free' },
+  { value: 'PRO', label: 'Pro' },
+];
+
+const ONBOARDING_OPTIONS = [
+  { value: 'all', label: 'All statuses' },
+  { value: 'true', label: 'Onboarded' },
+  { value: 'false', label: 'Pending' },
+];
 
 export interface UserFilters {
   search?: string;
@@ -33,6 +53,18 @@ export interface UserFilters {
   isOnboarded?: 'true' | 'false';
   includeDeleted?: boolean;
 }
+
+const SORT_BY_OPTIONS: { value: UserFilters['sortBy']; label: string }[] = [
+  { value: 'id', label: 'ID' },
+  { value: 'name', label: 'Name' },
+  { value: 'email', label: 'Email' },
+  { value: 'role', label: 'Role' },
+  { value: 'plan', label: 'Plan' },
+  { value: 'isOnboarded', label: 'Onboarding Status' },
+  { value: 'credits', label: 'Credits' },
+  { value: 'createdAt', label: 'Date Created' },
+  { value: 'updatedAt', label: 'Last Updated' },
+];
 
 interface UserFilterModalProps {
   isOpen: boolean;
@@ -107,22 +139,22 @@ export function UserFilterModal({
       onClose={onClose}
       title="Filter Users"
       description="Set filters to find the users you need"
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-2xl!"
       contentClassName="max-h-[90vh] overflow-y-auto"
       footer={customFooter}
     >
       {/* Search - Full Width */}
       <div className="mb-4">
-        <label htmlFor="search-users" className="mb-2 block text-sm font-medium text-text">
-          Search Users
-        </label>
-        <Input
-          id="search-users"
-          type="text"
-          placeholder="Search users by name or email..."
-          value={localFilters.search || ''}
-          onChange={e => handleSearch(e.target.value)}
-        />
+        <Field>
+          <FieldLabel htmlFor="search-users">Search Users</FieldLabel>
+          <Input
+            id="search-users"
+            type="text"
+            placeholder="Search users by name or email..."
+            value={localFilters.search || ''}
+            onChange={e => handleSearch(e.target.value)}
+          />
+        </Field>
       </div>
 
       {/* Two Column Layout for Filters */}
@@ -130,119 +162,120 @@ export function UserFilterModal({
         {/* Left Column */}
         <div className="space-y-4">
           {/* Role Filter */}
-          <div>
-            <label htmlFor="role-filter" className="mb-2 block text-sm font-medium text-text">
-              Role
-            </label>
-            <Select
-              value={localFilters.role || 'all'}
-              onValueChange={value => handleFilter('role', value)}
-              aria-label="Select role"
+          <Field>
+            <FieldLabel htmlFor="role-filter">Role</FieldLabel>
+            <Combobox
+              id="role-filter"
+              items={ROLE_OPTIONS}
+              value={ROLE_OPTIONS.find(o => o.value === (localFilters.role ?? 'all'))}
+              onValueChange={item => handleFilter('role', item?.value ?? 'all')}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger id="role-filter">
-                <SelectValue placeholder="All roles" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All roles</SelectItem>
-                {ADMIN_ROLES.map(role => (
-                  <SelectItem key={role.value} value={role.value}>
-                    {role.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="All roles" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
           {/* Plan Filter */}
-          <div>
-            <label htmlFor="plan-filter" className="mb-2 block text-sm font-medium text-text">
-              Plan
-            </label>
-            <Select
-              value={localFilters.plan || 'all'}
-              onValueChange={value => handleFilter('plan', value)}
-              aria-label="Select plan"
+          <Field>
+            <FieldLabel htmlFor="plan-filter">Plan</FieldLabel>
+            <Combobox
+              id="plan-filter"
+              items={PLAN_OPTIONS}
+              value={PLAN_OPTIONS.find(o => o.value === (localFilters.plan ?? 'all'))}
+              onValueChange={item => handleFilter('plan', item?.value ?? 'all')}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger id="plan-filter">
-                <SelectValue placeholder="All plans" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All plans</SelectItem>
-                <SelectItem value="FREE">Free</SelectItem>
-                <SelectItem value="PRO">Pro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="All plans" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
           {/* Onboarding Status Filter */}
-          <div>
-            <label htmlFor="onboarding-filter" className="mb-2 block text-sm font-medium text-text">
-              Onboarding Status
-            </label>
-            <Select
-              value={localFilters.isOnboarded || 'all'}
-              onValueChange={value => handleFilter('isOnboarded', value)}
-              aria-label="Select onboarding status"
+          <Field>
+            <FieldLabel htmlFor="onboarding-filter">Onboarding Status</FieldLabel>
+            <Combobox
+              id="onboarding-filter"
+              items={ONBOARDING_OPTIONS}
+              value={ONBOARDING_OPTIONS.find(o => o.value === (localFilters.isOnboarded ?? 'all'))}
+              onValueChange={item => handleFilter('isOnboarded', item?.value ?? 'all')}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger id="onboarding-filter">
-                <SelectValue placeholder="All statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="true">Onboarded</SelectItem>
-                <SelectItem value="false">Pending</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="All statuses" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
           {/* Include Deleted Users */}
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
+          <Field orientation="horizontal" className="flex-row items-center gap-2">
+            <Checkbox
               id="include-deleted"
-              checked={localFilters.includeDeleted || false}
-              onChange={e => handleIncludeDeleted(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              checked={localFilters.includeDeleted ?? false}
+              onCheckedChange={checked => handleIncludeDeleted(!!checked)}
             />
-            <label htmlFor="include-deleted" className="text-sm font-medium text-text">
-              Include deleted users
-            </label>
-          </div>
+            <FieldLabel htmlFor="include-deleted">Include deleted users</FieldLabel>
+          </Field>
         </div>
 
         {/* Right Column */}
         <div className="space-y-4">
           {/* Sort Options */}
-          <div>
-            <label htmlFor="sort-by-filter" className="mb-2 block text-sm font-medium text-text">
-              Sort By
-            </label>
-            <Select
-              value={localFilters.sortBy || 'id'}
-              onValueChange={value => handleSort(value as UserFilters["sortBy"], localFilters.sortOrder || 'desc')}
-              aria-label="Select sort by"
+          <Field>
+            <FieldLabel htmlFor="sort-by-filter">Sort By</FieldLabel>
+            <Combobox
+              id="sort-by-filter"
+              items={SORT_BY_OPTIONS}
+              value={SORT_BY_OPTIONS.find(o => o.value === (localFilters.sortBy ?? 'id'))}
+              onValueChange={item => {
+                if (item?.value) {
+                  handleSort(item.value, localFilters.sortOrder ?? 'desc');
+                }
+              }}
+              itemToStringValue={item => item.label}
             >
-              <SelectTrigger id="sort-by-filter">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="id">ID</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="role">Role</SelectItem>
-                <SelectItem value="plan">Plan</SelectItem>
-                <SelectItem value="isOnboarded">Onboarding Status</SelectItem>
-                <SelectItem value="credits">Credits</SelectItem>
-                <SelectItem value="createdAt">Date Created</SelectItem>
-                <SelectItem value="updatedAt">Last Updated</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <ComboboxInput placeholder="Sort by" />
+              <ComboboxContent className="pointer-events-auto">
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </Field>
 
-          <div>
-            <label htmlFor="sort-order-button" className="mb-2 block text-sm font-medium text-text">
-              Sort Order
-            </label>
+          <Field>
+            <FieldLabel htmlFor="sort-order-button">Sort Order</FieldLabel>
             <Button
               id="sort-order-button"
               variant="secondary"
@@ -255,13 +288,13 @@ export function UserFilterModal({
               className="flex w-full items-center justify-center gap-2"
             >
               {localFilters.sortOrder === 'asc' ? (
-                <RiSortAsc className="h-4 w-4" />
+                <ArrowUp className="h-4 w-4" />
               ) : (
-                <RiSortDesc className="h-4 w-4" />
+                <ArrowDown className="h-4 w-4" />
               )}
               {localFilters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
             </Button>
-          </div>
+          </Field>
         </div>
       </div>
     </Modal>

@@ -2,16 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 // React import not needed as we use hooks directly; remove empty import
 import { Controller, useForm, useWatch, type SubmitHandler } from 'react-hook-form';
 
-import { Input } from '@/components/atom/Input';
-import { Label } from '@/components/atom/Label';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/molecules/common/Select';
+} from '@/components/ui/select';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { ADMIN_ROLES, UserRole } from '@/lib/constants/admin';
 import { createUserSchema } from '@/validations/admin';
@@ -75,7 +75,7 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
       isOpen={isOpen}
       onClose={handleClose}
       title="Add New User"
-      maxWidth="max-w-md"
+      maxWidth="max-w-md!"
       primaryActionText="Add User"
       secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit(onSubmit)}
@@ -83,10 +83,10 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
       isPrimaryActionLoading={isCreating}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Label htmlFor="email" className="font-medium">
-            Email Address
-          </Label>
+        <Field>
+          <FieldLabel htmlFor="email">
+            Email Address <span className="text-destructive">*</span>
+          </FieldLabel>
           <Controller
             control={control}
             name="email"
@@ -99,21 +99,19 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
-                  className="mt-2"
+                  className=""
                   required
                 />
-                {errors.email && (
-                  <span className="mt-1 text-sm text-danger">{errors.email.message}</span>
-                )}
+                <FieldError errors={errors.email ? [{ message: errors.email.message }] : undefined} />
               </>
             )}
           />
-        </div>
+        </Field>
 
-        <div>
-          <Label htmlFor="password" className="font-medium">
-            Password
-          </Label>
+        <Field>
+          <FieldLabel htmlFor="password">
+            Password <span className="text-destructive">*</span>
+          </FieldLabel>
           <Controller
             control={control}
             name="password"
@@ -126,32 +124,33 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
-                  className="mt-2"
+                  className=""
                   required
                 />
-                {errors.password && (
-                  <span className="mt-1 text-sm text-danger">{errors.password.message}</span>
-                )}
-                <p className="mt-1 text-xs text-text-muted">
+                <FieldError errors={errors.password ? [{ message: errors.password.message }] : undefined} />
+                <FieldDescription>
                   Password must be at least 8 characters with uppercase, lowercase, number, and
                   special character.
-                </p>
+                </FieldDescription>
               </>
             )}
           />
-        </div>
+        </Field>
 
-        <div>
-          <Label htmlFor="role" className="font-medium">
-            Role
-          </Label>
+        <Field>
+          <FieldLabel htmlFor="role">
+            Role <span className="text-destructive">*</span>
+          </FieldLabel>
           <Controller
             control={control}
             name="role"
             render={({ field }) => (
               <>
-                <Select value={field.value ?? ''} onValueChange={field.onChange}>
-                  <SelectTrigger id="role" className="mt-2">
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger id="role" className="w-full">
                     <SelectValue placeholder="Select a role..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -162,13 +161,11 @@ export function ModalAddUser({ isOpen, onClose }: ModalAddUserProps) {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.role && (
-                  <span className="mt-1 text-sm text-danger">{errors.role.message}</span>
-                )}
+                <FieldError errors={errors.role ? [{ message: errors.role.message }] : undefined} />
               </>
             )}
           />
-        </div>
+        </Field>
       </form>
     </Modal>
   );
