@@ -128,9 +128,9 @@ export const contactsTableColumns: ColumnDef<ContactSubmission>[] = [
                             e.stopPropagation();
                             meta?.onViewDetails?.(contact);
                         }}
-                        className="group size-8 hover:border hover:border-border hover:bg-background"
+                        className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900"
                     >
-                        <Eye className="size-3.5 shrink-0" />
+                        <Eye size={16} className="shrink-0 text-blue-600 dark:text-blue-400" />
                     </Button>
                     <Button
                         variant="ghost"
@@ -138,9 +138,9 @@ export const contactsTableColumns: ColumnDef<ContactSubmission>[] = [
                             e.stopPropagation();
                             meta?.onDelete?.(contact);
                         }}
-                        className="group size-8 hover:border hover:border-border hover:bg-background"
+                        className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900"
                     >
-                        <Trash2 className="size-3.5 shrink-0 text-danger" />
+                        <Trash2 size={16} className="shrink-0 text-red-600 dark:text-red-400" />
                     </Button>
                 </div>
             );

@@ -1,7 +1,7 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Edit, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -71,17 +71,23 @@ export const categoryTableColumns: ColumnDef<CategoryTableRow>[] = [
                 >
                     <Button
                         variant="ghost"
-                        onClick={() => meta?.onEdit?.(category)}
-                        className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                        onClick={e => {
+                            e.stopPropagation();
+                            meta?.onEdit?.(category);
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
-                        <Edit size={14} className="shrink-0" />
+                        <Pencil size={16} className="shrink-0 text-text-muted" />
                     </Button>
                     <Button
                         variant="ghost"
-                        onClick={() => meta?.onDelete?.(category.id, category.name)}
-                        className="group size-8 hover:border hover:border-border hover:bg-background-light"
+                        onClick={e => {
+                            e.stopPropagation();
+                            meta?.onDelete?.(category.id, category.name);
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900"
                     >
-                        <Trash2 size={14} className="shrink-0 text-danger" />
+                        <Trash2 size={16} className="shrink-0 text-red-600 dark:text-red-400" />
                     </Button>
                 </div>
             );
