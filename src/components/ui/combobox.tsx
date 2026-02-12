@@ -88,6 +88,8 @@ function ComboboxInput({
 
 function ComboboxContent({
   className,
+  positionerClassName,
+  container,
   side = "bottom",
   sideOffset = 6,
   align = "start",
@@ -98,16 +100,19 @@ function ComboboxContent({
   Pick<
     ComboboxPrimitive.Positioner.Props,
     "side" | "align" | "sideOffset" | "alignOffset" | "anchor"
-  >) {
+  > & {
+    positionerClassName?: string;
+    container?: HTMLElement | React.RefObject<HTMLElement | null>;
+  }) {
   return (
-    <ComboboxPrimitive.Portal>
+    <ComboboxPrimitive.Portal container={container}>
       <ComboboxPrimitive.Positioner
         side={side}
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
         anchor={anchor}
-        className="isolate z-50"
+        className={cn("isolate z-50", positionerClassName)}
       >
         <ComboboxPrimitive.Popup
           data-slot="combobox-content"

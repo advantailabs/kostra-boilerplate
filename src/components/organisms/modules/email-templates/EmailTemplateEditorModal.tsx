@@ -1,16 +1,13 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 import { EmailType } from '@/lib/prisma/generated/enums';
 import Bold from '@tiptap/extension-bold';
 import BulletList from '@tiptap/extension-bullet-list';
@@ -42,14 +39,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useEmailTemplates } from '../../../../hooks/useEmailTemplates';
 import { EmailTemplate } from '../../../../services/api/email-templates';
-import { Switch } from '../../../atom/Switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../molecules/common/Select';
+import { Modal } from '../../../molecules/common/Modal';
 import { Textarea } from '../../../ui/textarea';
 
 interface EmailTemplateEditorModalProps {
@@ -203,6 +193,7 @@ export function EmailTemplateEditorModal({
 
   // Refs
   const sourceTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const comboboxPortalRef = useRef<HTMLDivElement>(null);
 
   // Available user fields for email templates (exact fields from User table in Prisma schema)
   const availableFields = [
@@ -563,408 +554,417 @@ export function EmailTemplateEditorModal({
           color: rgb(255 255 255);
         }
       `}</style>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none">
-          <div className="flex h-full flex-col">
-            {/* Header */}
-            <DialogHeader className="relative bg-white border-b border-gray-300 p-4 max-sm:p-3 dark:border-gray-700 dark:bg-background">
-              <DialogTitle className="text-lg font-medium text-gray-900 max-sm:pr-12 dark:text-gray-100">
-                {mode === 'create' ? 'Create Email Template' : 'Edit Email Template'}
-              </DialogTitle>
-              {/* <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:focus:ring-gray-700">
-                <X className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </DialogClose> */}
-            </DialogHeader>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={mode === 'create' ? 'Create Email Template' : 'Edit Email Template'}
+        fullScreen
+        removePadding
+        footer={
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="secondary" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="default"
+              onClick={handleSubmit}
+              disabled={!isFormValid || isCreating || isUpdating}
+              isLoading={isCreating || isUpdating}
+            >
+              {mode === 'create' ? 'Create Template' : 'Save Template'}
+            </Button>
+          </div>
+        }
+      >
+        <div ref={comboboxPortalRef} className="flex min-h-0 flex-1 overflow-hidden">
+          {/* Left Column - Template Details */}
+          <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 overflow-y-auto border-r border-gray-300 bg-background p-4 [-ms-overflow-style:none] [scrollbar-width:none] md:w-[450px] dark:border-gray-800">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Template Details
+              </h3>
 
-            {/* Main Content */}
-            <div className="flex min-h-0 flex-1 overflow-hidden">
-              {/* Left Column - Template Details */}
-              <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 overflow-y-auto border-r border-gray-300 bg-background p-4 [-ms-overflow-style:none] [scrollbar-width:none] md:w-[450px] dark:border-gray-800">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Template Details
-                  </h3>
+              {/* Template Name */}
+              <Field>
+                <FieldLabel htmlFor="name">
+                  Template Name <span className="text-destructive">*</span>
+                </FieldLabel>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={e => handleInputChange('name', e.target.value)}
+                  placeholder="Enter template name"
+                />
+              </Field>
 
-                  {/* Template Name */}
-                  <Field>
-                    <FieldLabel htmlFor="name">
-                      Template Name <span className="text-destructive">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={e => handleInputChange('name', e.target.value)}
-                      placeholder="Enter template name"
-                    />
-                  </Field>
+              {/* Email Type */}
+              <Field>
+                <FieldLabel>
+                  Email Type <span className="text-destructive">*</span>
+                </FieldLabel>
+                <RadioGroup
+                  value={formData.emailType}
+                  onValueChange={value => handleInputChange('emailType', value)}
+                  className="grid grid-cols-2 gap-2">
+                  <FieldLabel htmlFor="transactional">
+                    <Field orientation="horizontal">
+                      <RadioGroupItem value="TRANSACTIONAL" id="transactional" />
+                      <div className="font-medium">Transactional</div>
+                    </Field>
+                  </FieldLabel>
+                  <FieldLabel htmlFor="promotional">
+                    <Field orientation="horizontal">
+                      <RadioGroupItem value="PROMOTIONAL" id="promotional" />
+                      <div className="font-medium">Promotional</div>
+                    </Field>
+                  </FieldLabel>
+                </RadioGroup>
+              </Field>
 
-                  {/* Email Type */}
-                  <Field>
-                    <FieldLabel>
-                      Email Type <span className="text-destructive">*</span>
-                    </FieldLabel>
-                    <RadioGroup
-                      value={formData.emailType}
-                      onValueChange={value => handleInputChange('emailType', value)}
-                      className="grid grid-cols-2 gap-2">
-                      <FieldLabel htmlFor="transactional">
-                        <Field orientation="horizontal">
-                          <RadioGroupItem value="TRANSACTIONAL" id="transactional" />
-                          <div className="font-medium">Transactional</div>
-                        </Field>
-                      </FieldLabel>
-                      <FieldLabel htmlFor="promotional">
-                        <Field orientation="horizontal">
-                          <RadioGroupItem value="PROMOTIONAL" id="promotional" />
-                          <div className="font-medium">Promotional</div>
-                        </Field>
-                      </FieldLabel>
-                    </RadioGroup>
-                  </Field>
+              {/* From Name */}
+              <Field>
+                <FieldLabel htmlFor="fromName">
+                  From Name <span className="text-destructive">*</span>
+                </FieldLabel>
+                <Input
+                  id="fromName"
+                  value={formData.fromName}
+                  onChange={e => handleInputChange('fromName', e.target.value)}
+                  placeholder="Enter sender name"
+                />
+              </Field>
 
-                  {/* From Name */}
-                  <Field>
-                    <FieldLabel htmlFor="fromName">
-                      From Name <span className="text-destructive">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="fromName"
-                      value={formData.fromName}
-                      onChange={e => handleInputChange('fromName', e.target.value)}
-                      placeholder="Enter sender name"
-                    />
-                  </Field>
+              {/* From Email */}
+              <Field>
+                <FieldLabel htmlFor="fromEmail">
+                  From Email <span className="text-destructive">*</span>
+                </FieldLabel>
+                <Input
+                  id="fromEmail"
+                  type="email"
+                  value={formData.fromEmail}
+                  onChange={e => handleInputChange('fromEmail', e.target.value)}
+                  placeholder="Enter sender email"
+                />
+              </Field>
 
-                  {/* From Email */}
-                  <Field>
-                    <FieldLabel htmlFor="fromEmail">
-                      From Email <span className="text-destructive">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="fromEmail"
-                      type="email"
-                      value={formData.fromEmail}
-                      onChange={e => handleInputChange('fromEmail', e.target.value)}
-                      placeholder="Enter sender email"
-                    />
-                  </Field>
+              {/* Reply-To Email */}
+              <Field>
+                <FieldLabel htmlFor="replyToEmail">Reply-To Email</FieldLabel>
+                <Input
+                  id="replyToEmail"
+                  type="email"
+                  value={formData.replyToEmail}
+                  onChange={e => handleInputChange('replyToEmail', e.target.value)}
+                  placeholder="Enter reply-to email"
+                />
+              </Field>
 
-                  {/* Reply-To Email */}
-                  <Field>
-                    <FieldLabel htmlFor="replyToEmail">Reply-To Email</FieldLabel>
-                    <Input
-                      id="replyToEmail"
-                      type="email"
-                      value={formData.replyToEmail}
-                      onChange={e => handleInputChange('replyToEmail', e.target.value)}
-                      placeholder="Enter reply-to email"
-                    />
-                  </Field>
-
-                  {/* Subject */}
-                  <Field>
-                    <FieldLabel htmlFor="subject">
-                      Subject <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="subject"
-                      value={formData.subject}
-                      onChange={e => handleInputChange('subject', e.target.value)}
-                      placeholder="Enter email subject"
-                    />
-                  </Field>
-                </div>
-
-                {/* Variables Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Template Variables
-                  </h3>
-
-                  {/* Add New Variable */}
-                  <div className="flex gap-2">
-                    <Select value={newVariableName} onValueChange={setNewVariableName}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="Select a field" />
-                      </SelectTrigger>
-                      <SelectContent className="z-[1001]">
-                        {availableFields.map(field => (
-                          <SelectItem key={field} value={field}>
-                            {field}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button type="button" onClick={handleAddVariable} disabled={!newVariableName}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  {/* Variables List - Display as pill badges */}
-                  {variables.length > 0 && (
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        Selected Variables
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {variables.map(variableName => (
-                          <div
-                            key={variableName}
-                            className="flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-sm text-white "
-                          >
-                            <span>{variableName}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveVariable(variableName)}
-                              className="ml-1 rounded-full p-0.5 hover:bg-blue-200 dark:hover:bg-blue-800"
-                              title="Remove variable"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Side - Editor and Preview Side by Side */}
-              <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-4">
-                <div className="flex min-h-0 w-full flex-1 flex-col gap-4 lg:flex-row">
-                  {/* Left Column - Email Body Editor */}
-                  <div className="flex min-h-0 w-full flex-col lg:w-1/2">
-                    <div className="mb-4 flex flex-shrink-0 items-center justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        Email Body
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="source-mode" className="text-sm">
-                          Source Mode
-                        </Label>
-                        <Switch
-                          id="source-mode"
-                          checked={isSourceMode}
-                          onCheckedChange={handleSourceModeToggle}
-                        />
-                      </div>
-                    </div>
-
-                    {isSourceMode ? (
-                      <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-gray-300 dark:border-gray-700">
-                        <div className="flex items-center gap-2 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-gray-800">
-                          <Code className="h-4 w-4" />
-                          <span className="text-sm font-medium">HTML Source</span>
-                        </div>
-                        <div className="flex min-h-0 flex-1 overflow-hidden">
-                          <Textarea
-                            ref={sourceTextareaRef}
-                            value={sourceContent}
-                            onChange={e => handleSourceContentChange(e.target.value)}
-                            placeholder="Enter HTML content..."
-                            className="min-h-full w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent font-mono text-sm text-gray-900 focus:ring-0 focus:ring-offset-0 dark:text-white"
-                            style={{
-                              minHeight: '400px',
-                              height: '100%',
-                              maxHeight: getDynamicHeight(),
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="email-template-editor flex min-h-0 flex-1 flex-col bg-white dark:bg-background rounded-lg border border-gray-300 dark:border-gray-700">
-                        {/* Editor Toolbar */}
-                        <div className="flex flex-wrap items-center gap-1 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-background-light">
-                          {/* Heading Dropdown */}
-                          <div className="heading-dropdown relative">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
-                              className="flex min-w-[120px] items-center justify-between gap-1 px-2 py-1 text-xs"
-                            >
-                              <span>
-                                {headingLabels[getCurrentHeading() as keyof typeof headingLabels]}
-                              </span>
-                              <ChevronDown className="h-3 w-3" />
-                            </Button>
-
-                            {showHeadingDropdown && (
-                              <div className="absolute left-0 z-[9999] min-w-[120px] rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
-                                <button
-                                  onClick={() => setHeading(0)}
-                                  className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                >
-                                  Paragraph
-                                </button>
-                                {([1, 2, 3, 4, 5, 6] as const).map(level => (
-                                  <button
-                                    key={level}
-                                    onClick={() => setHeading(level)}
-                                    className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  >
-                                    Heading {level}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
-
-                          {/* Text Formatting */}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().toggleBold().run()}
-                            className={
-                              editor?.isActive('bold') ? 'bg-gray-400 dark:bg-gray-700' : ''
-                            }
-                          >
-                            <BoldIcon className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().toggleItalic().run()}
-                            className={
-                              editor?.isActive('italic') ? 'bg-gray-400 dark:bg-gray-700' : ''
-                            }
-                          >
-                            <ItalicIcon className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().toggleUnderline().run()}
-                            className={
-                              editor?.isActive('underline') ? 'bg-gray-400 dark:bg-gray-700' : ''
-                            }
-                          >
-                            <UnderlineIcon className="h-4 w-4" />
-                          </Button>
-
-                          <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
-
-                          {/* Lists */}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                            className={
-                              editor?.isActive('bulletList') ? 'bg-gray-400 dark:bg-gray-700' : ''
-                            }
-                          >
-                            <List className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                            className={
-                              editor?.isActive('orderedList') ? 'bg-gray-400 dark:bg-gray-700' : ''
-                            }
-                          >
-                            <ListOrdered className="h-4 w-4" />
-                          </Button>
-
-                          <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
-
-                          {/* Text Alignment */}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().setTextAlign('left').run()}
-                            className={
-                              editor?.isActive({ textAlign: 'left' })
-                                ? 'bg-gray-400 dark:bg-gray-700'
-                                : ''
-                            }
-                          >
-                            <AlignLeft className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().setTextAlign('center').run()}
-                            className={
-                              editor?.isActive({ textAlign: 'center' })
-                                ? 'bg-gray-400 dark:bg-gray-700'
-                                : ''
-                            }
-                          >
-                            <AlignCenter className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => editor?.chain().focus().setTextAlign('right').run()}
-                            className={
-                              editor?.isActive({ textAlign: 'right' })
-                                ? 'bg-gray-400 dark:bg-gray-700'
-                                : ''
-                            }
-                          >
-                            <AlignRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="flex min-h-0 flex-1 overflow-hidden">
-                          <EditorContent
-                            editor={editor}
-                            className="h-full max-h-full w-full overflow-y-auto [&_.ProseMirror:empty:before]:pointer-events-none [&_.ProseMirror:empty:before]:float-left [&_.ProseMirror:empty:before]:h-0 [&_.ProseMirror:empty:before]:text-gray-400! [&_.ProseMirror:empty:before]:content-[attr(data-placeholder)] [&_.ProseMirror]:h-full [&_.ProseMirror]:max-h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-4 [&_.ProseMirror]:text-gray-900 [&_.ProseMirror]:outline-hidden [&_.ProseMirror]:dark:text-white"
-                            style={{ maxHeight: getDynamicHeight() }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right Column - Live Preview */}
-                  <div className="flex min-h-0 w-full flex-col lg:w-1/2">
-                    <div className="mb-4 flex flex-shrink-0 items-center gap-2">
-                      <Eye className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        Live Preview
-                      </h3>
-                    </div>
-
-                    <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-300 dark:border-gray-700">
-                      <div
-                        className="flex h-full w-full overflow-y-auto bg-background"
-                        style={{ maxHeight: getDynamicHeight() }}
-                      >
-                        <div
-                          className="prose prose-sm dark:docs-prose-dark min-h-full w-full  bg-white dark:bg-background max-w-none p-4"
-                          dangerouslySetInnerHTML={{
-                            __html: sanitizePreviewHTML(generatePreviewHTML()),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Subject */}
+              <Field>
+                <FieldLabel htmlFor="subject">
+                  Subject <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Input
+                  id="subject"
+                  value={formData.subject}
+                  onChange={e => handleInputChange('subject', e.target.value)}
+                  placeholder="Enter email subject"
+                />
+              </Field>
             </div>
 
-            {/* Footer */}
-            <div className="flex justify-end gap-2 border-t border-gray-300  px-6 py-4 dark:border-gray-800 bg-white dark:bg-background">
-              <Button type="button" variant="secondary" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                variant="primary"
-                onClick={handleSubmit}
-                disabled={!isFormValid || isCreating || isUpdating}
-                isLoading={isCreating || isUpdating}
-              >
-                {mode === 'create' ? 'Create Template' : 'Save Template'}
-              </Button>
+            {/* Variables Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Template Variables
+              </h3>
+
+              {/* Add New Variable */}
+              <div className="flex gap-2">
+                <Combobox
+                  items={availableFields}
+                  value={
+                    newVariableName && availableFields.includes(newVariableName)
+                      ? newVariableName
+                      : null
+                  }
+                  onValueChange={value => setNewVariableName(value ?? '')}
+                  itemToStringValue={item => item}
+                  itemToStringLabel={item => item}
+                  isItemEqualToValue={(a, b) => a === b}
+                >
+                  <ComboboxInput placeholder="Select a field" className="w-full" />
+                  <ComboboxContent
+                    positionerClassName="z-[1001]"
+                    container={comboboxPortalRef}
+                  >
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem key={item} value={item}>
+                          {item}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                <Button type="button" onClick={handleAddVariable} disabled={!newVariableName}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Variables List - Display as pill badges */}
+              {variables.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Selected Variables
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {variables.map(variableName => (
+                      <Badge
+                        key={variableName}
+                        variant="default"
+                        className="flex items-center gap-1.5 py-1 pr-1 pl-2.5 text-xs"
+                      >
+                        {variableName}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => handleRemoveVariable(variableName)}
+                          title="Remove variable"
+                          className="rounded-full p-0.5 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
+                          aria-label={`Remove ${variableName}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Right Side - Editor and Preview Side by Side */}
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-4">
+            <div className="flex min-h-0 w-full flex-1 flex-col gap-4 lg:flex-row">
+              {/* Left Column - Email Body Editor */}
+              <div className="flex min-h-0 w-full flex-col lg:w-1/2">
+                <div className="mb-4 flex flex-shrink-0 items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Email Body
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="source-mode" className="text-sm">
+                      Source Mode
+                    </Label>
+                    <Switch
+                      id="source-mode"
+                      checked={isSourceMode}
+                      onCheckedChange={handleSourceModeToggle}
+                    />
+                  </div>
+                </div>
+
+                {isSourceMode ? (
+                  <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-gray-300 dark:border-gray-700">
+                    <div className="flex items-center rounded-t-lg gap-2 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-gray-800">
+                      <Code className="h-4 w-4" />
+                      <span className="text-sm font-medium">HTML Source</span>
+                    </div>
+                    <div className="flex min-h-0 flex-1 overflow-hidden">
+                      <Textarea
+                        ref={sourceTextareaRef}
+                        value={sourceContent}
+                        onChange={e => handleSourceContentChange(e.target.value)}
+                        placeholder="Enter HTML content..."
+                        className="min-h-full w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent font-mono text-sm text-gray-900 focus:ring-0 focus:ring-offset-0 dark:text-white"
+                        style={{
+                          minHeight: '400px',
+                          height: '100%',
+                          maxHeight: getDynamicHeight(),
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="email-template-editor flex min-h-0 flex-1 flex-col bg-white dark:bg-background rounded-lg border border-gray-300 dark:border-gray-700">
+                    {/* Editor Toolbar */}
+                    <div className="flex flex-wrap rounded-t-lg items-center gap-1 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-background-light">
+                      {/* Heading Dropdown */}
+                      <div className="heading-dropdown relative">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
+                          className="flex min-w-[120px] items-center justify-between gap-1 px-2 py-1 text-xs"
+                        >
+                          <span>
+                            {headingLabels[getCurrentHeading() as keyof typeof headingLabels]}
+                          </span>
+                          <ChevronDown className="h-3 w-3" />
+                        </Button>
+
+                        {showHeadingDropdown && (
+                          <div className="absolute left-0 z-[9999] min-w-[120px] rounded-md border border-gray-300 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
+                            <button
+                              onClick={() => setHeading(0)}
+                              className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Paragraph
+                            </button>
+                            {([1, 2, 3, 4, 5, 6] as const).map(level => (
+                              <button
+                                key={level}
+                                onClick={() => setHeading(level)}
+                                className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                Heading {level}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
+
+                      {/* Text Formatting */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().toggleBold().run()}
+                        className={
+                          editor?.isActive('bold') ? 'bg-gray-400 dark:bg-gray-700' : ''
+                        }
+                      >
+                        <BoldIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().toggleItalic().run()}
+                        className={
+                          editor?.isActive('italic') ? 'bg-gray-400 dark:bg-gray-700' : ''
+                        }
+                      >
+                        <ItalicIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().toggleUnderline().run()}
+                        className={
+                          editor?.isActive('underline') ? 'bg-gray-400 dark:bg-gray-700' : ''
+                        }
+                      >
+                        <UnderlineIcon className="h-4 w-4" />
+                      </Button>
+
+                      <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
+
+                      {/* Lists */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                        className={
+                          editor?.isActive('bulletList') ? 'bg-gray-400 dark:bg-gray-700' : ''
+                        }
+                      >
+                        <List className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                        className={
+                          editor?.isActive('orderedList') ? 'bg-gray-400 dark:bg-gray-700' : ''
+                        }
+                      >
+                        <ListOrdered className="h-4 w-4" />
+                      </Button>
+
+                      <div className="mx-1 h-6 w-px bg-gray-300 dark:bg-gray-600" />
+
+                      {/* Text Alignment */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                        className={
+                          editor?.isActive({ textAlign: 'left' })
+                            ? 'bg-gray-400 dark:bg-gray-700'
+                            : ''
+                        }
+                      >
+                        <AlignLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                        className={
+                          editor?.isActive({ textAlign: 'center' })
+                            ? 'bg-gray-400 dark:bg-gray-700'
+                            : ''
+                        }
+                      >
+                        <AlignCenter className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                        className={
+                          editor?.isActive({ textAlign: 'right' })
+                            ? 'bg-gray-400 dark:bg-gray-700'
+                            : ''
+                        }
+                      >
+                        <AlignRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex min-h-0 flex-1 overflow-hidden">
+                      <EditorContent
+                        editor={editor}
+                        className="h-full max-h-full w-full overflow-y-auto [&_.ProseMirror:empty:before]:pointer-events-none [&_.ProseMirror:empty:before]:float-left [&_.ProseMirror:empty:before]:h-0 [&_.ProseMirror:empty:before]:text-gray-400! [&_.ProseMirror:empty:before]:content-[attr(data-placeholder)] [&_.ProseMirror]:h-full [&_.ProseMirror]:max-h-full [&_.ProseMirror]:overflow-y-auto [&_.ProseMirror]:p-4 [&_.ProseMirror]:text-gray-900 [&_.ProseMirror]:outline-hidden [&_.ProseMirror]:dark:text-white"
+                        style={{ maxHeight: getDynamicHeight() }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column - Live Preview */}
+              <div className="flex min-h-0 w-full flex-col lg:w-1/2">
+                <div className="mb-4 flex flex-shrink-0 items-center gap-2">
+                  <Eye className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Live Preview
+                  </h3>
+                </div>
+
+                <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border border-gray-300 dark:border-gray-700">
+                  <div
+                    className="flex h-full w-full overflow-y-auto bg-background"
+                    style={{ maxHeight: getDynamicHeight() }}
+                  >
+                    <div
+                      className="prose prose-sm dark:docs-prose-dark min-h-full w-full  bg-white dark:bg-background max-w-none p-4"
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizePreviewHTML(generatePreviewHTML()),
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

@@ -85,6 +85,11 @@ export interface ModalProps {
    * Whether to remove padding from content area
    */
   removePadding?: boolean;
+
+  /**
+   * When true, modal uses full-screen layout and content area fills remaining height.
+   */
+  fullScreen?: boolean;
 }
 
 export function Modal({
@@ -103,6 +108,7 @@ export function Modal({
   primaryActionVariant = 'primary',
   contentClassName = '',
   removePadding = false,
+  fullScreen = false,
 }: ModalProps) {
   // Default footer if primaryActionText is provided but no custom footer
   const defaultFooter = (primaryActionText || secondaryActionText) && !footer && (
@@ -153,10 +159,24 @@ export function Modal({
     }
   };
 
+  const contentWrapperClassName = fullScreen
+    ? removePadding
+      ? 'flex min-h-0 flex-1 flex-col p-0'
+      : 'flex min-h-0 flex-1 flex-col px-4 py-4 max-sm:px-3 max-sm:py-3'
+    : removePadding
+      ? 'p-0'
+      : 'px-4 py-4 max-sm:px-3 max-sm:py-3';
+
+  const innerContentClassName = fullScreen ? 'flex min-h-0 flex-1 flex-col' : '';
+
+  const dialogContentClassName = fullScreen
+    ? `fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none gap-0 ${contentClassName}`.trim()
+    : `${maxWidth} gap-0 p-0 ${contentClassName}`.trim();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={`${maxWidth} gap-0 p-0 ${contentClassName}`}
+        className={dialogContentClassName}
         onPointerDownOutside={handlePointerDownOutside}
         onInteractOutside={handleInteractOutside}
       >
@@ -169,9 +189,9 @@ export function Modal({
           )}
         </DialogHeader>
 
-        <div className={removePadding ? 'p-0' : 'px-4 py-4 max-sm:px-3 max-sm:py-3'}>
+        <div className={contentWrapperClassName}>
           {/* Main content */}
-          <div className="">{children}</div>
+          <div className={innerContentClassName}>{children}</div>
 
         </div>
         {/* Footer with action buttons */}
