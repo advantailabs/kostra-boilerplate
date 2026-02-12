@@ -1,5 +1,7 @@
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
-import { Input } from '../../atom/Input';
 import { Modal } from './Modal';
 
 /**
@@ -100,7 +102,7 @@ export function ActionDialog({
       case 'restore':
         return {
           buttonClass:
-            'rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            'rounded-md border border-transparent bg-primary px-4 py-2  font-medium text-white hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           loadingText: 'Restoring...',
           actionText: 'Restore',
           primaryActionVariant: 'primary' as const,
@@ -109,7 +111,7 @@ export function ActionDialog({
       default:
         return {
           buttonClass:
-            'rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            'rounded-md border border-transparent bg-red-600 px-4 py-2  font-medium text-white hover:bg-red-700 focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           loadingText: 'Deleting...',
           actionText: 'Delete',
           primaryActionVariant: 'destructive' as const,
@@ -122,17 +124,17 @@ export function ActionDialog({
   // Custom footer for name confirmation
   const customFooter = showNameConfirmation ? (
     <div className="flex items-center justify-end gap-2">
-      <button
+      <Button
         type="button"
-        className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-text hover:bg-background-light focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md border border-border bg-background px-4 py-2 font-medium text-text hover:bg-background-light focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
         onClick={handleClose}
         disabled={isLoading}
       >
         Cancel
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
-        className={actionConfig.buttonClass}
+        className={actionConfig.buttonClass + ' cursor-pointer disabled:cursor-not-allowed'}
         onClick={handleAction}
         disabled={isConfirmDisabled}
       >
@@ -144,7 +146,7 @@ export function ActionDialog({
         ) : (
           actionConfig.actionText
         )}
-      </button>
+      </Button>
     </div>
   ) : undefined;
 
@@ -185,10 +187,10 @@ export function ActionDialog({
         </p>
 
         {showNameConfirmation && (
-          <div className="mt-4">
-            <label htmlFor="confirmation-name" className="text-sm font-medium text-text">
+          <Field className="mt-4">
+            <FieldLabel htmlFor="confirmation-name" className="text-sm font-medium text-text">
               Type &quot;{itemName}&quot; to confirm {actionType}
-            </label>
+            </FieldLabel>
             <Input
               id="confirmation-name"
               type="text"
@@ -197,7 +199,7 @@ export function ActionDialog({
               onChange={e => setConfirmationName(e.target.value)}
               className="mt-2"
             />
-          </div>
+          </Field>
         )}
 
         {additionalInfo && <div className="mt-4 space-y-2">{additionalInfo}</div>}
