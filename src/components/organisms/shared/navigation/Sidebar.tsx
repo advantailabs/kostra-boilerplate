@@ -14,6 +14,7 @@ import { useAuthStore } from '@/store/auth';
 
 import { CreditDisplay } from '@/components/atom/CreditDisplay';
 import GradientCtaButton from '@/components/molecules/common/GradientCtaButton';
+import { Card, CardContent as UICardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sidebar as ShadcnSidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from '@/components/ui/sidebar';
@@ -187,16 +188,18 @@ export function Sidebar() {
         })}
       </SidebarContent>
       <SidebarFooter>
-        <div className="mb-2 flex items-center justify-between rounded-md border border-border px-2 py-1.5 group-data-[collapsible=icon]:hidden">
-          <CreditDisplay size="sm" />
-          {userPlan === 'PRO' ? (
-            <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
-              <RiVipCrownLine className="size-3.5" /> Pro User
-            </span>
-          ) : (
-            <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
-          )}
-        </div>
+        <Card className="mb-2 flex flex-col gap-0 rounded-md border border-primary/20 bg-linear-to-r from-primary/10 to-transparent py-2 shadow-none text-card-foreground group-data-[collapsible=icon]:hidden">
+          <UICardContent className="flex items-center justify-between gap-3 px-2">
+            <CreditDisplay size="sm" />
+            {userPlan === 'PRO' ? (
+              <span className="bg-warning/10 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-warning">
+                <RiVipCrownLine className="size-3.5" /> Pro User
+              </span>
+            ) : (
+              <GradientCtaButton label="Upgrade to Pro" onClick={handleOpenPurchase} size="sm" />
+            )}
+          </UICardContent>
+        </Card>
         <UserProfileDropdown />
       </SidebarFooter>
       {/* <SidebarRail /> */}

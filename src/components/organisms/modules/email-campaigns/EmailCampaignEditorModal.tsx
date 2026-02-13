@@ -481,7 +481,7 @@ export function EmailCampaignEditorModal(props: EmailCampaignEditorModalProps) {
 
                     <div className="space-y-4 pb-3">
                       {/* Current Status Display */}
-                      <div className="space-y-2">
+                      <div className="flex flex-col space-y-2">
                         <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           Current Status
                         </Label>
