@@ -793,7 +793,7 @@ export function EmailTemplateEditorModal({
                 ) : (
                   <div className="email-template-editor flex min-h-0 flex-1 flex-col bg-white dark:bg-background rounded-lg border border-gray-300 dark:border-gray-700">
                     {/* Editor Toolbar */}
-                    <div className="flex flex-wrap rounded-t-lg items-center gap-1 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-background-light">
+                    <div className="flex flex-wrap rounded-t-lg items-center gap-1 border-b border-gray-300 bg-gray-200 p-2 dark:border-gray-700 dark:bg-background">
                       {/* Heading Dropdown */}
                       <div className="heading-dropdown relative">
                         <Button

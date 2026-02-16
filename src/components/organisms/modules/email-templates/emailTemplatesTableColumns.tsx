@@ -70,8 +70,8 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
     cell: ({ row }) => {
       const template = row.original;
       return (
-        <div className="truncate py-1 text-gray-700">
-          <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="truncate py-1 text-gray-700 dark:text-gray-300">
+          <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-50">
             {template.name || 'Unnamed Template'}
           </p>
         </div>
@@ -84,7 +84,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
     cell: ({ row }) => {
       const template = row.original;
       return (
-        <div className="truncate py-1 text-sm text-gray-600">
+        <div className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
           {template.subject || 'No subject'}
         </div>
       );
@@ -96,7 +96,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
     cell: ({ row }) => {
       const template = row.original;
       return (
-        <div className="truncate py-1 text-sm text-gray-600">
+        <div className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
           {template.fromName || 'No from name'}
         </div>
       );
@@ -131,7 +131,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="truncate">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-50">
               {user.name}
             </div>
           </div>
@@ -166,7 +166,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
           ? new Date(template.updatedAt).toLocaleDateString()
           : 'N/A';
       return (
-        <div className="py-1 text-gray-600">
+        <div className="py-1 text-gray-600 dark:text-gray-400">
           <div className="text-sm">{formatted}</div>
         </div>
       );
