@@ -1,6 +1,8 @@
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { CircleAlert } from 'lucide-react';
 import React, { useState } from 'react';
 import { Modal } from './Modal';
 
@@ -172,13 +174,10 @@ export function ActionDialog({
     >
       <div>
         {warningMessage && (
-          <div className="bg-danger/90 mb-4 rounded-md p-3">
-            <div className="text-sm text-danger">
-              <p>
-                <strong>Warning:</strong> {warningMessage}
-              </p>
-            </div>
-          </div>
+          <Alert variant="destructive" className="mb-4 border-none">
+            <CircleAlert />
+            <AlertDescription className="text-sm">{warningMessage}</AlertDescription>
+          </Alert>
         )}
 
         <p className="text-sm text-text-muted">
