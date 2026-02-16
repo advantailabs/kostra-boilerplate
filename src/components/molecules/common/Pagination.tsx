@@ -1,9 +1,9 @@
 import {
-  Pagination as PaginationNav,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  Pagination as PaginationNav,
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
@@ -25,7 +25,9 @@ interface PaginationProps {
 }
 
 export function Pagination({ pagination, onPageChange, className }: PaginationProps) {
-  const { page, totalPages, totalCount } = pagination;
+  const { page, totalPages, totalCount, limit } = pagination;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
 
   if (totalPages <= 1) {
     return null;
@@ -97,8 +99,8 @@ export function Pagination({ pagination, onPageChange, className }: PaginationPr
 
   return (
     <div className={cn('mt-3 flex items-center justify-between', className)}>
-      <div className="text-sm text-gray-500 dark:text-gray-400">
-        Page {page} of {totalPages} • {totalCount} total
+      <div className="text-center text-sm text-gray-500 sm:text-left dark:text-gray-400">
+        Showing {startIndex + 1} to {Math.min(endIndex, totalCount)} of {totalCount} results
       </div>
       <PaginationNav className="mx-0 w-auto">
         <PaginationContent>

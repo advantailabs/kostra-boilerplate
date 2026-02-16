@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
@@ -59,11 +58,6 @@ export function CategoriesTable({
     }
   }, [page, onPageChange]);
 
-  // Show loading screen only on initial load, not during search
-  if (isLoading && !searchInput) {
-    return <LoadingScreen message="Loading categories..." />;
-  }
-
   return (
     <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
@@ -87,8 +81,12 @@ export function CategoriesTable({
             data={categories}
             meta={{ onEdit, onDelete }}
             emptyMessage="No categories found."
-            isLoading={isLoading && searchInput !== debouncedSearch}
-            loadingMessage="Searching..."
+            isLoading={isLoading || searchInput !== debouncedSearch}
+            loadingMessage={
+              searchInput !== debouncedSearch
+                ? 'Searching...'
+                : 'Loading categories...'
+            }
           />
         </div>
 

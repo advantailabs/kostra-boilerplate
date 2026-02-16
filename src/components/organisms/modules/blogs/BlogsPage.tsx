@@ -227,7 +227,7 @@ export function BlogsPage({ className }: BlogsPageProps) {
             />
 
             {pagination && (
-              <Pagination pagination={pagination} onPageChange={handlePageChange} className="mt-6" />
+              <Pagination pagination={pagination} onPageChange={handlePageChange} />
             )}
           </>
         )}

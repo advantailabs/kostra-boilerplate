@@ -144,9 +144,9 @@ export function EmailTemplatesTable({
         {/* Pagination */}
         {paginatedTemplates.length > 0 && (
           <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-500 ">
+            {/* <div className="text-sm text-gray-500 ">
               Showing {startIndex + 1} to {Math.min(endIndex, total)} of {total} results
-            </div>
+            </div> */}
             <Pagination
               pagination={{
                 page,

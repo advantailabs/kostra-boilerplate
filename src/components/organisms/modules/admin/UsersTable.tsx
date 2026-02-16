@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
@@ -112,10 +111,6 @@ export function UsersTable({
     setIsFilterModalOpen(false);
   };
 
-  if (isLoading && !searchInput) {
-    return <LoadingScreen message="Loading users..." />;
-  }
-
   return (
     <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
@@ -158,8 +153,12 @@ export function UsersTable({
               isRestoring,
             }}
             emptyMessage="No users found."
-            isLoading={isLoading && searchInput !== debouncedSearch}
-            loadingMessage="Searching..."
+            isLoading={isLoading || searchInput !== debouncedSearch}
+            loadingMessage={
+              searchInput !== debouncedSearch
+                ? 'Searching...'
+                : 'Loading users...'
+            }
           />
         </div>
 

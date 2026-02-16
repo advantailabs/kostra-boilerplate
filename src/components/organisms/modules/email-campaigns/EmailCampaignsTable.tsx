@@ -314,22 +314,15 @@ export function EmailCampaignsTable({
 
         {/* Pagination */}
         {paginatedCampaigns.length > 0 && (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-center text-sm text-gray-500 sm:text-left ">
-              Showing {startIndex + 1} to {Math.min(endIndex, total)} of {total} results
-            </div>
-            <div className="flex justify-center sm:justify-end">
-              <Pagination
-                pagination={{
-                  page,
-                  limit,
-                  totalCount: total,
-                  totalPages,
-                }}
-                onPageChange={setPage}
-              />
-            </div>
-          </div>
+          <Pagination
+            pagination={{
+              page,
+              limit,
+              totalCount: total,
+              totalPages,
+            }}
+            onPageChange={setPage}
+          />
         )}
       </div>
     </div>

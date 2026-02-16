@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
 import { UnifiedSearchBar } from '@/components/molecules/common/UnifiedSearchBar';
@@ -59,14 +58,6 @@ export function PackagesTable({
     }
   }, [page, onPageChange]);
 
-  // Show loading screen only on initial load, not during search
-  if (isLoading && !searchInput) {
-    return <LoadingScreen message="Loading packages..." />;
-  }
-
-  const isSearching =
-    isLoading && searchInput !== debouncedSearch;
-
   return (
     <div className={`min-h-screen ${className || ''}`}>
       <PageHeaderWithAction
@@ -92,8 +83,12 @@ export function PackagesTable({
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             emptyMessage="No packages found."
-            isLoading={isSearching}
-            loadingMessage="Searching..."
+            isLoading={isLoading || searchInput !== debouncedSearch}
+            loadingMessage={
+              searchInput !== debouncedSearch
+                ? 'Searching...'
+                : 'Loading packages...'
+            }
           />
         </div>
 

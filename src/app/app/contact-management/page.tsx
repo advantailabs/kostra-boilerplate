@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { ActionDialog } from '@/components/molecules/common/ActionDialog';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
@@ -79,10 +78,6 @@ export default function ContactManagementPage() {
     setStatus(undefined);
     setPurpose(undefined);
   };
-
-  if (isLoading && !data) {
-    return <LoadingScreen message="Loading contact submissions..." />;
-  }
 
   return (
     <div className="">
@@ -169,6 +164,12 @@ export default function ContactManagementPage() {
               onDelete: (s: ContactSubmission) => setDeleteTarget(s),
             }}
             emptyMessage="No contact submissions found."
+            isLoading={isLoading || searchInput !== debouncedSearch}
+            loadingMessage={
+              searchInput !== debouncedSearch
+                ? 'Searching...'
+                : 'Loading contact submissions...'
+            }
           />
         </div>
 
