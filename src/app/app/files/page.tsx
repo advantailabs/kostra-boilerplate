@@ -79,10 +79,6 @@ export default function FilesPage() {
     Object.keys(filters).length > 0 &&
     Object.values(filters).some(value => value !== undefined && value !== '');
 
-  if (loading && files.length === 0) {
-    return <LoadingScreen message="Loading files..." />;
-  }
-
   return (
     <div className="min-h-screen">
       <PageHeaderWithAction
@@ -96,70 +92,79 @@ export default function FilesPage() {
 
       {/* Files Content */}
       <div className="p-4 max-sm:p-3">
-        {/* Mobile actions */}
-        <div className="hidden max-sm:mb-3">{/* max-sm:block */}
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => setShowFilterModal(true)}
-              variant="secondary"
-              className={`w-auto justify-center px-3 py-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''
-                }`}
-            >
-              <Filter className="mr-1 h-4 w-4" />
-              Filter
-            </Button>
-            <Button
-              onClick={() => setShowUploader(true)}
-              className="w-auto justify-center px-3 py-2"
-            >
-              <Plus className="mr-1 h-4 w-4" />
-              Upload
-            </Button>
-          </div>
-        </div>
-        {files.length === 0 && Object.values(filters).length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
-            <div className="text-center">
-              <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
-              <h3 className="mt-2 text-sm font-medium text-text">No files</h3>
-              <p className="mt-1 text-sm text-text-muted">
-                Get started by uploading your first file.
-              </p>
-              <div className="mt-6">
+        {loading && files.length === 0 ? (
+          <LoadingScreen
+            message="Loading files..."
+            className="h-[calc(100%-4rem)] flex items-center justify-center bg-transparent"
+          />
+        ) : (
+          <>
+            {/* Mobile actions */}
+            <div className="hidden max-sm:mb-3">{/* max-sm:block */}
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => setShowFilterModal(true)}
+                  variant="secondary"
+                  className={`w-auto justify-center px-3 py-2 ${hasActiveFilters ? 'ring-2 ring-primary' : ''
+                    }`}
+                >
+                  <Filter className="mr-1 h-4 w-4" />
+                  Filter
+                </Button>
                 <Button
                   onClick={() => setShowUploader(true)}
-                  className="max-sm:w-full max-sm:justify-center"
+                  className="w-auto justify-center px-3 py-2"
                 >
-                  Upload Files
+                  <Plus className="mr-1 h-4 w-4" />
+                  Upload
                 </Button>
               </div>
             </div>
-          </div>
-        ) : files.length === 0 && Object.values(filters).length > 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
-            <div className="text-center">
-              <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
-              <h3 className="mt-2 text-sm font-medium text-text">No Files Found</h3>
-              <p className="mt-1 text-sm text-text-muted">
-                No files were found that matched your filters
-              </p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="mb-4 max-sm:mb-3">
-              <p className="text-sm text-text-muted">
-                {total} file{total !== 1 ? 's' : ''} •{' '}
-                {formatFileSize(files.reduce((acc, file) => acc + file.size, 0))} total
-              </p>
-            </div>
-            <FileGrid
-              files={files}
-              onFileDeleted={handleFileDeleted}
-              onLoadMore={handleLoadMore}
-              hasMore={hasMore}
-              loading={loading}
-            />
+            {files.length === 0 && Object.values(filters).length === 0 ? (
+              <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
+                <div className="text-center">
+                  <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
+                  <h3 className="mt-2 text-sm font-medium text-text">No files</h3>
+                  <p className="mt-1 text-sm text-text-muted">
+                    Get started by uploading your first file.
+                  </p>
+                  <div className="mt-6">
+                    <Button
+                      onClick={() => setShowUploader(true)}
+                      className="max-sm:w-full max-sm:justify-center"
+                    >
+                      Upload Files
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : files.length === 0 && Object.values(filters).length > 0 ? (
+              <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-border shadow-xs max-sm:h-auto max-sm:min-h-[200px] max-sm:px-4 max-sm:py-8">
+                <div className="text-center">
+                  <FileIcon className="mx-auto h-12 w-12 text-text-muted" />
+                  <h3 className="mt-2 text-sm font-medium text-text">No Files Found</h3>
+                  <p className="mt-1 text-sm text-text-muted">
+                    No files were found that matched your filters
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4 max-sm:mb-3">
+                  <p className="text-sm text-text-muted">
+                    {total} file{total !== 1 ? 's' : ''} •{' '}
+                    {formatFileSize(files.reduce((acc, file) => acc + file.size, 0))} total
+                  </p>
+                </div>
+                <FileGrid
+                  files={files}
+                  onFileDeleted={handleFileDeleted}
+                  onLoadMore={handleLoadMore}
+                  hasMore={hasMore}
+                  loading={loading}
+                />
+              </>
+            )}
           </>
         )}
       </div>
