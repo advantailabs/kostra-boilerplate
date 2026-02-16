@@ -112,7 +112,7 @@ export function FileCard({
                                     }}
                                     className="hover:bg-primary/10 flex items-center gap-2 px-2 py-1.5 text-xs text-text transition-colors duration-200 hover:text-primary"
                                 >
-                                    <div className="bg-primary/20 flex h-3 w-3 shrink-0 items-center justify-center rounded sm:h-3.5 sm:w-3.5">
+                                    <div className="flex h-3 w-3 shrink-0 items-center justify-center rounded sm:h-3.5 sm:w-3.5">
                                         <Eye className="h-1.5 w-1.5 text-primary sm:h-2 sm:w-2" />
                                     </div>
                                     <span className="truncate">View Details</span>
