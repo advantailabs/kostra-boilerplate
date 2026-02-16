@@ -2,16 +2,16 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RiCalendar2Fill } from '@remixicon/react';
 import { format } from 'date-fns';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button } from '@/components/atom/Button';
 import { Calendar } from '@/components/molecules/common/Calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/molecules/common/Popover';
+import { Button } from '@/components/ui/button';
 import { cx } from '@/lib/utils';
+import { CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 const FormSchema = z.object({
@@ -118,7 +118,7 @@ export function DateTimePicker24hForm({
               ) : (
                 <span>MM/DD/YYYY HH:mm</span>
               )}
-              <RiCalendar2Fill className="ml-auto h-4 w-4 opacity-50" />
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="z-[9999] w-auto p-0">
@@ -142,7 +142,7 @@ export function DateTimePicker24hForm({
                         <Button
                           key={hour}
                           variant={
-                            currentValue && currentValue?.getHours() === hour ? 'primary' : 'ghost'
+                            currentValue && currentValue?.getHours() === hour ? 'default' : 'ghost'
                           }
                           className="h-7 w-full text-xs"
                           onClick={() => handleTimeChange('hour', hour.toString())}
@@ -164,7 +164,7 @@ export function DateTimePicker24hForm({
                         key={minute}
                         variant={
                           currentValue && currentValue?.getMinutes() === minute
-                            ? 'primary'
+                            ? 'default'
                             : 'ghost'
                         }
                         className="h-7 w-full text-xs"
