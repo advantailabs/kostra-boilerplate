@@ -1,6 +1,13 @@
-import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
-
-import { Button } from '@/components/atom/Button';
+import {
+  Pagination as PaginationNav,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import { cn } from '@/lib/utils';
 
 interface PaginationInfo {
   page: number;
@@ -66,54 +73,68 @@ export function Pagination({ pagination, onPageChange, className }: PaginationPr
   };
 
   const pageNumbers = getPageNumbers();
+  const isPreviousDisabled = page <= 1;
+  const isNextDisabled = page >= totalPages;
+
+  const handlePreviousClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!isPreviousDisabled) {
+      onPageChange(Math.max(1, page - 1));
+    }
+  };
+
+  const handleNextClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!isNextDisabled) {
+      onPageChange(Math.min(totalPages, page + 1));
+    }
+  };
+
+  const handlePageClick = (e: React.MouseEvent<HTMLAnchorElement>, pageNum: number) => {
+    e.preventDefault();
+    onPageChange(pageNum);
+  };
 
   return (
-    <div className={`mt-3 flex items-center justify-between ${className || ''}`}>
+    <div className={cn('mt-3 flex items-center justify-between', className)}>
       <div className="text-sm text-gray-500 dark:text-gray-400">
         Page {page} of {totalPages} • {totalCount} total
       </div>
-      <div className="flex items-center gap-1">
-        {/* Previous Button */}
-        <Button
-          variant="secondary"
-          disabled={page <= 1}
-          onClick={() => onPageChange(Math.max(1, page - 1))}
-          className="h-6 w-6 p-0"
-        >
-          <RiArrowLeftSLine className="h-3 w-3" />
-        </Button>
-
-        {/* Page Numbers */}
-        <div className="flex items-center gap-1">
+      <PaginationNav className="mx-0 w-auto">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={handlePreviousClick}
+              className={cn(isPreviousDisabled && 'pointer-events-none opacity-50')}
+              aria-disabled={isPreviousDisabled}
+            />
+          </PaginationItem>
           {pageNumbers.map((pageNum, index) => (
-            <div key={index}>
+            <PaginationItem key={index}>
               {pageNum === '...' ? (
-                <span className="flex h-6 w-6 items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-                  ...
-                </span>
+                <PaginationEllipsis />
               ) : (
-                <Button
-                  variant={pageNum === page ? 'primary' : 'secondary'}
-                  onClick={() => onPageChange(pageNum as number)}
-                  className="h-6 w-6 p-0 text-sm"
+                <PaginationLink
+                  href="#"
+                  isActive={pageNum === page}
+                  onClick={(e) => handlePageClick(e, pageNum as number)}
                 >
                   {pageNum}
-                </Button>
+                </PaginationLink>
               )}
-            </div>
+            </PaginationItem>
           ))}
-        </div>
-
-        {/* Next Button */}
-        <Button
-          variant="secondary"
-          disabled={page >= totalPages}
-          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-          className="h-6 w-6 p-0"
-        >
-          <RiArrowRightSLine className="h-3 w-3" />
-        </Button>
-      </div>
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={handleNextClick}
+              className={cn(isNextDisabled && 'pointer-events-none opacity-50')}
+              aria-disabled={isNextDisabled}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </PaginationNav>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Switch } from '@/components/atom/Switch';
 import { BlogImageUpload } from '@/components/molecules/form/BlogImageUpload';
 import { TagInput } from '@/components/molecules/form/TagInput';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,6 +10,7 @@ import {
   FieldTitle,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { BlogResponseType } from '@/types/blog.type';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 

@@ -789,7 +789,7 @@ function Editor({
 
       {/* Editor Content */}
       <div
-        className="flex-1 cursor-text overflow-y-auto scrollbar-thin scrollbar-track-background-light scrollbar-thumb-border hover:scrollbar-thumb-border-muted"
+        className="flex-1 cursor-text overflow-y-auto scrollbar-thin scrollbar-track-background-light scrollbar-thumb-border hover:scrollbar-thumb-border-muted p-4"
         onClick={e => {
           e.stopPropagation();
           if (editor && !editor.isFocused) {

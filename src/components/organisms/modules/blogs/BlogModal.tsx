@@ -77,10 +77,10 @@ export function BlogModal({
             </DialogHeader>
 
             {/* Main Content */}
-            <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-              <div className="flex min-h-0 flex-1">
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+              <div className="flex min-h-0 flex-1 overflow-hidden">
                 {/* Left Side - Form Fields */}
-                <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 border-r border-border p-4 [-ms-overflow-style:none] [scrollbar-width:none] md:w-[450px]">
+                <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-4 md:w-[450px]">
                   <BlogFormFields
                     control={form.control}
                     errors={form.formState.errors}
@@ -91,11 +91,11 @@ export function BlogModal({
 
                 {/* Right Side - Editor */}
                 <div
-                  className="flex h-[740px] 2xl:h-[88vh] min-w-0 flex-1 p-0"
+                  className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto p-0"
                   onClick={e => e.stopPropagation()}
                 >
                   <div
-                    className="flex min-h-0 w-full flex-1 flex-col"
+                    className="flex min-h-0 w-full min-w-0 flex-1 flex-col"
                     onClick={e => e.stopPropagation()}
                   >
                     <Editor
