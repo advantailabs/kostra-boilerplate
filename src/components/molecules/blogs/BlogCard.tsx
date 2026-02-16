@@ -152,11 +152,11 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
         )}
       </div>
 
-      <CardContent className="space-y-3 px-4 pt-4">
+      <CardContent className="space-y-2 px-4 pt-4">
         {/* Meta row: date + category/tags badge (+N if more tags) */}
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <CalendarDays className="size-4 shrink-0" aria-hidden />
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <CalendarDays className="size-3 shrink-0" aria-hidden />
             <span>{formatDate(blog.createdAt)}</span>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-1">
@@ -176,7 +176,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
         {/* Title */}
         <h3
           className={cn(
-            'line-clamp-2 text-base font-semibold leading-snug md:text-lg',
+            'line-clamp-2 text-sm font-medium leading-snug md:text-base',
             isCardClickable && 'cursor-pointer'
           )}
         >
@@ -185,12 +185,12 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
 
         {/* Description excerpt */}
         {excerpt && (
-          <p className="line-clamp-2 text-base text-muted-foreground">{excerpt}</p>
+          <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
         )}
 
         {/* Footer: author + read more button */}
         <div className="flex items-center justify-between gap-4">
-          <span className="text-sm font-medium">
+          <span className="text-xs font-medium">
             {blog.author?.name ?? 'Unknown Author'}
           </span>
           {isCardClickable && (
