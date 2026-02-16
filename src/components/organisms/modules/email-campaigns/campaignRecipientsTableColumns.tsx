@@ -102,7 +102,7 @@ export const campaignRecipientsTableColumns: ColumnDef<CampaignRecipientWithUser
             header: 'Email',
             accessorFn: row => row.user.email,
             cell: ({ row }) => (
-                <p className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="truncate py-1 text-sm text-text-muted">
                     {row.original.user.email}
                 </p>
             ),

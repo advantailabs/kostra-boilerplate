@@ -93,7 +93,7 @@ export const emailCampaignsTableColumns: ColumnDef<CampaignWithRelations>[] = [
     header: 'Template',
     accessorFn: row => row.emailTemplate.name,
     cell: ({ row }) => (
-      <div className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
+      <div className="truncate py-1 text-sm text-text-muted">
         {row.original.emailTemplate.name}
       </div>
     ),
@@ -103,7 +103,7 @@ export const emailCampaignsTableColumns: ColumnDef<CampaignWithRelations>[] = [
     header: 'Recipients',
     accessorFn: row => row.recipients.length,
     cell: ({ row }) => (
-      <div className="py-1 text-sm text-gray-600 dark:text-gray-400">
+      <div className="py-1 text-sm text-text-muted">
         {row.original.recipients.length}
       </div>
     ),
@@ -113,7 +113,7 @@ export const emailCampaignsTableColumns: ColumnDef<CampaignWithRelations>[] = [
     header: 'Scheduled',
     accessorFn: row => row.scheduledAt,
     cell: ({ row }) => (
-      <div className="py-1 text-sm text-gray-600 dark:text-gray-400">
+      <div className="py-1 text-sm text-text-muted">
         {formatScheduledDate(row.original.scheduledAt)}
       </div>
     ),

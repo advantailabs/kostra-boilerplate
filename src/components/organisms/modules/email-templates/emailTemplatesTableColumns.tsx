@@ -84,7 +84,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
     cell: ({ row }) => {
       const template = row.original;
       return (
-        <div className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
+        <div className="truncate py-1 text-sm text-text-muted">
           {template.subject || 'No subject'}
         </div>
       );
@@ -96,7 +96,7 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
     cell: ({ row }) => {
       const template = row.original;
       return (
-        <div className="truncate py-1 text-sm text-gray-600 dark:text-gray-400">
+        <div className="truncate py-1 text-sm text-text-muted">
           {template.fromName || 'No from name'}
         </div>
       );
@@ -166,8 +166,8 @@ export const emailTemplateTableColumns: ColumnDef<EmailTemplate>[] = [
           ? new Date(template.updatedAt).toLocaleDateString()
           : 'N/A';
       return (
-        <div className="py-1 text-gray-600 dark:text-gray-400">
-          <div className="text-sm">{formatted}</div>
+        <div className="py-1 text-text-muted">
+          <div className="text-sm text-text-muted">{formatted}</div>
         </div>
       );
     },
