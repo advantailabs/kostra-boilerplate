@@ -90,7 +90,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
   return (
     <Card
       className={cn(
-        'flex flex-col gap-0 overflow-hidden rounded-md pt-0 pb-4 shadow-none h-full group',
+        'bg-card text-card-foreground flex flex-col gap-6 overflow-hidden rounded-xl border py-6 shadow-none h-full group transition-all duration-300',
         className
       )}
       onClick={isCardClickable ? handleClick : undefined}
@@ -99,74 +99,82 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
       tabIndex={isCardClickable ? 0 : undefined}
       aria-label={isCardClickable ? `Blog: ${blog.title}` : undefined}
     >
-      {/* Image block: full width, no px/pt padding */}
-      <div className="relative h-50 w-full overflow-hidden rounded-t-md">
-        {imageUrl && !imageError ? (
-          <Image
-            src={imageUrl}
-            alt={blog.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className={cn('h-full w-full bg-linear-to-br', gradientClass)} />
-        )}
-        <div className="absolute left-2 top-2">
-          <span
-            className={cn(
-              'rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm',
-              blog.published ? 'bg-green-600 text-green-200' : 'bg-yellow-500 text-black'
-            )}
-          >
-            {blog.published ? 'Published' : 'Draft'}
-          </span>
-        </div>
-        {(onEdit || onDelete) && (
-          <div className="absolute right-2 top-2 flex gap-1">
-            {onEdit && (
-              <Button
-                variant="ghost"
-                onClick={e => {
-                  e.stopPropagation();
-                  onEdit(blog);
-                }}
-                className="h-7 w-7 bg-gray-800/30 p-0 text-white backdrop-blur-sm hover:bg-white/30"
-              >
-                <Edit className="h-3 w-3" aria-label="Edit blog" />
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                variant="ghost"
-                onClick={e => {
-                  e.stopPropagation();
-                  onDelete(blog);
-                }}
-                className="h-7 w-7 bg-red-600/80 p-0 text-white backdrop-blur-sm hover:bg-danger/30"
-              >
-                <Trash2 className="h-3 w-3" aria-label="Delete blog" />
-              </Button>
-            )}
+      <CardContent className="px-6 space-y-3.5">
+        {/* Image block */}
+        <div className="relative mb-6 overflow-hidden rounded-lg sm:mb-12">
+          {imageUrl && !imageError ? (
+            <Image
+              src={imageUrl}
+              alt={blog.title}
+              width={600}
+              height={238}
+              className="h-[238px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div
+              className={cn(
+                'h-[238px] w-full bg-linear-to-br',
+                gradientClass
+              )}
+            />
+          )}
+          <div className="absolute left-2 top-2">
+            <span
+              className={cn(
+                'rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm',
+                blog.published
+                  ? 'bg-green-600 text-green-200'
+                  : 'bg-yellow-500 text-black'
+              )}
+            >
+              {blog.published ? 'Published' : 'Draft'}
+            </span>
           </div>
-        )}
-      </div>
+          {(onEdit || onDelete) && (
+            <div className="absolute right-2 top-2 flex gap-1">
+              {onEdit && (
+                <Button
+                  variant="ghost"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onEdit(blog);
+                  }}
+                  className="h-7 w-7 bg-gray-800/30 p-0 text-white backdrop-blur-sm hover:bg-white/30 hover:text-white"
+                >
+                  <Edit className="h-3 w-3" aria-label="Edit blog" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="ghost"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onDelete(blog);
+                  }}
+                  className="h-7 w-7 bg-red-600/80 p-0 text-white backdrop-blur-sm hover:bg-danger/30 hover:text-white"
+                >
+                  <Trash2 className="h-3 w-3" aria-label="Delete blog" />
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
 
-      <CardContent className="space-y-2 px-4 pt-4">
-        {/* Meta row: date + category/tags badge (+N if more tags) */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <CalendarDays className="size-3 shrink-0" aria-hidden />
+        {/* Meta row: date + category/tags badge */}
+        <div className="flex items-center justify-between gap-1.5">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-base">
+            <CalendarDays className="size-6 shrink-0" aria-hidden />
             <span>{formatDate(blog.createdAt)}</span>
           </div>
-          <div className="flex flex-wrap items-center justify-end gap-1">
+          <div className="flex items-center gap-1.5">
             {categoryLabel && (
-              <Badge className="border-0 bg-primary/10 text-xs font-medium text-primary">
+              <Badge className="border-0 rounded-full bg-primary/10 px-2 py-0.5 text-sm font-medium text-primary">
                 {categoryLabel}
               </Badge>
             )}
             {blog.tags && blog.tags.length > 1 && (
-              <Badge className="border-0 bg-primary/10 text-xs font-medium text-primary">
+              <Badge className="border-0 rounded-full bg-primary/10 px-2 py-0.5 text-sm font-medium text-primary">
                 +{blog.tags.length - 1}
               </Badge>
             )}
@@ -176,7 +184,7 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
         {/* Title */}
         <h3
           className={cn(
-            'line-clamp-2 text-sm font-medium leading-snug md:text-base',
+            'line-clamp-2 text-lg font-medium md:text-xl',
             isCardClickable && 'cursor-pointer'
           )}
         >
@@ -185,19 +193,19 @@ export function BlogCard({ blog, onEdit, onDelete, className, onClick }: BlogCar
 
         {/* Description excerpt */}
         {excerpt && (
-          <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
+          <p className="text-muted-foreground line-clamp-2 text-base">{excerpt}</p>
         )}
 
         {/* Footer: author + read more button */}
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-xs font-medium">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">
             {blog.author?.name ?? 'Unknown Author'}
           </span>
           {isCardClickable && (
             <Button
               variant="outline"
               size="icon"
-              className="size-9 border shadow-xs transition-colors duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
+              className="size-9 border shadow-xs transition-all duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
               onClick={e => {
                 e.stopPropagation();
                 handleClick();

@@ -228,7 +228,7 @@ export const userTableColumns: ColumnDef<User>[] = [
                                         Edit
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                        className="text-danger"
+                                        className="text-red-600 focus:text-red-600 dark:text-red-400 focus:dark:text-red-400"
                                         disabled={currentUser}
                                         onClick={e => {
                                             e.stopPropagation();
