@@ -52,6 +52,16 @@ interface EmailTemplateEditorModalProps {
 
 // Variables are now stored as simple array of field names
 
+const EMPTY_FORM_DATA = {
+  name: '',
+  subject: '',
+  fromEmail: '',
+  fromName: '',
+  replyToEmail: '',
+  emailType: 'TRANSACTIONAL' as const,
+  body: '',
+};
+
 export function EmailTemplateEditorModal({
   isOpen,
   onClose,
@@ -132,17 +142,8 @@ export function EmailTemplateEditorModal({
         }
       }
     }
-    return {
-      name: '',
-      subject: '',
-      fromEmail: '',
-      fromName: '',
-      replyToEmail: '',
-      emailType: 'TRANSACTIONAL',
-      body: '',
-    }
-
-  }
+    return { ...EMPTY_FORM_DATA };
+  };
   const initializeTemplateVariables = () => {
     if (isOpen) {
       if (template && mode === 'edit') {
@@ -450,6 +451,16 @@ export function EmailTemplateEditorModal({
     return sanitizedHTML || fallbackHTML;
   };
 
+  const resetForm = () => {
+    setFormData({ ...EMPTY_FORM_DATA });
+    setSourceContent('');
+    setVariables([]);
+    setNewVariableName('');
+    setShowHeadingDropdown(false);
+    setIsSourceMode(false);
+    editor?.commands.setContent('');
+  };
+
   // Handle form submission
   const handleSubmit = async () => {
     if (
@@ -474,9 +485,11 @@ export function EmailTemplateEditorModal({
 
       if (mode === 'create') {
         await createEmailTemplate(templateData);
+        resetForm();
         onSuccess();
       } else if (template) {
         await updateEmailTemplate({ id: template.id, data: templateData });
+        resetForm();
         onSuccess();
       }
     } catch (error) {
