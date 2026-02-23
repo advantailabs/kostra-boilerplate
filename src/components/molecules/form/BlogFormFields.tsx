@@ -1,8 +1,16 @@
-import { Input } from '@/components/atom/Input';
-import { Label } from '@/components/atom/Label';
-import { Switch } from '@/components/atom/Switch';
 import { BlogImageUpload } from '@/components/molecules/form/BlogImageUpload';
 import { TagInput } from '@/components/molecules/form/TagInput';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldTitle,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { BlogResponseType } from '@/types/blog.type';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
@@ -33,10 +41,10 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
   return (
     <>
       {/* Title */}
-      <div>
-        <Label htmlFor="title" className="mb-2 block text-sm font-medium text-text">
+      <Field>
+        <FieldLabel htmlFor="title">
           Title
-        </Label>
+        </FieldLabel>
         <Controller
           control={control}
           name="title"
@@ -47,19 +55,18 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                 {...field}
                 value={String(field.value ?? '')}
                 placeholder="Enter blog title..."
-                className="h-9"
               />
-              {errors.title && <span className="text-sm text-danger">{errors.title.message}</span>}
+              <FieldError errors={errors.title ? [{ message: errors.title.message }] : []} />
             </>
           )}
         />
-      </div>
+      </Field>
 
       {/* Slug */}
-      <div>
-        <Label htmlFor="slug" className="mb-2 block text-sm font-medium text-text">
+      <Field>
+        <FieldLabel htmlFor="slug">
           Slug
-        </Label>
+        </FieldLabel>
         <Controller
           control={control}
           name="slug"
@@ -70,19 +77,18 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
                 {...field}
                 value={String(field.value ?? '')}
                 placeholder="Enter blog slug..."
-                className="h-9"
               />
-              {errors.slug && <span className="text-sm text-danger">{errors.slug.message}</span>}
+              <FieldError errors={errors.slug ? [{ message: errors.slug.message }] : []} />
             </>
           )}
         />
-      </div>
+      </Field>
 
       {/* Categories */}
-      <div>
-        <Label htmlFor="categories" className="mb-2 block text-sm font-medium text-text">
+      <Field>
+        <FieldLabel htmlFor="categories">
           Categories
-        </Label>
+        </FieldLabel>
         <Controller
           control={control}
           name="categories"
@@ -90,31 +96,27 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
             <div className="grid grid-cols-2 gap-x-2 gap-y-1">
               {categoryOptions.map(option => (
                 <div key={option.value} className="inline-flex w-fit items-center space-x-2">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     id={`category-${option.value}`}
                     checked={field.value?.includes(option.value) || false}
-                    onChange={e => {
+                    onCheckedChange={checked => {
                       const currentValue = field.value || [];
-                      const newValue = e.target.checked
+                      const newValue = checked
                         ? [...currentValue, option.value]
                         : currentValue.filter((val: string) => val !== option.value);
                       field.onChange(newValue);
                     }}
-                    className="h-3 w-3 rounded border-border text-primary focus:ring-0 focus:ring-offset-0"
                   />
-                  <label htmlFor={`category-${option.value}`} className="text-sm text-text">
+                  <FieldLabel htmlFor={`category-${option.value}`}>
                     {option.label}
-                  </label>
+                  </FieldLabel>
                 </div>
               ))}
             </div>
           )}
         />
-        {errors.categories && typeof errors.categories.message === 'string' && (
-          <span className="text-sm text-danger">{errors.categories.message}</span>
-        )}
-      </div>
+        <FieldError errors={errors.categories ? [{ message: errors.categories.message }] : []} />
+      </Field>
 
       {/* Blog Image */}
       <Controller
@@ -135,10 +137,10 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
       <div className="-mx-4 border-t border-border" />
 
       {/* Tags */}
-      <div>
-        <Label htmlFor="tags" className="mb-2 block text-sm font-medium text-text">
+      <Field>
+        <FieldLabel htmlFor="tags">
           Tags
-        </Label>
+        </FieldLabel>
         <Controller
           control={control}
           name="tags"
@@ -151,15 +153,18 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
             />
           )}
         />
-        {errors.tags && <span className="text-sm text-danger">{errors.tags.message}</span>}
-      </div>
+        <FieldError errors={errors.tags ? [{ message: errors.tags.message }] : []} />
+      </Field>
 
       {/* Published */}
-      <div>
-        <div className="flex items-center justify-between">
-          <Label htmlFor="published" className="mb-2 block text-sm font-medium text-text">
-            Published
-          </Label>
+      <FieldLabel htmlFor="published" className="px-0! border-none!">
+        <Field orientation="horizontal" className="px-0!">
+          <FieldContent className="cursor-pointer!">
+            <FieldTitle>Published</FieldTitle>
+            <FieldDescription>
+              When enabled, this blog will be visible to the public
+            </FieldDescription>
+          </FieldContent>
           <Controller
             control={control}
             name="published"
@@ -171,11 +176,8 @@ export function BlogFormFields({ control, errors, categoryOptions, blog }: BlogF
               />
             )}
           />
-        </div>
-        <p className="-mt-2 text-xs text-text-muted">
-          When enabled, this blog will be visible to the public
-        </p>
-      </div>
+        </Field>
+      </FieldLabel>
     </>
   );
 }

@@ -119,7 +119,7 @@ const CommandBarCommand = React.forwardRef<HTMLButtonElement, CommandProps>(
     return (
       <span
         className={cx(
-          'flex items-center gap-x-2 rounded-lg bg-background-dark p-1 text-base font-medium text-text outline-none transition focus:z-10 sm:text-sm',
+          'flex items-center gap-x-2 rounded-lg bg-background-dark p-1 text-base font-medium text-text outline-hidden transition focus:z-10 sm:text-sm',
           'sm:last-of-type:-mr-1',
           className
         )}

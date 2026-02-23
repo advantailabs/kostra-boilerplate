@@ -9,7 +9,7 @@ import { cx, focusInput, focusRing, hasErrorInput } from '@/lib/utils';
 const inputStyles = tv({
   base: [
     // base
-    'relative block w-full appearance-none truncate rounded-md border px-2.5 py-2 shadow-sm outline-none transition sm:text-sm',
+    'relative block w-full appearance-none truncate rounded-md border px-2.5 py-2 shadow-xs outline-hidden transition sm:text-sm',
     // border color
     'border-border',
     // text color
@@ -22,7 +22,7 @@ const inputStyles = tv({
     'disabled:border-border-muted disabled:bg-background-light disabled:text-text-muted',
     // file
     [
-      'file:-my-2 file:-ml-2.5 file:cursor-pointer file:rounded-l-[5px] file:rounded-r-none file:border-0 file:px-3 file:py-2 file:outline-none focus:outline-none disabled:pointer-events-none file:disabled:pointer-events-none',
+      'file:-my-2 file:-ml-2.5 file:cursor-pointer file:rounded-l-[5px] file:rounded-r-none file:border-0 file:px-3 file:py-2 file:outline-hidden focus:outline-hidden disabled:pointer-events-none file:disabled:pointer-events-none',
       'file:border-solid file:border-border file:bg-background-light file:text-text-muted file:hover:bg-background-dark file:disabled:border-border-muted',
       'file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem]',
       'file:disabled:bg-background-light file:disabled:text-text-muted',
@@ -97,7 +97,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               aria-label="Change password visibility"
               className={cx(
                 // base
-                'h-fit w-fit rounded-sm outline-none transition-all',
+                'h-fit w-fit rounded-sm outline-hidden transition-all',
                 // text
                 'text-text-muted',
                 // hover

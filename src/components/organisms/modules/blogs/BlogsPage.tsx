@@ -1,6 +1,5 @@
 'use client';
 
-import { LoadingScreen } from '@/components/atom/LoadingScreen';
 import { BlogGrid } from '@/components/molecules/blogs/BlogGrid';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
 import { Pagination } from '@/components/molecules/common/Pagination';
@@ -173,13 +172,10 @@ export function BlogsPage({ className }: BlogsPageProps) {
   // Find the blog being edited
   const editingBlog = editingBlogId ? blogs?.find(blog => blog.id === editingBlogId) : null;
 
-  // Show loading screen only on initial load, not during search
-  if (isBlogsLoading && !searchInput) {
-    return <LoadingScreen message="Loading blogs..." />;
-  }
+  const loadingMessage = debouncedSearch ? 'Searching...' : 'Loading blogs...';
 
   return (
-    <div className={`min-h-screen bg-background ${className || ''}`}>
+    <div className={`min-h-screen ${className || ''}`}>
       <BlogModal
         isOpen={isBlogModalOpen}
         onClose={handleBlogModalClose}
@@ -207,24 +203,33 @@ export function BlogsPage({ className }: BlogsPageProps) {
         addButtonText="New"
       />
 
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-[calc(100%-4rem)] p-4 space-y-4 max-sm:p-3 overflow-y-auto">
         <UnifiedSearchBar
           placeholder="Search by title..."
           value={searchInput}
           onChange={handleSearchChange}
         />
 
-        <BlogGrid
-          searchInput={debouncedSearch || ''}
-          blogs={blogs || []}
-          onEdit={handleEditBlog}
-          onDelete={handleDeleteBlog}
-          onBlogClick={handleBlogClick}
-          className="mt-2"
-        />
+        {isBlogsLoading ? (
+          <div className="flex h-[calc(100%-4rem)] flex-col items-center justify-center gap-2">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <p className="text-sm text-text-muted">{loadingMessage}</p>
+          </div>
+        ) : (
+          <>
+            <BlogGrid
+              searchInput={debouncedSearch || ''}
+              blogs={blogs || []}
+              onEdit={handleEditBlog}
+              onDelete={handleDeleteBlog}
+              onBlogClick={handleBlogClick}
+              className=""
+            />
 
-        {pagination && (
-          <Pagination pagination={pagination} onPageChange={handlePageChange} className="mt-6" />
+            {pagination && (
+              <Pagination pagination={pagination} onPageChange={handlePageChange} />
+            )}
+          </>
         )}
       </div>
     </div>

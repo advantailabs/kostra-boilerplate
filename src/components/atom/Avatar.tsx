@@ -47,7 +47,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
             })()}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-sm">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-xs">
             <span className={cx('font-semibold text-white', textSizes[size])}>
               {fallback?.charAt(0).toUpperCase() || 'U'}
             </span>

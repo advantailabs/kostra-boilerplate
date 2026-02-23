@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/atom/Button';
+import { Button } from '@/components/ui/button';
 import { cx } from '@/lib/utils';
 
 export interface GradientCtaButtonProps {
@@ -27,15 +27,15 @@ export function GradientCtaButton({
   return (
     <div
       className={cx(
-        'rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px] shadow-[0_0_16px_rgba(99,102,241,0.35)]',
+        '',
         className
       )}
     >
       <Button
-        variant="ghost"
+        variant="default"
         className={cx(
           size === 'sm' ? 'h-7 px-2 text-xs' : 'h-8 px-3 text-sm',
-          'border-transparent bg-background text-text hover:bg-background-light',
+          'border-transparent',
           'btn-shimmer',
           buttonClassName
         )}

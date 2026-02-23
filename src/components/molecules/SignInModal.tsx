@@ -104,7 +104,7 @@ function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 alt="Kostra Logo"
                 width={52}
                 height={52}
-                className="drop-shadow-sm"
+                className="drop-shadow-xs"
               />
             </div>
             <h1 id="modal-title" className="mb-2 text-2xl font-bold text-gray-100">

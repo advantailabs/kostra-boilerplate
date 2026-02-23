@@ -3,10 +3,10 @@
  * Displays comprehensive user information with profile picture
  */
 
-import { Badge } from '@/components/atom/Badge';
 import { UserProfilePicture } from '@/components/atom/UserProfilePicture';
 import { Modal } from '@/components/molecules/common/Modal';
 import { UserDetailsList } from '@/components/molecules/common/UserDetailsList';
+import { Badge } from '@/components/ui/badge';
 import { ModalUserDetailsProps } from '@/types/user';
 
 export function ModalUserDetails({ isOpen, onClose, user }: ModalUserDetailsProps) {
@@ -18,7 +18,7 @@ export function ModalUserDetails({ isOpen, onClose, user }: ModalUserDetailsProp
       onClose={onClose}
       title="User Details"
       description={`Detailed information for ${user.name}`}
-      maxWidth="max-w-lg"
+      maxWidth="max-w-lg!"
       secondaryActionText="Close"
     >
       <div className="space-y-6">
@@ -34,8 +34,8 @@ export function ModalUserDetails({ isOpen, onClose, user }: ModalUserDetailsProp
             <h3 className="truncate text-lg font-semibold text-text">{user.name}</h3>
             <p className="truncate text-sm text-text-muted">{user.email}</p>
             <div className="mt-2 flex items-center gap-2">
-              <Badge variant={user.role === 'ADMIN' ? 'primary' : 'default'}>{user.role}</Badge>
-              <Badge variant={user.plan === 'PRO' ? 'warning' : 'neutral'}>{user.plan} Plan</Badge>
+              <Badge variant={user.role === 'ADMIN' ? 'success' : 'info'}>{user.role}</Badge>
+              <Badge variant={user.plan === 'PRO' ? 'warning' : 'default'}>{user.plan} Plan</Badge>
             </div>
           </div>
         </div>

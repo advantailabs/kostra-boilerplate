@@ -1,4 +1,8 @@
-import { RiCloseLine } from '@remixicon/react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { FieldDescription } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { X } from 'lucide-react';
 import React, { KeyboardEvent, useState } from 'react';
 
 interface TagInputProps {
@@ -50,26 +54,28 @@ export function TagInput({
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, index) => (
-            <span
+            <Badge
               key={index}
-              className="bg-primary/20 inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm text-primary"
+              variant="outline"
             >
               {tag}
-              <button
+              <Button
                 type="button"
                 onClick={() => removeTag(index)}
-                className="hover:bg-primary/30 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full"
+                variant="ghost"
+                size="icon-xs"
                 aria-label={`Remove ${tag} tag`}
               >
-                <RiCloseLine className="h-3 w-3" />
-              </button>
-            </span>
+                <X className="size-3" />
+              </Button>
+            </Badge>
           ))}
         </div>
       )}
 
       {/* Input Field */}
-      <input
+      <Input
+        id="tags"
         type="text"
         value={inputValue}
         onChange={handleInputChange}
@@ -77,13 +83,13 @@ export function TagInput({
         onBlur={addTag}
         placeholder={tags.length >= maxTags ? `Maximum ${maxTags} tags allowed` : placeholder}
         disabled={tags.length >= maxTags}
-        className="w-full rounded-md border border-border bg-background-light px-3 py-2 text-sm text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:bg-background-light disabled:text-text-muted"
+        className=""
       />
 
       {/* Helper Text */}
-      <p className="text-xs text-text-muted">
+      <FieldDescription>
         {tags.length}/{maxTags} tags • Press Enter or comma to add
-      </p>
+      </FieldDescription>
     </div>
   );
 }

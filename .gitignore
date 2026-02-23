@@ -43,3 +43,5 @@ next-env.d.ts
 data/
 
 src/lib/prisma/generated
+
+.pnpm-store

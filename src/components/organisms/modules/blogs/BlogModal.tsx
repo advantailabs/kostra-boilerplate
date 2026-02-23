@@ -1,21 +1,13 @@
 'use client';
 
-import { Button } from '@/components/atom/Button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
 import Editor from '@/components/molecules/editor/Editor';
 import { BlogFormFields } from '@/components/molecules/form/BlogFormFields';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useBlogForm } from '@/hooks/useBlogForm';
 import { useCategories } from '@/hooks/useCategories';
 import { CreateBlogInput, UpdateBlogInput } from '@/schemas/blog.schema';
 import { BlogResponseType } from '@/types/blog.type';
-import { RiCloseLine } from '@remixicon/react';
 
 interface BlogModalProps {
   isOpen: boolean;
@@ -67,29 +59,28 @@ export function BlogModal({
           }
         }}
       >
-        <DialogContent className="custom-modal-class max-w-screen z-[1000] flex h-screen max-h-screen w-screen flex-col border-border bg-background  p-0 shadow-2xl">
-          <div className="flex h-full flex-col">
+        <DialogContent
+          className="fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none"
+
+        >
+          <div className="flex h-full flex-col overflow-hidden">
             {/* Header */}
-            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3 bg-white dark:bg-background-light">
-              <DialogTitle className="text-lg font-medium text-text max-sm:pr-12">
+            <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
+              <DialogTitle className="max-sm:pr-12">
                 {mode === 'create' ? 'Create Blog' : 'Edit Blog'}
               </DialogTitle>
-              <DialogDescription className="-mt-1 text-xs text-text-muted max-sm:pr-12">
+              <DialogDescription className="-mt-1 max-sm:pr-12">
                 {mode === 'create'
                   ? 'Create a new blog post with content, images, and metadata.'
                   : 'Update your blog post with new content and settings.'}
               </DialogDescription>
-              <DialogClose className="focus:ring-primary/20 absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-none focus:ring-2">
-                <RiCloseLine className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </DialogClose>
             </DialogHeader>
 
             {/* Main Content */}
-            <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-              <div className="flex min-h-0 flex-1">
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+              <div className="flex min-h-0 flex-1 overflow-hidden">
                 {/* Left Side - Form Fields */}
-                <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 border-r border-border p-4 [-ms-overflow-style:none] [scrollbar-width:none] md:w-[450px]">
+                <div className="flex w-full max-w-[450px] flex-shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-4 md:w-[450px]">
                   <BlogFormFields
                     control={form.control}
                     errors={form.formState.errors}
@@ -100,11 +91,11 @@ export function BlogModal({
 
                 {/* Right Side - Editor */}
                 <div
-                  className="flex h-[740px] 2xl:h-[88vh] min-w-0 flex-1 p-0"
+                  className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto p-0"
                   onClick={e => e.stopPropagation()}
                 >
                   <div
-                    className="flex min-h-0 w-full flex-1 flex-col"
+                    className="flex min-h-0 w-full min-w-0 flex-1 flex-col"
                     onClick={e => e.stopPropagation()}
                   >
                     <Editor
@@ -121,7 +112,7 @@ export function BlogModal({
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-2 border-t border-border bg-background-light px-6 py-4">
+              <DialogFooter className="flex justify-end gap-2 border-t border-border bg-background-light px-6 py-4">
                 <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
@@ -133,7 +124,7 @@ export function BlogModal({
                 >
                   {mode === 'create' ? 'Create Blog' : 'Update Blog'}
                 </Button>
-              </div>
+              </DialogFooter>
             </form>
           </div>
         </DialogContent>

@@ -1,13 +1,15 @@
 'use client';
 
-import { Badge } from '@/components/atom/Badge';
-import { Input } from '@/components/atom/Input';
-import { Label } from '@/components/atom/Label';
-import { Switch } from '@/components/atom/Switch';
-import { Textarea } from '@/components/atom/Textarea';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Field, FieldContent, FieldDescription, FieldError, FieldLabel, FieldTitle } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { usePackages } from '@/hooks/usePackages';
-import { RiCloseLine } from '@remixicon/react';
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface Package {
@@ -246,7 +248,7 @@ export function PackageModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-2xl!"
       title={mode === 'create' ? 'Create Package' : 'Edit Package'}
       primaryActionText={mode === 'create' ? 'Create Package' : 'Update Package'}
       secondaryActionText="Cancel"
@@ -257,10 +259,8 @@ export function PackageModal({
       <form className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {/* Title */}
-          <div className="sm:col-span-2">
-            <Label htmlFor="title">
-              Title <span className="text-danger">*</span>
-            </Label>
+          <Field className='sm:col-span-2'>
+            <FieldLabel htmlFor="title">Title <span className="text-destructive">*</span></FieldLabel>
             <Input
               id="title"
               value={formData.title}
@@ -268,33 +268,26 @@ export function PackageModal({
               placeholder="Enter package title..."
               className="mt-1"
             />
-            {formErrors.title && <span className="text-sm text-danger">{formErrors.title}</span>}
-          </div>
+            <FieldError errors={formErrors.title ? [{ message: formErrors.title }] : []} />
+          </Field>
 
           {/* Description */}
-          <div className="sm:col-span-2">
-            <Label htmlFor="description">
-              Description <span className="text-danger">*</span>
-            </Label>
+
+          <Field className='sm:col-span-2'>
+            <FieldLabel htmlFor="description">Description <span className="text-destructive">*</span></FieldLabel>
             <Textarea
               id="description"
               value={formData.description}
               onChange={e => handleInputChange('description', e.target.value)}
               placeholder="Enter package description..."
-              className="mt-1 resize-none"
               rows={3}
-              style={{ height: '80px', minHeight: '80px', maxHeight: '80px' }}
             />
-            {formErrors.description && (
-              <span className="text-sm text-danger">{formErrors.description}</span>
-            )}
-          </div>
+            <FieldError errors={formErrors.description ? [{ message: formErrors.description }] : []} />
+          </Field>
 
           {/* Price */}
-          <div>
-            <Label htmlFor="price">
-              Price <span className="text-danger">*</span>
-            </Label>
+          <Field className=''>
+            <FieldLabel htmlFor="price">Price <span className="text-destructive">*</span></FieldLabel>
             <Input
               id="price"
               type="number"
@@ -306,12 +299,12 @@ export function PackageModal({
               placeholder="0.00"
               className="mt-1"
             />
-            {formErrors.price && <span className="text-sm text-danger">{formErrors.price}</span>}
-          </div>
+            <FieldError errors={formErrors.price ? [{ message: formErrors.price }] : []} />
+          </Field>
 
           {/* Currency Symbol */}
-          <div>
-            <Label htmlFor="currencySymbol">Currency Symbol</Label>
+          <Field className=''>
+            <FieldLabel htmlFor="currencySymbol">Currency Symbol <span className="text-destructive">*</span></FieldLabel>
             <Input
               id="currencySymbol"
               value={formData.currencySymbol}
@@ -320,27 +313,22 @@ export function PackageModal({
               className="mt-1"
               maxLength={4}
             />
-            {formErrors.currencySymbol ? (
-              <span className="text-sm text-danger">{formErrors.currencySymbol}</span>
-            ) : (
-              <span className="text-xs text-text-muted">Examples: $, €, £, ¥, ₹</span>
-            )}
-          </div>
+            <FieldDescription>Examples: $, €, £, ¥, ₹</FieldDescription>
+            <FieldError errors={formErrors.currencySymbol ? [{ message: formErrors.currencySymbol }] : []} />
+          </Field>
 
           {/* Featured */}
-          <div className="sm:col-span-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="isFeatured">Featured Package</Label>
-                <p className="text-sm text-text-muted">Mark this package as featured</p>
-              </div>
-              <Switch
-                id="isFeatured"
-                checked={formData.isFeatured}
-                onCheckedChange={checked => handleInputChange('isFeatured', checked)}
-              />
-            </div>
-          </div>
+          <FieldLabel htmlFor="isFeatured" className='sm:col-span-2 px-0! border-none!'>
+            <Field orientation="horizontal" className='px-0! '>
+              <FieldContent className='cursor-pointer!'>
+                <FieldTitle>Featured Package</FieldTitle>
+                <FieldDescription>
+                  Mark this package as featured
+                </FieldDescription>
+              </FieldContent>
+              <Switch id="isFeatured" checked={formData.isFeatured} onCheckedChange={checked => handleInputChange('isFeatured', checked)} />
+            </Field>
+          </FieldLabel>
         </div>
 
         {/* Features */}
@@ -353,18 +341,18 @@ export function PackageModal({
                 {formData.features.map((feature, index) => (
                   <Badge
                     key={index}
-                    variant="neutral"
-                    className="inline-flex items-center gap-1 px-3 py-1 !bg-primary/30 !text-primary !ring-primary"
+                    variant="outline"
                   >
-                    <span className="text-sm">{feature}</span>
-                    <button
+                    {feature}
+                    <Button
                       type="button"
                       onClick={() => handleRemoveFeature(index)}
-                      className="hover:bg-primary/20 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full"
+                      variant="ghost"
+                      size="icon-xs"
                       aria-label={`Remove ${feature} feature`}
                     >
-                      <RiCloseLine className="h-3 w-3" />
-                    </button>
+                      <X className="h-3 w-3" />
+                    </Button>
                   </Badge>
                 ))}
               </div>
@@ -384,19 +372,20 @@ export function PackageModal({
                 }}
                 className="flex-1"
               />
-              <button
+              <Button
                 type="button"
                 onClick={handleAddFeature}
-                className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-hover"
+                variant="default"
+                className="rounded-md px-3 py-2 text-sm font-medium"
               >
                 Add
-              </button>
+              </Button>
             </div>
           </div>
         </div>
 
         {serverError && (
-          <div className="bg-danger/10 rounded-md p-3 text-sm text-danger">{serverError}</div>
+          <div className="bg-danger/10 rounded-md p-3 text-sm text-destructive">{serverError}</div>
         )}
       </form>
     </Modal>

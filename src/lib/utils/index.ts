@@ -5,6 +5,7 @@
 
 // CSS utilities
 export * from './css/css-utils';
+export { cx as cn } from './css/css-utils';
 
 // Format utilities
 export * from './format/format-utils';

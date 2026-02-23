@@ -1,13 +1,12 @@
-import { Button } from '@/components/atom/Button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from '@/components/molecules/common/Dialog';
-import { RiCloseLine } from '@remixicon/react';
+  DialogTitle
+} from '@/components/ui/dialog';
 import { ReactNode } from 'react';
 
 export interface ModalProps {
@@ -86,6 +85,11 @@ export interface ModalProps {
    * Whether to remove padding from content area
    */
   removePadding?: boolean;
+
+  /**
+   * When true, modal uses full-screen layout and content area fills remaining height.
+   */
+  fullScreen?: boolean;
 }
 
 export function Modal({
@@ -104,6 +108,7 @@ export function Modal({
   primaryActionVariant = 'primary',
   contentClassName = '',
   removePadding = false,
+  fullScreen = false,
 }: ModalProps) {
   // Default footer if primaryActionText is provided but no custom footer
   const defaultFooter = (primaryActionText || secondaryActionText) && !footer && (
@@ -121,7 +126,7 @@ export function Modal({
       {primaryActionText && (
         <Button
           type="button"
-          variant={primaryActionVariant}
+          variant={primaryActionVariant === 'primary' ? 'default' : primaryActionVariant}
           onClick={onPrimaryAction}
           disabled={isPrimaryActionDisabled}
           isLoading={isPrimaryActionLoading}
@@ -133,34 +138,71 @@ export function Modal({
     </div>
   );
 
+  const isInsideCombobox = (event: Event & { detail?: { originalEvent?: Event } }) => {
+    const target =
+      (event.target as HTMLElement) ??
+      (event.detail?.originalEvent?.target as HTMLElement);
+    return Boolean(
+      target?.closest?.('[data-slot="combobox-content"], [data-slot="combobox-list"]')
+    );
+  };
+
+  const handlePointerDownOutside = (event: Event) => {
+    if (isInsideCombobox(event)) {
+      event.preventDefault();
+    }
+  };
+
+  const handleInteractOutside = (event: Event) => {
+    if (isInsideCombobox(event)) {
+      event.preventDefault();
+    }
+  };
+
+  const contentWrapperClassName = fullScreen
+    ? removePadding
+      ? 'flex min-h-0 flex-1 flex-col p-0'
+      : 'flex min-h-0 flex-1 flex-col px-4 py-4 max-sm:px-3 max-sm:py-3'
+    : removePadding
+      ? 'p-0'
+      : 'px-4 py-4 max-sm:px-3 max-sm:py-3';
+
+  const innerContentClassName = fullScreen ? 'flex min-h-0 flex-1 flex-col' : '';
+
+  const dialogContentClassName = fullScreen
+    ? `fixed inset-0 z-[1000] flex h-screen w-screen max-h-none max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 border-border bg-background p-0 shadow-2xl sm:max-w-none gap-0 ${contentClassName}`.trim()
+    : `${maxWidth} gap-0 p-0 ${contentClassName}`.trim();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${maxWidth} p-0 ${contentClassName}`}>
+      <DialogContent
+        className={dialogContentClassName}
+        onPointerDownOutside={handlePointerDownOutside}
+        onInteractOutside={handleInteractOutside}
+      >
         <DialogHeader className="relative border-b border-border p-4 max-sm:p-3">
-          <DialogTitle className="text-base max-sm:pr-12">{title}</DialogTitle>
+          <DialogTitle className=" max-sm:pr-12">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="-mt-1 text-sm max-sm:pr-12">
+            <DialogDescription className="-mt-1 max-sm:pr-12">
               {description}
             </DialogDescription>
           )}
-          <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-muted hover:bg-background-light hover:text-text focus:outline-none focus:ring-2 focus:ring-primary">
-            <RiCloseLine className="h-5 w-5" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
         </DialogHeader>
 
-        <div className={removePadding ? 'p-0' : 'px-4 pt-4 max-sm:px-3 max-sm:pt-3'}>
+        <div className={contentWrapperClassName}>
           {/* Main content */}
-          <div className="mb-4 max-sm:mb-3">{children}</div>
+          <div className={innerContentClassName}>{children}</div>
 
-          {/* Footer with action buttons */}
-          {(footer || defaultFooter) && (
-            <>
-              <div className="-mx-4 border-t border-border" />
-              <div className="py-4 max-sm:py-3">{footer || defaultFooter}</div>
-            </>
-          )}
         </div>
+        {/* Footer with action buttons */}
+        {(footer || defaultFooter) && (
+          <>
+            <div className="border-t border-border" />
+            <DialogFooter className='px-4 py-4 max-sm:px-3 max-sm:py-3'>
+              {footer || defaultFooter}
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

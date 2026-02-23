@@ -1,8 +1,8 @@
 'use client';
 
-import { Input } from '@/components/atom/Input';
-import { Label } from '@/components/atom/Label';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryResponseType } from '@/types/blog.type';
 import React, { useState } from 'react';
@@ -138,10 +138,10 @@ export function CategoryModal({
     >
       <form className="space-y-4">
         {/* Name */}
-        <div>
-          <Label htmlFor="name">
-            Name <span className="text-danger">*</span>
-          </Label>
+        <Field>
+          <FieldLabel htmlFor="name">
+            Name <span className="text-destructive">*</span>
+          </FieldLabel>
           <Input
             id="name"
             value={formData.name}
@@ -149,14 +149,14 @@ export function CategoryModal({
             placeholder="Enter category name..."
             className="mt-1"
           />
-          {formErrors.name && <span className="text-sm text-danger">{formErrors.name}</span>}
-        </div>
+          <FieldError errors={formErrors.name ? [{ message: formErrors.name }] : []} />
+        </Field>
 
         {/* Slug */}
-        <div>
-          <Label htmlFor="slug">
-            Slug <span className="text-danger">*</span>
-          </Label>
+        <Field>
+          <FieldLabel htmlFor="slug">
+            Slug <span className="text-destructive">*</span>
+          </FieldLabel>
           <Input
             id="slug"
             value={formData.slug}
@@ -164,11 +164,11 @@ export function CategoryModal({
             placeholder="Enter category slug..."
             className="mt-1"
           />
-          {formErrors.slug && <span className="text-sm text-danger">{formErrors.slug}</span>}
-        </div>
+          <FieldError errors={formErrors.slug ? [{ message: formErrors.slug }] : []} />
+        </Field>
 
         {serverError && (
-          <div className="bg-danger/10 rounded-md p-3 text-sm text-danger">{serverError}</div>
+          <div className="bg-danger/10 rounded-md p-3 text-sm text-destructive">{serverError}</div>
         )}
       </form>
     </Modal>

@@ -20,7 +20,7 @@ SelectValue.displayName = 'SelectValue';
 const selectTriggerStyles = [
   cx(
     // base
-    'group/trigger flex w-full select-none items-center justify-between gap-2 truncate rounded-md border px-3 py-2 shadow-sm outline-none transition sm:text-sm',
+    'group/trigger flex w-full select-none items-center justify-between gap-2 truncate rounded-md border px-3 py-2 shadow-xs outline-hidden transition sm:text-sm',
     // border color
     'border-border',
     // text color
@@ -139,7 +139,7 @@ const SelectContent = React.forwardRef<
           className={cx(
             'p-1',
             position === 'popper' &&
-              'h-[var(--radix-select-trigger-height)] w-full min-w-[calc(var(--radix-select-trigger-width))]'
+            'h-[var(--radix-select-trigger-height)] w-full min-w-[calc(var(--radix-select-trigger-width))]'
           )}
         >
           {children}
@@ -180,7 +180,7 @@ const SelectItem = React.forwardRef<
       ref={forwardedRef}
       className={cx(
         // base
-        'grid cursor-pointer grid-cols-[1fr_20px] gap-x-2 rounded px-3 py-2 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm',
+        'grid cursor-pointer grid-cols-[1fr_20px] gap-x-2 rounded px-3 py-2 outline-hidden transition-colors data-[state=checked]:font-semibold sm:text-sm',
         // text color
         'text-text',
         // disabled
@@ -214,7 +214,7 @@ const SelectItemPeriod = React.forwardRef<
       ref={forwardedRef}
       className={cx(
         // base
-        'relative flex cursor-pointer items-center rounded py-2 pl-8 pr-3 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm',
+        'relative flex cursor-pointer items-center rounded py-2 pl-8 pr-3 outline-hidden transition-colors data-[state=checked]:font-semibold sm:text-sm',
         // text color
         'text-gray-900 dark:text-gray-50',
         // disabled
@@ -282,5 +282,6 @@ export {
   SelectItemPeriod,
   SelectSeparator,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 };
+

@@ -1,40 +1,42 @@
 'use client';
 
-import { RiDeleteBinLine, RiEyeLine, RiPencilLine } from '@remixicon/react';
+import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
+import { Badge } from '@/components/atom/Badge';
 import { PageHeaderWithAction } from '@/components/molecules/common/PageHeaderWithAction';
+import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { DataTable } from '@/components/ui/data-table';
 import { CampaignStatus } from '@/lib/prisma/generated/browser';
 import { CampaignWithRelations } from '@/types/campaign';
-import { Badge, BadgeProps } from '../../../atom/Badge';
-import { Button } from '../../../atom/Button';
 import { Pagination } from '../../../molecules/common/Pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../molecules/common/Select';
-import { Table, TableBody, TableCell, TableRow } from '../../../molecules/common/Table';
 import { UnifiedSearchBar } from '../../../molecules/common/UnifiedSearchBar';
 
-// Shared helper: map campaign status to badge variant
-const getStatusBadgeVariant = (status: string): BadgeProps['variant'] => {
-  switch (status) {
-    case 'SENT':
-      return 'success';
-    case 'SCHEDULED':
-      return 'warning';
-    case 'FAILED':
-      return 'error';
-    case 'PARTIALLYSUCCESS':
-      return 'info';
-    default:
-      return 'default';
-  }
-};
+import {
+  emailCampaignsTableColumns,
+  formatCampaignStatusText,
+  formatScheduledDate,
+  getStatusBadgeVariant,
+} from './emailCampaignsTableColumns';
+
+type StatusFilterValue = 'ALL' | CampaignStatus | 'DRAFT';
+const STATUS_OPTIONS: { value: StatusFilterValue; label: string }[] = [
+  { value: 'ALL', label: 'All Status' },
+  { value: 'SENT', label: 'Sent' },
+  { value: 'SCHEDULED', label: 'Scheduled' },
+  { value: 'FAILED', label: 'Failed' },
+  { value: 'PARTIALLYSUCCESS', label: 'Partial Success' },
+  { value: 'DRAFT', label: 'Draft' },
+];
 
 // Component for mobile campaign card
 interface MobileCampaignCardProps {
@@ -45,18 +47,6 @@ interface MobileCampaignCardProps {
 }
 
 function MobileCampaignCard({ campaign, onEdit, onDelete, onView }: MobileCampaignCardProps) {
-  const formatScheduledDate = (scheduledAt: Date | null) => {
-    if (!scheduledAt) return '-';
-    return new Date(scheduledAt).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
   const handleEdit = () => {
     onEdit(campaign);
   };
@@ -83,21 +73,21 @@ function MobileCampaignCard({ campaign, onEdit, onDelete, onView }: MobileCampai
             onClick={handleView}
             className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900"
           >
-            <RiEyeLine size={16} className="text-blue-600 dark:text-blue-400" />
+            <Eye size={16} className="text-blue-600 dark:text-blue-400" />
           </Button>
           <Button
             variant="ghost"
             onClick={handleEdit}
             className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            <RiPencilLine size={16} className="text-gray-600 " />
+            <Pencil size={16} className="text-gray-600 " />
           </Button>
           <Button
             variant="ghost"
             onClick={handleDelete}
             className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900"
           >
-            <RiDeleteBinLine size={16} className="text-red-600 dark:text-red-400" />
+            <Trash2 size={16} className="text-red-600 dark:text-red-400" />
           </Button>
         </div>
       </div>
@@ -106,20 +96,7 @@ function MobileCampaignCard({ campaign, onEdit, onDelete, onView }: MobileCampai
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500 ">Status:</span>
           <Badge variant={getStatusBadgeVariant(campaign.status)}>
-            {(() => {
-              switch (campaign.status) {
-                case 'SENT':
-                  return 'Sent';
-                case 'SCHEDULED':
-                  return 'Scheduled';
-                case 'FAILED' as CampaignStatus:
-                  return 'Failed';
-                case 'PARTIALLYSUCCESS' as CampaignStatus:
-                  return 'Partial Success';
-                default:
-                  return 'Draft';
-              }
-            })()}
+            {formatCampaignStatusText(campaign.status)}
           </Badge>
         </div>
 
@@ -145,108 +122,6 @@ function MobileCampaignCard({ campaign, onEdit, onDelete, onView }: MobileCampai
         </div>
       </div>
     </div>
-  );
-}
-
-// Component for individual table row
-interface EmailCampaignRowProps {
-  campaign: CampaignWithRelations;
-  onEdit: (_campaign: CampaignWithRelations) => void;
-  onDelete: (_campaignId: number, _campaignName: string) => void;
-  onView: (_campaignId: number) => void;
-}
-
-function EmailCampaignRow({ campaign, onEdit, onDelete, onView }: EmailCampaignRowProps) {
-  const formatScheduledDate = (scheduledAt: Date | null) => {
-    if (!scheduledAt) return '-';
-    return new Date(scheduledAt).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  const handleEdit = () => {
-    onEdit(campaign);
-  };
-
-  const handleDelete = () => {
-    onDelete(campaign.id, campaign.name);
-  };
-
-  const handleView = () => {
-    onView(campaign.id);
-  };
-
-  return (
-    <TableRow
-      key={campaign.id}
-      className="group cursor-pointer select-text border-b border-border-light bg-background-light hover:bg-background !text-text-muted"
-    >
-      <TableCell className="py-6 text-gray-700 dark:text-gray-300">
-        <div className="truncate">
-          <p className="cursor-pointer truncate text-sm font-semibold text-gray-900 hover:text-blue-800 dark:text-gray-50 dark:hover:text-blue-300">
-            {campaign.name}
-          </p>
-        </div>
-      </TableCell>
-      <TableCell className="py-3">
-        <Badge variant={getStatusBadgeVariant(campaign.status)}>
-          {(() => {
-            switch (campaign.status) {
-              case 'SENT':
-                return 'Sent';
-              case 'SCHEDULED':
-                return 'Scheduled';
-              case 'FAILED' as CampaignStatus:
-                return 'Failed';
-              case 'PARTIALLYSUCCESS' as CampaignStatus:
-                return 'Partial Success';
-              default:
-                return 'Draft';
-            }
-          })()}
-        </Badge>
-      </TableCell>
-
-      <TableCell className="py-3 text-gray-600 ">
-        <div className="truncate text-sm">{campaign.emailTemplate.name}</div>
-      </TableCell>
-      <TableCell className="py-3 text-gray-600 ">
-        <div className="text-sm">{campaign.recipients.length}</div>
-      </TableCell>
-      <TableCell className="py-3 text-gray-600 ">
-        <div className="text-sm">{formatScheduledDate(campaign.scheduledAt)}</div>
-      </TableCell>
-      <TableCell className="py-3 text-right">
-        <div className="flex items-center justify-end gap-2">
-          <Button
-            variant="ghost"
-            onClick={handleView}
-            className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900"
-          >
-            <RiEyeLine size={16} className="text-blue-600 dark:text-blue-400" />
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleEdit}
-            className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            <RiPencilLine size={16} className="text-text-muted " />
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleDelete}
-            className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900"
-          >
-            <RiDeleteBinLine size={16} className="text-red-600 dark:text-red-400" />
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
   );
 }
 
@@ -277,27 +152,7 @@ export function EmailCampaignsTable({
   const [limit] = useState(10);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch] = useDebounce(searchInput, 400);
-  const [filterStatus, setFilterStatus] = useState<'ALL' | CampaignStatus>('ALL');
-
-  // Fix for dropdown closing issues
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      // Force close and blur any active elements
-      setTimeout(() => {
-        const activeElement = document.activeElement as HTMLElement;
-        if (activeElement && activeElement.blur) {
-          activeElement.blur();
-        }
-      }, 0);
-    }
-  };
-
-  const selectContentProps = {
-    position: 'popper' as const,
-    sideOffset: 4,
-    className: 'z-50',
-    onCloseAutoFocus: (e: Event) => e.preventDefault(),
-  };
+  const [filterStatus, setFilterStatus] = useState<StatusFilterValue>('ALL');
 
   // Filter campaigns based on search and status
   const filteredCampaigns = (campaigns || []).filter(campaign => {
@@ -329,7 +184,7 @@ export function EmailCampaignsTable({
   }, [page, onPageChange]);
 
   return (
-    <div className={`min-h-screen overflow-x-hidden bg-background ${className || ''}`}>
+    <div className={`min-h-screen overflow-x-hidden ${className || ''}`}>
       <PageHeaderWithAction
         title="Email Campaigns"
         description="Manage your email marketing campaigns"
@@ -337,27 +192,30 @@ export function EmailCampaignsTable({
         addButtonText="New Campaign"
         actions={
           <div className="flex items-center gap-2">
-            <Select
-              value={filterStatus}
-              onValueChange={(value: 'ALL' | CampaignStatus) => setFilterStatus(value)}
-              onOpenChange={handleOpenChange}
+            <Combobox
+              items={STATUS_OPTIONS}
+              value={
+                STATUS_OPTIONS.find((o) => o.value === filterStatus) ?? STATUS_OPTIONS[0]
+              }
+              onValueChange={(item) => setFilterStatus(item?.value ?? 'ALL')}
+              itemToStringValue={(item) => item.label}
             >
-              <SelectTrigger className="w-40 min-w-0">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent {...selectContentProps}>
-                <SelectItem value="ALL">All Status</SelectItem>
-                <SelectItem value="SENT">Sent</SelectItem>
-                <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                <SelectItem value="FAILED">Failed</SelectItem>
-                <SelectItem value="PARTIALLYSUCCESS">Partial Success</SelectItem>
-                <SelectItem value="DRAFT">Draft</SelectItem>
-              </SelectContent>
-            </Select>
+              <ComboboxInput placeholder="All Status" className="w-40 min-w-0" />
+              <ComboboxContent>
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item.value} value={item}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
         }
       />
-      <div className="h-full p-4 max-sm:p-3">
+      <div className="h-full space-y-4 p-4 max-sm:p-3">
         {/* Mobile controls: Status + New Campaign (only on small screens) */}
         <div className="mb-4 flex flex-col gap-3 sm:hidden">
           <div className="flex items-center gap-3">
@@ -365,23 +223,26 @@ export function EmailCampaignsTable({
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Status:
               </label>
-              <Select
-                value={filterStatus}
-                onValueChange={(value: 'ALL' | CampaignStatus) => setFilterStatus(value)}
-                onOpenChange={handleOpenChange}
+              <Combobox
+                items={STATUS_OPTIONS}
+                value={
+                  STATUS_OPTIONS.find((o) => o.value === filterStatus) ?? STATUS_OPTIONS[0]
+                }
+                onValueChange={(item) => setFilterStatus(item?.value ?? 'ALL')}
+                itemToStringValue={(item) => item.label}
               >
-                <SelectTrigger className="w-40 min-w-0">
-                  <SelectValue placeholder="All Status" />
-                </SelectTrigger>
-                <SelectContent {...selectContentProps}>
-                  <SelectItem value="ALL">All Status</SelectItem>
-                  <SelectItem value="SENT">Sent</SelectItem>
-                  <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                  <SelectItem value="FAILED">Failed</SelectItem>
-                  <SelectItem value="PARTIALLYSUCCESS">Partial Success</SelectItem>
-                  <SelectItem value="DRAFT">Draft</SelectItem>
-                </SelectContent>
-              </Select>
+                <ComboboxInput placeholder="All Status" className="w-40 min-w-0" />
+                <ComboboxContent>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item.value} value={item}>
+                        {item.label}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </div>
             <Button onClick={onAdd} className="w-auto shrink-0 justify-center px-4 py-2">
               + New Campaign
@@ -390,7 +251,7 @@ export function EmailCampaignsTable({
         </div>
 
         {/* Search */}
-        <div className="mb-2">
+        <div className="">
           <UnifiedSearchBar
             placeholder="Search by name..."
             value={searchInput}
@@ -400,59 +261,21 @@ export function EmailCampaignsTable({
         </div>
 
         {/* Desktop Table */}
-        <div className="relative hidden overflow-hidden overflow-x-auto bg-background rounded-lg md:block table-cell-box-shadow dark:border-gray-800 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_2px_4px_rgba(0,0,0,0.05)] before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] dark:before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_0_rgba(0,0,0,0.5)]">
-          <Table className="min-w-full border-0">
-            <TableBody>
-              {(() => {
-                if (isLoading) {
-                  return (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center bg-white dark:bg-background-light">
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                          <span className="text-sm text-gray-500">Loading email campaigns...</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                }
-                if (searchInput !== debouncedSearch) {
-                  return (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center bg-white dark:bg-background-light">
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                          <span className="text-sm text-gray-500">Searching...</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                }
-                if (paginatedCampaigns.length === 0) {
-                  return (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center bg-white dark:bg-background-light">
-                        No email campaigns found.
-                      </TableCell>
-                    </TableRow>
-                  );
-                }
-                return paginatedCampaigns.map(campaign => (
-                  <EmailCampaignRow
-                    key={campaign.id}
-                    campaign={campaign}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    onView={onView}
-                  />
-                ));
-              })()}
-            </TableBody>
-          </Table>
+        <div className="relative overflow-hidden overflow-x-auto rounded-md bg-background">
+          <DataTable<CampaignWithRelations, unknown>
+            columns={emailCampaignsTableColumns}
+            data={paginatedCampaigns}
+            meta={{ onView, onEdit, onDelete }}
+            emptyMessage="No email campaigns found."
+            isLoading={isLoading || searchInput !== debouncedSearch}
+            loadingMessage={
+              searchInput !== debouncedSearch ? 'Searching...' : 'Loading email campaigns...'
+            }
+          />
         </div>
 
         {/* Mobile Card Layout */}
-        <div className="space-y-3 md:hidden">
+        {/*  <div className="space-y-3 md:hidden">
           {(() => {
             if (isLoading) {
               return (
@@ -487,26 +310,19 @@ export function EmailCampaignsTable({
               />
             ));
           })()}
-        </div>
+        </div> */}
 
         {/* Pagination */}
         {paginatedCampaigns.length > 0 && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-center text-sm text-gray-500 sm:text-left ">
-              Showing {startIndex + 1} to {Math.min(endIndex, total)} of {total} results
-            </div>
-            <div className="flex justify-center sm:justify-end">
-              <Pagination
-                pagination={{
-                  page,
-                  limit,
-                  totalCount: total,
-                  totalPages,
-                }}
-                onPageChange={setPage}
-              />
-            </div>
-          </div>
+          <Pagination
+            pagination={{
+              page,
+              limit,
+              totalCount: total,
+              totalPages,
+            }}
+            onPageChange={setPage}
+          />
         )}
       </div>
     </div>

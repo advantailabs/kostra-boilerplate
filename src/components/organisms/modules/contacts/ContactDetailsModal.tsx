@@ -1,22 +1,33 @@
 'use client';
 
+import {
+  BadgeCheck,
+  Calendar,
+  Mail,
+  MessageSquare,
+  StickyNote,
+  Tag,
+  User,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { Badge } from '@/components/atom/Badge';
-import { Button } from '@/components/atom/Button';
-import { Input } from '@/components/atom/Input';
-import { Label } from '@/components/atom/Label';
-import { Textarea } from '@/components/atom/Textarea';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/molecules/common/Select';
-// Using built-in toLocaleString for date formatting to match existing patterns
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { Field, FieldContent, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { CONTACT_PURPOSES, CONTACT_STATUSES, ContactSubmission } from '@/types/contact';
+
+type ContactStatusOption = (typeof CONTACT_STATUSES)[number];
 
 type ContactDetailsModalProps = {
   isOpen: boolean;
@@ -24,6 +35,19 @@ type ContactDetailsModalProps = {
   contact: ContactSubmission | null;
   onSave: (_update: { status?: string; adminNotes?: string; resolvedAt?: string }) => Promise<void>;
   isSaving?: boolean;
+};
+
+const BADGE_VARIANT_MAP: Record<string, 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'outline' | 'ghost' | 'info' | 'error'> = {
+  neutral: 'secondary',
+  default: 'default',
+  secondary: 'secondary',
+  success: 'success',
+  warning: 'warning',
+  destructive: 'destructive',
+  outline: 'outline',
+  ghost: 'ghost',
+  info: 'info',
+  error: 'error',
 };
 
 export function ContactDetailsModal({
@@ -49,6 +73,8 @@ export function ContactDetailsModal({
       ? { label: s.label, variant: s.variant === 'secondary' ? 'neutral' : (s.variant as string) }
       : { label: String(contact.status), variant: 'neutral' };
   }, [contact]);
+
+  const badgeVariant = BADGE_VARIANT_MAP[statusMeta.variant] ?? 'secondary';
 
   const handleSave = async () => {
     await onSave({
@@ -76,83 +102,134 @@ export function ContactDetailsModal({
       title="Contact Details"
       description="View and update the contact inquiry."
       footer={footer}
-      maxWidth="sm:max-w-2xl"
+      maxWidth="sm:max-w-2xl!"
     >
       {contact && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <Label className="font-medium">Name</Label>
-              <Input value={contact.name} disabled className="mt-2" />
-            </div>
-            <div>
-              <Label className="font-medium">Email</Label>
-              <Input value={contact.email} disabled className="mt-2" />
-            </div>
-            <div>
-              <Label className="font-medium">Purpose</Label>
-              <Input value={purposeLabel} disabled className="mt-2" />
-            </div>
-            <div>
-              <Label className="font-medium">Status</Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  {CONTACT_STATUSES.map(s => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+
+            <Field>
+              <FieldLabel htmlFor="contact-name" className="flex items-center gap-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                Name
+              </FieldLabel>
+              <FieldContent>
+                <Input id="contact-name" value={contact.name} disabled />
+              </FieldContent>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="contact-email" className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                Email
+              </FieldLabel>
+              <FieldContent>
+                <Input id="contact-email" value={contact.email} disabled />
+              </FieldContent>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="contact-purpose" className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                Purpose
+              </FieldLabel>
+              <FieldContent>
+                <Input id="contact-purpose" value={purposeLabel} disabled />
+              </FieldContent>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="contact-status" className="flex items-center gap-2">
+                <BadgeCheck className="h-4 w-4 text-muted-foreground" />
+                Status
+              </FieldLabel>
+              <FieldContent>
+                <Combobox<ContactStatusOption>
+                  id="contact-status"
+                  items={CONTACT_STATUSES}
+                  value={(CONTACT_STATUSES.find(s => s.value === status) ?? undefined) as ContactStatusOption | undefined}
+                  onValueChange={item => item != null && setStatus(item.value)}
+                  itemToStringValue={item => item.label}
+                >
+                  <ComboboxInput placeholder="Select status" className="w-full" />
+                  <ComboboxContent className="pointer-events-auto">
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {item => (
+                        <ComboboxItem key={item.value} value={item}>
+                          {item.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </FieldContent>
+            </Field>
           </div>
 
-          <div>
-            <Label className="font-medium">Message</Label>
-            <Textarea value={contact.message} disabled className="mt-2" rows={5} />
-          </div>
+          <Field>
+            <FieldLabel htmlFor="contact-message" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              Message
+            </FieldLabel>
+            <FieldContent>
+              <Textarea id="contact-message" value={contact.message} disabled rows={5} />
+            </FieldContent>
+          </Field>
 
-          <div>
-            <Label className="font-medium">Admin Notes</Label>
-            <Textarea
-              value={adminNotes}
-              onChange={e => setAdminNotes(e.target.value)}
-              className="mt-2"
-              rows={4}
-              placeholder="Add internal notes for this inquiry"
-            />
-          </div>
+          <Field>
+            <FieldLabel htmlFor="contact-admin-notes" className="flex items-center gap-2">
+              <StickyNote className="h-4 w-4 text-muted-foreground" />
+              Admin Notes
+            </FieldLabel>
+            <FieldContent>
+              <Textarea
+                id="contact-admin-notes"
+                value={adminNotes}
+                onChange={e => setAdminNotes(e.target.value)}
+                rows={4}
+                placeholder="Add internal notes for this inquiry"
+              />
+            </FieldContent>
+          </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div>
-              <Label className="font-medium">Submitted</Label>
-              <div className="mt-1 text-sm text-text-muted">
-                {new Date(contact.createdAt).toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <Label className="font-medium">Updated</Label>
-              <div className="mt-1 text-sm text-text-muted">
-                {new Date(contact.updatedAt).toLocaleString()}
-              </div>
-            </div>
-            <div>
-              <Label className="font-medium">Current Status</Label>
-              <div className="mt-1">
-                <Badge variant={statusMeta.variant as React.ComponentProps<typeof Badge>['variant']}>
-                  {statusMeta.label}
-                </Badge>
-              </div>
-            </div>
+            <Field>
+              <FieldLabel htmlFor="contact-submitted" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                Submitted
+              </FieldLabel>
+              <FieldContent>
+                <div id="contact-submitted" className="text-sm text-muted-foreground">
+                  {new Date(contact.createdAt).toLocaleString()}
+                </div>
+              </FieldContent>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="contact-updated" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                Updated
+              </FieldLabel>
+              <FieldContent>
+                <div id="contact-updated" className="text-sm text-muted-foreground">
+                  {new Date(contact.updatedAt).toLocaleString()}
+                </div>
+              </FieldContent>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="contact-current-status" className="flex items-center gap-2">
+                <BadgeCheck className="h-4 w-4 text-muted-foreground" />
+                Current Status
+              </FieldLabel>
+              <FieldContent>
+                <div id="contact-current-status">
+                  <Badge variant={badgeVariant}>{statusMeta.label}</Badge>
+                </div>
+              </FieldContent>
+            </Field>
           </div>
         </div>
-      )
-      }
-    </Modal >
+      )}
+    </Modal>
   );
 }
-
-// no default export to avoid import lint issues

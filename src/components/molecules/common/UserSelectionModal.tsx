@@ -1,13 +1,14 @@
 'use client';
 
-import { RiSearchLine } from '@remixicon/react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
+import { Button } from '@/components/ui/button';
+import { Field } from '@/components/ui/field';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { UserSelection, UserSelectionModalProps } from '@/types/user';
-import { Button } from '../../atom/Button';
-import { Input } from '../../atom/Input';
+import { SearchIcon } from 'lucide-react';
 import { Modal } from './Modal';
 
 export function UserSelectionModal({
@@ -52,7 +53,7 @@ export function UserSelectionModal({
   };
 
   const modalFooter = (
-    <div className="flex justify-end gap-3 py-4">
+    <div className="flex justify-end gap-3">
       <Button type="button" variant="secondary" onClick={handleCancel}>
         Cancel
       </Button>
@@ -68,33 +69,34 @@ export function UserSelectionModal({
       onClose={onClose}
       title="Select Users"
       description="Choose users to include in this campaign"
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-2xl!"
       footer={modalFooter}
     >
       <div className="space-y-4">
         <div className="flex gap-4">
-          <div className="relative flex-1">
-            <RiSearchLine className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              placeholder="Search users..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <button
+          <Field className="flex-1">
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon className="text-muted-foreground" />
+              </InputGroupAddon>
+              <InputGroupInput
+                id="user-search"
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </InputGroup>
+          </Field>
+          <Button
             type="button"
+            variant={showDeletedUsers ? 'destructive' : 'secondary'}
             onClick={() => setShowDeletedUsers(!showDeletedUsers)}
-            className={`rounded-md border px-3 py-2 text-sm transition-colors ${showDeletedUsers
-              ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400'
-              : 'border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
-              }`}
           >
             {showDeletedUsers ? 'Hide Deleted' : 'Show Deleted'}
-          </button>
+          </Button>
         </div>
 
-        <div className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600 max-h-96 overflow-y-auto p-1">
+        <div className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600 max-h-96 overflow-y-auto py-1">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />

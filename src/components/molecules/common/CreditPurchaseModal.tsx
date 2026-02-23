@@ -1,7 +1,9 @@
 'use client';
 
-import { Button } from '@/components/atom/Button';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent as UICardContent } from '@/components/ui/card';
 import { PLANS } from '@/data/config/plans';
 import { useStripe } from '@/hooks/useStripe';
 import { useCreditStore } from '@/store/credits';
@@ -13,38 +15,59 @@ export interface CreditPurchaseModalProps {
   onClose: () => void;
 }
 
-// CardContent component moved outside to prevent recreation on every render
-function CardContent({ plan }: { plan: (typeof PLANS)[0] }) {
+// Parse price for ref-style display: $ + number + /period when applicable
+function formatPrice(price: string, period?: string) {
+  const match = price.match(/^\$(\d+)$/);
+  if (match) {
+    return {
+      split: true as const,
+      dollar: '$',
+      amount: match[1],
+      period: period ? `/${period}` : '',
+    };
+  }
+  return { split: false as const, price };
+}
+
+// Plan card body with ref-style layout (title, description, price, features)
+function PlanCardBody({ plan }: { plan: (typeof PLANS)[0] }) {
+  const formatted = formatPrice(plan.price, plan.period);
   return (
     <>
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-base font-semibold text-text">{plan.name}</h3>
-        {plan.badge && (
-          <span
-            className="rounded-full border px-2 py-0.5 text-[10px] font-medium"
-            style={{
-              backgroundColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--primary)',
-              borderColor: plan.id === 'pro' ? 'var(--primary)' : 'var(--primary)',
-              color: plan.id === 'pro' ? 'var(--bg-light)' : 'var(--bg-light)',
-            }}
-          >
-            {plan.badge}
-          </span>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-foreground">{plan.name}</h3>
+          {plan.badge && <Badge variant="default">{plan.badge}</Badge>}
+        </div>
+        <p className="text-sm text-muted-foreground">{plan.description}</p>
+      </div>
+      <div className="flex gap-0.5 items-baseline">
+        {formatted.split ? (
+          <>
+            <span className="text-sm font-medium text-muted-foreground">{formatted.dollar}</span>
+            <span className="text-2xl font-bold text-foreground">{formatted.amount}</span>
+            {formatted.period && (
+              <span className="text-sm text-muted-foreground self-end">{formatted.period}</span>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="text-2xl font-bold text-foreground">{formatted.price}</span>
+            {plan.period && (
+              <span className="text-sm text-muted-foreground self-end">/ {plan.period}</span>
+            )}
+          </>
         )}
       </div>
-      <p className="text-xs text-text-muted">{plan.description}</p>
-      <div className="mt-3 flex items-baseline gap-1">
-        <span className="text-xl font-bold text-text">{plan.price}</span>
-        {plan.period && <span className="text-xs text-text-muted">/ {plan.period}</span>}
-      </div>
-      <ul className="mt-3 space-y-2">
+      <div className="flex flex-col gap-1.5">
+        <h4 className="mb-1.5 text-sm font-medium text-foreground">Features</h4>
         {plan.features.map(feature => (
-          <li key={feature} className="flex items-center gap-2 text-sm text-text">
-            <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
-            {feature}
-          </li>
+          <div key={feature} className="flex items-center gap-2 py-1">
+            <div className="bg-primary size-2 rounded-full shrink-0" />
+            <p className="text-sm text-foreground">{feature}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 }
@@ -55,9 +78,9 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
   const credits = useCreditStore(state => state.credits);
 
   const footer = (
-    <div className="flex w-full items-center justify-between gap-2 px-4">
+    <div className="flex w-full items-center justify-between gap-2">
       <div className="flex items-center gap-2">
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-muted-foreground">
           Contact{' '}
           <a
             href="mailto:hi@kostra.io?subject=Enterprise%20Plan%20Inquiry"
@@ -83,7 +106,7 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       </div>
       <div className="flex items-center gap-2">
         <Button
-          variant="primary"
+          variant="default"
           isLoading={isCreatingCheckout}
           loadingText="Redirecting..."
           onClick={async () => {
@@ -101,64 +124,39 @@ export function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProp
       isOpen={isOpen}
       onClose={onClose}
       title="Purchase Credits"
-      maxWidth="max-w-4xl"
+      maxWidth="max-w-4xl!"
       contentClassName="overflow-hidden"
       footer={footer}
       removePadding
     >
       <div className="px-4 pb-4 pt-5">
-        <div className="mb-4 rounded-md bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]">
-          <div
-            className="flex items-center justify-between rounded-md px-4 py-2 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
-            style={{
-              backgroundColor: 'var(--bg-light)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+        <Card className="mb-4 flex flex-col gap-0 rounded-md border border-primary/20 bg-linear-to-r from-primary/10 to-transparent py-3 shadow-none text-card-foreground">
+          <UICardContent className="flex items-center justify-between gap-3">
+            <p className="text-sm text-foreground">
               Lets keep your things going, Topup some credits now.
             </p>
-            <div
-              className="rounded-md px-3 py-1 text-sm font-semibold"
-              style={{ backgroundColor: 'var(--primary)', color: 'var(--bg-light)' }}
-            >
-              Credits: <span style={{ color: 'var(--bg-light)' }}>{credits}</span>
-            </div>
-          </div>
-        </div>
+            <Badge variant="default">Credits: {credits}</Badge>
+          </UICardContent>
+        </Card>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {PLANS.filter(plan => plan.id !== 'lifetime').map((plan, idx) => {
-            return (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className={
-                  plan.id === 'pro'
-                    ? 'rounded-lg bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-rose-500 p-[1px]'
-                    : 'min-w-0 rounded-lg border border-border p-0 shadow-sm transition-colors'
-                }
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {PLANS.filter(plan => plan.id !== 'lifetime').map((plan, idx) => (
+            <motion.div
+              key={plan.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              className={`bg-foreground/10 card group relative h-full overflow-hidden rounded-xl transition-all duration-300 ease-in-out max-lg:last:col-span-full ${plan.id === 'pro' ? 'p-0' : 'p-px'}`}
+            >
+              <Card
+                className={`h-full flex flex-col gap-6 rounded-xl border py-6 shadow-none transition-all duration-300 ease-in-out bg-card text-card-foreground group-hover:bg-card/90 ${plan.id === 'pro' ? 'border-primary border-2' : ''}`}
               >
-                {plan.id === 'pro' ? (
-                  <div
-                    className="h-full min-w-0 rounded-lg p-4 shadow-sm dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),0_2px_0_rgba(255,255,255,0.9)]"
-                    style={{
-                      backgroundColor: 'var(--bg-light)',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <CardContent plan={plan} />
-                  </div>
-                ) : (
-                  <div className={`p-4 ${plan.id === 'free' ? 'opacity-60 grayscale' : ''}`}>
-                    <CardContent plan={plan} />
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
+                <UICardContent className="flex flex-col gap-4 px-6">
+                  <PlanCardBody plan={plan} />
+                </UICardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       </div>
     </Modal>

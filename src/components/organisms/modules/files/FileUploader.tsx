@@ -1,10 +1,10 @@
 'use client';
 
-import { RiCheckLine, RiCloseLine, RiFileLine, RiSaveLine, RiUploadLine } from '@remixicon/react';
+import { Check, File, Save, Upload, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { Button } from '@/components/atom/Button';
 import { Modal } from '@/components/molecules/common/Modal';
+import { Button } from '@/components/ui/button';
 import { useUploadFiles } from '@/hooks/useFiles';
 import { uploadFileViaPresignedUrl } from '@/services/external/aws/presigned-upload';
 import { formatFileSize } from '@/services/internal/files/file-upload/file-utils';
@@ -207,7 +207,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
             </>
           ) : (
             <>
-              <RiSaveLine className="h-4 w-4" />
+              <Save className="h-4 w-4" />
               <span>
                 Save {uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length} File
                 {(uploadFilesMutation.isPending ? filesBeingSaved : readyFiles.length) !== 1
@@ -228,7 +228,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
         onClose={handleClose}
         title="Upload Files"
         description="Upload files to your account"
-        maxWidth="max-w-2xl"
+        maxWidth="max-w-2xl!"
         contentClassName="max-h-[90vh] overflow-y-auto"
         footer={actionFooter}
       >
@@ -236,13 +236,13 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
           {/* Drop Zone */}
           <div
             ref={dropZoneRef}
-            className="hover:border-primary/50 rounded-lg border-2 border-dashed border-border p-8 text-center shadow-sm transition-all duration-200 hover:shadow-md"
+            className="hover:border-primary/50 rounded-lg border-2 border-dashed border-border p-8 text-center shadow-xs transition-all duration-200 hover:shadow-md"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
           >
-            <RiUploadLine className="mx-auto h-16 w-16 text-text-muted" />
+            <Upload className="mx-auto h-16 w-16 text-text-muted" />
             <div className="mt-4">
               <p className="text-lg font-medium text-text">Drop files here or browse</p>
               <p className="mt-2 text-sm text-text-muted">
@@ -286,7 +286,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
                   key={uploadingFile.id}
                   className="flex items-center space-x-4 rounded-lg bg-background p-3"
                 >
-                  <RiFileLine className="h-5 w-5 flex-shrink-0 text-text-muted" />
+                  <File className="h-5 w-5 flex-shrink-0 text-text-muted" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-text">
                       {uploadingFile.file.name}
@@ -315,12 +315,12 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
                     )}
                     {uploadingFile.status === 'ready' && (
                       <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                        <RiCheckLine className="h-3 w-3 text-white" />
+                        <Check className="h-3 w-3 text-white" />
                       </div>
                     )}
                     {uploadingFile.status === 'success' && (
                       <div className="flex h-5 w-5 items-center justify-center rounded-full bg-success">
-                        <RiCheckLine className="h-3 w-3 text-white" />
+                        <Check className="h-3 w-3 text-white" />
                       </div>
                     )}
                     {uploadingFile.status === 'error' && (
@@ -332,7 +332,7 @@ export function FileUploader({ isOpen, onClose, onUploaded }: FileUploaderProps)
                       }
                       className="text-text-muted hover:text-text"
                     >
-                      <RiCloseLine className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 </div>

@@ -29,6 +29,10 @@
   --info: hsl(260 60% 55%); /* Info color - blue */
   --info-hover: hsl(260 60% 50%); /* Info hover */
 
+  /* Popover colors */
+  --popover: var(--bg-light); /* Popover background */
+  --popover-foreground: var(--text); /* Popover text */
+
   /* Semantic color mappings for existing Tailwind classes */
   --gray-50: var(--bg-light);
   --gray-100: var(--bg);
@@ -165,6 +169,10 @@
   --success-hover: hsl(160 60% 75%); /* Success hover */
   --info: hsl(260 60% 70%); /* Info color */
   --info-hover: hsl(260 60% 75%); /* Info hover */
+
+  /* Popover colors */
+  --popover: var(--bg-light); /* Popover background */
+  --popover-foreground: var(--text); /* Popover text */
 
   /* Semantic color mappings for existing Tailwind classes */
   --gray-50: hsl(0 0% 5%); /* Darkest - base */
