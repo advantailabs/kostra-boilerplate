@@ -3,6 +3,7 @@ import React from 'react';
 
 import { MinimalFooter } from '@/components/branding/minimal-footer';
 import { ModernNavigation } from '@/components/branding/modern-navigation';
+import { ScrollRestoration } from '@/components/branding/scroll-restoration';
 import { SignInModalProvider } from '@/providers/SignInModalProvider';
 import type { Metadata } from 'next';
 import '../globals.css';
@@ -43,17 +44,7 @@ export default function BrandingLayout({
         <ModernNavigation />
         <main className="relative pt-12 md:pt-16">{children}</main>
         <MinimalFooter />
-        <script
-           
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Prevent browser scroll restoration on page load
-              if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
-                window.history.scrollRestoration = 'manual';
-              }
-            `,
-          }}
-        />
+        <ScrollRestoration />
       </div>
     </SignInModalProvider>
   );

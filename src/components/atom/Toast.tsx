@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useTheme } from '@teispace/next-themes';
 import React from 'react';
 import { toast as sonnerToast, Toaster as SonnerToaster } from 'sonner';
 

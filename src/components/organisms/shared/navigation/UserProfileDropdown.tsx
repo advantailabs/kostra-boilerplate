@@ -11,7 +11,7 @@ import {
   RiMoonLine,
   RiSunLine,
 } from '@remixicon/react';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@teispace/next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 

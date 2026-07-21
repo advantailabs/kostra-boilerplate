@@ -1,3 +1,4 @@
+import { JsonLd } from '@/components/seo/json-ld';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -39,34 +40,30 @@ export default function PrivacyPolicyPage() {
 
   return (
     <>
-      {/* Structured Data for Google */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebPage',
-            name: 'Privacy Policy',
-            description: 'Privacy Policy for Kostra - Modern Next.js SaaS Boilerplate',
-            url: 'https://kostra.io/privacy-policy',
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Privacy Policy',
+          description: 'Privacy Policy for Kostra - Modern Next.js SaaS Boilerplate',
+          url: 'https://kostra.io/privacy-policy',
+          dateModified: lastUpdated,
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'Kostra',
+            url: 'https://kostra.io',
+          },
+          mainEntity: {
+            '@type': 'Article',
+            headline: 'Privacy Policy',
+            description: 'Learn how we collect, use, and protect your personal information.',
             dateModified: lastUpdated,
-            isPartOf: {
-              '@type': 'WebSite',
+            author: {
+              '@type': 'Organization',
               name: 'Kostra',
               url: 'https://kostra.io',
             },
-            mainEntity: {
-              '@type': 'Article',
-              headline: 'Privacy Policy',
-              description: 'Learn how we collect, use, and protect your personal information.',
-              dateModified: lastUpdated,
-              author: {
-                '@type': 'Organization',
-                name: 'Kostra',
-                url: 'https://kostra.io',
-              },
-            },
-          }),
+          },
         }}
       />
 

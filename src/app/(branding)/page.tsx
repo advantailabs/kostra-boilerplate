@@ -4,6 +4,7 @@ import { FeaturesSection } from '@/components/branding/features-section';
 import { InnovativeHero } from '@/components/branding/innovative-hero';
 import { MinimalFeatures } from '@/components/branding/minimal-features';
 import { PricingSection } from '@/components/branding/pricing-section';
+import { JsonLd } from '@/components/seo/json-ld';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -43,6 +44,71 @@ export const metadata: Metadata = {
   },
 };
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Best Next.js Boilerplate - Modern Web Application',
+  description:
+    'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
+  url: 'https://your-domain.com',
+  sameAs: [
+    'https://your-domain.com/privacy-policy',
+    'https://your-domain.com/terms-of-services',
+  ],
+  mainEntity: {
+    '@type': 'SoftwareApplication',
+    name: 'Next.js Boilerplate',
+    applicationCategory: 'BusinessApplication',
+    description:
+      'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
+    operatingSystem: 'Web Browser',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      description: 'Free tier available',
+    },
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Next.js Boilerplate',
+    url: 'https://your-domain.com',
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://your-domain.com/app?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://your-domain.com',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Privacy Policy',
+      item: 'https://your-domain.com/privacy-policy',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'Terms of Service',
+      item: 'https://your-domain.com/terms-of-services',
+    },
+  ],
+};
+
 // Static generation - this page will be pre-rendered at build time
 export async function generateStaticParams() {
   return [{}]; // This will statically generate the homepage
@@ -53,82 +119,8 @@ export default function HomePage() {
   return (
     <div className="overflow-x-hidden">
       <>
-        {/* Structured Data for Google */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'Best Next.js Boilerplate - Modern Web Application',
-              description:
-                'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
-              url: 'https://your-domain.com',
-              sameAs: [
-                'https://your-domain.com/privacy-policy',
-                'https://your-domain.com/terms-of-services',
-              ],
-              mainEntity: {
-                '@type': 'SoftwareApplication',
-                name: 'Next.js Boilerplate',
-                applicationCategory: 'BusinessApplication',
-                description:
-                  'A comprehensive Next.js boilerplate with modern features, authentication, and scalable architecture.',
-                operatingSystem: 'Web Browser',
-                offers: {
-                  '@type': 'Offer',
-                  price: '0',
-                  priceCurrency: 'USD',
-                  description: 'Free tier available',
-                },
-              },
-              publisher: {
-                '@type': 'Organization',
-                name: 'Next.js Boilerplate',
-                url: 'https://your-domain.com',
-              },
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: {
-                  '@type': 'EntryPoint',
-                  urlTemplate: 'https://your-domain.com/app?q={search_term_string}',
-                },
-                'query-input': 'required name=search_term_string',
-              },
-            }),
-          }}
-        />
-
-        {/* Navigation hints for crawlers */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                {
-                  '@type': 'ListItem',
-                  position: 1,
-                  name: 'Home',
-                  item: 'https://your-domain.com',
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 2,
-                  name: 'Privacy Policy',
-                  item: 'https://your-domain.com/privacy-policy',
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 3,
-                  name: 'Terms of Service',
-                  item: 'https://your-domain.com/terms-of-services',
-                },
-              ],
-            }),
-          }}
-        />
+        <JsonLd data={websiteJsonLd} />
+        <JsonLd data={breadcrumbJsonLd} />
 
         <section id="home">
           <InnovativeHero />
